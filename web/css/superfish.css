@@ -1,0 +1,89 @@
+.nav {position:relative; float:left; z-index:10;}
+.inner-nav {
+	position: relative;
+	left:0;
+	float:left;
+	background:url(../images/mnu_tile.png) repeat-x;
+	width:900px;
+	height:66px;
+}
+.sf-menu{
+	font-size:0;
+	line-height:0;
+	padding:0px 0 0 0;
+	margin:0;
+	position:relative;
+	right:0;
+	width:900px;
+	height:66px;
+	z-index:1;
+}
+.sf-menu ul{
+	position:absolute;
+	top:-999em;
+	width:110px;
+	left:0;
+	display:none;
+	margin:0;
+	background: #151515;
+	padding:3px 0 5px 0;
+}
+	.sf-menu ul ul {width:131px;}
+	.sf-menu > li:first-child+li+li+li+li > ul {width:180px;}
+.sf-menu > li{
+	position:relative;
+	padding:0;
+	float:left;
+	margin:0px 0px 0 0px;
+}
+.sf-menu > li > a {
+	float: left;
+	display:inline-block;
+	padding: 26px 18px 0px 18px;
+	margin:0px 0px 0px 0px;
+	text-align:left;
+	font-size: 18px;
+	height:40px;
+	width:auto;
+	line-height:18px;
+	text-decoration: none;
+	text-transform:uppercase;
+	color:#fff;
+}
+	.sf-menu > li > a:hover, .sf-menu > li.sfHover > a, .sf-menu > li.current > a {color:#fff !important; background:url(../images/mnu_hvr.jpg) repeat-x;}
+	.sf-menu > li > a > .sf-sub-indicator {
+		position:absolute;
+		display:block;
+		width:7px;
+		height:5px;
+		left:0;
+		top:30px;
+		margin:0 0 0 -3px;
+		background:url(../images/sub-menu-indicator.gif) no-repeat 0 0;
+	}
+	.sf-sub-indicator {display:none;}
+.sf-menu li:hover ul,.sf-menu li.sfHover ul{top:59px; left:-0px;z-index:10 !important;}
+.sf-menu li:hover li ul,ul.sf-menu li.sfHover li ul{top:-999em}
+.sf-menu li li a{
+	display:block;
+	margin:0;
+	position:relative;
+	text-decoration:none;
+	font-size:14px;
+	line-height:18px;
+	color:#fff;
+	padding:11px 0 11px 7px;
+	overflow:hidden;
+	text-transform:uppercase;
+	white-space:nowrap;
+	text-align:left;
+}
+.sf-menu li li {
+	position:relative;
+	float:none;
+	margin:0 5px;
+}
+.sf-menu li li:hover > a, .sf-menu li li.sfHover > a, .sf-menu li li.current > a, .sf-menu li li.current > a:hover{color:#fff; text-shadow:none;}
+.sf-menu li li:hover, .sf-menu li li.sfHover, .sf-menu li li.current{background:#cd1307 repeat-x; color:#fff; text-shadow:none;}
+.sf-menu li li:hover ul,ul.sf-menu li li.sfHover ul{left:105%;top:-3px;}
+
