@@ -12,6 +12,18 @@ CREATE TABLE IF NOT EXISTS `activities` (
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `bots` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `user_id` int(11) unsigned NOT NULL default '0',
+  `job_id` int(11) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL,
+  `model` varchar(255) NOT NULL,
+  `status` enum('idle', 'working', 'finished', 'error', 'maintenance', 'offline') NOT NULL default 'offline',
+  `last_seen` datetime NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL,
@@ -34,6 +46,30 @@ CREATE TABLE IF NOT EXISTS `email_queue` (
   UNIQUE KEY `id` (`id`),
   KEY `user_id` (`user_id`),
   KEY `status` (`status`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `jobs` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `user_id` int(11) unsigned NOT NULL default '0',
+  `queue_id` int(11) unsigned NOT NULL default '0',
+  `file_id` int(11) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL,
+  `status` enum('available', 'taken', 'complete', 'failure') NOT NULL default 'available',
+  `start` datetime NOT NULL,
+  `end` datetime NOT NULL,
+  `user_sort` int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `queue_id` (`queue_id`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `queues` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `user_id` int(11) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `s3_files` (
