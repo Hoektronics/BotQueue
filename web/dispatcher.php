@@ -69,13 +69,6 @@
 	//$main is an object derived from the Controller class, e.g. iphoneController, mainController, itemController, etc.
 	$main = Controller::byName($controller);
 	
-	//make sure we log in.
-	if ($_GET['login_required'] != 'false')
-	{
-		$main->assertLoggedIn();
-		
-	}
-	
 	//call the renderView function (within the Controller class), passing it only the name of the view (e.g. newest)
 	//The renderView function does the following:
 	//  - Sets the the property, $main->data['items'], equal to an array containing one page worth of object (e.g item) data read in from MySQL
