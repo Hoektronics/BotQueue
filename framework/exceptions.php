@@ -1,0 +1,6 @@
+<?
+	class ViewException extends Exception
+	{
+	
+	}
+?>

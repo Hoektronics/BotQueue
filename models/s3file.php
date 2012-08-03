@@ -1,0 +1,218 @@
+<?
+	class S3File extends Model
+	{
+		public function __construct($id = null, $table = null)
+		{
+			if ($table === null)
+				parent::__construct($id, "s3_files");
+			else
+				parent::__construct($id, $table);
+		}
+		
+		public function delete()
+		{
+			if ($this->isHydrated())
+			{
+				$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+				$s3->deleteObject($this->get('bucket'), $this->get('path'));
+			}
+			
+			parent::delete();
+		}
+		
+		public function uploadFile($file, $path, $acl = S3::ACL_PUBLIC_READ, $save = true)
+		{
+			//is it a real file?
+			if (file_exists($file))
+			{
+				//do the actual upload.
+				$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+				$result = $s3->putObjectFile($file, AMAZON_S3_BUCKET_NAME, $path, S3::ACL_PUBLIC_READ);
+
+				//echo "Uploading {$file} to " . AMAZON_S3_BUCKET_NAME . ":{$path}\n";
+
+				//get our info for saving
+				$info = $s3->getObjectInfo(AMAZON_S3_BUCKET_NAME, $path, true);
+
+				//save our info.
+				$this->set('hash', $info['hash']);
+				$this->set('size', $info['size']);
+				$this->set('type', $info['type']);
+				$this->set('bucket', AMAZON_S3_BUCKET_NAME);
+				$this->set('path', $path);
+				$this->set('add_date', date("Y-m-d H:i:s"));
+	
+				//for non db accessible scripts.			
+				if ($save)
+					$this->save();
+
+				//yay!
+				if ($result !== false)
+					return true;
+			}
+			else
+				echo "No file at $path or $file\n";
+			
+			//fail!
+			return false;
+		}
+		
+		public function uploadUrl($url, $s3_path, $acl = S3::ACL_PUBLIC_READ, $save = true)
+		{
+			//where to download to?
+			$path = tempnam('/tmp', 'fuuu');
+
+			//set it up for download
+			$ch = curl_init();
+			$fp = fopen($path, "w");
+		  curl_setopt($ch, CURLOPT_URL, $url);
+		  curl_setopt($ch, CURLOPT_FILE, $fp);
+		  curl_setopt($ch, CURLOPT_HEADER, 0);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+      
+			//download it!
+		  if (!curl_exec($ch)) {
+		    trigger_error("Error downloading $url " . curl_error($ch));
+			}
+
+      curl_close($ch);
+			fclose($fp);
+
+			//actually upload it!
+			$this->uploadFile($path, $s3_path, $acl, $save);
+
+			//where do we download it?
+			return $path;
+		}
+		
+		public static function createHashDirectory()
+		{
+			$hash = sha1(mt_rand() . mt_rand() . mt_rand() . mt_rand());
+			
+			$directory  = substr($hash, 0, 2);
+			$directory .= "/";
+			$directory .= substr($hash, 2, 2);
+			$directory .= "/";
+			$directory .= substr($hash, 4, 2);
+			$directory .= "/";
+			$directory .= substr($hash, 6, 2);
+			$directory .= "/";
+			$directory .= substr($hash, 8, 2);
+
+			return $directory;
+		}
+		
+		public static function getNiceDir($path)
+		{
+			$dir = self::createHashDirectory();
+			$file = self::removeHash($path);
+			
+			return "$dir/$file";
+		}
+		
+		public static function removeHash($file)
+		{
+			$file = basename($file);
+			$file = preg_replace("/[0-9a-f]{32}-/i", "", $file);
+			
+			return $file; 
+		}
+		
+		public function getRealUrl()
+		{
+			if (FORCE_SSL)
+				$protocol = 'https://';
+			else
+				$protocol = 'http://';
+				
+			return $protocol . $this->get('bucket') . ".s3.amazonaws.com/" . $this->get('path');
+		}
+
+		public function getRealDownloadUrl() {
+		  $s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			return $s3->getAuthenticatedDownloadURL($this->get('bucket'), $this->get('path'), 3600);
+		}
+		
+		public function downloadToPath($path)
+		{
+			//make directory.
+			$dir = dirname($path);
+			if (!file_exists($dir))
+				mkdir($dir, 0777, true);
+			if (!is_writable($dir))
+				return false;
+			
+			//load up S3 for download
+			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$result = $s3->getObject($this->get('bucket'), $this->get('path'), $path);
+			
+			//did it work?
+			if ($result !== false)
+				return true;
+
+			//fail :-/
+			return false;
+		}
+		
+		public function copy()
+		{
+			$new = parent::copy();
+			
+
+			ob_start();
+			
+			//copy our new one to its own path.
+			$newPath = $new->getNiceDir($new->get('path'));
+			$new->copyToPath($newPath);
+			$new->set('path', $newPath);
+			$new->set('bucket', AMAZON_S3_BUCKET_NAME);
+			$new->save();
+			
+			ob_end_clean();
+			
+			return $new;
+		}
+		
+		public function copyToPath($path)
+		{
+			//load up S3 for download
+			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$result = $s3->copyObject(
+				$this->get('bucket'), $this->get('path'),
+				AMAZON_S3_BUCKET_NAME, $path,
+				S3::ACL_PUBLIC_READ
+			);
+			
+			return $result;
+		}
+		
+		public function copyToBucket($bucket)
+		{
+			//load up S3 for download
+			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$result = $s3->copyObject($this->get('bucket'), $this->get('path'), $bucket, $this->get('path'), S3::ACL_PUBLIC_READ);
+			
+			$this->set('bucket', $bucket);
+			$this->save();
+			
+			return $result;
+		}
+		
+		public function getBasename()
+		{
+			return basename($this->get('path'));
+		}
+		
+		public function getExtension()
+		{
+			$data = pathinfo($this->get('path'));
+			
+			return $data['extension'];
+		}
+		
+		public function getName()
+		{
+			return $this->getBasename();
+		}
+	}
+?>

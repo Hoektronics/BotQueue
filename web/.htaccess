@@ -1,0 +1,51 @@
+#setup our site configuration
+#setup our site configuration
+Options -Indexes
+DirectoryIndex dispatcher.php
+RewriteEngine on
+
+#does it exist?
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(.*)$	$1 [NC,L]
+
+#this brings the site down
+#RewriteCond %{REQUEST_URI} !^/admin
+#RewriteCond %{REQUEST_URI} !^/ajax/admin
+#RewriteRule (.*) down.html [NC,L]
+
+#ajax rule!
+RewriteRule ^ajax/([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)/?$		dispatcher.php?mode=ajax&controller=$1&view=$2 [NC,L]
+
+#random stuff
+RewriteRule ^home/?$					dispatcher.php?controller=user&view=home [NC,L]
+RewriteRule ^activity(/page:([0-9]+))?/?$					dispatcher.php?controller=main&view=activity&page=$2 [NC,L]
+
+
+#user login action
+RewriteRule ^login/?$					dispatcher.php?controller=auth&view=login&mode=ajax&login_required=false [NC,L]
+RewriteRule ^login/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=login&payload=$1&mode=ajax&login_required=false [NC,L]
+RewriteRule ^token/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=login&token=$1&mode=ajax&login_required=false [NC,L]
+RewriteRule ^logout/?$					dispatcher.php?controller=auth&view=logout&login_required=false [NC,L]
+RewriteRule ^forgotpass/?$				dispatcher.php?controller=auth&view=forgotpass&login_required=false [NC,L]
+RewriteRule ^register/?$				dispatcher.php?controller=user&view=register [NC,L]
+
+#admin area
+RewriteRule ^admin/?$														dispatcher.php?controller=admin&view=home
+
+#user profile stuff.
+RewriteRule ^user:([0-9]+)/?$												dispatcher.php?controller=user&view=profile&id=$1 [NC,L]
+RewriteRule ^user/edit														dispatcher.php?controller=user&view=edit [NC,L]		
+RewriteRule ^user/changepass/?$												dispatcher.php?controller=user&view=changepass [NC,L]		
+RewriteRule ^user:([0-9]+)/changepass/?$									dispatcher.php?controller=user&view=changepass&id=$1 [NC,L]		
+RewriteRule ^user:([0-9]+)/edit/?$											dispatcher.php?controller=user&view=edit&id=$1 [NC,L]
+RewriteRule ^user:([0-9]+)/delete/?$										dispatcher.php?controller=user&view=delete&id=$1 [NC,L]
+RewriteRule ^user:([0-9]+)/resetpass:([0-9a-zA-Z]{40})/?$					dispatcher.php?controller=user&view=resetpass&id=$1&hash=$2 [NC,L]
+RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?/?$						dispatcher.php?controller=user&view=activity&id=$1&page=$3 [NC,L]
+
+#shortcode parsing
+RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
+
+#username wildcard pages.  must be at the very end to avoid conflicting with other pages
+RewriteRule ^([-_a-zA-Z0-9]+)/?$											dispatcher.php?controller=user&view=profile&username=$1 [NC,L]
+RewriteRule ^([-_a-zA-Z0-9]+)/edit/?$										dispatcher.php?controller=user&view=edit&username=$1 [NC,L]
+RewriteRule ^([-_a-zA-Z0-9]+)/resetpass:([0-9a-zA-Z]{40})/?$				dispatcher.php?controller=user&view=resetpass&username=$1&hash=$2&login_required=false [NC,L]

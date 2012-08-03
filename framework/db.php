@@ -1,0 +1,234 @@
+<?
+
+function db($key = null)
+{
+	return Database::getSocket($key);
+}
+
+class Database
+{
+	private static $sockets = array();
+
+	private function __construct() {}
+	
+	public static function getSocket($key = null)
+	{
+		if ($key === null)
+			$key = 'main';
+			
+		//RR_DB_USER, RR_DB_PASS, RR_DB_HOST and RR_DB_PORT are global variables in extensions/config.php
+		if (self::$sockets[$key] === null)      
+			self::$sockets[$key] = new DatabaseSocket(RR_DB_USER, RR_DB_PASS, RR_DB_HOST, RR_DB_PORT);
+		
+		return self::$sockets[$key];
+	}
+}
+
+class DatabaseSocket
+{
+	private $link;
+
+	private $user;
+	private $pass;
+	private $host;
+	private $port;
+	
+	private static $executes = array();
+	private static $queries = array();
+	private static $inserts = array();
+	
+	public function __construct($user, $pass = null, $host = 'localhost', $port = 3306)
+	{
+		$this->user = $user;
+		$this->pass = $pass;
+		$this->host = $host;
+		$this->port = $port;
+
+		//Call the function to connect to the MySQL server
+		$this->reconnect();
+		
+		if (mysql_error() || $this->link === false)
+			trigger_error(mysql_error());
+	}
+	
+	//This method actually calls the mysql_connect function to connect to the server and select the database
+	//The link property of this object is set to the identifier returned by mysql_connect
+
+	public function reconnect()
+	{
+		$this->link = mysql_connect($this->host . ":" . $this->port, $this->user, $this->pass, true);
+		if (!$this->link) {
+		  die("Failed to connect: " . mysql_error());
+		}
+		$this->selectDb(RR_DB_NAME);
+	}
+	
+	public function safe($text)
+	{
+		return mysql_real_escape_string($text, $this->link);
+	}
+	
+	public function error()
+	{
+		return mysql_error($this->link);
+	}
+	
+	//This method actually calls the myqsl_query function
+	//Accepts as input an sql string and a database identfier
+	public function query($sql)
+	{
+		if (TRACK_SQL_QUERIES)
+			self::$queries[] = $sql;
+		
+		return mysql_query($sql, $this->link);
+	}
+	
+	public function insert($sql)
+	{
+		if (TRACK_SQL_QUERIES)
+			self::$inserts[] = $sql;
+			
+		mysql_query($sql, $this->link);
+		
+		return mysql_insert_id($this->link);
+	}
+	
+	public function execute($sql)
+	{
+		if (TRACK_SQL_QUERIES)
+			self::$executes[] = $sql;
+			
+		mysql_query($sql, $this->link);
+		
+		return mysql_affected_rows($this->link);
+	}
+	
+	public function ping()
+	{
+    mysql_ping($this->link);
+	}
+	
+	public function getArray($sql, $key = null, $life = null)
+	{
+		//check the cache first?
+		if ($key !== null && $life !== null)
+		{
+			$data = CacheBot::get($key, $data, $life);
+			if (is_array($data))
+				return $data;
+		}
+		
+		//okay, load it from db.
+		//$rs now contains a resource that can be used to extract the results of the query
+		$rs = $this->query($sql);
+
+		//error?
+		if (mysql_error())
+			trigger_error(mysql_error() . ": $sql");
+
+		//snag it - populate the $data array with the results of the mysql output
+		//$data is a numerically indexed array where each row corresponds to one row of MySQL output
+		//Each value (row) in data contains an associative array for a given row of MySQL output, for example: array('id' => '1', 'user_id' => '5', ...)
+		//So now $data looks like this:
+		//  $data[0] = array('id' => '1', 'user_id' => '5', ...)
+		//  $data[1] = array('id' => '2', 'user_id' => '6', ...)
+		//  ...
+
+		while ($row = mysql_fetch_assoc($rs))
+			$data[] = $row;
+			
+		//save it to cache?
+		if ($key !== null && $life !== null)
+			CacheBot::set($key, $data, $life);
+		
+		//return the $data array, which contains the results of the mysql query
+		return $data;
+	}
+	
+	public function getRow($sql, $key = null, $life = null)
+	{
+		//check the cache first?
+		if ($key !== null && $life !== null)
+		{
+			$data = CacheBot::get($key, $data, $life);
+			if (is_array($data))
+				return $data;
+		}
+		
+		$this->ping();
+		
+		//okay, load it from db.
+		$data = mysql_fetch_assoc($this->query($sql));
+
+		//error?
+		if (mysql_error())
+			trigger_error(mysql_error() . ": $sql");
+
+		//save it to cache?
+		if ($key !== null && $life !== null)
+			CacheBot::set($key, $data, $life);
+
+		return $data;
+	}
+	
+	public function getValue($sql, $key = null, $life = null)
+	{
+		$row = $this->getRow($sql, $key, $life);
+
+		//error?
+		if (mysql_error())
+			trigger_error(mysql_error() . ": $sql");
+		
+		if (is_array($row) && count($row))
+			return array_shift($row);
+		
+		return null;
+	}
+	
+	public function getLink()
+	{
+		return $this->link;
+	}
+	
+	public function selectDb($database)
+	{
+		mysql_select_db($database, $this->link);
+	}
+	
+	public static function drawDbStats()
+	{
+		echo "\nDB Activity.\n";
+
+		if (!empty(self::$queries))
+		{
+			echo "Queries:\n";
+			foreach (self::$queries AS $query)
+				echo str_replace("\t", "", trim($query)) . "\n\n";
+		}
+		else
+			echo "No queries.\n";
+
+		if (!empty(self::$inserts))
+		{
+			echo "Inserts:\n";
+			foreach (self::$inserts AS $query)
+				echo str_replace("\t", "", trim($query)) . "\n\n";
+		}
+		else
+			echo "No inserts.\n";
+			
+		if (!empty(self::$exections))
+		{
+			echo "Updates/Deletes:\n";
+			foreach (self::$executions AS $query)
+				echo str_replace("\t", "", trim($query)) . "\n\n";
+		}
+		else
+			echo "No updates/deletes.\n";
+
+
+		echo "\n";
+	}
+}
+
+?>

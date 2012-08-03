@@ -1,0 +1,155 @@
+<?
+	class UploadController extends Controller
+	{
+		public function uploader()
+		{
+			$payload = base64_encode(serialize($this->args('payload')));
+			
+			$this->setArg('label');
+
+			//where you want me go?
+			$redirect = "http://" . SITE_HOSTNAME . "/dispatcher.php?controller=upload&view=success&payload=$payload";
+			$acl = "public-read";
+			$expiration = gmdate("Y-m-d\TH:i:s\Z", strtotime("+1 day"));
+			
+			//create amazons crazy policy data array.
+			$policy_json = '
+			{
+				"expiration": "' . $expiration . '",
+				"conditions": [
+					{"acl": "' . $acl . '"},
+					{"bucket": "' . AMAZON_S3_BUCKET_NAME . '"},
+					["starts-with", "$key", "uploads/"],
+					["starts-with", "$Content-Type", ""],
+					["starts-with", "$Content-Disposition", ""],
+					{"success_action_redirect": "' . $redirect . '"},
+					["content-length-range", 1, 262144000]
+				]
+			}';
+			
+			//create our various encoded/signed stuff.
+			$policy_json_cleaned = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $policy_json);
+			$policy_encoded = base64_encode($policy_json_cleaned);
+			$signature = hex2b64(hash_hmac('sha1', $policy_encoded, AMAZON_AWS_SECRET));
+				
+			//okay, set our view vars.
+			$this->set('redirect', $redirect);
+			$this->set('acl', $acl);
+			$this->set('policy', $policy_encoded);
+			$this->set('signature', $signature);
+		}
+		
+		public function success()
+		{
+			$this->assertLoggedIn();
+
+			//get our payload.
+			$payload = unserialize(base64_decode($this->args('payload')));
+
+			//get all my info.
+			$info = $this->_lookupFileInfo();
+
+			//handle our upload payload.
+			try
+			{
+					//todo: make this work.
+					$file = $this->_createS3File();
+
+				}
+			}
+			//did anything go wrong?
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}
+		}
+
+		private function _lookupFileInfo()
+		{
+			//look up our real info.
+			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$info = $s3->getObjectInfo($this->args('bucket'), $this->args('key'), true);
+			if ($info['size'] == 0)
+			{
+				//capture for debug
+				ob_start();
+				
+				var_dump($args);
+				var_dump($info);
+				
+				//try it again.
+				sleep(1);
+				$info = $s3->getObjectInfo($this->args('bucket'), $this->args('key'), true);
+				var_dump($info);
+				
+				//still bad?
+				if ($info['size'] == 0)
+				{
+					$text = ob_get_contents();
+					$html = "<pre>{$text}</pre>";
+					
+					//email the admin
+					$admin = User::byUsername('hoeken');
+					Email::queue($admin, "upload fail", $text, $html);
+
+					//show us.
+					if (User::isAdmin())
+					{
+						@ob_end_clean();
+						
+						echo "'failed' file upload:<br/><br/>$html";
+						exit;
+					}
+
+					//$this->set('megaerror', "You cannot upload a blank/empty file.");
+				}
+				
+				@ob_end_clean();
+			}
+			
+			//send it back.
+			return $info;
+		}
+		
+		private function _createS3File()
+		{
+			//format the name and stuff
+			$filename = basename($this->args('key'));
+			$filename = str_replace(" ", "_", $filename);
+			$filename = preg_replace("/[^-_.+[0-9a-zA-Z]/", "", $filename);
+			$path = "assets/" . S3File::getNiceDir($filename);
+
+			//check our info out.
+			$info = $this->_lookupFileInfo();
+	
+			//create new s3 file
+			$file = new S3File();
+			$file->set('type', $info['type']);
+			$file->set('size', $info['size']);
+			$file->set('hash', $info['hash']);
+			$file->set('add_date', date('Y-m-d H:i:s'));
+			$file->set('bucket', AMAZON_S3_BUCKET_NAME);
+			$file->set('path', $path);
+			$file->save();
+
+			//copy to new location in s3.
+			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$s3->copyObject($this->args('bucket'), $this->args('key'), AMAZON_S3_BUCKET_NAME, $path, S3::ACL_PUBLIC_READ);
+
+			//remove the uploaded file.
+			$s3->deleteObject($this->args('bucket'), $this->args('key'));
+			
+			return $file;
+		}
+	
+	// Function to help sign the policy
+	function hex2b64($str)
+	{
+		$raw = '';
+		for ($i=0; $i < strlen($str); $i+=2)
+		{
+			$raw .= chr(hexdec(substr($str, $i, 2)));
+		}
+		return base64_encode($raw);
+	}
+?>
