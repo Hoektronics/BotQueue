@@ -9,3 +9,5 @@ sudo a2ensite BotQueue
 sudo a2enmod rewrite
 
 sudo /etc/init.d/apache2 restart
+
+mysql -u root < install/createdb.sql

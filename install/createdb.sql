@@ -1,5 +1,6 @@
-SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
+
+CREATE DATABASE botqueue;
 
 CREATE TABLE `activities` (
   `id` int(11) unsigned NOT NULL auto_increment,
