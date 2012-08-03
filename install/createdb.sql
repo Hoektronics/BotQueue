@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `comments`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `comments` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL,
   `comment` text NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE `comments`  IF NOT EXISTS (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `email_queue`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `email_queue` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL default '0',
   `subject` varchar(255) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `email_queue`  IF NOT EXISTS (
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `s3_files`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `s3_files` (
   `id` bigint(11) unsigned NOT NULL auto_increment,
   `type` varchar(255) NOT NULL,
   `size` int(10) unsigned NOT NULL,
@@ -47,14 +47,14 @@ CREATE TABLE `s3_files`  IF NOT EXISTS (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `shortcodes`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `shortcodes` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `url` (`url`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `tokens`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `tokens` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL,
   `hash` varchar(40) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `tokens`  IF NOT EXISTS (
   KEY `expire_date` (`expire_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `users`  IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `username` varchar(32) NOT NULL,
   `email` varchar(255) NOT NULL,
