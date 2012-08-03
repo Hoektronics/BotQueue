@@ -1,0 +1,21 @@
+v1 Release
+
+* Basic site infrastructure: registration, login, etc.
+* Upload gcode file
+* API for workers to get / complete jobs
+* Machine registration
+* Queue creation
+* Queue view / edit / delete / reorder
+* Individual job view / edit
+* Basic Daemon for mac / win / linux
+
+* Files - GCode that is ready to print.
+* Queues - Holds all jobs that need to be completed.
+* Bots - Individual machines capable of handling jobs.
+* Jobs - Process to be completed.  Associated w/ queue and has a single gcode file to execute.
+
+v2 Release
+
+* Slicers + Profiles
+* API to upload files or jobs
+* Pull in files from internet (Thingiverse, GrabCAD, etc)
