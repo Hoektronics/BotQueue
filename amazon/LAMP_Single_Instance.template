@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   
-  "Description" : "AWS CloudFormation Sample Template LAMP_Single_Instance: Create a LAMP stack using a single EC2 instance and a local MySQL database for storage. This template demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy the Apache web server, PHP and MySQL at instance launch time. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "Single Server.",
   
   "Parameters" : {
       
@@ -15,8 +15,8 @@
     },    
 
     "DBName": {
-      "Default": "MyDatabase",
-      "Description" : "MySQL database name",
+      "Default": "BotQueue",
+      "Description" : "database name",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "64",
@@ -25,7 +25,7 @@
     },
 
     "DBUsername": {
-      "NoEcho": "true",
+      "Default": "BotQueue",
       "Description" : "Username for MySQL database access",
       "Type": "String",
       "MinLength": "1",
@@ -35,7 +35,6 @@
     },
 
     "DBPassword": {
-      "NoEcho": "true",
       "Description" : "Password for MySQL database access",
       "Type": "String",
       "MinLength": "1",
@@ -45,7 +44,6 @@
     },
 
     "DBRootPassword": {
-      "NoEcho": "true",
       "Description" : "Root password for MySQL",
       "Type": "String",
       "MinLength": "1",
@@ -57,7 +55,7 @@
     "InstanceType" : {
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
-      "Default" : "m1.small",
+      "Default" : "t1.micro",
       "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     }
