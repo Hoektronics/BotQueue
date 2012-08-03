@@ -1,7 +1,7 @@
 <?
 	class QueueController extends Controller
 	{
-		public function register()
+		public function create()
 		{
 			$this->assertLoggedIn();
 			
@@ -18,13 +18,14 @@
 				{
 					//woot!
 					$q = new Queue();
-					$q->set('name', $name);
+					$q->set('name', $this->args('name'));
+					$q->set('user_id', User::$me->id);
 					$q->save();
 					
 					//todo: send a confirmation email.
-					Activity::log("created a new queue named " . $q->getName(), $q);
+					Activity::log("created a new queue named " . $q->getLink(), $q);
 
-					$this->forwardToUrl($q->getUrl() . '/view');
+					$this->forwardToUrl($q->getUrl());
 				}
 				else
 				{

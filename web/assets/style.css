@@ -2,7 +2,7 @@ body {
 	margin: 0 auto;
 	width:100%;
 	text-align:center;
-	background:url(/img/bg_tile.jpg) repeat;
+	background:url(/assets/bg_tile.jpg) repeat;
 
 }
 
@@ -81,7 +81,7 @@ h3 {
 	width:100%;
 	height:auto;
 	float:left;
-	background:url(/img/top_tile.png) 50% 0% repeat-x;
+	background:url(/assets/top_tile.png) 50% 0% repeat-x;
 	margin:0 auto;
 }
 
@@ -143,7 +143,7 @@ h3 {
 	height:456px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0px 0px;
-	background:url(/img/header_bg.png) no-repeat;
+	background:url(/assets/header_bg.png) no-repeat;
 	position:relative;
 
 }
@@ -156,7 +156,7 @@ h3 {
 	height:auto;
 	padding:0px 0px 40px 0px;
 	margin:10px 0px 0px 0px;
-	background:url(/img/border.jpg) repeat-x bottom;
+	background:url(/assets/border.jpg) repeat-x bottom;
 }
 
 .banr_top {
@@ -166,7 +166,7 @@ h3 {
 	height:47px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0px 0px;
-	background:url(/img/bnr_txt_bar.png) no-repeat;
+	background:url(/assets/bnr_txt_bar.png) no-repeat;
 }
 
 .banr_top .text {
@@ -196,7 +196,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr1.png) no-repeat;
+	background:url(/assets/bnr1.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -204,7 +204,7 @@ h3 {
 }
 .banr_1 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr1_hvr.png) no-repeat;
+	background:url(/assets/bnr1_hvr.png) no-repeat;
 }
 
 
@@ -223,7 +223,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr2.png) no-repeat;
+	background:url(/assets/bnr2.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -231,7 +231,7 @@ h3 {
 }
 .banr_2 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr2_hvr.png) no-repeat;
+	background:url(/assets/bnr2_hvr.png) no-repeat;
 }
 
 .banr_3 {
@@ -249,7 +249,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr3.png) no-repeat;
+	background:url(/assets/bnr3.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -257,7 +257,7 @@ h3 {
 }
 .banr_3 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr3_hvr.png) no-repeat;
+	background:url(/assets/bnr3_hvr.png) no-repeat;
 }
 
 .banr_4 {
@@ -275,7 +275,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr4.png) no-repeat;
+	background:url(/assets/bnr4.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -283,7 +283,7 @@ h3 {
 }
 .banr_4 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr4_hvr.png) no-repeat;
+	background:url(/assets/bnr4_hvr.png) no-repeat;
 }
 
 
@@ -317,7 +317,7 @@ h3 {
 	height: auto;
 	padding: 0px 0px 5px 0px;
 	margin:10px 0px 0px 0px;
-	background:url(/img/border_right.jpg) repeat-y right;
+	background:url(/assets/border_right.jpg) repeat-y right;
 }
 
 .left_side .module_box { border-bottom:0px solid #e3e3e3;}
@@ -393,13 +393,13 @@ h3 {
 	font-size:18px;
 	color:#cd1307;
 	text-transform:uppercase;
-	background:url(/img/r_icon.png) no-repeat right;
+	background:url(/assets/r_icon.png) no-repeat right;
 
 }
 
 .left_side .read_1 a:hover {
 	color:#000;
-	background:url(/img/r_icon_hvr.png) no-repeat right;
+	background:url(/assets/r_icon_hvr.png) no-repeat right;
 
 }
 
@@ -416,9 +416,9 @@ h3 {
 	height:5px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0 0px;
-	background:url(/img/r_link.png) no-repeat;
+	background:url(/assets/r_link.png) no-repeat;
 }
-.left_side .left_btn a:hover  { background:url(/img/r_link_hvr.png) no-repeat; text-decoration:none;
+.left_side .left_btn a:hover  { background:url(/assets/r_link_hvr.png) no-repeat; text-decoration:none;
 }
  
 
@@ -434,7 +434,7 @@ h3 {
 	height:auto;
 	margin:10px 0px 0px 20px;
 	padding:0px 0 5px 0px;
-	background:url(/img/border_right.jpg) repeat-y right;
+	background:url(/assets/border_right.jpg) repeat-y right;
 }
 
 .mid_side .module_box h1 {
@@ -499,11 +499,11 @@ h3 {
 	margin:0px 0px 0 0px;
 	color:#fff;
 	font-size:17px;
-	background:url(/img/read_btn.png) no-repeat;
+	background:url(/assets/read_btn.png) no-repeat;
 	text-decoration:none;
 	text-transform:uppercase;
 }
-.mid_side .left_btn2 a:hover  { color:#fff; background:url(/img/read_btn_hvr.png) no-repeat; text-decoration:none;
+.mid_side .left_btn2 a:hover  { color:#fff; background:url(/assets/read_btn_hvr.png) no-repeat; text-decoration:none;
 }
 
 
@@ -581,13 +581,13 @@ h3 {
 	font-size:18px;
 	color:#cd1307;
 	text-transform:uppercase;
-	background:url(/img/r_icon.png) no-repeat right;
+	background:url(/assets/r_icon.png) no-repeat right;
 
 }
 
 .right_side .read_1 a:hover {
 	color:#000;
-	background:url(/img/r_icon_hvr.png) no-repeat right;
+	background:url(/assets/r_icon_hvr.png) no-repeat right;
 
 }
 
@@ -608,7 +608,7 @@ h3 {
 	height:auto;
 	margin:10px 0px 0px 0px;
 	padding:0px 0 5px 0px;
-	background:url(/img/border_right.jpg) repeat-y right;
+	background:url(/assets/border_right.jpg) repeat-y right;
 }
 
 .left_side3 .module_box h1 {
@@ -673,11 +673,11 @@ h3 {
 	margin:0px 0px 0 0px;
 	color:#fff;
 	font-size:17px;
-	background:url(/img/read_btn.png) no-repeat;
+	background:url(/assets/read_btn.png) no-repeat;
 	text-decoration:none;
 	text-transform:uppercase;
 }
-.left_side3 .left_btn2 a:hover  { color:#fff; background:url(/img/read_btn_hvr.png) no-repeat; text-decoration:none;
+.left_side3 .left_btn2 a:hover  { color:#fff; background:url(/assets/read_btn_hvr.png) no-repeat; text-decoration:none;
 }
 
 
@@ -753,7 +753,7 @@ h3 {
 	height:auto;
 	margin:10px 0px 0px 0px;
 	padding:0px 0 10px 0px;
-	background:url(/img/border_right.jpg) repeat-y right;
+	background:url(/assets/border_right.jpg) repeat-y right;
 }
 
 .right_side2 .module_box { border-bottom:0px solid #e3e3e3;}
@@ -817,13 +817,13 @@ h3 {
 	font-size:18px;
 	color:#cd1307;
 	text-transform:uppercase;
-	background:url(/img/r_icon.png) no-repeat right;
+	background:url(/assets/r_icon.png) no-repeat right;
 
 }
 
 .right_side2 .read_1 a:hover {
 	color:#000;
-	background:url(/img/r_icon_hvr.png) no-repeat right;
+	background:url(/assets/r_icon_hvr.png) no-repeat right;
 
 }
 
@@ -980,7 +980,7 @@ h3 {
 	height: auto;
 	padding: 0px 0px 5px 0px;
 	margin:10px 30px 0px 15px;
-	background:url(/img/border_right.jpg) repeat-y right;
+	background:url(/assets/border_right.jpg) repeat-y right;
 }
 
 .left_box .module_box { border-bottom:0px solid #e3e3e3;}
@@ -1056,13 +1056,13 @@ h3 {
 	font-size:18px;
 	color:#cd1307;
 	text-transform:uppercase;
-	background:url(/img/r_icon.png) no-repeat right;
+	background:url(/assets/r_icon.png) no-repeat right;
 
 }
 
 .left_box .read_1 a:hover {
 	color:#000;
-	background:url(/img/r_icon_hvr.png) no-repeat right;
+	background:url(/assets/r_icon_hvr.png) no-repeat right;
 
 }
 
@@ -1079,9 +1079,9 @@ h3 {
 	height:5px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0 0px;
-	background:url(/img/r_link.png) no-repeat;
+	background:url(/assets/r_link.png) no-repeat;
 }
-.left_box .left_btn a:hover  { background:url(/img/r_link_hvr.png) no-repeat; text-decoration:none;
+.left_box .left_btn a:hover  { background:url(/assets/r_link_hvr.png) no-repeat; text-decoration:none;
 }
 
 
@@ -1166,13 +1166,13 @@ h3 {
 	font-size:18px;
 	color:#cd1307;
 	text-transform:uppercase;
-	background:url(/img/r_icon.png) no-repeat right;
+	background:url(/assets/r_icon.png) no-repeat right;
 
 }
 
 .left_box2 .read_1 a:hover {
 	color:#000;
-	background:url(/img/r_icon_hvr.png) no-repeat right;
+	background:url(/assets/r_icon_hvr.png) no-repeat right;
 
 }
 
@@ -1189,9 +1189,9 @@ h3 {
 	height:5px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0 0px;
-	background:url(/img/r_link.png) no-repeat;
+	background:url(/assets/r_link.png) no-repeat;
 }
-.left_box2 .left_btn a:hover  { background:url(/img/r_link_hvr.png) no-repeat; text-decoration:none;
+.left_box2 .left_btn a:hover  { background:url(/assets/r_link_hvr.png) no-repeat; text-decoration:none;
 }
 
 .body_area3 {
@@ -1201,7 +1201,7 @@ h3 {
 	height:auto;
 	padding:0px 0px 40px 0px;
 	margin:10px 0px 0px 0px;
-	background:url(/img/border.jpg) repeat-x bottom;
+	background:url(/assets/border.jpg) repeat-x bottom;
 }
 
 .banr_top {
@@ -1211,7 +1211,7 @@ h3 {
 	height:47px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0px 0px;
-	background:url(/img/bnr_txt_bar.png) no-repeat;
+	background:url(/assets/bnr_txt_bar.png) no-repeat;
 }
 
 .banr_top .text {
@@ -1241,7 +1241,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr4.png) no-repeat;
+	background:url(/assets/bnr4.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -1249,7 +1249,7 @@ h3 {
 }
 .banr_5 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr4_hvr.png) no-repeat;
+	background:url(/assets/bnr4_hvr.png) no-repeat;
 }
 
 
@@ -1268,7 +1268,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr3.png) no-repeat;
+	background:url(/assets/bnr3.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -1276,7 +1276,7 @@ h3 {
 }
 .banr_6 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr3_hvr.png) no-repeat;
+	background:url(/assets/bnr3_hvr.png) no-repeat;
 }
 
 
@@ -1295,7 +1295,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr2.png) no-repeat;
+	background:url(/assets/bnr2.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -1303,7 +1303,7 @@ h3 {
 }
 .banr_7 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr2_hvr.png) no-repeat;
+	background:url(/assets/bnr2_hvr.png) no-repeat;
 }
 .banr_8 {
 	float:left;
@@ -1320,7 +1320,7 @@ h3 {
 	height:226px;
 	padding:24px 0px 0px 0px;
 	margin:0px px 0px 0px;
-	background:url(/img/bnr1.png) no-repeat;
+	background:url(/assets/bnr1.png) no-repeat;
 	text-align:center;
 	font-size:22px;
 	color:#000;
@@ -1328,7 +1328,7 @@ h3 {
 }
 .banr_8 a:hover {
     color:#FFFFFF;
-	background:url(/img/bnr1_hvr.png) no-repeat;
+	background:url(/assets/bnr1_hvr.png) no-repeat;
 }
 
 
@@ -1438,14 +1438,14 @@ div button{ float:left; width:200px; margin:50px 0 0 0; height:175px;}
 	font-family:Trebuchet MS;
 	font-size:15px;
 	padding:7px 0px 0px 22px;
-	background:url(/img/read_btn.png) no-repeat;
+	background:url(/assets/read_btn.png) no-repeat;
 	margin-right:10px;
 }
 
 iframe { border:1px solid #000000;}
 .button:hover{
 	text-decoration:none;
-	background:url(/img/read_btn_hvr.png) no-repeat;
+	background:url(/assets/read_btn_hvr.png) no-repeat;
 	color: #fff;
 }
 .button1{

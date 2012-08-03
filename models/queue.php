@@ -5,6 +5,11 @@
 		{
 			parent::__construct($id, "queues");
 		}
+		
+		public function getName()
+		{
+			return $this->get('name');
+		}
 
 		public function getUser()
 		{

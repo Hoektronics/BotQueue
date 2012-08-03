@@ -6,7 +6,7 @@
 	height:66px;
 	padding:0px 0px 0px 0px;
 	margin:0px 0px 0px 0px;
-	background:url(/img/mnu_tile.png) repeat-x;
+	background:url(/assets/mnu_tile.png) repeat-x;
 }
 
 .navigation {
@@ -37,8 +37,8 @@
 	color:#fff;
 }
 .navigation ul.menu li a:visited { color:#fff; text-decoration:underline;  }
-.navigation ul.menu li a:hover{ color:#fff; background:url(/img/mnu_hvr.jpg) repeat-x; padding:0px auto; text-decoration:none;  }
-.navigation ul.menu li#current a { color:#fff; background:url(/img/mnu_hvr.jpg) repeat-x; text-decoration:none;}
+.navigation ul.menu li a:hover{ color:#fff; background:url(/assets/mnu_hvr.jpg) repeat-x; padding:0px auto; text-decoration:none;  }
+.navigation ul.menu li#current a { color:#fff; background:url(/assets/mnu_hvr.jpg) repeat-x; text-decoration:none;}
 .navigation ul.menu a.last { background:none;}
 
 /*** MAIN NAVIGATION END******/
@@ -61,7 +61,7 @@
 	font-family:Arial, Helvetica, sans-serif;
 	font-size:12px;
 	border-left:0px solid #000;
-	background:url(/img/top_icon.jpg) no-repeat left;
+	background:url(/assets/top_icon.jpg) no-repeat left;
 	text-transform: capitalize;
 }
 
@@ -92,7 +92,7 @@
 	display:block;
 	line-height:20px;
 	padding:0px 8px 0px 28px;
-	background:url(/img/b_icon2.png) 6px 7px no-repeat;
+	background:url(/assets/b_icon2.png) 6px 7px no-repeat;
 	margin:0px 0 0px 0;
 	text-align:left;
 	z-index:100;
@@ -102,12 +102,12 @@
 
 .leftlinks ul.menu li a:hover  {
 	color:#000000;
-	background:url(/img/b_icon2_hvr.png) 6px 7px no-repeat;
+	background:url(/assets/b_icon2_hvr.png) 6px 7px no-repeat;
 }
 
 .leftlinks ul li#current a {
 	color:#000000;
-	background:url(/img/b_icon2_hvr.png) 6px 7px no-repeat;
+	background:url(/assets/b_icon2_hvr.png) 6px 7px no-repeat;
 }
 
 
@@ -127,28 +127,28 @@
 	line-height:26px;
 	border-bottom:1px dotted #a1a1a1;
 	text-decoration:none;
-	background:url(/img/top_icon.jpg) 2px 7px no-repeat;
+	background:url(/assets/top_icon.jpg) 2px 7px no-repeat;
 }
 
 .rightlinks ul.menu li a:hover  {
     color: #000;
 	font-weight:normal;
 	text-decoration:none;
-	background:url(/img/top_icon.jpg) 2px 7px no-repeat;
+	background:url(/assets/top_icon.jpg) 2px 7px no-repeat;
 }
 
 .rightlinks ul.menu li#current a {
     color: #000;
 	font-weight:normal;
 	text-decoration:none;
-	background:url(/img/top_icon.jpg) 2px 7px no-repeat;
+	background:url(/assets/top_icon.jpg) 2px 7px no-repeat;
 }
 
 /*** RIGHT BAR LINKS START******/
 
 /*** FOOTER BOX START******/
 
-.footer_wraper { float:left; width:100%;  margin:10px 0px 0px 0px; background:url(/img/footer_tile.png) repeat-x;}
+.footer_wraper { float:left; width:100%;  margin:10px 0px 0px 0px; background:url(/assets/footer_tile.png) repeat-x;}
 
 .footer { width:900px; margin:0px auto;}
 
@@ -212,13 +212,13 @@
 .footer_menu ul.menu li a:hover  {
 	color:#c5ff05;
 	text-decoration:none;
-	background:url(/img/t_bordr.jpg) no-repeat right;
+	background:url(/assets/t_bordr.jpg) no-repeat right;
 }
 
 .footer_menu ul li#current a {
 	color:#c5ff05;
 	text-decoration:none;
-	background:url(/img/t_bordr.jpg) no-repeat right;
+	background:url(/assets/t_bordr.jpg) no-repeat right;
 }
 /*** FOOTER MENU END******/
 
@@ -243,7 +243,7 @@
 /* Tooltips */
 #aToolTip{border:0px solid #444;background:#cd1307; width:auto; height:auto; color:#fff; margin:20px 0px 0px 0px; padding:2px 8px; font-size:11px; position:absolute; display:none;z-index:50000}
 #aToolTip .aToolTipContent{position:relative; margin:0;padding:0;width:auto; color:#fff; height:auto;}
-a#aToolTipCloseBtn{display:block; height:20px; width:20px; overflow:hidden; background:url(/img/close.gif) no-repeat; text-indent:-9999px; outline:none; position:absolute; top:-15px;right:-20px}
+a#aToolTipCloseBtn{display:block; height:20px; width:20px; overflow:hidden; background:url(/assets/close.gif) no-repeat; text-indent:-9999px; outline:none; position:absolute; top:-15px;right:-20px}
 
 .icons{float:left; overflow:hidden; width:220px; margin:10px 0px 0px 20px;}
 .icons a{float:left;margin-left:2px; color:#fff; margin:0px 2px 0px 2px;}
@@ -291,7 +291,7 @@ a#aToolTipCloseBtn{display:block; height:20px; width:20px; overflow:hidden; back
 	padding:0px 0px 0px 16px;
 	text-decoration: none;
 	line-height:22px;
-	background:url(/img/f_icon1.png) no-repeat scroll 3px 5px transparent;
+	background:url(/assets/f_icon1.png) no-repeat scroll 3px 5px transparent;
 
 }
 

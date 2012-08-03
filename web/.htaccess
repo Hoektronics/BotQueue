@@ -43,6 +43,10 @@ RewriteRule ^user:([0-9]+)/delete/?$										dispatcher.php?controller=user&vie
 RewriteRule ^user:([0-9]+)/resetpass:([0-9a-zA-Z]{40})/?$					dispatcher.php?controller=user&view=resetpass&id=$1&hash=$2 [NC,L]
 RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?/?$						dispatcher.php?controller=user&view=activity&id=$1&page=$3 [NC,L]
 
+#queue stuff.
+RewriteRule ^queue/create?$												dispatcher.php?controller=queue&view=create [NC,L]
+RewriteRule ^queue:([0-9]+)/?$												dispatcher.php?controller=queue&view=view&id=$1 [NC,L]
+
 #shortcode parsing
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
 
