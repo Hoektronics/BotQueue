@@ -17,7 +17,7 @@ RewriteRule ^(.*)$	$1 [NC,L]
 RewriteRule ^ajax/([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)/?$		dispatcher.php?mode=ajax&controller=$1&view=$2 [NC,L]
 
 #random stuff
-RewriteRule ^home/?$					dispatcher.php?controller=user&view=home [NC,L]
+RewriteRule ^home/?$					dispatcher.php?controller=user&view=home&login_required=false [NC,L]
 RewriteRule ^activity(/page:([0-9]+))?/?$					dispatcher.php?controller=main&view=activity&page=$2 [NC,L]
 
 
@@ -27,7 +27,7 @@ RewriteRule ^login/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=logi
 RewriteRule ^token/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=login&token=$1&mode=ajax&login_required=false [NC,L]
 RewriteRule ^logout/?$					dispatcher.php?controller=auth&view=logout&login_required=false [NC,L]
 RewriteRule ^forgotpass/?$				dispatcher.php?controller=auth&view=forgotpass&login_required=false [NC,L]
-RewriteRule ^register/?$				dispatcher.php?controller=user&view=register [NC,L]
+RewriteRule ^register/?$				dispatcher.php?controller=user&view=register&login_required=false [NC,L]
 
 #admin area
 RewriteRule ^admin/?$														dispatcher.php?controller=admin&view=home
