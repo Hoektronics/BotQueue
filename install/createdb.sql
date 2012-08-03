@@ -1,8 +1,9 @@
 SET character_set_client = utf8;
 
-CREATE DATABASE botqueue;
+CREATE DATABASE IF NOT EXISTS botqueue;
+USE botqueue;
 
-CREATE TABLE `activities` (
+CREATE TABLE IF NOT EXISTS `activities` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL,
   `activity` text NOT NULL,
@@ -11,7 +12,7 @@ CREATE TABLE `activities` (
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `comments` (
+CREATE TABLE `comments`  IF NOT EXISTS (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL,
   `comment` text NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE `comments` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `email_queue` (
+CREATE TABLE `email_queue`  IF NOT EXISTS (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL default '0',
   `subject` varchar(255) NOT NULL,
@@ -35,7 +36,7 @@ CREATE TABLE `email_queue` (
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `s3_files` (
+CREATE TABLE `s3_files`  IF NOT EXISTS (
   `id` bigint(11) unsigned NOT NULL auto_increment,
   `type` varchar(255) NOT NULL,
   `size` int(10) unsigned NOT NULL,
@@ -46,14 +47,14 @@ CREATE TABLE `s3_files` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `shortcodes` (
+CREATE TABLE `shortcodes`  IF NOT EXISTS (
   `id` int(11) unsigned NOT NULL auto_increment,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `url` (`url`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `tokens` (
+CREATE TABLE `tokens`  IF NOT EXISTS (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL,
   `hash` varchar(40) NOT NULL,
@@ -63,7 +64,7 @@ CREATE TABLE `tokens` (
   KEY `expire_date` (`expire_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-CREATE TABLE `users` (
+CREATE TABLE `users`  IF NOT EXISTS (
   `id` int(11) unsigned NOT NULL auto_increment,
   `username` varchar(32) NOT NULL,
   `email` varchar(255) NOT NULL,
