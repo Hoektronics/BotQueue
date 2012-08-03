@@ -6,7 +6,7 @@ height:32px;
 width:263px;
 margin:12px 10px 0px 0px;
 padding:0px 0px 0px 0px;
-background:url(../images/search_bar.jpg) no-repeat;
+background:url(/img/search_bar.jpg) no-repeat;
 }
 .top .search form { margin:0px; padding:0px}
 .top .search .inputbox
@@ -19,7 +19,7 @@ background:url(../images/search_bar.jpg) no-repeat;
 	color:#515151;
 	border:none;
 	background-color:#fff;
-	/*background:url(../images/bak_bar.jpg);*/
+	/*background:url(/img/bak_bar.jpg);*/
 	font-family:Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	line-height: 15px;
@@ -56,7 +56,7 @@ width:266px;
 padding:0;
 margin:10px 0px 0px 0px;
 /*---- for news background 
-background:url(../images/news-tile.jpg) repeat-x;
+background:url(/img/news-tile.jpg) repeat-x;
 */
 }
 .newsletter_box h2 {
@@ -100,7 +100,7 @@ border:none;
 outline:none;
 text-transform:none;
 line-height: 31px;
-background:url(../images/search_bar.png) no-repeat;
+background:url(/img/search_bar.png) no-repeat;
 }
 
 .newsletter_box .newsletter_btn {
@@ -122,12 +122,12 @@ margin:0px 0px 0px 0px;
 font-size:20px;
 color:#FFFFFF;
 text-transform:uppercase;
-background:url(../images/s_btn.png) no-repeat;
+background:url(/img/s_btn.png) no-repeat;
 line-height: 19px;
 }
 
 .newsletter_box .newsletter_btn a:hover {
-background:url(../images/s_btn.png) no-repeat;
+background:url(/img/s_btn.png) no-repeat;
 }
 
 /*****NEWSLETTER BOX END********/

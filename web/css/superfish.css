@@ -3,7 +3,7 @@
 	position: relative;
 	left:0;
 	float:left;
-	background:url(../images/mnu_tile.png) repeat-x;
+	background:url(/img/mnu_tile.png) repeat-x;
 	width:900px;
 	height:66px;
 }
@@ -50,7 +50,7 @@
 	text-transform:uppercase;
 	color:#fff;
 }
-	.sf-menu > li > a:hover, .sf-menu > li.sfHover > a, .sf-menu > li.current > a {color:#fff !important; background:url(../images/mnu_hvr.jpg) repeat-x;}
+	.sf-menu > li > a:hover, .sf-menu > li.sfHover > a, .sf-menu > li.current > a {color:#fff !important; background:url(/img/mnu_hvr.jpg) repeat-x;}
 	.sf-menu > li > a > .sf-sub-indicator {
 		position:absolute;
 		display:block;
@@ -59,7 +59,7 @@
 		left:0;
 		top:30px;
 		margin:0 0 0 -3px;
-		background:url(../images/sub-menu-indicator.gif) no-repeat 0 0;
+		background:url(/img/sub-menu-indicator.gif) no-repeat 0 0;
 	}
 	.sf-sub-indicator {display:none;}
 .sf-menu li:hover ul,.sf-menu li.sfHover ul{top:59px; left:-0px;z-index:10 !important;}
