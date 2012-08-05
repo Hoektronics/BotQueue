@@ -1,18 +1,35 @@
 v1 Release
 
-* Basic site infrastructure: registration, login, etc.
-* Upload gcode file
-* API for workers to get / complete jobs
-* Machine registration
-* Queue creation
-* Queue view / edit / delete / reorder
-* Individual job view / edit
-* Basic Daemon for mac / win / linux
+* Website:
+  * Add licenses to all PHP files and top level.
+  * Nice looking template
+	* Machine registration
+	* Queue creation
+	* Queue view / edit / delete / reorder
+	* Individual job view / edit
+  * Upload gcode file / create job
+  * API flow through OAuth
+  * Machine status / dashboard
+  * Print statistics (% pass / fail, # of hours, etc)
+  * Test Amazon bootup script.
 
-* Files - GCode that is ready to print.
-* Queues - Holds all jobs that need to be completed.
-* Bots - Individual machines capable of handling jobs.
-* Jobs - Process to be completed.  Associated w/ queue and has a single gcode file to execute.
+* API
+	* OAuth flow for apps to register and get active.
+	* Workers can grab jobs.
+	* Workers can finish jobs.
+	* Get information on a job.
+	* Get a list of user queues
+	* Get a list of jobs in a queue
+		* active
+		* pending
+		* completed
+		* failed
+
+* App
+	* Basic Daemon for mac / win / linux
+	* Use pronterface backend for reprap / gcode style machines
+	* Use s3g python interface for MakerBot machines
+	* Use pronterface for smoothie style machines?  TBD
 
 v2 Release
 

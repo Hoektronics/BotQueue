@@ -1,4 +1,21 @@
 <?
+  /*
+    This file is part of BotQueue.
+
+    BotQueue is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    BotQueue is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
+  */
+
 	// figure out the base dir, we're two directories past the base dir
 	// so just pop them off the end
 	$parts = explode("/", __FILE__);
@@ -13,7 +30,6 @@
 		'BASE_DIR' 			=>  $base_dir.'/framework/',
 		'EXTENSIONS_DIR' 	=>  $base_dir.'/extensions/',
 		'CLASSES_DIR' 		=>  $base_dir.'/classes/',
-		'INCLUDES_DIR'		=>	$base_dir.'/includes/',
 		'VIEWS_DIR'			=>	$base_dir.'/views/',
 		'CONTROLLERS_DIR'	=>	$base_dir.'/controllers/',
 		'MODELS_DIR'		=>	$base_dir.'/models/',
