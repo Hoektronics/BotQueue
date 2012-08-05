@@ -69,5 +69,10 @@
 				$this->set('jobs', $q->getJobs()->getRange(0, 20));
 			}
 		}
+		
+		public function draw_queues()
+		{
+			$this->setArg('queues');
+		}
 	}
 ?>

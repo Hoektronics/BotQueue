@@ -267,9 +267,38 @@
 		
 		public function getQueues()
 		{
-			$sql = "SELECT id FROM queues WHERE user_id = {$this->id} ORDER BY name";
+			$sql = "
+				SELECT id
+				FROM queues
+				WHERE user_id = {$this->id}
+				ORDER BY name
+			";
 
 			return new Collection($sql, array('Queue' => 'id'));
+		}
+
+		public function getBots()
+		{
+			$sql = "
+				SELECT id
+				FROM bots
+				WHERE user_id = {$this->id}
+				ORDER BY name
+			";
+
+			return new Collection($sql, array('Bot' => 'id'));
+		}
+
+		public function getJobs()
+		{
+			$sql = "
+				SELECT id
+				FROM jobs
+				WHERE user_id = {$this->id}
+				ORDER BY name
+			";
+
+			return new Collection($sql, array('Job' => 'id'));
 		}
 	}
 ?>

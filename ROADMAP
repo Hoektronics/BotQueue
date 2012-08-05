@@ -1,19 +1,41 @@
 v1 Release
 
 * Website:
+
   * Nice looking template
-	* Queue view / edit / delete / reorder
-	* Individual job view / edit
-	* Machine registration
-  * API flow through OAuth
-  * Machine status / dashboard
-  * Print statistics (% pass / fail, # of hours, etc)
-  * 100% working Amazon bootup script.
+
+  * Install
+  	* 100% working Amazon bootup script.
+
+	* Queue Functionality:
+		* reordering of job priorities
+		* canceling of a job
+		* uploading a new file
+		* statistics (% pass / fail, # of hours, etc)
+	  * Add public / private queues.  Default to private.
+
+
+	* Job / File functionality
+		* re-print job
+		* cancel job
+		* select quantity during upload
+		* select queue during upload
+		* job view
+		* job edit?
+		
+	* Machine areas
+		* current status
+		* toggle online/offline
+		* statistics (% pass / fail, # of hours, etc)
+		* mini-dashboard with machine vitals
+
+  * Add activity logs to various job steps
 
 * API
 	* OAuth flow for apps to register and get active.
 	* Workers can grab jobs.
 	* Workers can finish jobs.
+	* Workers can update status with a percentage and short log?
 	* Get information on a job.
 	* Get a list of user machines
 	* Get a list of user queues
@@ -43,3 +65,4 @@ v2 Release
 * API to upload files or jobs
 * Pull in files from internet (Thingiverse, GrabCAD, etc)
 * Remove/lower Amazon requirements for non-amazon / non-public installs.
+* Private jobs.

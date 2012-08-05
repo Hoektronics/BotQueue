@@ -26,6 +26,10 @@
 			$collection = Activity::getStream();
       $per_page = 25;
       $page = $collection->putWithinBounds($this->args('page'), $per_page);
+
+			$this->set('queues', User::$me->getQueues()->getRange(0, 20));
+			$this->set('bots', User::$me->getBots()->getRange(0, 20));
+			$this->set('jobs', User::$me->getJobs()->getRange(0, 20));
     
       $this->set('per_page', $per_page);
       $this->set('total', $collection->count());

@@ -71,5 +71,10 @@
 				$this->set('queue', $q);
 			}
 		}
+			
+		public function draw_bots()
+		{
+			$this->setArg('bots');
+		}
 	}
 ?>
