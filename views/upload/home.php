@@ -1,7 +1,9 @@
 <? if (User::isLoggedIn()): ?>
+
 	<?= Controller::byName('upload')->renderView('uploader', array(
 		'payload' => array(
-			'type' => 'new_file'
+			'type' => 'new_file',
+			'queue_id' => $queue->id
 		)
 	)); ?><br/>
 	

@@ -345,13 +345,18 @@
 					$user->set('registered_on', date("Y-m-d H:i:s"));
 					$user->save();
 					
+					//create them a default queue.
+					$q = new Queue();
+					$q->set("name", 'Default');
+					$q->set("user_id", $user->id);
+					$q->save();
+					
 					//todo: send a confirmation email.
 					Activity::log("registered a new account on BotQueue.", $user);
 
-					if (Controller::isiPhone())
-						$this->forwardToUrl('/');
-					else
-						$this->forwardToUrl($user->getUrl() . "/edit");
+					//todo: automatically log them in.
+
+					$this->forwardToUrl('/');
 				}
 				else
 				{

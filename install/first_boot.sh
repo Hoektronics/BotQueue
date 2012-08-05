@@ -16,7 +16,7 @@
 #    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   
 sudo apt-get update
-sudo apt-get install git apache2 php5-mysql php-pear build-essential libpcre3-dev
+sudo apt-get install git apache2 php5-mysql php-pear build-essential libpcre3-dev php5-curl
 
 sudo pecl install oauth
 

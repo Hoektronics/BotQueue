@@ -20,7 +20,7 @@
 	{
 		public function __construct($id = null)
 		{
-			parent::__construct($id, "bots");
+			parent::__construct($id, "jobs");
 		}
 
 		public function getUser()

@@ -18,6 +18,12 @@
 
 	class UploadController extends Controller
 	{
+		public function home()
+		{
+			$queues = User::$me->getQueues()->getAll();
+			$this->set('queue', $queues[0]['Queue']);
+		}
+		
 		public function uploader()
 		{
 			$payload = base64_encode(serialize($this->args('payload')));
@@ -63,22 +69,28 @@
 			//get our payload.
 			$payload = unserialize(base64_decode($this->args('payload')));
 
-			//get all my info.
-			$info = $this->_lookupFileInfo();
-
-			//handle our upload payload.
+			//handle our upload
 			try
 			{
-					//todo: make this work.
-					$file = $this->_createS3File();
+				if (!preg_match('/gcode$/i', $this->args('key')))
+					throw new Exception("Only GCode files are allowed at this time.");
 
-				}
+				$info = $this->_lookupFileInfo();
+				
+				$queue = new Queue($payload['queue_id']);				
+				if (!$queue->canAdd())
+					throw new Exception("You don't have access to add a job to this queue.");
+				
+				$file = $this->_createS3File();
+				$job = $queue->addGCodeFile($file);
+				
+				$this->forwardToUrl($queue->getUrl());
 			}
 			//did anything go wrong?
 			catch (Exception $e)
 			{
 				$this->set('megaerror', $e->getMessage());
-			}
+			}				
 		}
 
 		private function _lookupFileInfo()
@@ -158,6 +170,7 @@
 			
 			return $file;
 		}
+	}
 	
 	// Function to help sign the policy
 	function hex2b64($str)

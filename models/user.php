@@ -264,5 +264,12 @@
 			
 			return $col->getMap();
 		}
+		
+		public function getQueues()
+		{
+			$sql = "SELECT id FROM queues WHERE user_id = {$this->id} ORDER BY name";
+
+			return new Collection($sql, array('Queue' => 'id'));
+		}
 	}
 ?>

@@ -20,6 +20,6 @@
 	<label><input type="checkbox" name="rememberme" value="1" checked="true"> Remember me</label>
 
 	<input type="submit" name="submit" value="Login" class="login">
-
-	<a href="/forgotpass">Forgot your username or password?</a>
+	<br/>
+	<a href="/forgotpass">Forgot your username or password?</a>  Don't have an account? <a href="/register">Register today!</a>
 </form>

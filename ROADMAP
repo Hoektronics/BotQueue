@@ -1,23 +1,22 @@
 v1 Release
 
 * Website:
-  * Add licenses to all PHP files and top level.
   * Nice looking template
-	* Machine registration
-	* Queue creation
 	* Queue view / edit / delete / reorder
 	* Individual job view / edit
   * Upload gcode file / create job
+	* Machine registration
   * API flow through OAuth
   * Machine status / dashboard
   * Print statistics (% pass / fail, # of hours, etc)
-  * Test Amazon bootup script.
+  * 100% working Amazon bootup script.
 
 * API
 	* OAuth flow for apps to register and get active.
 	* Workers can grab jobs.
 	* Workers can finish jobs.
 	* Get information on a job.
+	* Get a list of user machines
 	* Get a list of user queues
 	* Get a list of jobs in a queue
 		* active
@@ -27,9 +26,17 @@ v1 Release
 
 * App
 	* Basic Daemon for mac / win / linux
-	* Use pronterface backend for reprap / gcode style machines
-	* Use s3g python interface for MakerBot machines
-	* Use pronterface for smoothie style machines?  TBD
+	* Driver based system for controlling multiple types of machines.
+		* Use pronterface backend for reprap / gcode style machines
+		* Use s3g python interface for MakerBot machines
+		* Use pronterface for smoothie style machines?  TBD
+	* App will pull down a list of machines and look for those.
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
+	* Allow toggling machine between online/offline states
+		* Online = ready to take jobs
+		* Offline = does not take jobs
+	* Allow pausing / canceling of print jobs.
 
 v2 Release
 

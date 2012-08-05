@@ -23,6 +23,11 @@
 			parent::__construct($id, "queues");
 		}
 		
+		public function canAdd()
+		{
+			return (User::$me->id == $this->get('user_id'));
+		}
+		
 		public function getName()
 		{
 			return $this->get('name');
@@ -47,6 +52,20 @@
 				ORDER BY user_sort
 			";
 			return new Collection($sql, array('Job' => 'id'));
+		}
+		
+		public function addGCodeFile($file, $qty = 1)
+		{
+			$job = new Job();
+			$job->set('user_id', User::$me->id);
+			$job->set('queue_id', $this->id);
+			$job->set('file_id', $file->id);
+			$job->set('name', $file->get('path'));
+			$job->set('status', 'available');
+			$job->set('start', date("Y-m-d H:i:s"));
+			$job->save();
+			
+			return $job;
 		}
 	}
 ?>

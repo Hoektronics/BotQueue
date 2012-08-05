@@ -61,6 +61,9 @@ RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?/?$						dispatcher.php?cont
 RewriteRule ^queue/create?$												dispatcher.php?controller=queue&view=create [NC,L]
 RewriteRule ^queue:([0-9]+)/?$												dispatcher.php?controller=queue&view=view&id=$1 [NC,L]
 
+#uploader
+RewriteRule ^upload?$												dispatcher.php?controller=upload&view=home [NC,L]
+
 #bot stuff.
 RewriteRule ^bot/register?$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)/?$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
