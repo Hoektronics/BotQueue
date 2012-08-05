@@ -33,17 +33,22 @@ v1 Release
 
 * API
 	* OAuth flow for apps to register and get active.
-	* Workers can grab jobs.
-	* Workers can finish jobs.
-	* Workers can update status with a percentage and short log?
-	* Get information on a job.
-	* Get a list of user machines
-	* Get a list of user queues
-	* Get a list of jobs in a queue
-		* active
-		* pending
-		* completed
-		* failed
+		* go through and fix Provider class to work with actual oauth classes
+		* fix up Oauth consumer model.
+		* fix up OAuth token model
+		* add in database schema stuff from the oauth tutorial
+	* API Calls:
+		* Workers can grab jobs.
+		* Workers can finish jobs.
+		* Workers can update status with a percentage and short log?
+		* Get information on a job.
+		* Get a list of user machines
+		* Get a list of user queues
+		* Get a list of jobs in a queue
+			* active
+			* pending
+			* completed
+			* failed
 
 * App
 	* Basic Daemon for mac / win / linux
