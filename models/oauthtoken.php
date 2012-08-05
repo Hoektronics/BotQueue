@@ -1,7 +1,7 @@
 <?php
 	class OAuthToken extends Model
 	{	
-		protected $id;
+		//todo: nuke this.
 		protected $type;
 		protected $consumer;
 		protected $token;
@@ -11,67 +11,78 @@
 		protected $user;
 		protected $pdo;
 		
+		public function __construct($id = null)
+		{
+			parent::__construct($id, "oauth_consumer");
+			
+			//nuke this.
+			$this->load();
+		}
+
 		/* static functions */
 		
-		public static function createRequestToken(IConsumer $consumer,$token,$tokensecret,$callback){
-			$pdo = Db::singleton();
-			$pdo->exec("insert into token (type,consumer_id,token,token_secret,callback_url) values (1,".$consumer->getId().",'".$token."','".$tokensecret."','".$callback."') ");
+		public static function createRequestToken($consumer, $token, $tokensecret, $callback)
+		{
+			$t = new OAuthToken();
+			$t->set('type', 1);
+			$t->set('consumer_id', $consumer->id);
+			$t->set('token', $token);
+			$t->set('token_secret', $tokensecret);
+			$t->set('callback_url', $callback);
+			$t->save();
+			
+			return $t;
 		}
 		
-		public static function findByToken($token){
-			$ret = null;
-			$pdo = Db::singleton();
-			$find = $pdo->query("select id from token where token = '".$token."'");
-			if($find->rowCount()==1){
-				$find = $find->fetch();
-				$request_token = new Token($find['id']);
-				$ret = $request_token;
-			}
-			return $ret;
-		}
+		public static function findByKey($key)
+		{
+			$id = db()->query("
+				SELECT id
+				FROM oauth_token
+				WHERE token = '{$key}'"
+			);
+
+			return new OAuthToken($id);
+		}		
 		
-		
-		public function __construct($id=0){
-			$this->pdo = Db::singleton();
-			if($id != 0){
-				$this->id = $id;
-				$this->load();
-			}
-		}
-		
+		//todo: add getConsumer() call.
 		private function load(){
-			$info = $this->pdo->query("select * from token where id = ".$this->id)->fetch();
-			$this->token = $info['token'];
-			$this->type = $info['type'];
-			$this->token_secret = $info['token_secret'];
-			$this->consumer = new Consumer($info['consumer_id']);
-			$this->callback = $info['callback_url'];
-			$this->verifier = $info['verifier'];
-			if($info['user_id'] != 0){
-				$this->user = new User($info['user_id']);
-			} else {
-				$this->user = 0;
-			}
+			$this->consumer = new OAuthConsumer($this->get('consumer_id'));
+			$this->user = new User($this->get('user_id'));
 		}
 		
-		public function changeToAccessToken($token,$secret){
-			if($this->isRequest()){
-				$this->pdo->exec("update token set type = 2, verifier = '', callback_url = '', token = '".$token."', token_secret = '".$secret."' where id = ".$this->id);	
+		public function changeToAccessToken($token,$secret)
+		{
+			if($this->isRequest())
+			{
+				$this->set('token', $token);
+				$this->set('token_secret', $secret);
+				$this->set('type', 2);
+				$this->set('verifier', '');
+				$this->set('callback_url', '');
+				$this->save();
+				
 				return true;
-			} else {
-				return false;
 			}
+			else
+				return false;
 		}
 		
 		/* some setters */
 		
-		public function setVerifier($verifier){
-			$this->pdo->exec("update token set verifier = '".$verifier."' where id = ".$this->id);
+		public function setVerifier($verifier)
+		{
+			$this->set('verifier', $verifier);
+			$this->save();
+			
 			$this->verifier = $verifier;
 		}
 		
-		public function setUser(IUser $user){
-			$this->pdo->exec("update token set user_id = '".$user->getId()."' where id = ".$this->id);
+		public function setUser($user)
+		{
+			$this->set('user_id', $user->id);
+			$this->save();
+			
 			$this->user = $user;
 		}
 		
@@ -85,25 +96,29 @@
 			return !$this->isRequest();
 		}
 		
+		//todo: nuke me
 		public function getCallback(){
 			return $this->callback;
 		}
 		
+		//todo: nuke me
 		public function getVerifier(){
 			return $this->verifier;
 		}
 		
+		//todo: nuke me
 		public function getType(){
 			return $this->type;
 		}
 		
+		//todo: nuke me
 		public function getSecret(){
 			return $this->token_secret;
 		}
 		
+		//todo: nuke me
 		public function getUser(){
 			return $this->user;
-		}
-		
+		}	
 	}
 ?>

@@ -1,87 +1,104 @@
 <?php
-	class Consumer extends Model
+	class OAuthConsumer extends Model
 	{
-		public static function findByKey($key){
-			$consumer = null;
-			$pdo = Db::singleton();
-			$info = $pdo->query("select id from consumer where consumer_key = '".$key."'"); // this is not safe !
-			if($info->rowCount()==1){
-				$info = $info->fetch();
-				$consumer = new Consumer($info['id']);
-			}
-			return $consumer;
-		}
 		
-		public function __construct($id = 0){
-			$this->pdo = Db::singleton();
-			if($id != 0){
-				$this->id = $id;
+		public function __construct($id = null)
+		{
+			parent::__construct($id, "oauth_consumer");
+
+			if($id != 0)
 				$this->load();
-			}
+		}
+
+		public static function findByKey($key)
+		{
+			$id = db()->query("
+				SELECT id
+				FROM oauth_consumer
+				WHERE consumer_key = '{$key}'"
+			);
+
+			return new OAuthConsumer($id);
 		}
 		
-		private function load(){
-			$info = $this->pdo->query("select * from consumer where id = '".$this->id."'")->fetch();
-			$this->id = $this->id;
-			$this->key = $info['consumer_key'];
-			$this->secret = $info['consumer_secret'];
-			$this->active = $info['active'];
+		//todo: nuke this.
+		private function load()
+		{
+			$this->key = $this->get('consumer_key');
+			$this->secret = $this->get('consumer_secret');
+			$this->active = $this->get('active');
 		}
 		
-		public static function create($key,$secret){
-			$pdo = Db::singleton();
-			$pdo->exec("insert into consumer (consumer_key,consumer_secret,active) values ('".$key."','".$secret."',1)");
-			$consumer = new Consumer($pdo->lastInsertId());
-			return $consumer;
+		public static function create($key, $secret)
+		{
+			$c = new OAuthConsumer();
+			$c->set('consumer_key', $key);
+			$c->set('consumer_secret', $secret);
+			$c->set('active', 1);
+			$c->save();
+			
+			return $c;
 		}
 		
-		public function isActive(){
-			return $this->active;
+		public function isActive()
+		{
+			return $this->get('active');
 		}
 		
 		public function getKey(){
-			return $this->key;
+			return $this->get('consumer_key');
 		}
 		
 		public function getSecretKey(){
-			return $this->secret;
+			return $this->get('consumer_secret');
 		}
 		
-		public function getId(){
-			return $this->id;
+		public function hasNonce($nonce, $timestamp)
+		{
+			$check = db()->getValue("
+				SELECT count(*) AS cnt 
+				FROM oauth_consumer_nonce
+				WHERE timestamp = '{$timestamp}'
+					AND nonce = '{$nonce}'
+					AND consumer_id = {$this->id}
+			");
+
+			return ($check['cnt']==1);
 		}
 		
-		public function hasNonce($nonce,$timestamp){
-			$check = $this->pdo->query("select count(*) as cnt from consumer_nonce where timestamp = '".$timestamp."' and nonce = '".$nonce."' and consumer_id = ".$this->id)->fetch();
-			if($check['cnt']==1){
-				return true;
-			} else {
-				return false;
-			}
-		}
-		
-		public function addNonce($nonce){
-			$check = $this->pdo->exec("insert into consumer_nonce (consumer_id,timestamp,nonce) values (".$this->id.",".time().",'".$nonce."')");
+		//todo: create OAuthConsumerNonce
+		//todo: make sure calls to this are okay.
+		public function addNonce($nonce)
+		{
+			$n = new OAuthConsumerNonce();
+			$n->set('consumer_id', $this->id);
+			$n->set('timestamp', time());
+			$n->set('nonce', $nonce);
+			$n->save();
+			
+			return $n;
 		}
 		
 		/* setters */
 		
+		//todo: nuke this.
 		public function setKey($key){
 			$this->key = $key;
 		}
 		
+		//todo: nuke this.
 		public function setSecret($secret){
 			$this->secret = $secret;
 		}
 		
+		//todo: nuk this.
 		public function setActive($active){
 			$this->active = $active;
 		}
 		
+		//todo: nuke this.
 		public function setId($id){
 			$this->id = $id;
-		}
-		
+		}	
 	}
-	
 ?>

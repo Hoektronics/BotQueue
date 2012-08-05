@@ -83,6 +83,38 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `oauth_consumer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `consumer_key` varchar(255) NOT NULL,
+  `consumer_secret` varchar(255) NOT NULL,
+  `active` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `consumer_id` int(11) NOT NULL,
+  `timestamp` bigint(20) NOT NULL,
+  `nonce` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `consumer_id` (`consumer_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `oauth_token` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` int(11) NOT NULL,
+  `consumer_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `token_secret` varchar(255) NOT NULL,
+  `callback_url` text NOT NULL,
+  `verifier` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `consumer_id` (`consumer_id`),
+  KEY `user_id` (`user_id`),
+  KEY `type` (`type`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `queues` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL default '0',
