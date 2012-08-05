@@ -66,6 +66,7 @@
 			if (!$this->get('megaerror'))
 			{
 				$this->set('queue', $q);
+				$this->set('jobs', $q->getJobs()->getRange(0, 20));
 			}
 		}
 	}

@@ -22,6 +22,11 @@
 		{
 			parent::__construct($id, "jobs");
 		}
+		
+		public function getName()
+		{
+			return $this->get('name');	
+		}
 
 		public function getUser()
 		{
@@ -30,7 +35,7 @@
 		
 		public function getUrl()
 		{
-			return "/bot:" . $this->id;
+			return "/job:" . $this->id;
 		}
 		
 		public function getFile()

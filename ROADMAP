@@ -4,7 +4,6 @@ v1 Release
   * Nice looking template
 	* Queue view / edit / delete / reorder
 	* Individual job view / edit
-  * Upload gcode file / create job
 	* Machine registration
   * API flow through OAuth
   * Machine status / dashboard
@@ -43,3 +42,4 @@ v2 Release
 * Slicers + Profiles
 * API to upload files or jobs
 * Pull in files from internet (Thingiverse, GrabCAD, etc)
+* Remove/lower Amazon requirements for non-amazon / non-public installs.
