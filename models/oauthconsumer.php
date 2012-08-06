@@ -4,18 +4,16 @@
 		public function __construct($id = null)
 		{
 			parent::__construct($id, "oauth_consumer");
-
-			if($id != 0)
-				$this->load();
 		}
 
 		public static function findByKey($key)
 		{
-			$id = db()->query("
+			$sql = "
 				SELECT id
 				FROM oauth_consumer
-				WHERE consumer_key = '{$key}'"
-			);
+				WHERE consumer_key = '{$key}'
+			";
+			$id = db()->getValue($sql);
 
 			return new OAuthConsumer($id);
 		}

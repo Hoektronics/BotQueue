@@ -35,7 +35,6 @@ RewriteRule ^/?$					dispatcher.php?controller=main&view=home [NC,L]
 RewriteRule ^home/?$					dispatcher.php?controller=user&view=home [NC,L]
 RewriteRule ^activity(/page:([0-9]+))?/?$					dispatcher.php?controller=main&view=activity&page=$2 [NC,L]
 
-
 #user login action
 RewriteRule ^login/?$					dispatcher.php?controller=auth&view=login&mode=ajax [NC,L]
 RewriteRule ^login/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=login&payload=$1&mode=ajax& [NC,L]
@@ -77,7 +76,11 @@ RewriteRule ^api/v1/register$												dispatcher.php?controller=apiv1&view=re
 RewriteRule ^api/v1/app:([0-9]+)$												dispatcher.php?controller=apiv1&view=view_app&app_id=$1 [NC,L]
 RewriteRule ^api/v1/app:([0-9]+)/edit$												dispatcher.php?controller=apiv1&view=edit_app&app_id=$1 [NC,L]
 RewriteRule ^api/v1/app:([0-9]+)/delete$												dispatcher.php?controller=apiv1&view=delete_app&app_id=$1 [NC,L]
-
+RewriteRule ^api/v1/authorize$												dispatcher.php?controller=apiv1&view=authorize_app [NC,L,QSA]
+RewriteRule ^api/v1/revoke$												dispatcher.php?controller=apiv1&view=revoke_app [NC,L,QSA]
+RewriteRule ^api/v1/request_token$												apiv1/oauth_request_token.php [NC,L,QSA]
+RewriteRule ^api/v1/access_token$												apiv1/oauth_access_token.php [NC,L,QSA]
+RewriteRule ^api/v1/endpoint$												apiv1/endpoint.php [NC,L,QSA]
 
 #username wildcard pages.  must be at the very end to avoid conflicting with other pages
 RewriteRule ^([-_a-zA-Z0-9]+)/?$											dispatcher.php?controller=user&view=profile&username=$1 [NC,L]

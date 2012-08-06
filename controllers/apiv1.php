@@ -23,6 +23,7 @@
 		public function home()
 		{
 			$this->set('apps', User::$me->getMyApps()->getAll());
+			$this->set('authorized', User::$me->getAuthorizedApps()->getAll());
 		}
 		
 		public function register_app()
@@ -137,54 +138,121 @@
 			}						
 		}
 		
-		//deletes an access token from an app.
-		public function revoke_token()
+		//todo: this needs to be made.
+		public function authorize_app()
 		{
-			
+			$this->assertLoggedIn();
+
+			try
+			{
+				$token = OAuthToken::findByKey($this->args('oauth_token'));
+				if (!$token->isHydrated())
+					throw new Exception("That token does not exist.");
+				if (!$token->isRequest())
+					throw new Exception("This app has already been authorized.");
+
+				$app = $token->getConsumer();
+				if (!$app->isHydrated())
+					throw new Exception("That application does not exist.");
+				if (!$app->isActive())
+					throw new Exception("That application is not active.");
+
+				//okay, save it!
+				$token->set('user_id', User::$me->id);
+				$token->set('verifier', mt_rand(0, 99999));
+				$token->save();
+				
+				$this->set('token', $token);
+				$this->set('app', $app);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}	
+		}
+		
+		//deletes an access token from an app.
+		public function revoke_app()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				$token = OAuthToken::findByKey($this->args('token'));
+				if (!$token->isHydrated())
+					throw new Exception("This app does not exist.");
+				if (!User::$me->isAdmin() && $token->get('user_id') != User::$me->id)
+					throw new Exception("You are not authorized to delete this app.");
+
+				$this->set('token', $token);
+				$this->set('app', $token->getConsumer());
+
+				if ($this->args('submit'))
+				{
+					$token->delete();
+					$this->forwardToUrl("/api/v1");
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}				
 		}
 		
 		//not sure what this stuff does.  this was in the oauth login page docs.
-		public function authenticate()
-		{
-			$request_token = Token::findByToken($_REQUEST['oauth_token']);
-			if(is_object($request_token)&&$request_token->isRequest()){
-				if(is_object($user)){
-					$request_token->setVerifier(Provider::generateVerifier());
-					$request_token->setUser($user);
-					header("location: ".$request_token->getCallback()."?&oauth_token=".$_REQUEST['oauth_token']."&oauth_verifier=".$request_token->getVerifier());
-				} else {
-					echo "User not found !";
-				}
-			} else {
-				echo "The specified token does not exist";
-			}
-		}
-		
 		public function request_token()
 		{
+			//this is where we validate the request
 			$provider = new MyOAuthProvider();
 			$provider->setRequestTokenQuery();
 			$provider->checkRequest();
-			echo $provider->generateRequestToken();			
+	
+			if (!$provider->hasError())
+			{
+				//this is where we generate our token.
+				$token_key = MyOAuthProvider::generateToken();
+				$token_secret = MyOAuthProvider::generateToken();
+	
+				//okay, save it to the db.
+				$t = new OAuthToken();
+				$t->set('type', 1);
+				$t->set('consumer_id', $provider->consumer->id);
+				$t->set('token', $token_key);
+				$t->set('token_secret', $token_secret);
+				$t->save();
+	
+				echo "oauth_token={$token_key}&oauth_token_secret={$token_secret}";
+			}
+			exit;
 		}
 
 		public function access_token()
 		{
 			$provider = new MyOAuthProvider();
 			$provider->checkRequest();
-			echo $provider->generateAccessToken();
+
+			if (!$provider->hasError())
+			{
+				$token = OAuthToken::findByKey($provider->oauth->token);
+				$token->changeToAccessToken();
+			
+				echo "oauth_token=" . $token->get('token') . "&oauth_token_secret=" . $token->get('token_secret');
+			}
+			exit;
 		}
 		
-		public function api_call()
+		//todo: make this the entry point for the rest of the API calls.
+		public function endpoint()
 		{
 			$provider = new MyOAuthProvider();
-
-			/* this is a basic api call that will return the id of an authenticated user */
 			$provider->checkRequest();
-			try {
+			try
+			{
 				echo $provider->getUser()->getId();
-			} catch(Exception $E){
-				echo $E;
+			}
+			catch(Exception $e)
+			{
+				echo $e;
 			}
 		}
 	}

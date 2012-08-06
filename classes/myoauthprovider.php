@@ -2,9 +2,8 @@
 
 	class MyOAuthProvider
 	{
-		
-		private $oauth;
-		private $consumer;
+		public $oauth;
+		public $consumer;
 		private $oauth_error;
 		private $user;
 		
@@ -39,6 +38,11 @@
 			}
 		}
 		
+		public function hasError()
+		{
+			return $this->oauth_error;
+		}
+		
 		/**
 		 * This function is called when you are requesting a request token
 		 * Basically it disabled the tokenHandler check and force the oauth_callback parameter
@@ -46,57 +50,7 @@
 		public function setRequestTokenQuery()
 		{
 			$this->oauth->isRequestTokenEndpoint(true); 
-			$this->oauth->addRequiredParameter("oauth_callback");
-		}
-		
-		/**
-		 * This function generates a Request token
-		 * and save it in the db
-		 * then returns the oauth_token, oauth_token_secret & the authentication url
-		 * Please note that the authentication_url is not part of the oauth protocol but I added it to show you how to add extra parameters
-		 */
-		public function generateRequestToken()
-		{	
-			if($this->oauth_error)
-				return false;
-			
-			$token = self::generateToken();
-			$token_secret = self::generateToken();
-			
-			$callback = $this->oauth->callback;
-			
-			OAuthToken::createRequestToken($this->consumer, $token, $token_secret, $callback);
-		
-			//todo: this is weird.  take it out?
-			return "authentification_url=".$this->authentification_url."&oauth_token=".$token."&oauth_token_secret=".$token_secret."&oauth_callback_confirmed=true";
-			
-		}
-		
-		/**
-		 * This function generates a Access token saves it in the DB and return it
-		 * In that process it also removes the request token used to get that access token
-		 */
-		public function generateAccesstoken()
-		{
-			if($this->oauth_error)
-				return false;
-			
-			$access_token = self::generateToken();
-			$secret = self::generateToken();
-			
-			$token = OAuthToken::findByToken($this->oauth->token);
-			$token->changeToAccessToken($access_token, $secret);
-			
-			return "oauth_token=".$access_token."&oauth_token_secret=".$secret;
-		}
-		
-		/**
-		 * This function generates a verifier and returns it
-		 */
-		public function generateVerifier()
-		{
-			$verifier = self::generateToken();
-			return $verifier;
+			//$this->oauth->addRequiredParameter("oauth_callback");
 		}
 		
 		/* handlers */
@@ -111,18 +65,17 @@
 		{
 			$return = OAUTH_CONSUMER_KEY_UNKNOWN;
 			
-			$aConsumer = OAuthConsumer::findByKey($provider->consumer_key);
-			
-			if($aConsumer->isHydrated())
+			$c = OAuthConsumer::findByKey($provider->consumer_key);
+			if($c->isHydrated())
 			{
-				if(!$aConsumer->isActive())
+				if(!$c->isActive())
 				{
 					$return = OAUTH_CONSUMER_KEY_REFUSED;
 				}
 				else 
 				{
-					$this->consumer = $aConsumer;
-					$provider->consumer_secret = $this->consumer->getSecretKey();
+					$this->consumer = $c;
+					$provider->consumer_secret = $this->consumer->get('consumer_secret');
 					$return = OAUTH_OK;
 				}
 			}
@@ -139,24 +92,22 @@
 		 */
 		public function checkToken($provider)
 		{
-			$token = OAuthToken::findByToken($provider->token);
+			$token = OAuthToken::findByKey($provider->token);
 			
-			if(is_null($token))
-			{ // token not found
+			if(!$token->isHydrated())
 				return OAUTH_TOKEN_REJECTED;
-			}
-			elseif($token->getType() == 1 && $token->getVerifier() != $provider->verifier)
-			{ // bad verifier for request token
+			elseif($token->get('type') == 1 && $token->get('verifier') != $provider->verifier)
 				return OAUTH_VERIFIER_INVALID;
-			}
 			else
 			{
-				if($token->getType() == 2)
+				if($token->get('type') == 2)
 				{
 					/* if this is an access token we register the user to the provider for use in our api */
 					$this->user = $token->getUser();
+					User::$me = $token->getUser();
 				}
-				$provider->token_secret = $token->getSecret();
+
+				$provider->token_secret = $token->get('token_secret');
 				return OAUTH_OK;
 			}
 		}
@@ -189,6 +140,5 @@
 			else
 				throw new Exception("User not authenticated");
 		}
-		
 	}
 ?>

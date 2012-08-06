@@ -30,7 +30,7 @@
 
 			<tr>
 				<td><?=$a->getLink()?></td>
-				<td><a href="/api/v1/revoke_">
+				<td><a href="/api/v1/revoke?token=<?=$t->get('token')?>">revoke</a></td>
 			</tr>
 		<? endforeach ?>
 	</table>
