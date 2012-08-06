@@ -1,5 +1,10 @@
-<?
-//	echo Controller::byName("HTMLTemplate")->renderView('header', array('title' => $title));
-	echo $content;
-//	echo Controller::byName("HTMLTemplate")->renderView('footer', array('sidebar' => $sidebar));
-?>
+<?= Controller::byName('user')->renderView('loginbox'); ?>
+<br/>
+<a href="/">Home</a> |
+<a href="/queue/create">Create Queue</a> |
+<a href="/bot/register">Register Bot</a> |
+<a href="/upload">Upload a Job</a> |
+<a href="/api/v1">API</a>
+
+<br/>
+<?= $content ?>

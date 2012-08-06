@@ -1,7 +1,3 @@
-<a href="/queue/create">Create Queue</a>
-<a href="/bot/register">Register Bot</a>
-<a href="/upload">Upload a Job</a>
-
 <h2>Queues</h2>
 <?= Controller::byName('queue')->renderView('draw_queues', array('queues' => $queues)); ?>
 

@@ -1,8 +1,8 @@
 import urlparse
 import oauth2 as oauth
 
-consumer_key = ''
-consumer_secret = ''
+consumer_key = '7f16659a9d83655c88e75e28b72223ca4e059b9b'
+consumer_secret = '78743f8a1c35830b80e724a87431be0c19812e3a'
 
 request_token_url = 'http://botqueue.com/api/v1/request_token'
 access_token_url = 'http://botqueue.com/api/v1/access_token'

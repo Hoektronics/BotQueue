@@ -248,12 +248,48 @@
 			$provider->checkRequest();
 			try
 			{
-				echo $provider->getUser()->getId();
+				if (!$provider->hasError())
+				{
+					switch ($this->args('api_call'))
+					{
+						case 'listjobs':
+							$data = $this->api_listjobs();
+							break;
+					}
+				}
 			}
 			catch(Exception $e)
 			{
 				echo $e;
 			}
+			
+			echo JSON::encode($data);
+			
+			exit;
+		}
+		
+		public function api_listjobs()
+		{
+			try
+			{
+				if ($this->args('queue_id'))
+					$queue = new Queue($this->args('queue_id'));
+#				else
+#					$queue = User::$me->getDefaultQueue();
+				
+				$data = array();
+				$jobs = $queue->getJobs()->getRange(0, 30);
+				if (!empty($jobs))
+					foreach ($jobs AS $row)
+						$data[] = $row['Job']->getAPIData();
+						
+			}
+			catch(Exception $e)
+			{
+				echo $e;
+			}			
+
+			return $data;
 		}
 	}
 ?>
