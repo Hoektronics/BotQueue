@@ -58,18 +58,26 @@ RewriteRule ^user:([0-9]+)/resetpass:([0-9a-zA-Z]{40})/?$					dispatcher.php?con
 RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?/?$						dispatcher.php?controller=user&view=activity&id=$1&page=$3 [NC,L]
 
 #queue stuff.
-RewriteRule ^queue/create?$												dispatcher.php?controller=queue&view=create [NC,L]
+RewriteRule ^queue/create/?$												dispatcher.php?controller=queue&view=create [NC,L]
 RewriteRule ^queue:([0-9]+)/?$												dispatcher.php?controller=queue&view=view&id=$1 [NC,L]
 
 #uploader
-RewriteRule ^upload?$												dispatcher.php?controller=upload&view=home [NC,L]
+RewriteRule ^upload/?$												dispatcher.php?controller=upload&view=home [NC,L]
 
 #bot stuff.
-RewriteRule ^bot/register?$												dispatcher.php?controller=bot&view=register [NC,L]
+RewriteRule ^bot/register/?$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)/?$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
 
 #shortcode parsing
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
+
+#api v1.
+RewriteRule ^api/v1/?$												dispatcher.php?controller=apiv1&view=home [NC,L]
+RewriteRule ^api/v1/register$												dispatcher.php?controller=apiv1&view=register_app [NC,L]
+RewriteRule ^api/v1/app:([0-9]+)$												dispatcher.php?controller=apiv1&view=view_app&app_id=$1 [NC,L]
+RewriteRule ^api/v1/app:([0-9]+)/edit$												dispatcher.php?controller=apiv1&view=edit_app&app_id=$1 [NC,L]
+RewriteRule ^api/v1/app:([0-9]+)/delete$												dispatcher.php?controller=apiv1&view=delete_app&app_id=$1 [NC,L]
+
 
 #username wildcard pages.  must be at the very end to avoid conflicting with other pages
 RewriteRule ^([-_a-zA-Z0-9]+)/?$											dispatcher.php?controller=user&view=profile&username=$1 [NC,L]

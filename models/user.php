@@ -300,5 +300,31 @@
 
 			return new Collection($sql, array('Job' => 'id'));
 		}
+		
+		public function getAuthorizedApps()
+		{
+			$sql = "
+				SELECT id, consumer_id
+				FROM oauth_token
+				WHERE user_id = {$this->id}
+					AND type = 2
+				ORDER BY id
+			";
+
+			return new Collection($sql, array('OAuthToken' => 'id', 'OAuthConsumer' => 'consumer_id'));
+		}
+
+		public function getMyApps()
+		{
+			$sql = "
+				SELECT id
+				FROM oauth_consumer
+				WHERE user_id = {$this->id}
+				ORDER BY name
+			";
+
+			return new Collection($sql, array('OAuthConsumer' => 'id'));
+		}
+
 	}
 ?>

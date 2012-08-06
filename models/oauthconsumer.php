@@ -1,7 +1,6 @@
 <?php
 	class OAuthConsumer extends Model
 	{
-		
 		public function __construct($id = null)
 		{
 			parent::__construct($id, "oauth_consumer");
@@ -21,23 +20,14 @@
 			return new OAuthConsumer($id);
 		}
 		
-		//todo: nuke this.
-		private function load()
+		public function getUrl()
 		{
-			$this->key = $this->get('consumer_key');
-			$this->secret = $this->get('consumer_secret');
-			$this->active = $this->get('active');
+			return '/api/v1/app:' . $this->id;
 		}
 		
-		public static function create($key, $secret)
+		public function getName()
 		{
-			$c = new OAuthConsumer();
-			$c->set('consumer_key', $key);
-			$c->set('consumer_secret', $secret);
-			$c->set('active', 1);
-			$c->save();
-			
-			return $c;
+			return $this->get('name');
 		}
 		
 		public function isActive()
@@ -63,7 +53,7 @@
 					AND consumer_id = {$this->id}
 			");
 
-			return ($check['cnt']==1);
+			return ($check==1);
 		}
 		
 		//todo: create OAuthConsumerNonce

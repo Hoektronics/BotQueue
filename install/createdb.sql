@@ -168,3 +168,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `pass_hash` (`pass_hash`),
   KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+alter table oauth_consumer add name varchar(255) default '';
+alter table oauth_consumer add user_id int(11) default 0;

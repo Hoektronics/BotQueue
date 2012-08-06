@@ -20,12 +20,9 @@
 			
 		}
 		
-		public static function createConsumer()
+		public static function generateToken()
 		{
-			$key = sha1(OAuthProvider::generateToken(20,true));
-			$secret = sha1(OAuthProvider::generateToken(20,true));
-			
-			return OAuthConsumer::create($key,$secret);
+			return sha1(OAuthProvider::generateToken(20));
 		}
 		
 		/**
@@ -63,8 +60,8 @@
 			if($this->oauth_error)
 				return false;
 			
-			$token = sha1(OAuthProvider::generateToken(20,true));
-			$token_secret = sha1(OAuthProvider::generateToken(20,true));
+			$token = self::generateToken();
+			$token_secret = self::generateToken();
 			
 			$callback = $this->oauth->callback;
 			
@@ -84,8 +81,8 @@
 			if($this->oauth_error)
 				return false;
 			
-			$access_token = sha1(OAuthProvider::generateToken(20,true));
-			$secret = sha1(OAuthProvider::generateToken(20,true));
+			$access_token = self::generateToken();
+			$secret = self::generateToken();
 			
 			$token = OAuthToken::findByToken($this->oauth->token);
 			$token->changeToAccessToken($access_token, $secret);
@@ -98,7 +95,7 @@
 		 */
 		public function generateVerifier()
 		{
-			$verifier = sha1(OAuthProvider::generateToken(20,true));
+			$verifier = self::generateToken();
 			return $verifier;
 		}
 		
