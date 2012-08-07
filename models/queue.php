@@ -34,9 +34,14 @@
 			
 		public function canAdd()
 		{
-			return (User::$me->id == $this->get('user_id'));
+			return $this->isMine();
 		}
 		
+		public function isMine()
+		{
+			return (User::$me->id == $this->get('user_id'));
+		}	
+
 		public function getName()
 		{
 			return $this->get('name');

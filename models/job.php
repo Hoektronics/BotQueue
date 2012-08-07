@@ -66,5 +66,20 @@
 			
 			return $d;
 		}
+		
+		public function cancelJob()
+		{
+			$bot = $job->getBot();
+			if ($bot->isHydrated())
+			{
+				$bot->set('job_id', 0);
+				$bot->set('status', 'idle');
+				$bot->save();
+			}
+			
+			$this->set('status', 'cancelled');
+			$this->set('bot_id', 0);
+			$this->save();
+		}
 	}
 ?>

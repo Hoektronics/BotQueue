@@ -36,6 +36,75 @@
 		public function getJob()
 		{
 			return new Job($this->get('job_id'));
-		}		
+		}
+		
+		public function isMine()
+		{
+			return (User::$me->id == $this->get('user_id'));
+		}	
+		
+		public function canGrab($job)
+		{
+			//todo: fix me once we have the bot_to_queues table
+			if ($bot->get('user_id') != $job->getQueue()->get('user_id'))
+				return false;
+			
+			if ($job->get('status') != 'available')
+				return false;
+
+			if ($this->get('job_id'))
+				return false;
+
+			return true;
+		}
+		
+		public function grabJob($job)
+		{
+			$job->set('status', 'taken');
+			$job->set('bot_id', $this->id);
+			$job->save();
+			
+			$this->set('job_id', $job->id);
+			$this->set('status', 'working');
+			$this->save();
+		}
+		
+		public function canDrop($job)
+		{
+			if ($job->get('bot_id') == $this->id && ($job->get('status') == 'working' || $job->get('status') == 'failure'))
+				return true;
+			else
+				return false;
+		}
+		
+		public function dropJob($job)
+		{
+			$job->set('status', 'available');
+			$job->set('bot_id', 0);
+			$job->save();
+			
+			$this->set('job_id', 0);
+			$this->set('status', 'idle');
+			$this->save();
+		}
+
+		public function canComplete($job)
+		{
+			if ($job->get('bot_id') == $this->id && $job->get('status') == 'working')
+				return true;
+			else
+				return false;
+		}
+		
+		public function completeJob($job)
+		{
+			$job->set('status', 'complete');
+			$job->set('bot_id', 0);
+			$job->save();
+			
+			$this->set('job_id', 0);
+			$this->set('status', 'idle');
+			$this->save();
+		}
 	}
 ?>

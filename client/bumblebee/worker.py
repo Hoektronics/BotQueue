@@ -2,28 +2,31 @@ import urlparse
 import oauth2 as oauth
 import json
 
-consumer_key = '7f16659a9d83655c88e75e28b72223ca4e059b9b'
-consumer_secret = '78743f8a1c35830b80e724a87431be0c19812e3a'
-token_key = '86125f53cad61d22b8390d1daf52c3b563107852'
-token_secret = '087c013a0b4f72cdbaa8bd1535f296690f3037b9'
-
 class WorkerBee():
   
+  #request_token_url = 'http://botqueue.com/api/v1/request_token'
+  #access_token_url = 'http://botqueue.com/api/v1/access_token'
+  #authorize_url = 'http://botqueue.com/api/v1/authorize'
   endpoint_url = 'http://botqueue.com/api/v1/endpoint'
   
+  #todo: 2 constructors, or a separate call to setToken()?
   def __init__(self, consumer_key, consumer_secret, token_key, token_secret):
     self.consumer = oauth.Consumer(consumer_key, consumer_secret)
     self.token = oauth.Token(token_key, token_secret)
     self.client = oauth.Client(self.consumer, self.token)
 
-  def apiCall(self, call, parameters = {}):
+  def apiCall(self, call, parameters = {}, url = False, method = "POST"):
+    #what url to use?
+    if (url == False):
+        url = self.endpoint_url
+
     #format our api call data.  todo: need to sanitize w/ html entities?
     body = "api_call=%s&api_output=json" % (call)
     for k, v in parameters.iteritems():
       body = body + "&%s=%s" % (k, v)
     
     # make the call
-    resp, content = self.client.request(self.endpoint_url, "POST", body)
+    resp, content = self.client.request(url, "POST", body)
     try:
       if resp['status'] != '200':
         raise Exception("Invalid response %s." % resp['status'])
@@ -35,26 +38,54 @@ class WorkerBee():
     
     return result
 
+  def requestToken(self):
+    self.client = oauth.Client(self.consumer)
+
+    result = self.apiCall('request_token')
+    if result['status'] == 'success':
+      self.token = oauth.Token(result['data']['oauth_token'], result['data']['oauth_token_secret'])
+      return result['data']
+    else
+      raise Exception("Error getting token: %s" % result['error'])
+
+  def getAuthorizeUrl(self):
+    return self.authorize_url + "?oauth_token=" + self.token.key 
+
+  def convertToken(self, verifier):
+    self.token.set_verifier(verifier)
+    self.client = oauth.Client(self.consumer, self.token)
+
+    result = self.apiCall('access_token')
+    if result['status'] == 'success':
+      self.token = oauth.Token(result['data']['oauth_token'], result['data']['oauth_token_secret'])
+      self.client = oauth.Client(self.consumer, self.token)
+      return result['data']
+    else
+      raise Exception("Error converting token: %s" % result['error'])
+
   def listQueues(self):
     return self.apiCall('listqueues')
     
   def listJobs(self, queue_id):
     return self.apiCall('listjobs', {'queue_id' : queue_id});
     
-  def grabJob(self, machine_id, job_id):
-    return self.apiCall('grabjob', {'machine_id' : machine_id, 'job_id' : job_id})
+  def grabJob(self, bot_id, job_id):
+    return self.apiCall('grabjob', {'bot_id' : bot_id, 'job_id' : job_id})
 
   def dropJob(self, job_id):
     return self.apiCall('dropjob', {'job_id' : job_id})
 
   def cancelJob(self, job_id):
-    return self.apiCall('canceljob', {'machine_id' : machine_id, 'job_id' : job_id})
+    return self.apiCall('canceljob', {'job_id' : job_id})
+
+  def failJob(self, job_id):
+    return self.apiCall('failjob', {'job_id' : job_id})
     
-  def finishJob(self, job_id):
-    return self.apiCall('finishjob', {'job_id' : job_id})
+  def completeJob(self, job_id):
+    return self.apiCall('completejob', {'job_id' : job_id})
   
   def updateJob(self, job_id, percent):
-    return self.apiCall('updatejob', {'job_id' : job_id, 'percent' : percent})
+    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'percent' : percent})
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})

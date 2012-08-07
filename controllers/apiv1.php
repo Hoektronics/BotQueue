@@ -199,71 +199,41 @@
 			}				
 		}
 		
-		//not sure what this stuff does.  this was in the oauth login page docs.
-		public function request_token()
-		{
-			//this is where we validate the request
-			$provider = new MyOAuthProvider();
-			$provider->setRequestTokenQuery();
-			$provider->checkRequest();
-	
-			if (!$provider->hasError())
-			{
-				//this is where we generate our token.
-				$token_key = MyOAuthProvider::generateToken();
-				$token_secret = MyOAuthProvider::generateToken();
-	
-				//okay, save it to the db.
-				$t = new OAuthToken();
-				$t->set('type', 1);
-				$t->set('consumer_id', $provider->consumer->id);
-				$t->set('token', $token_key);
-				$t->set('token_secret', $token_secret);
-				$t->save();
-	
-				echo "oauth_token={$token_key}&oauth_token_secret={$token_secret}";
-			}
-			exit;
-		}
-
-		public function access_token()
-		{
-			$provider = new MyOAuthProvider();
-			$provider->checkRequest();
-
-			if (!$provider->hasError())
-			{
-				$token = OAuthToken::findByKey($provider->oauth->token);
-				$token->changeToAccessToken();
-			
-				echo "oauth_token=" . $token->get('token') . "&oauth_token_secret=" . $token->get('token_secret');
-			}
-			exit;
-		}
+		//TODO: split everything below into its own controller?  app registration vs API
 		
-		//todo: make this the entry point for the rest of the API calls.
 		public function endpoint()
 		{
 			$provider = new MyOAuthProvider();
+
+			//we need to disable a check if it is our first call to requesttoken.
+			$c = strtolower($this->args('api_call'));
+			if ($c == 'requesttoken')
+				$provider->setRequestTokenQuery();
+
 			$provider->checkRequest();
 			try
 			{
 				if ($provider->hasError())
 					throw new Exception("Error verifying API call.");
 
-				$c = strtolower($this->args('api_call'));
 				$calls = array(
+					'requesttoken',
+					'accesstoken',
 					'listqueues',
+					'queueinfo',
 					'listjobs',
+					'jobinfo',
 					'grabjob',
 					'dropjob',
 					'canceljob',
-					'finishjob',
-					'updatejob',
-					'jobinfo',
+					'failjob',
+					'completejob',
+					'updatejobprogress',
 					'listbots',
 					'botinfo',
 					'registerbot',
+					'updatebot',
+					'updatebotstatus',
 				);
 				if (in_array($c, $calls))
 				{
@@ -286,10 +256,41 @@
 			exit;
 		}
 		
+		public function api_requesttoken()
+		{
+			//this is where we generate our token.
+			$token_key = MyOAuthProvider::generateToken();
+			$token_secret = MyOAuthProvider::generateToken();
+
+			//okay, save it to the db.
+			$t = new OAuthToken();
+			$t->set('type', 1);
+			$t->set('consumer_id', $provider->consumer->id);
+			$t->set('token', $token_key);
+			$t->set('token_secret', $token_secret);
+			$t->save();
+	
+			$data['oauth_token'] = $token_key;
+			$data['oauth_token_secret'] = $token_secret;
+
+			return $data;
+		}
+
+		public function api_accesstoken()
+		{
+			$token = OAuthToken::findByKey($provider->oauth->token);
+			$token->changeToAccessToken();
+			
+			$data['oauth_token'] = $token->get('token');
+			$data['oauth_token_secret'] = $token->get('token_secret');
+
+			return $data;
+		}
+
 		public function api_listqueues()
 		{
 			$data = array();
-			$qs = User::$me->getQueues()->getRange(0, 50);
+			$qs = User::$me->getQueues()->getRange(0, 100);
 			if (!empty($qs))
 				foreach ($qs AS $row)
 					$data[] = $row['Queue']->getAPIData();
@@ -301,11 +302,11 @@
 		{
 			if ($this->args('queue_id'))
 				$queue = new Queue($this->args('queue_id'));
-#				else
-#					$queue = User::$me->getDefaultQueue();
-
+			else
+				$queue = User::$me->getDefaultQueue();
+				
 			if (!$queue->isHydrated())
-				throw new Exception("Could not find that queue.");
+				throw new Exception("Could not find a queue.");
 			
 			$data = array();
 			$jobs = $queue->getJobs()->getRange(0, 50);
@@ -315,6 +316,141 @@
 
 			return $data;
 		}
+		
+		public function api_grabjob()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			$bot = new Bot($this->args('bot_id'));
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+				
+			if (!$bot->isMine())
+				throw new Exception("This is not your bot.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+				
+			if (!$bot->canGrab($job)))
+				throw new Exception("You cannot grab this job.");
+				
+			$bot->grabJob($job);
+			
+			$data['job'] = $job->getAPIData();
+			$data['bot'] = $bot->getAPIData();
+			
+			return $data;
+		}
+		
+		public function api_dropjob()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			$bot = $job->getBot();
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+				
+			if (!$bot->isMine())
+				throw new Exception("This is not your bot.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+				
+			if (!$bot->canDrop($job)))
+				throw new Exception("You cannot drop this job.");
+				
+			$bot->dropJob($job);
+			
+			$data['job'] = $job->getAPIData();
+			$data['bot'] = $bot->getAPIData();
+			
+			return $data;
+		}
+		
+		public function api_canceljob()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
 
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+
+			if (!$job->canDelete($job)))
+				throw new Exception("You cannot cancel this job.");
+				
+			$job->cancelJob();
+
+			$data = "ok";
+		}
+
+		public function api_completejob()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			$bot = $job->getBot();
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+				
+			if (!$bot->isMine())
+				throw new Exception("This is not your bot.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+				
+			if (!$bot->canComplete($job)))
+				throw new Exception("You cannot complete this job.");
+				
+			$bot->completeJob($job);
+			
+			$data['job'] = $job->getAPIData();
+			$data['bot'] = $bot->getAPIData();
+			
+			return $data;
+		}
+		
+		public function api_updatejobprogress()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			$bot = $job->getBot();
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+				
+			if (!$bot->isMine())
+				throw new Exception("This is not your bot.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+				
+			$job->set('progress', (float)$this->args('progress'));
+			$job->save();
+			
+			$data['job'] = $job->getAPIData();
+			
+			return $data;
+		}
+
+		public function api_jobinfo()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+				
+			$data['job'] = $job->getAPIData();
+			
+			return $data;
+		}
 	}
 ?>

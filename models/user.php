@@ -276,6 +276,16 @@
 
 			return new Collection($sql, array('Queue' => 'id'));
 		}
+		
+		public function getDefaultQueue()
+		{
+			$sql = "
+				SELECT id FROM queues
+				WHERE name = 'Default'
+					AND user_id = {$this->id}
+			";
+			return new Queue(db()->getValue($sql));
+		}
 
 		public function getBots()
 		{

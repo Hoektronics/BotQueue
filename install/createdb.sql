@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `queue_id` int(11) unsigned NOT NULL default '0',
   `file_id` int(11) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL,
-  `status` enum('available', 'taken', 'complete', 'failure') NOT NULL default 'available',
+  `status` enum('available', 'taken', 'complete', 'failure', 'cancelled') NOT NULL default 'available',
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
   `user_sort` int(11) unsigned NOT NULL default '0',
