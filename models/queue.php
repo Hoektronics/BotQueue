@@ -23,6 +23,15 @@
 			parent::__construct($id, "queues");
 		}
 		
+		public function getAPIData()
+		{
+			$d = array();
+			$d['id'] = $this->id;
+			$d['name'] = $this->getName();
+			
+			return $d;
+		}
+			
 		public function canAdd()
 		{
 			return (User::$me->id == $this->get('user_id'));

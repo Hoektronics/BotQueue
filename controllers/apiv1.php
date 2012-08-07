@@ -248,48 +248,73 @@
 			$provider->checkRequest();
 			try
 			{
-				if (!$provider->hasError())
+				if ($provider->hasError())
+					throw new Exception("Error verifying API call.");
+
+				$c = strtolower($this->args('api_call'));
+				$calls = array(
+					'listqueues',
+					'listjobs',
+					'grabjob',
+					'dropjob',
+					'canceljob',
+					'finishjob',
+					'updatejob',
+					'jobinfo',
+					'listbots',
+					'botinfo',
+					'registerbot',
+				);
+				if (in_array($c, $calls))
 				{
-					switch ($this->args('api_call'))
-					{
-						case 'listjobs':
-							$data = $this->api_listjobs();
-							break;
-					}
+					$fname = "api_{$c}";
+					$data = $this->$fname();
 				}
+				else
+					throw new Exception("Specified api_call '{$c}' does not exist.");
+					
+				$result = array('status' => 'success', 'data' => $data);
 			}
 			catch(Exception $e)
 			{
-				echo $e;
+				$result = array('status' => 'error', 'error' => $e->getMessage());
 			}
-			
-			echo JSON::encode($data);
-			
+
+			//eventually add more data outputs.  json is a good default.
+			echo JSON::encode($result);
+				
 			exit;
 		}
 		
-		public function api_listjobs()
+		public function api_listqueues()
 		{
-			try
-			{
-				if ($this->args('queue_id'))
-					$queue = new Queue($this->args('queue_id'));
-#				else
-#					$queue = User::$me->getDefaultQueue();
-				
-				$data = array();
-				$jobs = $queue->getJobs()->getRange(0, 30);
-				if (!empty($jobs))
-					foreach ($jobs AS $row)
-						$data[] = $row['Job']->getAPIData();
-						
-			}
-			catch(Exception $e)
-			{
-				echo $e;
-			}			
+			$data = array();
+			$qs = User::$me->getQueues()->getRange(0, 50);
+			if (!empty($qs))
+				foreach ($qs AS $row)
+					$data[] = $row['Queue']->getAPIData();
 
 			return $data;
 		}
+
+		public function api_listjobs()
+		{
+			if ($this->args('queue_id'))
+				$queue = new Queue($this->args('queue_id'));
+#				else
+#					$queue = User::$me->getDefaultQueue();
+
+			if (!$queue->isHydrated())
+				throw new Exception("Could not find that queue.");
+			
+			$data = array();
+			$jobs = $queue->getJobs()->getRange(0, 50);
+			if (!empty($jobs))
+				foreach ($jobs AS $row)
+					$data[] = $row['Job']->getAPIData();
+
+			return $data;
+		}
+
 	}
 ?>
