@@ -2,7 +2,7 @@ import urlparse
 import oauth2 as oauth
 import json
 
-class WorkerBee():
+class BotQueueApi():
   
   #request_token_url = 'http://botqueue.com/api/v1/request_token'
   #access_token_url = 'http://botqueue.com/api/v1/access_token'
@@ -91,7 +91,7 @@ class WorkerBee():
     return self.apiCall('jobinfo', {'job_id' : job_id})
 
 #instantiate our worker bee to pull some data
-wb = WorkerBee(consumer_key, consumer_secret, token_key, token_secret);
+wb = BotQueueAPI(consumer_key, consumer_secret, token_key, token_secret);
 
 #pull all our queues and list all our jobs.
 queues = wb.listQueues()

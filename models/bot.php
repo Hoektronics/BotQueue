@@ -103,7 +103,7 @@
 			$job->save();
 			
 			$this->set('job_id', 0);
-			$this->set('status', 'idle');
+			$this->set('status', 'finished');
 			$this->save();
 		}
 	}

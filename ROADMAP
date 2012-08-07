@@ -63,6 +63,7 @@ v1 Release
 
 	* Use python multiprocessing: http://docs.python.org/library/multiprocessing.html
 	* Use python+webkit for UI
+	* sqlite for local data storage
 
 	* Driver based system for controlling multiple types of machines.
 		* Use pronterface backend for passthrough style machines
