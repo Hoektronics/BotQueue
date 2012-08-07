@@ -452,5 +452,102 @@
 			
 			return $data;
 		}
+		
+		public function api_listbots()
+		{
+			$data = array();
+			$bots = User::$me->getBots()->getRange(0, 100);
+			if (!empty($bots))
+				foreach ($bots AS $row)
+					$data[] = $row['Bot']->getAPIData();
+
+			return $data;
+		}
+		
+		public function api_botinfo()
+		{
+			$bot = new Bot($this->args('bot_id'));
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+			
+			if (!$bot->isMine())
+				throw new Exception("This bot is not yours.");
+				
+			$data['bot'] = $bot->getAPIData();
+			
+			return $data;			
+		}
+
+		public function api_registerbot()
+		{
+			if (!$this->args('name'))
+				throw new Exception('Bot name is a required parameter.');
+			if (!$this->args('identifier'))
+				throw new Exception('Bot identifier is a required parameter.');
+			if (!$this->args('manufacturer'))
+				throw new Exception('Bot manufacturer is a required parameter.');
+			if (!$this->args('model'))
+				throw new Exception('Bot model is a required parameter.');
+				
+			$bot = new Bot();
+			$bot->set('user_id', User::$me->id);
+			$bot->set('name', $this->args('name'));
+			$bot->set('identifier', $this->args('identifier'));
+			$bot->set('manufacturer', $this->args('manufacturer'));
+			$bot->set('model', $this->args('model'));
+			$bot->set('electronics', $this->args('electronics'));
+			$bot->set('firmware', $this->args('firmware'));
+			$bot->set('extruder', $this->args('extruder'));
+			$bot->set('status', 'idle');
+			$bot->save();
+			
+			$data['bot'] = $bot->getAPIData();
+
+			return $data;			
+		}
+		
+		public function api_updatebot()
+		{
+			$bot = new Bot($this->args('bot_id'));
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+			
+			if (!$bot->isMine())
+				throw new Exception("This bot is not yours.");
+
+			if (!$this->args('name'))
+				throw new Exception('Bot name is a required parameter.');
+			if (!$this->args('identifier'))
+				throw new Exception('Bot identifier is a required parameter.');
+			if (!$this->args('manufacturer'))
+				throw new Exception('Bot manufacturer is a required parameter.');
+			if (!$this->args('model'))
+				throw new Exception('Bot model is a required parameter.');
+				
+			$bot->set('name', $this->args('name'));
+			$bot->set('identifier', $this->args('identifier'));
+			$bot->set('manufacturer', $this->args('manufacturer'));
+			$bot->set('model', $this->args('model'));
+			$bot->set('electronics', $this->args('electronics'));
+			$bot->set('firmware', $this->args('firmware'));
+			$bot->set('extruder', $this->args('extruder'));
+			$bot->save();
+			
+			$data['bot'] = $bot->getAPIData();
+
+			return $data;			
+		}
+		
+		public function api_updatebotstatus()
+		{
+			$bot = new Bot($this->args('bot_id'));
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+			
+			if (!$bot->isMine())
+				throw new Exception("This bot is not yours.");
+
+			//TODO: how does this flow look?
+		}
 	}
 ?>
