@@ -57,14 +57,17 @@
 			return "/queue:" . $this->id;
 		}
 		
-		public function getJobs()
+		public function getJobs($status = null, $order = null)
 		{
+			if ($status !== null)
+				$statusSql = " AND status = '{$status}'";
+				
 			$sql = "
 				SELECT id
 				FROM jobs
 				WHERE queue_id = '{$this->id}'
-					AND status = 'available'
-				ORDER BY user_sort
+					{$statusSql}
+				ORDER BY user_sort, id DESC
 			";
 			return new Collection($sql, array('Job' => 'id'));
 		}

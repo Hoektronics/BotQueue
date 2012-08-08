@@ -230,10 +230,12 @@
 					'listjobs',
 					'jobinfo',
 					'grabjob',
+					'findnewjob',
 					'dropjob',
 					'canceljob',
 					'failjob',
 					'completejob',
+					'createjob',
 					'updatejobprogress',
 					'listbots',
 					'botinfo',
@@ -486,6 +488,24 @@
 				throw new Exception("This bot is not yours.");
 				
 			$data['bot'] = $bot->getAPIData();
+			
+			return $data;			
+		}
+
+		public function api_findnewjob()
+		{
+			$bot = new Bot($this->args('bot_id'));
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+			
+			if (!$bot->isMine())
+				throw new Exception("This bot is not yours.");
+
+			//load up our data.
+			$data = array();	
+			$jobs = $bot->getQueue()->getJobs('available')->getRange(0, 1);
+			if (!empty($jobs))
+				$data[] = $jobs[0]['Job']->getAPIData();
 			
 			return $data;			
 		}

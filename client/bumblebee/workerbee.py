@@ -58,7 +58,7 @@ class WorkerBee():
       
   def getNewJob(self):
     print "Getting new job."
-    result = self.api.listJobs(self.data['queue_id'])
+    result = self.api.findNewJob(self.data['id'])
     if (result['status'] == 'success'):
       if (len(result['data'])):
         job = result['data'][0]
@@ -71,9 +71,10 @@ class WorkerBee():
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
       else:
-        sleep(10) #todo: make this sleep get longer with each successive try.
+        print "No jobs found."
+        time.sleep(10) #todo: make this sleep get longer with each successive try.
     else:
-      raise Exception("Error listing jobs in queue.")
+      raise Exception("Error finding new job: %s" % result['error'])
 
   def downloadJob(self):
 
@@ -103,6 +104,7 @@ class WorkerBee():
 
     currentPosition = 0
     currentPercent = 0
+    lastUpdate = time.time()
     # is this the best way to open a big file for reading?
     for linenum, line in enumerate(self.jobFile):
       try:
@@ -110,15 +112,21 @@ class WorkerBee():
         self.driver.execute(line)
         currentPosition = currentPosition + len(line)
         
+        # this will really need to happen outside our thread, so we don't interrupt printing.
         # Update our print status every X lines/bytes/minutes
         latest = float(currentPosition) / float(self.fileSize)*100
-        if (latest > currentPercent+5):
-          print "%d%%" % latest
-          currentPercent = currentPercent+5
+#        if (latest > currentPercent+5):
+#          print "%0.2f%%" % latest
+#          currentPercent = currentPercent+5
+#          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+        if (time.time() - lastUpdate > 30):
+          print "%0.2f%%" % latest
+          lastUpdate = time.time()
+          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
       except Exception as ex:
         #todo: handle any errors from the driver, such as loss of comms or printer failure
         print ex
-    print "100%%"
+    print "100%"
     
     #delete the job file
     #todo: v2 add caching for repeat jobs.

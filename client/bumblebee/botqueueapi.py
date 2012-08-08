@@ -94,11 +94,14 @@ class BotQueueAPI():
   def completeJob(self, job_id):
     return self.apiCall('completejob', {'job_id' : job_id})
   
-  def updateJob(self, job_id, percent):
-    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'percent' : percent})
+  def updateJobProgress(self, job_id, progress):
+    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress})
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})
   
   def listBots(self):
     return self.apiCall('listbots')
+    
+  def findNewJob(self, bot_id):
+    return self.apiCall('findnewjob', {'bot_id' : bot_id});    

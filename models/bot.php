@@ -122,12 +122,17 @@
 		public function completeJob($job)
 		{
 			$job->set('status', 'complete');
-			$job->set('bot_id', 0);
+			$job->set('progress', 100);
 			$job->save();
 			
 			$this->set('job_id', 0);
 			$this->set('status', 'idle');
 			$this->save();
+		}
+		
+		public function getQueue()
+		{
+			return new Queue($this->get('queue_id'));
 		}
 	}
 ?>
