@@ -33,6 +33,21 @@
 			return new User($this->get('user_id'));
 		}
 		
+		public function getAPIData()
+		{
+			$r = array();
+			$r['id'] = $this->id;
+			$r['queue_id'] = $this->get('queue_id'); //todo: implement bot_to_queues and make this better.
+			$r['identifier'] = $this->get('identifier');
+			$r['name'] = $this->getName();
+			$r['manufacturer'] = $this->get('manufacturer');
+			$r['model'] = $this->get('model');
+			$r['status'] = $this->get('status');
+			$r['last_seen'] = $this->get('last_seen');
+
+			return $r;
+		}
+		
 		public function getUrl()
 		{
 			return "/bot:" . $this->id;
@@ -51,10 +66,13 @@
 		public function canGrab($job)
 		{
 			//todo: fix me once we have the bot_to_queues table
-			if ($bot->get('user_id') != $job->getQueue()->get('user_id'))
+			if ($this->get('user_id') != $job->getQueue()->get('user_id'))
+				return false;
+
+			if ($job->get('status') != 'available')
 				return false;
 			
-			if ($job->get('status') != 'available')
+			if ($this->get('status') != 'idle')
 				return false;
 
 			if ($this->get('job_id'))

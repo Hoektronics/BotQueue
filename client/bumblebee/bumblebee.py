@@ -16,5 +16,12 @@ workerconfig = {
 wb = botqueueapi.BotQueueAPI(config['consumer_key'], config['consumer_secret'])
 wb.setToken(config['token_key'], config['token_secret'])
 
-worker = workerbee.WorkerBee(wb, workerconfig)
-worker.run();
+bots = wb.listBots()
+
+if (bots['status'] == 'success'):
+  print "Loading bot %s" % bots['data'][0]
+  worker = workerbee.WorkerBee(wb, workerconfig, bots['data'][0])
+  worker.run();
+else:
+  print "Bot list failure."
+

@@ -45,7 +45,7 @@
 
 		public function getQueue()
 		{
-			return new S3File($this->get('queue_id'));
+			return new Queue($this->get('queue_id'));
 		}		
 
 		public function getBot()

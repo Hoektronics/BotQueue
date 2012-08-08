@@ -99,3 +99,6 @@ class BotQueueAPI():
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})
+  
+  def listBots(self):
+    return self.apiCall('listbots')
