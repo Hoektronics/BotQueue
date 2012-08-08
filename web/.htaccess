@@ -64,8 +64,8 @@ RewriteRule ^queue:([0-9]+)/?$												dispatcher.php?controller=queue&view=v
 RewriteRule ^upload/?$												dispatcher.php?controller=upload&view=home [NC,L]
 
 #bot stuff.
-RewriteRule ^bot/register/?$												dispatcher.php?controller=bot&view=register [NC,L]
-RewriteRule ^bot:([0-9]+)/?$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
+RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
+RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
 
 #shortcode parsing
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]

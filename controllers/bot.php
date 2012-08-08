@@ -34,10 +34,11 @@
 				if (empty($errors))
 				{
 					//woot!
-					$bot = new Queue();
+					$bot = new Bot();
+					$bot->set('user_id', User::$me->id);
 					$bot->set('name', $this->args('name'));
 					$bot->set('model', $this->args('model'));
-					$bot->set('status', 'offline');
+					$bot->set('status', 'idle');
 					$bot->set('last_seen', date('Y-m-d H:i:s'));
 					$bot->save();
 					
@@ -59,16 +60,16 @@
 		{
 			//how do we find them?
 			if ($this->args('id'))
-				$q = new Queue($this->args('id'));
+				$bot = new Bot($this->args('id'));
 
 			//did we really get someone?
-			if (!$q->isHydrated())
-				$this->set('megaerror', "Could not find that queue.");
+			if (!$bot->isHydrated())
+				$this->set('megaerror', "Could not find that bot.");
 				
 			//errors?
 			if (!$this->get('megaerror'))
 			{
-				$this->set('queue', $q);
+				$this->set('bot', $bot);
 			}
 		}
 			

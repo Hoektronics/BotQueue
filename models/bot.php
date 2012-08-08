@@ -22,6 +22,11 @@
 		{
 			parent::__construct($id, "bots");
 		}
+		
+		public function getName()
+		{
+			return $this->get('name');
+		}
 
 		public function getUser()
 		{

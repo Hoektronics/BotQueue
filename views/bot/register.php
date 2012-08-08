@@ -1,4 +1,4 @@
-<form method="post" autocomplete="off" action="/bot/register">
+<form method="post" action="/bot/register">
 	<? if (!empty($errors)): ?>
 		<div class="BaseError">There were errors :(</div>
 	<? endif ?>

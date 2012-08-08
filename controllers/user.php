@@ -50,7 +50,7 @@
 			if (!$this->get('megaerror'))
 			{
 				$this->set('user', $user);
-				$this->set('photo', $user->getProfileImage());
+				//$this->set('photo', $user->getProfileImage());
 
 				//figure out our info.
 				$collection = $user->getActivityStream();
