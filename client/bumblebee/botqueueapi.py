@@ -2,16 +2,16 @@ import urlparse
 import oauth2 as oauth
 import json
 
-class BotQueueApi():
+class BotQueueAPI():
   
-  #request_token_url = 'http://botqueue.com/api/v1/request_token'
-  #access_token_url = 'http://botqueue.com/api/v1/access_token'
-  #authorize_url = 'http://botqueue.com/api/v1/authorize'
+  authorize_url = 'http://botqueue.com/api/v1/authorize'
   endpoint_url = 'http://botqueue.com/api/v1/endpoint'
   
   #todo: 2 constructors, or a separate call to setToken()?
-  def __init__(self, consumer_key, consumer_secret, token_key, token_secret):
+  def __init__(self, consumer_key, consumer_secret):
     self.consumer = oauth.Consumer(consumer_key, consumer_secret)
+
+  def setToken(self, token_key, token_secret):
     self.token = oauth.Token(token_key, token_secret)
     self.client = oauth.Client(self.consumer, self.token)
 
@@ -25,9 +25,20 @@ class BotQueueApi():
     for k, v in parameters.iteritems():
       body = body + "&%s=%s" % (k, v)
     
+    #print "-------url------"
+    #print url
+    #print "-------body------"
+    #print body
+    
     # make the call
     resp, content = self.client.request(url, "POST", body)
     try:
+
+      #print "-------resp------"
+      #print resp
+      #print "-------content------"
+      #print content
+
       if resp['status'] != '200':
         raise Exception("Invalid response %s." % resp['status'])
 
@@ -41,11 +52,11 @@ class BotQueueApi():
   def requestToken(self):
     self.client = oauth.Client(self.consumer)
 
-    result = self.apiCall('request_token')
+    result = self.apiCall('requesttoken')
     if result['status'] == 'success':
-      self.token = oauth.Token(result['data']['oauth_token'], result['data']['oauth_token_secret'])
+      self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
-    else
+    else:
       raise Exception("Error getting token: %s" % result['error'])
 
   def getAuthorizeUrl(self):
@@ -55,12 +66,11 @@ class BotQueueApi():
     self.token.set_verifier(verifier)
     self.client = oauth.Client(self.consumer, self.token)
 
-    result = self.apiCall('access_token')
+    result = self.apiCall('accesstoken')
     if result['status'] == 'success':
-      self.token = oauth.Token(result['data']['oauth_token'], result['data']['oauth_token_secret'])
-      self.client = oauth.Client(self.consumer, self.token)
+      self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
-    else
+    else:
       raise Exception("Error converting token: %s" % result['error'])
 
   def listQueues(self):
@@ -89,23 +99,3 @@ class BotQueueApi():
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})
-
-#instantiate our worker bee to pull some data
-wb = BotQueueAPI(consumer_key, consumer_secret, token_key, token_secret);
-
-#pull all our queues and list all our jobs.
-queues = wb.listQueues()
-if queues['status'] == 'success':
-  print "Get Queues: ok"
-  for queue in queues['data']:
-    print "#%d: %s" % (int(queue['id']), queue['name'])
-    jobs = wb.listJobs(queue['id'])
-    if jobs['status'] == 'success':
-      if (len(jobs['data'])):
-        print "\tJob Id, Name, Status"
-        for job in jobs['data']:
-          print "\t%d, %s, %s, %s" % (int(job['id']), job['name'], job['status'], job['file'])
-    else:
-      print "\tget jobs failed."
-else:
-  print "Get Queues: fail"

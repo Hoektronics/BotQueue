@@ -18,7 +18,7 @@
 
   define("START_TIME", microtime(true));
   
-	include("../../extensions/global.php");
+	include("../extensions/global.php");
 	include(EXTENSIONS_DIR . "session.php");
 
 	//are we in the right place?

@@ -208,7 +208,13 @@
 			//we need to disable a check if it is our first call to requesttoken.
 			$c = strtolower($this->args('api_call'));
 			if ($c == 'requesttoken')
+			{
 				$provider->setRequestTokenQuery();
+				$this->set('provider', $provider);
+			}
+			//accesstoken also needs the class.
+			elseif ($c == 'accesstoken')
+				$this->set('provider', $provider);
 
 			$provider->checkRequest();
 			try
@@ -258,6 +264,9 @@
 		
 		public function api_requesttoken()
 		{
+			//pull in our interface class.
+			$provider = $this->get('provider');
+			
 			//this is where we generate our token.
 			$token_key = MyOAuthProvider::generateToken();
 			$token_secret = MyOAuthProvider::generateToken();
@@ -278,6 +287,9 @@
 
 		public function api_accesstoken()
 		{
+			//pull in our interface class.
+			$provider = $this->get('provider');
+			
 			$token = OAuthToken::findByKey($provider->oauth->token);
 			$token->changeToAccessToken();
 			
@@ -333,7 +345,7 @@
 			if (!$job->getQueue()->isMine())
 				throw new Exception("This job is not in your queue.");
 				
-			if (!$bot->canGrab($job)))
+			if (!$bot->canGrab($job))
 				throw new Exception("You cannot grab this job.");
 				
 			$bot->grabJob($job);
@@ -360,7 +372,7 @@
 			if (!$job->getQueue()->isMine())
 				throw new Exception("This job is not in your queue.");
 				
-			if (!$bot->canDrop($job)))
+			if (!$bot->canDrop($job))
 				throw new Exception("You cannot drop this job.");
 				
 			$bot->dropJob($job);
@@ -380,8 +392,8 @@
 			if (!$job->getQueue()->isMine())
 				throw new Exception("This job is not in your queue.");
 
-			if (!$job->canDelete($job)))
-				throw new Exception("You cannot cancel this job.");
+			if (!$job->canDelete($job))
+				throw new Exception("You cannot delete this job.");
 				
 			$job->cancelJob();
 
@@ -404,7 +416,7 @@
 			if (!$job->getQueue()->isMine())
 				throw new Exception("This job is not in your queue.");
 				
-			if (!$bot->canComplete($job)))
+			if (!$bot->canComplete($job))
 				throw new Exception("You cannot complete this job.");
 				
 			$bot->completeJob($job);
