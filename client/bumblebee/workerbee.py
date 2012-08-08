@@ -1,12 +1,15 @@
+import time
+import drivers
+
 class WorkerBee():
   
   data = {}
   
-  def __init__(self, api, config, data):
+  def __init__(self, api, config):
     self.api = api
     self.config = config
-    self.data = data
-    self.driver = self.driverFactory()
+#    self.data = data  //todo: load data somehow.
+    self.driver = self.driverFactory(config)
     self.startup()
 
   def startup(self):
@@ -21,17 +24,17 @@ class WorkerBee():
 
     #connect to our driver.
     try:
-      driver.connect()
+      self.driver.connect()
     except Exception as ex:
       print ex;
 
   def driverFactory(self, config):
     if (self.config['driver'] == 's3g'):
-      return BQS3GDriver(self.config);
+      return drivers.S3GDriver(self.config);
     elif (self.config['driver'] == 'passthru'):
-      return BQSerialPassthruDriver(self.config)
+      return drivers.SerialPassthruDriver(self.config)
     elif (self.config['driver'] == 'dummy'):
-      return BQDummyDriver(self.config)
+      return drivers.DummyDriver(self.config)
     else:
       raise Exception("Unknown driver specified.")
       
@@ -42,11 +45,9 @@ class WorkerBee():
         self.getNewJob()
       elif self.data['status'] == 'working':
         self.processJob()
-      elif self.data['status'] == 'finished':
-        #where do we handle job finished mode?
-        sleep(1)
       else: #we're either error, maintenance, or offline... wait until that changes
-        sleep(1) # sleep for a second to not hog resources
+        sleep(10) # sleep for a second to not hog resources
+        print "waiting for job"
       
   def getNewJob(self):
     result = api.listJobs(self.data['queue_id'])
