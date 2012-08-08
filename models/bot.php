@@ -113,7 +113,7 @@
 
 		public function canComplete($job)
 		{
-			if ($job->get('bot_id') == $this->id && $job->get('status') == 'working')
+			if ($job->get('bot_id') == $this->id && $job->get('status') == 'taken')
 				return true;
 			else
 				return false;
@@ -126,7 +126,7 @@
 			$job->save();
 			
 			$this->set('job_id', 0);
-			$this->set('status', 'finished');
+			$this->set('status', 'idle');
 			$this->save();
 		}
 	}

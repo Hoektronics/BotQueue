@@ -63,6 +63,7 @@
 				SELECT id
 				FROM jobs
 				WHERE queue_id = '{$this->id}'
+					AND status = 'available'
 				ORDER BY user_sort
 			";
 			return new Collection($sql, array('Job' => 'id'));

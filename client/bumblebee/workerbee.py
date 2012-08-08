@@ -53,7 +53,7 @@ class WorkerBee():
       elif self.data['status'] == 'working':
         self.processJob()
       else: #we're either error, maintenance, or offline... wait until that changes
-        sleep(10) # sleep for a second to not hog resources
+        time.sleep(10) # sleep for a second to not hog resources
         print "waiting for job"
       
   def getNewJob(self):
@@ -84,6 +84,7 @@ class WorkerBee():
     self.jobFile = tempfile.NamedTemporaryFile()
 
     #todo: don't forget to check the sha1 hash.
+    self.fileSize = 0
     chunk = 4096
     while 1:
         data = urlfile.read(chunk)
@@ -93,30 +94,40 @@ class WorkerBee():
         self.jobFile.write(data)
         sys.stdout.write('.')
         sys.stdout.flush()
+        self.fileSize = self.fileSize + len(data)
         #print "Read %s bytes"%len(data)
     self.jobFile.seek(0)
       
   def processJob(self):
     self.downloadJob()
 
+    currentPosition = 0
+    currentPercent = 0
     # is this the best way to open a big file for reading?
     for linenum, line in enumerate(self.jobFile):
       try:
         #print "%d: %s" % (linenum, line)
         self.driver.execute(line)
+        currentPosition = currentPosition + len(line)
+        
         # Update our print status every X lines/bytes/minutes
+        latest = float(currentPosition) / float(self.fileSize)*100
+        if (latest > currentPercent+5):
+          print "%d%%" % latest
+          currentPercent = currentPercent+5
       except Exception as ex:
         #todo: handle any errors from the driver, such as loss of comms or printer failure
         print ex
+    print "100%%"
     
     #delete the job file
     #todo: v2 add caching for repeat jobs.
     self.jobFile.close()
 
-    raise Exception("file deleted")
-
     #finish the job online, and mark as completed.
     result = self.api.completeJob(self.job['id'])
     if result['status'] == 'success':
-      self.job = result['status']['job']
-      self.data = result['status']['bot']
+      self.job = result['data']['job']
+      self.data = result['data']['bot']
+    else:
+      raise Exception("Error completing job: %s" % result['error'])
