@@ -352,6 +352,7 @@
 				
 			$bot->grabJob($job);
 			
+			$data = array();
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
 			

@@ -17,11 +17,12 @@ class WorkerBee():
     self.startup()
 
   def startup(self):
-    print "Bot startup"
+    self.log("Bot startup")
+    
     #we shouldn't startup in a working or completed state... that implies some sort of error.
     if (self.data['status'] == 'working' or self.data['status'] == 'finished'):
       result = self.api.cancelJob(self.data['job_id'])
-      print "Cancelling job."
+      self.log("Cancelling job.")
       if (result['status'] == 'success'):
           self.job = result['data']['job']
           self.data = result['data']['bot']
@@ -30,10 +31,13 @@ class WorkerBee():
 
     #connect to our driver.
     try:
-      print "Bot connecting"
+      self.log("Connecting")
       self.driver.connect()
     except Exception as ex:
-      print ex;
+      self.log(ex);
+
+  def log(self, message):
+    print "%s: %s" % (self.data['name'], message)
 
   def driverFactory(self, config):
     if (self.config['driver'] == 's3g'):
@@ -49,29 +53,31 @@ class WorkerBee():
     #todo: threading and crap here.
     while True:
       if self.data['status'] == 'idle':
-        self.getNewJob()
+        try:
+          self.getNewJob()
+        except Exception as ex:
+          #todo: handle any errors from the driver, such as loss of comms or printer failure
+          self.log(ex)
       elif self.data['status'] == 'working':
         self.processJob()
       else: #we're either error, maintenance, or offline... wait until that changes
         time.sleep(10) # sleep for a second to not hog resources
-        print "waiting for job"
+        self.log("waiting for bot to be fixed")
       
   def getNewJob(self):
-    print "Getting new job."
+    self.log("Looking for new job.")
     result = self.api.findNewJob(self.data['id'])
     if (result['status'] == 'success'):
       if (len(result['data'])):
         job = result['data'][0]
-        #print "new job: %s" % job
         jresult = self.api.grabJob(self.data['id'], job['id'])
         if (jresult['status'] == 'success'):
-          print "grabbed ok"
           self.job = jresult['data']['job']
           self.data = jresult['data']['bot']
+          self.log("grabbed job %s" % self.job['name'])
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
       else:
-        print "No jobs found."
         time.sleep(10) #todo: make this sleep get longer with each successive try.
     else:
       raise Exception("Error finding new job: %s" % result['error'])
@@ -84,28 +90,26 @@ class WorkerBee():
     urlfile = urllib2.urlopen(request)
     self.jobFile = tempfile.NamedTemporaryFile()
 
+    self.log("downloading %s." % self.job['file'])
+
     #todo: don't forget to check the sha1 hash.
     self.fileSize = 0
     chunk = 4096
     while 1:
         data = urlfile.read(chunk)
         if not data:
-            print "done."
             break
         self.jobFile.write(data)
-        sys.stdout.write('.')
-        sys.stdout.flush()
         self.fileSize = self.fileSize + len(data)
-        #print "Read %s bytes"%len(data)
     self.jobFile.seek(0)
       
   def processJob(self):
     self.downloadJob()
 
     currentPosition = 0
-    currentPercent = 0
     lastUpdate = time.time()
-    # is this the best way to open a big file for reading?
+
+    #loop through all our lines.
     for linenum, line in enumerate(self.jobFile):
       try:
         #print "%d: %s" % (linenum, line)
@@ -115,18 +119,14 @@ class WorkerBee():
         # this will really need to happen outside our thread, so we don't interrupt printing.
         # Update our print status every X lines/bytes/minutes
         latest = float(currentPosition) / float(self.fileSize)*100
-#        if (latest > currentPercent+5):
-#          print "%0.2f%%" % latest
-#          currentPercent = currentPercent+5
-#          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
         if (time.time() - lastUpdate > 30):
-          print "%0.2f%%" % latest
+          self.log("%0.2f%%" % latest)
           lastUpdate = time.time()
           self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
       except Exception as ex:
         #todo: handle any errors from the driver, such as loss of comms or printer failure
-        print ex
-    print "100%"
+        self.log(ex)
+    self.log("Print finished.")
     
     #delete the job file
     #todo: v2 add caching for repeat jobs.

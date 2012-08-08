@@ -1,6 +1,6 @@
-#import WorkerBee
 import botqueueapi
 import workerbee
+import multiprocessing
 
 config = {
   'consumer_key' : '7f16659a9d83655c88e75e28b72223ca4e059b9b',
@@ -13,15 +13,28 @@ workerconfig = {
   'driver' : 'dummy'
 }
 
+def loadbot(pipe, api_config, config, data):
+  print "Loading bot %s" % data['name']
+
+  api = botqueueapi.BotQueueAPI(api_config['consumer_key'], api_config['consumer_secret'])
+  api.setToken(api_config['token_key'], api_config['token_secret'])
+  worker = workerbee.WorkerBee(api, config, data)
+  worker.run();
+
+workers = []
+
 wb = botqueueapi.BotQueueAPI(config['consumer_key'], config['consumer_secret'])
 wb.setToken(config['token_key'], config['token_secret'])
-
 bots = wb.listBots()
-
 if (bots['status'] == 'success'):
-  print "Loading bot %s" % bots['data'][0]
-  worker = workerbee.WorkerBee(wb, workerconfig, bots['data'][0])
-  worker.run();
+  for row in bots['data']:
+    parent_conn, child_conn = multiprocessing.Pipe()
+    p = multiprocessing.Process(target=loadbot, args=(child_conn,config,workerconfig,row,))
+    p.start()
+    link = { 'process' : p, 'pipe' : parent_conn }
+    workers.append(link)
 else:
   print "Bot list failure."
 
+for link in workers:
+  link['process'].join()
