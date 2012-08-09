@@ -2,7 +2,11 @@ v1 Release - Sep 1, 2012
 
 * Website:
 
-  * Nice looking template
+  * Fully implement bootstrap
+		* forms
+		* headers
+		* tables
+		* progress bars
 
   * Install
   	* 100% working Amazon bootup script.
