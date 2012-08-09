@@ -39,6 +39,24 @@
   <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="50">
 
 
+  <!-- Navbar
+    ================================================== -->
+ <div class="navbar navbar-fixed-top">
+   <div class="navbar-inner">
+     <div class="container">
+       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+       </a>
+       <a class="brand" href="../">Bootswatch</a>
+       <div class="nav-collapse" id="main-menu">
+
+       </div>
+     </div>
+   </div>
+ </div>
+
     <div class="container">
 
 
@@ -120,13 +138,13 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </a>
-        <a class="brand" href="/">BotQueue</a>
+        <a class="brand" href="#">Project name</a>
         <div class="nav-collapse">
           <ul class="nav">
-            <li class="active"><a href="/">Dashboard</a></li>
-            <li><a href="/queues">Queues</a></li>
-            <li><a href="/bots">Bots</a></li>
-            <li><a href="/settings">Settings</a></li>
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -159,6 +177,7 @@
       </div>
     </div><!-- /navbar-inner -->
   </div><!-- /navbar -->
+
 </section>
 
 
