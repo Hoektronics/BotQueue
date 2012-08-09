@@ -22,12 +22,6 @@
 		{
 		}
 		
-		public function loginbox()
-		{
-			if (User::isLoggedIn())
-				$this->set('user', User::$me);
-		}
-		
 		public function profile()
 		{
 			//how do we find them?
@@ -306,34 +300,77 @@
 			$this->set('user', $user);
 		}
 		
+		public function loginandregister()
+		{
+			$this->setTitle('Login or register a new account.');
+
+			//did we get a redirect payload or anything?
+			if ($this->args('payload'))
+			{
+				$payload = unserialize(base64_decode($this->args('payload')));
+				if (is_array($payload) && $payload['type'] && $payload['data'])
+					$_SESSION['payload'] = $payload;
+			}
+			
+			//did we get a token?
+			if ($this->args('token'))
+			{
+				//try to login with it.
+				User::loginWithToken($this->args('token'));
+				if (User::isLoggedIn())
+				{
+					//fully log them in.
+					$data = unserialize(base64_decode($this->args('token')));
+					$token = Token::byToken($data['token']);
+					$token->setCookie();
+					
+					//to our profile.
+					$this->forwardToUrl(User::$me->getUrl());
+				}
+			}
+		}
+	
 		public function register()
 		{
-			$this->setTitle('Register a new Account');
-			
-			if ($this->args('submit'))
+			if ($this->args('submit') && $this->args('action') == 'register')
 			{
 				//validate username
 				$username = $this->args('username');
 				if (!Verify::username($username, $reason))
+				{
 					$errors['username'] = $reason;
+					$errorfields['username'] = 'error';
+				}
 									
 				//validate email
 				$email = $this->args('email');
 				if (!Verify::email($email))
+				{
 					$errors['email'] = "You must supply a valid email.";
+					$errorfields['email'] = 'error';
+				}
 				else
 				{
 					$testUser = User::byEmail($email);
 					if ($testUser->isHydrated())
+					{
 						$errors['email'] = "That email is already being used.";
+						$errorfields['email'] = 'error';
+					}
 				}
 				
 				//check passwords
 				if ($this->args('pass1') != $this->args('pass2'))
+				{
 					$errors['password'] = "Your passwords do not match.";
+					$errorfields['password'] = 'error';
+				}
 				else if (!strlen($this->args('pass1')))
+				{
 					$errors['password'] = "You must enter a password.";
-					
+					$errorfields['password'] = 'error';
+				}	
+
 				//okay, we good?
 				if (empty($errors))
 				{
@@ -354,17 +391,78 @@
 					//todo: send a confirmation email.
 					Activity::log("registered a new account on BotQueue.", $user);
 
-					//todo: automatically log them in.
+					//automatically log them in.
+					$token = $user->createToken();
+					$token->setCookie();
 
 					$this->forwardToUrl('/');
 				}
 				else
 				{
 					$this->set('errors', $errors);
+					$this->set('errorfields', $errorfields);
 					$this->setArg('username');
 					$this->setArg('email');
 					$this->setArg('pass1');
 					$this->setArg('pass2');
+				}
+			}
+		}
+		
+		public function login()
+		{
+			if ($this->args('submit') && $this->args('action') == 'login')
+			{
+				$username = $this->args('username');
+				$pass = $this->args('password');
+				$rememberme = $this->args('rememberme');
+
+				//are we good?
+				if (!$username)
+				{
+					$errors['username'] = "You must supply a username.";
+					$errorfields['username'] = 'error';
+				}
+				else if (!$pass)
+				{
+					$errors['password'] = "You must supply a password.";
+					$errorfields['password'] = 'error';
+				}
+				else
+				{
+					User::login($username, $pass);
+					
+					if (User::isLoggedIn())
+					{
+						//want a cookie?
+						if ($rememberme)
+						{
+							$token = User::$me->createToken();
+							$token->setCookie();
+						}
+						
+						Activity::log("logged in.");
+												
+						//send us!
+						//$this->forwardToUrl("/home");
+						if (Controller::isiPhone())
+							$this->forwardToUrl('/');
+						else
+							$this->forwardToUrl(User::$me->getUrl());
+					}
+					else
+					{
+						$errors['password'] = "We could not find that username and password combination.";
+						$errorfields['password'] = 'error';
+						$errorfields['username'] = 'error';
+					}
+				}
+				
+				if (!empty($errors))
+				{
+					$this->setArg('username');
+					$this->set('errors', $errors);
+					$this->set('errorfields', $errorfields);
 				}
 			}
 		}

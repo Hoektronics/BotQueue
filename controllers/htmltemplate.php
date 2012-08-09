@@ -24,15 +24,10 @@
 			$this->setArg('title');
 			$this->setArg('sidebar');
 		}
-		
-		public function header()
+
+		public function errorbar()
 		{
-			$this->setArg('title');
-		}
-		
-		public function footer()
-		{
-			$this->setArg('sidebar');
+			$this->setArgs('message');
 		}
 	}
 ?>

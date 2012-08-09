@@ -3,7 +3,7 @@
 #page_signin #signin form{margin:0;}
 #page_signin #signin fieldset{width:auto;margin:0;padding:30px 0 15px 0;background-color:#fff;border:1px solid #ddd;border-top:none;-moz-border-radius-bottomleft:6px;-moz-border-radius-bottomright:6px;}
 #page_signin #signin .actions{margin:20px 0 0 0;padding-left:30px;}
-#page_signin #signin .clearfix,#page_signin #signin .clearfix.error{width:auto!important;padding-top:0!important;margin-left:0!important;margin-right:0!important;padding-left:30px!important;padding-right:30px!important;}
+#page_signin #signin .control-group,#page_signin #signin .clearfix.error{width:auto!important;padding-top:0!important;margin-left:0!important;margin-right:0!important;padding-left:30px!important;padding-right:30px!important;}
 #page_signin #signin label{font-weight:bold;}
 #page_signin #signin div.input label{font-weight:normal!important;}
 #page_signin #signin p.reset{margin: 15px 0px 0px 0px;}
@@ -14,7 +14,7 @@
 #page_signin #signup form{margin:0!important;padding:0!important;}
 #page_signin #signup fieldset{width:auto;margin:0;padding:15px 0 15px 0;background-color:#fff;border:1px solid #ddd;border-top:none;-moz-border-radius-bottomleft:6px;-moz-border-radius-bottomright:6px;}
 #page_signin #signup .actions{margin:35px 0 0 0!important;padding-left:30px;}
-#page_signin #signup .clearfix,#page_signin #signup .clearfix.error{width:auto!important;padding-top:0!important;margin-left:0!important;margin-right:0!important;padding-left:30px!important;padding-right:30px!important;}
+#page_signin #signup .control-group,#page_signin #signup .clearfix.error{width:auto!important;padding-top:0!important;margin-left:0!important;margin-right:0!important;padding-left:30px!important;padding-right:30px!important;}
 #page_signin #signup label{font-weight:bold;}
 #page_signin #signup div.input label{font-weight:normal!important;}
 #page_signin #signup .clickedit{color:#333!important;margin:11px 0 5px 0;font-family:Cambria,Georgia,serif;font-size:110%;line-height:120%;padding:8px 10px;border:1px dashed #e4e4e4;-moz-border-radius:4px;-webkit-border-radius:4px;border-radius:4px;}

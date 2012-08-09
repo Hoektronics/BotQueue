@@ -37,12 +37,12 @@ RewriteRule ^home/?$					dispatcher.php?controller=user&view=home [NC,L]
 RewriteRule ^activity(/page:([0-9]+))?/?$					dispatcher.php?controller=main&view=activity&page=$2 [NC,L]
 
 #user login action
-RewriteRule ^login/?$					dispatcher.php?controller=auth&view=login&mode=ajax [NC,L]
-RewriteRule ^login/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=login&payload=$1&mode=ajax& [NC,L]
-RewriteRule ^token/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=auth&view=login&token=$1&mode=ajax [NC,L]
+RewriteRule ^login/?$					dispatcher.php?controller=user&view=loginandregister [NC,L]
+RewriteRule ^login/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=user&view=loginandregister&payload=$1 [NC,L]
+RewriteRule ^token/([A-Za-z0-9+/=]+)/?$	dispatcher.php?controller=user&view=loginandregister&token=$1 [NC,L]
 RewriteRule ^logout/?$					dispatcher.php?controller=auth&view=logout [NC,L]
 RewriteRule ^forgotpass/?$				dispatcher.php?controller=auth&view=forgotpass [NC,L]
-RewriteRule ^register/?$				dispatcher.php?controller=user&view=register [NC,L]
+RewriteRule ^register/?$				dispatcher.php?controller=user&view=loginandregister [NC,L]
 
 #admin area
 RewriteRule ^admin/?$														dispatcher.php?controller=admin&view=home
