@@ -4,7 +4,6 @@
 	{
 		public $oauth;
 		public $consumer;
-		private $oauth_error;
 		private $user;
 		
 		public function __construct()
@@ -23,37 +22,6 @@
 		{
 			return sha1(OAuthProvider::generateToken(20));
 		}
-		
-		/**
-		 * This function check the handlers that we added in the constructor
-		 * and then checks for a valid signature
-		 */
-		public function checkRequest(){
-			/* now that everything is setup we run the checks */
-			try{
-				$this->oauth->checkOAuthRequest();
-			} catch(OAuthException $E){
-				echo OAuthProvider::reportProblem($E);
-				$this->oauth_error = true;
-			}
-		}
-		
-		public function hasError()
-		{
-			return $this->oauth_error;
-		}
-		
-		/**
-		 * This function is called when you are requesting a request token
-		 * Basically it disabled the tokenHandler check and force the oauth_callback parameter
-		 */
-		public function setRequestTokenQuery()
-		{
-			$this->oauth->isRequestTokenEndpoint(true); 
-			//$this->oauth->addRequiredParameter("oauth_callback");
-		}
-		
-		/* handlers */
 		
 		/**
 		 * This function checks if the consumer exist in the DB and that it is active

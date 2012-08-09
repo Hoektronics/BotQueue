@@ -209,18 +209,16 @@
 			$c = strtolower($this->args('api_call'));
 			if ($c == 'requesttoken')
 			{
-				$provider->setRequestTokenQuery();
+				$provider->oauth->isRequestTokenEndpoint(true);
 				$this->set('provider', $provider);
 			}
 			//accesstoken also needs the class.
 			elseif ($c == 'accesstoken')
 				$this->set('provider', $provider);
 
-			$provider->checkRequest();
 			try
 			{
-				if ($provider->hasError())
-					throw new Exception("Error verifying API call.");
+				$provider->oauth->checkOAuthRequest();
 
 				$calls = array(
 					'requesttoken',

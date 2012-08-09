@@ -9,36 +9,26 @@ v1 Release
 
 	* Queue Functionality:
 		* reordering of job priorities
-		* statistics (% pass / fail, # of hours, etc)
+		* view.statistics (% pass / fail, # of hours, etc)
 
 	* Job / File functionality
-		* re-print job
-		* cancel job
+		* re-print job (duplicate job, same file)
+		* cancel/delete job
 		* select quantity during upload
 		* select queue during upload
 		* job view
-		* job edit?
+		* job edit? - what does this consist of?
 		
-	* Machine areas
-		* current status
+	* Bot areas
 		* toggle online/offline
 		* statistics (% pass / fail, # of hours, etc)
-		* mini-dashboard with machine vitals
+		* edit page
+		* delete page
 
   * Add activity logs to various job steps
 
 * API
-	* OAuth flow for apps to register and get active.
-		* double check flow through oauth - try to break it.
-		* verify function calls and other cruft from imported oauth library
 	* API Calls:
-		* Workers can update status with a percentage and short log?
-		* Get information on a job.
-		* Get a list of jobs in a queue based on status
-			* active
-			* pending
-			* completed
-			* failed
 		* verify that all calls in API V1 are implemented in python client
 			* and functioning!
 		* API to add jobs from url (including qty)
@@ -46,6 +36,29 @@ v1 Release
 
 * App
 
+  * Some sort of inter-process communication system for telling worker processes what to do.
+		* stop+drop job
+		* online / offline
+		* stop process
+		
+	* some sort of flow to resolve bots in a bad state.
+
+	* local flat file for config storage
+
+	* Driver based system for controlling multiple types of machines.
+		* Use pronterface backend for passthrough style machines
+		* Use s3g python interface for MakerBot machines
+
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
+	* Allow toggling machine between online/offline states
+		* Online = ready to take jobs
+		* Offline = does not take jobs
+	* Allow pausing / canceling of print jobs.
+
+v2 Release
+
+* nice GUI app
 	High-level views:
 		Dashboard: all bots w/ current status and active jobs.
 		Add Bot: configure local bot settings (drivers, name, etc)
@@ -55,35 +68,12 @@ v1 Release
 			* pause print
 			* cancel print
 			* toggle bot status: online/offline/fixed/broken
-
-	* Use python multiprocessing: http://docs.python.org/library/multiprocessing.html
 	* Use python+webkit for UI
-	* config file for local data storage
 
-	* Driver based system for controlling multiple types of machines.
-		* Use pronterface backend for passthrough style machines
-		* Use s3g python interface for MakerBot machines
-
-	* App will pull down a list of machines and look for those.
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
-	* Allow toggling machine between online/offline states
-		* Online = ready to take jobs
-		* Offline = does not take jobs
-	* Allow pausing / canceling of print jobs.
-
-	Bot:
-		* Driver -> accepts gcode
-		* Job -> information on the job
-			* GCode -> gcode file to be printed
-		* API -> talk to the server
-
-v2 Release
-
-* windows app
 * Slicers + Profiles
 * Pull in files from internet (Thingiverse, GrabCAD, etc)
 * Remove/lower Amazon requirements for non-amazon / non-public installs.
 * Private jobs.
 * Add public / private queues.  Default to private.
 * sqlite for local data storage
+* bot current status / mini-dashboard with machine vitals
