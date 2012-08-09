@@ -16,7 +16,8 @@
     along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-	class HelpController extends Controller
+	class AppController extends Controller
 	{
+
 	}
 ?>

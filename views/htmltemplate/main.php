@@ -78,8 +78,9 @@
                 <li><a href="/upload">Upload Job</a></li>
               </ul>
             </li>
-            <li><a href="/queues">Queues</a></li>
             <li><a href="/bots">Bots</a></li>
+            <li><a href="/queues">Queues</a></li>
+            <li><a href="/jobs">Jobs</a></li>
             <li><a href="/app">App</a></li>
             <li><a href="/help">Help</a></li>
           </ul>
@@ -102,9 +103,11 @@
 							<? endif ?>
             </li>
           </ul>
+					<!-- 
           <form class="navbar-search pull-right" action="">
             <input type="text" class="search-query span2" placeholder="Search">
           </form>
+					-->
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->
@@ -129,7 +132,9 @@
 
 <!-- Footer -->
 <div class="footer">
-		&copy; <?= date("Y") ?> <?= COMPANY_NAME ?>. Generated in <?= round(microtime(true) - START_TIME, 2) ?> seconds.
+		&copy; <?= date("Y") ?> <a href="/"><?= COMPANY_NAME ?></a><br/>
+		This site is powered by <a href="http://www.botqueue.com">BotQueue</a>.<br/>
+		Generated in <?= round(microtime(true) - START_TIME, 3) ?> seconds.
 		
 		<?= Controller::$content_for['footer']; ?>
 </div>

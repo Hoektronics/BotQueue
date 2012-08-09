@@ -20,6 +20,8 @@
 	{
 		public function home()
 		{
+			$this->assertLoggedIn();
+			
 			$queues = User::$me->getQueues()->getAll();
 			$this->set('queue', $queues[0]['Queue']);
 		}
