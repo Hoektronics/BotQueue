@@ -53,9 +53,20 @@
 			return "/bot:" . $this->id;
 		}
 		
-		public function getJob()
+		public function getCurrentJob()
 		{
 			return new Job($this->get('job_id'));
+		}
+		
+		public function getJobs()
+		{
+			$sql = "
+				SELECT id
+				FROM jobs
+				WHERE bot_id = {$this->id}
+				ORDER BY end
+			";
+			return new Collection($sql, array('Job' => 'id'));
 		}
 		
 		public function isMine()
@@ -86,6 +97,11 @@
 			$job->set('status', 'taken');
 			$job->set('bot_id', $this->id);
 			$job->save();
+
+			usleep(1000 + mt_rand(100,500));
+			$job = new Job($job->id);
+			if ($job->get('bot_id') != $this->id)
+				throw new Exception("Unable to lock job #{$job->id}");
 			
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');

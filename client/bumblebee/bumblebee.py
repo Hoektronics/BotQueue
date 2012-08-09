@@ -1,6 +1,7 @@
 import botqueueapi
 import workerbee
 import multiprocessing
+import time
 
 config = {
   'consumer_key' : '7f16659a9d83655c88e75e28b72223ca4e059b9b',
@@ -33,6 +34,7 @@ if (bots['status'] == 'success'):
     p.start()
     link = { 'process' : p, 'pipe' : parent_conn }
     workers.append(link)
+    time.sleep(0.5) # give us enough time to avoid contention when getting jobs.
 else:
   print "Bot list failure."
 

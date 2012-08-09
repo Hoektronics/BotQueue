@@ -43,7 +43,6 @@ v1 Release
 			* and functioning!
 		* API to add jobs from url (including qty)
 		* API to re-run a job (including qty)
-		* NEED TO ADD LOCKING TO GRAB JOB
 
 * App
 

@@ -24,6 +24,14 @@
 			
 			$this->setTitle('Register a Bot');
 			
+			$queues = User::$me->getQueues()->getAll();
+			foreach ($queues AS $row)
+			{
+				$q = $row['Queue'];
+				$data[$q->id] = $q->getName();
+			}
+			$this->set('queues', $data);
+			
 			if ($this->args('submit'))
 			{
 				//did we get a name?
@@ -36,8 +44,13 @@
 					//woot!
 					$bot = new Bot();
 					$bot->set('user_id', User::$me->id);
+					$bot->set('queue_id', $this->args('queue_id'));
 					$bot->set('name', $this->args('name'));
+					$bot->set('manufacturer', $this->args('manufacturer'));
 					$bot->set('model', $this->args('model'));
+					$bot->set('electronics', $this->args('electronics'));
+					$bot->set('firmware', $this->args('firmware'));
+					$bot->set('extruder', $this->args('extruder'));
 					$bot->set('status', 'idle');
 					$bot->set('last_seen', date('Y-m-d H:i:s'));
 					$bot->save();
@@ -70,6 +83,9 @@
 			if (!$this->get('megaerror'))
 			{
 				$this->set('bot', $bot);
+				$this->set('queue', $bot->getQueue());
+				$this->set('job', $bot->getCurrentJob());
+				$this->set('jobs', $bot->getJobs()->getRange(0, 50));
 			}
 		}
 			
