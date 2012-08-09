@@ -27,6 +27,7 @@ sudo cp ~/BotQueue/install/apache.conf /etc/apache2/sites-available/BotQueue
 sudo a2ensite BotQueue
 sudo a2enmod rewrite
 
+sudo /etc/init.d/apache2 reload
 sudo /etc/init.d/apache2 restart
 
 mysql -u root < install/createdb.sql
