@@ -5,8 +5,7 @@ v1 Release - Sep 1, 2012
   * Fully implement bootstrap
 		* forms
 		* headers
-		* tables
-		* progress bars
+		* pagination
 
   * Install
   	* 100% working Amazon bootup script.
@@ -16,8 +15,8 @@ v1 Release - Sep 1, 2012
 		* view.statistics (% pass / fail, # of hours, etc)
 
 	* Job functionality
-		* select quantity during upload
-		* select queue during upload
+		* select quantity after upload
+		* select queue after upload
 		* re-print job (duplicate job, same file)
 		* cancel/delete job
 		* job view
@@ -28,6 +27,7 @@ v1 Release - Sep 1, 2012
 		* statistics (% pass / fail, # of hours, etc)
 		* edit page
 		* delete page
+		* update last_seen whenever a bot does an activity.
 
   * Add activity logs to various job steps
 

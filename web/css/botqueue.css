@@ -23,3 +23,5 @@
 #page_signin .error .help-block.error{margin-top:4px;color:#b94a48;}
 #page_signin .help-block a,#page_signin .help-inline a{color:#777;text-decoration:none;}
 #page_signin .help-block a:hover,#page_signin .help-inline a:hover{color:#444;text-decoration:underline;}
+
+.progress {margin-bottom: 0px;}

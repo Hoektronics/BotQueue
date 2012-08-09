@@ -225,7 +225,7 @@
 					'accesstoken',        //ok
 					'listqueues',         //ok
 					'queueinfo',          //ok
-					'createqueue'         //ok
+					'createqueue',        //ok
 					'listjobs',           //ok
 					'jobinfo',            //ok
 					'grabjob',            //ok
@@ -377,16 +377,16 @@
 			// #2 - send a file url and we'll grab it.
 			else if ($this->args('job_url'))
 			{
-				throw new Exception("Job add via URL is not implemented yet.")
+				throw new Exception("Job add via URL is not implemented yet.");
 			}
 			// #3 - post a file via http multipart form
 			else if (!empty($_FILES['job_data']) && is_uploaded_file($_FILES['job_data']['tmp_name']))
 			{
-				throw new Exception("Job add via HTTP POST is not implemented yet.")
+				throw new Exception("Job add via HTTP POST is not implemented yet.");
 			}
 			else
 			{
-				throw new Exception("Unknown job creation method.")
+				throw new Exception("Unknown job creation method.");
 			}
 			
 			$data = array();
@@ -414,7 +414,7 @@
 			else
 				$col = $queue->getJobs();
 			
-			$jobs = $col->getRange(0, 50)
+			$jobs = $col->getRange(0, 50);
 			if (!empty($jobs))
 				foreach ($jobs AS $row)
 					$data[] = $row['Job']->getAPIData();

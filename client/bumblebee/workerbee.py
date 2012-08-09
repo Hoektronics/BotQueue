@@ -24,8 +24,7 @@ class WorkerBee():
       result = self.api.cancelJob(self.data['job_id'])
       self.log("Cancelling job.")
       if (result['status'] == 'success'):
-          self.job = result['data']['job']
-          self.data = result['data']['bot']
+          self.job = result['data']
       else:
         raise Exception("Unable to clear stale job.")
 
@@ -69,7 +68,7 @@ class WorkerBee():
     result = self.api.findNewJob(self.data['id'])
     if (result['status'] == 'success'):
       if (len(result['data'])):
-        job = result['data'][0]
+        job = result['data']
         jresult = self.api.grabJob(self.data['id'], job['id'])
         if (jresult['status'] == 'success'):
           self.job = jresult['data']['job']

@@ -38,6 +38,22 @@
 			return "/job:" . $this->id;
 		}
 		
+		public function getStatusHTML()
+		{
+			return "<span class=\"label " . self::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
+		}
+		
+		public static function getStatusHTMLClass($status)
+		{
+			$s2c = array(
+				'taken' => 'label-info',
+				'complete' => 'label-success',
+				'failure' => 'label-important'
+			);
+			
+			return $s2c[$status];
+		}
+		
 		public function getFile()
 		{
 			return new S3File($this->get('file_id'));
@@ -79,7 +95,29 @@
 			
 			$this->set('status', 'cancelled');
 			$this->set('bot_id', 0);
+			$this->set('start', 0);
 			$this->save();
+		}
+		
+		public function getElapsedText()
+		{
+			if ($this->get('status') == 'available')
+			{
+				$start = strtotime($this->get('created'));
+				$end = time();
+			}
+			elseif ($this->get('status') == 'taken')
+			{
+				$start = strtotime($this->get('start'));
+				$end = time();
+			}
+			else
+			{
+				$start = strtotime($this->get('start'));
+				$end = strtotime($this->get('end'));
+			}
+
+			return Utility::getElapsed($end - $start);
 		}
 	}
 ?>

@@ -290,13 +290,13 @@
 		public function getBots()
 		{
 			$sql = "
-				SELECT id
+				SELECT id, queue_id, job_id
 				FROM bots
 				WHERE user_id = {$this->id}
 				ORDER BY name
 			";
 
-			return new Collection($sql, array('Bot' => 'id'));
+			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
 		}
 
 		public function getJobs()

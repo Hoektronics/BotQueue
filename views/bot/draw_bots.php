@@ -1,14 +1,32 @@
 <? if (!empty($bots)): ?>
-	<table>
-		<tr>
-			<th>Name</th>
-		</tr>
-		<? foreach ($bots AS $row): ?>
-			<? $b = $row['Bot'] ?>
+	<table class="table table-striped table-bordered table-condensed">
+		<thead>
 			<tr>
-				<td><?=$b->getLink()?></td>
+				<th>Name</th>
+				<th>Status</th>
+				<th>Last Seen</th>
+				<th>Queue</th>
+				<th>Job</th>
 			</tr>
-		<?endforeach?>
+		</thead>
+		<tbody>
+			<? foreach ($bots AS $row): ?>
+				<? $b = $row['Bot'] ?>
+				<? $q = $row['Queue'] ?>
+				<? $j = $row['Job'] ?>
+				<tr>
+					<td><?=$b->getLink()?></td>
+					<td><?=$b->getStatusHTML()?></td>
+					<td><?=Utility::relativeTime($b->get('last_seen'))?></td>
+					<td><?=$q->getLink()?></td>
+					<? if ($j->isHydrated()): ?>
+						<td><?=$j->getLink()?></td>
+					<? else: ?>
+						<td>none</td>
+					<? endif ?>
+				</tr>
+			<?endforeach?>
+		</tbody>
 	</table>
 <? else: ?>
 	<b>No bots.</b>

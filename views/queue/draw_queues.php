@@ -1,14 +1,29 @@
 <? if (!empty($queues)): ?>
-	<table>
-		<tr>
-			<th>Name</th>
-		</tr>
-		<? foreach ($queues AS $row): ?>
-			<? $q = $row['Queue'] ?>
+	<table class="table table-striped table-bordered table-condensed">
+		<thead>
 			<tr>
-				<td><?=$q->getLink()?></td>
+				<th>Name</th>
+				<th>Available</th>
+				<th>Working</th>
+				<th>Completed</th>
+				<th>Failed</th>
+				<th>Total</th>
 			</tr>
-		<?endforeach?>
+		</thead>
+		<tbody>
+			<? foreach ($queues AS $row): ?>
+				<? $q = $row['Queue'] ?>
+				<? $stats = $q->getStats() ?>
+				<tr>
+					<td><?=$q->getLink()?></td>
+					<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span></td>
+					<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span></td>
+					<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span></td>
+					<td><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$stats['failure'] ?></span></td>
+					<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
+				</tr>
+			<?endforeach?>
+		</tbody>
 	</table>
 <? else: ?>
 	<b>No queues.</b>

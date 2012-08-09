@@ -47,6 +47,25 @@
 
 			return $r;
 		}
+
+		public function getStatusHTML()
+		{
+			return "<span class=\"label " . $this->getStatusHTMLClass() . "\">" . $this->get('status') . "</span>";
+		}
+		
+		public function getStatusHTMLClass()
+		{
+			$s2c = array(
+				'working' => 'label-info',
+				'complete' => 'label-success',
+				'failure' => 'label-important',
+				'maintenance' => 'label-warning',
+				'offline' => 'label-inverse',
+			);
+			
+			return $s2c[$this->get('status')];
+		}
+
 		
 		public function getUrl()
 		{
@@ -96,6 +115,7 @@
 		{
 			$job->set('status', 'taken');
 			$job->set('bot_id', $this->id);
+			$job->set('start', date('Y-m-d H:i:s'));
 			$job->save();
 
 			usleep(1000 + mt_rand(100,500));
@@ -120,6 +140,7 @@
 		{
 			$job->set('status', 'available');
 			$job->set('bot_id', 0);
+			$job->set('start', 0);
 			$job->save();
 			
 			$this->set('job_id', 0);
@@ -139,6 +160,7 @@
 		{
 			$job->set('status', 'complete');
 			$job->set('progress', 100);
+			$job->set('end', date('Y-m-d H:i:s'));
 			$job->save();
 			
 			$this->set('job_id', 0);

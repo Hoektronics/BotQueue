@@ -92,5 +92,27 @@
 			
 			return $jobs;
 		}
+		
+		public function getStats()
+		{
+			$sql = "
+				SELECT status, count(status) as cnt
+				FROM jobs
+				WHERE queue_id = {$this->id}
+				GROUP BY status
+			";
+
+			$data = array();
+			$stats = db()->getArray($sql);
+			if (!empty($stats))
+			{
+				foreach ($stats AS $row)
+				{
+					$data[$row['status']] = $row['cnt'];
+					$data['total'] += $row['cnt'];
+				}
+			}
+			return $data;
+		}
 	}
 ?>
