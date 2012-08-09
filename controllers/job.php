@@ -18,6 +18,17 @@
 
 	class JobController extends Controller
 	{
+		public function home()
+		{
+			$this->assertLoggedIn();
+			
+			$this->setTitle(User::$me->getName() . "'s Jobs");
+			$this->set('available', User::$me->getJobs('available')->getRange(0, 10));
+			$this->set('taken', User::$me->getJobs('taken')->getRange(0, 10));
+			$this->set('complete', User::$me->getJobs('complete')->getRange(0, 10));
+			$this->set('failure', User::$me->getJobs('failure')->getRange(0, 10));
+		}
+
 		public function view()
 		{
 			//how do we find them?
@@ -36,6 +47,11 @@
 		}
 			
 		public function draw_jobs()
+		{
+			$this->setArg('jobs');
+		}
+
+		public function draw_jobs_small()
 		{
 			$this->setArg('jobs');
 		}

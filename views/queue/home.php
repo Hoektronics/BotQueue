@@ -1,3 +1,1 @@
-<div style="text-align: center">
-	<img src="/img/Under_Construction_Robot.jpg">
-</div>
+<?= Controller::byName('queue')->renderView('draw_queues', array('queues' => $queues)); ?>

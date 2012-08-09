@@ -1,16 +1,18 @@
 <? if (!empty($activities)): ?>
-		<table>
+	<table class="table table-striped table-bordered table-condensed">
+		<tbody>
 			<? foreach ($activities AS $row): ?>
 				<? $user = $row['User'] ?>
 				<? $activity = $row['Activity'] ?>
-				<td valign="top" width="60">
-					image
-				</td>
-				<td valign="top" align="left">
-					<b><?= $user->getLink() ?></b> <?= $activity->get('activity') ?><br/>
-					<span class="formtip"><?= Utility::getTimeAgo($activity->get('action_date')) ?> - <?= Utility::formatDateTime($activity->get('action_date')) ?></span>
-				</td>
-			</tr>
+				<tr>
+					<td valign="top" align="left">
+						<?= $user->getLink() ?> <?= $activity->get('activity') ?>
+						<?= Utility::getTimeAgo($activity->get('action_date')) ?>
+					</td>
+				</tr>
 			<? endforeach ?>
-		</table>
+		</tbody>
+	</table>
+<? else: ?>
+	<b>No activity found.</b>
 <? endif ?>

@@ -299,12 +299,16 @@
 			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
 		}
 
-		public function getJobs()
+		public function getJobs($status = null)
 		{
+			if ($status !== null)
+				$statusSQL = " AND status = '{$status}'";
+			
 			$sql = "
 				SELECT id
 				FROM jobs
 				WHERE user_id = {$this->id}
+					{$statusSQL}
 				ORDER BY name
 			";
 

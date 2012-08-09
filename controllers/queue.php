@@ -18,6 +18,14 @@
 
 	class QueueController extends Controller
 	{
+		public function home()
+		{
+			$this->assertLoggedIn();
+			
+			$this->setTitle(User::$me->getName() . "'s Queues");
+			$this->set('queues', User::$me->getQueues()->getRange(0, 100));
+		}
+		
 		public function create()
 		{
 			$this->assertLoggedIn();

@@ -121,10 +121,10 @@
   </div>
 
   <!-- Headings & Paragraph Copy -->
-	<div class="row-fluid">
+	<div class="row">
 	  <div class="span12">
 			<?=$content?>
-	  </div>
+		</div>
 	</div> <!-- end content -->
 </section>
 

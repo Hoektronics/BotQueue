@@ -18,6 +18,14 @@
 
 	class BotController extends Controller
 	{
+		public function home()
+		{
+			$this->assertLoggedIn();
+			
+			$this->setTitle(User::$me->getName() . "'s Bots");
+			$this->set('bots', User::$me->getBots()->getRange(0, 20));
+		}
+
 		public function register()
 		{
 			$this->assertLoggedIn();
