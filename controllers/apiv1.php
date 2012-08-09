@@ -221,25 +221,26 @@
 				$provider->oauth->checkOAuthRequest();
 
 				$calls = array(
-					'requesttoken',
-					'accesstoken',
-					'listqueues',
-					'queueinfo',
-					'listjobs',
-					'jobinfo',
-					'grabjob',
-					'findnewjob',
-					'dropjob',
-					'canceljob',
-					'failjob',
-					'completejob',
-					'createjob',
-					'updatejobprogress',
-					'listbots',
-					'botinfo',
-					'registerbot',
-					'updatebot',
-					'updatebotstatus',
+					'requesttoken',       //ok
+					'accesstoken',        //ok
+					'listqueues',         //ok
+					'queueinfo',          //ok
+					'createqueue'         //ok
+					'listjobs',           //ok
+					'jobinfo',            //ok
+					'grabjob',            //ok
+					'findnewjob',         //ok
+					'dropjob',            //ok
+					'canceljob',          //ok
+					'failjob',            //ok
+					'completejob',        //ok
+					'createjob',          //ok
+					'updatejobprogress',  //ok
+					'listbots',           //ok
+					'botinfo',            //ok
+					'registerbot',        //ok
+					'updatebot',          //ok
+					'updatebotstatus',    //ok
 				);
 				if (in_array($c, $calls))
 				{
@@ -310,6 +311,92 @@
 			return $data;
 		}
 
+		public function api_queueinfo()
+		{
+			if ($this->args('queue_id'))
+				$queue = new Queue($this->args('queue_id'));
+			else
+				$queue = User::$me->getDefaultQueue();
+				
+			if (!$queue->isHydrated())
+				throw new Exception("Could not find a queue.");
+			
+			$data = $queue->getAPIData();
+
+			return $data;
+		}
+		
+		public function api_createqueue()
+		{
+			if (!$this->args('name'))
+				throw new Exception('Queue name is a required parameter.');
+
+			$q = new Queue();
+			$q->set('name', $this->args('name'));
+			$q->set('user_id', User::$me->id);
+			$q->save();
+			
+			return $q->getAPIData();
+		}
+
+		public function api_createjob()
+		{
+			if ($this->args('queue_id'))
+				$queue = new Queue($this->args('queue_id'));
+			else
+				$queue = User::$me->getDefaultQueue();
+				
+			if (!$queue->isHydrated())
+				throw new Exception("Could not find a queue.");
+			if (!$queue->isMine())
+				throw new Exception("This is not your queue.");
+				
+			//get our quantity and make sure its at least 1.
+			if ($this->args('quantity'))
+				$quantity = (int)$this->args('quantity');
+			$quantity = max(1, $quantity);
+			$quantity = min(100, $quantity);
+			
+			// there are 3 ways to create a job:
+			// #1 - existing job id
+			if ($this->args('job_id'))
+			{
+				$oldjob = new Job($this->args('job_id'));
+
+				if (!$oldjob->isHydrated())
+					throw new Exception("Job does not exist.");
+				if (!$job->getQueue()->isMine())
+					throw new Exception("This job is not in your queue.");
+
+				$file = $oldjob->getFile();
+				if (!$file->isHydrated())
+					throw new Exception("That job does not exist anymore.");
+				
+				$jobs = $queue->addGCodeFile($file, $quantity);
+			}
+			// #2 - send a file url and we'll grab it.
+			else if ($this->args('job_url'))
+			{
+				throw new Exception("Job add via URL is not implemented yet.")
+			}
+			// #3 - post a file via http multipart form
+			else if (!empty($_FILES['job_data']) && is_uploaded_file($_FILES['job_data']['tmp_name']))
+			{
+				throw new Exception("Job add via HTTP POST is not implemented yet.")
+			}
+			else
+			{
+				throw new Exception("Unknown job creation method.")
+			}
+			
+			$data = array();
+			if (!empty($jobs))
+				foreach($jobs AS $job)
+					$data[] = $job->getAPIData();
+					
+			return $data;
+		}
+
 		public function api_listjobs()
 		{
 			if ($this->args('queue_id'))
@@ -321,7 +408,13 @@
 				throw new Exception("Could not find a queue.");
 			
 			$data = array();
-			$jobs = $queue->getJobs()->getRange(0, 50);
+			
+			if ($this->args('status'))
+				$col = $queue->getJobs($this->args('status'));
+			else
+				$col = $queue->getJobs();
+			
+			$jobs = $col->getRange(0, 50)
 			if (!empty($jobs))
 				foreach ($jobs AS $row)
 					$data[] = $row['Job']->getAPIData();
@@ -334,6 +427,9 @@
 			$job = new Job($this->args('job_id'));
 			if (!$job->isHydrated())
 				throw new Exception("Job does not exist.");
+
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
 			
 			$bot = new Bot($this->args('bot_id'));
 			if (!$bot->isHydrated())
@@ -342,9 +438,6 @@
 			if (!$bot->isMine())
 				throw new Exception("This is not your bot.");
 			
-			if (!$job->getQueue()->isMine())
-				throw new Exception("This job is not in your queue.");
-				
 			if (!$bot->canGrab($job))
 				throw new Exception("You cannot grab this job.");
 				
@@ -398,7 +491,7 @@
 				
 			$job->cancelJob();
 
-			$data = "ok";
+			return $job->getAPIData();
 		}
 
 		public function api_completejob()
@@ -447,9 +540,7 @@
 			$job->set('progress', (float)$this->args('progress'));
 			$job->save();
 			
-			$data['job'] = $job->getAPIData();
-			
-			return $data;
+			return $job->getAPIData();
 		}
 
 		public function api_jobinfo()
@@ -461,9 +552,7 @@
 			if (!$job->getQueue()->isMine())
 				throw new Exception("This job is not in your queue.");
 				
-			$data['job'] = $job->getAPIData();
-			
-			return $data;
+			return $job->getAPIData();
 		}
 		
 		public function api_listbots()
@@ -486,11 +575,9 @@
 			if (!$bot->isMine())
 				throw new Exception("This bot is not yours.");
 				
-			$data['bot'] = $bot->getAPIData();
-			
-			return $data;			
+			return $bot->getAPIData();
 		}
-
+		
 		public function api_findnewjob()
 		{
 			$bot = new Bot($this->args('bot_id'));
@@ -504,7 +591,7 @@
 			$data = array();	
 			$jobs = $bot->getQueue()->getJobs('available')->getRange(0, 1);
 			if (!empty($jobs))
-				$data[] = $jobs[0]['Job']->getAPIData();
+				$data = $jobs[0]['Job']->getAPIData();
 			
 			return $data;			
 		}
@@ -515,10 +602,10 @@
 				throw new Exception('Bot name is a required parameter.');
 			if (!$this->args('identifier'))
 				throw new Exception('Bot identifier is a required parameter.');
-			if (!$this->args('manufacturer'))
-				throw new Exception('Bot manufacturer is a required parameter.');
-			if (!$this->args('model'))
-				throw new Exception('Bot model is a required parameter.');
+			#if (!$this->args('manufacturer'))
+			#	throw new Exception('Bot manufacturer is a required parameter.');
+			#if (!$this->args('model'))
+			#	throw new Exception('Bot model is a required parameter.');
 				
 			$bot = new Bot();
 			$bot->set('user_id', User::$me->id);
@@ -532,9 +619,7 @@
 			$bot->set('status', 'idle');
 			$bot->save();
 			
-			$data['bot'] = $bot->getAPIData();
-
-			return $data;			
+			return $bot->getAPIData();
 		}
 		
 		public function api_updatebot()
@@ -550,10 +635,10 @@
 				throw new Exception('Bot name is a required parameter.');
 			if (!$this->args('identifier'))
 				throw new Exception('Bot identifier is a required parameter.');
-			if (!$this->args('manufacturer'))
-				throw new Exception('Bot manufacturer is a required parameter.');
-			if (!$this->args('model'))
-				throw new Exception('Bot model is a required parameter.');
+			//if (!$this->args('manufacturer'))
+			//	throw new Exception('Bot manufacturer is a required parameter.');
+			//if (!$this->args('model'))
+			//	throw new Exception('Bot model is a required parameter.');
 				
 			$bot->set('name', $this->args('name'));
 			$bot->set('identifier', $this->args('identifier'));
@@ -564,9 +649,7 @@
 			$bot->set('extruder', $this->args('extruder'));
 			$bot->save();
 			
-			$data['bot'] = $bot->getAPIData();
-
-			return $data;			
+			return $bot->getAPIData();
 		}
 		
 		public function api_updatebotstatus()
@@ -578,7 +661,10 @@
 			if (!$bot->isMine())
 				throw new Exception("This bot is not yours.");
 
-			//TODO: how does this flow look?
+			$bot->set('status', $this->args('status'));
+			$bot->save();
+			
+			return $bot->getAPIData();
 		}
 	}
 ?>

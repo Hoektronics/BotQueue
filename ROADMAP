@@ -1,4 +1,4 @@
-v1 Release
+v1 Release - Sep 1, 2012
 
 * Website:
 
@@ -11,11 +11,11 @@ v1 Release
 		* reordering of job priorities
 		* view.statistics (% pass / fail, # of hours, etc)
 
-	* Job / File functionality
-		* re-print job (duplicate job, same file)
-		* cancel/delete job
+	* Job functionality
 		* select quantity during upload
 		* select queue during upload
+		* re-print job (duplicate job, same file)
+		* cancel/delete job
 		* job view
 		* job edit? - what does this consist of?
 		
@@ -28,13 +28,13 @@ v1 Release
   * Add activity logs to various job steps
 
 * API
-	* API Calls:
-		* verify that all calls in API V1 are implemented in python client
-			* and functioning!
-		* API to add jobs from url (including qty)
-		* API to re-run a job (including qty)
+	* verify that all calls in API V1 are implemented in python client (and functioning)
+	* implement job creation via URL download
+	* implement job creation via HTTP file POST
 
 * App
+
+	* local flat file for config storage (json?)
 
   * Some sort of inter-process communication system for telling worker processes what to do.
 		* stop+drop job
@@ -42,8 +42,6 @@ v1 Release
 		* stop process
 		
 	* some sort of flow to resolve bots in a bad state.
-
-	* local flat file for config storage
 
 	* Driver based system for controlling multiple types of machines.
 		* Use pronterface backend for passthrough style machines
@@ -55,6 +53,8 @@ v1 Release
 		* Online = ready to take jobs
 		* Offline = does not take jobs
 	* Allow pausing / canceling of print jobs.
+	
+	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 
 v2 Release
 

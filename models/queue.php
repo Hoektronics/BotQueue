@@ -74,16 +74,23 @@
 		
 		public function addGCodeFile($file, $qty = 1)
 		{
-			$job = new Job();
-			$job->set('user_id', User::$me->id);
-			$job->set('queue_id', $this->id);
-			$job->set('file_id', $file->id);
-			$job->set('name', $file->get('path'));
-			$job->set('status', 'available');
-			$job->set('start', date("Y-m-d H:i:s"));
-			$job->save();
+			$jobs = array();
 			
-			return $job;
+			for ($i=0; $i++; $i<$qty)
+			{
+				$job = new Job();
+				$job->set('user_id', User::$me->id);
+				$job->set('queue_id', $this->id);
+				$job->set('file_id', $file->id);
+				$job->set('name', $file->get('path'));
+				$job->set('status', 'available');
+				$job->set('created', date("Y-m-d H:i:s"));
+				$job->save();
+
+				$jobs[] = $job;
+			}
+			
+			return $jobs;
 		}
 	}
 ?>
