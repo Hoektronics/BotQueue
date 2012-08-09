@@ -27,7 +27,7 @@
 
 		public function errorbar()
 		{
-			$this->setArgs('message');
+			$this->setArg('message');
 		}
 	}
 ?>

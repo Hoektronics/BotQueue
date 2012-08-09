@@ -30,13 +30,16 @@
 		{
 			$this->assertLoggedIn();
 			
-			$this->setTitle('Create a queue');
+			$this->setTitle('Create a New Queue');
 			
 			if ($this->args('submit'))
 			{
 				//did we get a name?
 				if (!$this->args('name'))
+				{
 					$errors['name'] = "You need to provide a name.";
+					$errorfields['name'] = 'error';
+				}
 					
 				//okay, we good?
 				if (empty($errors))
@@ -55,6 +58,7 @@
 				else
 				{
 					$this->set('errors', $errors);
+					$this->set('errorfields', $errorfields);
 					$this->setArg('name');
 				}
 			}
