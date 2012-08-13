@@ -88,5 +88,20 @@
 		public function setId($id){
 			$this->id = $id;
 		}	
+		
+		public function delete()
+		{
+			//delete all our tokens
+			db()->execute("
+				DELETE FROM oauth_token WHERE consumer_id = {$this->id}
+			");
+
+			//delete all our nonces
+			db()->execute("
+				DELETE FROM oauth_token_nonce WHERE consumer_id = {$this->id}
+			");
+			
+			parent::delete();
+		}
 	}
 ?>

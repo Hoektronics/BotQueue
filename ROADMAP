@@ -86,3 +86,4 @@ v2 Release
 * Add public / private queues.  Default to private.
 * sqlite for local data storage
 * bot current status / mini-dashboard with machine vitals
+* grouping of jobs into batches or something?

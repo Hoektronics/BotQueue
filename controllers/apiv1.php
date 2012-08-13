@@ -99,6 +99,7 @@
 					if (empty($errors))
 					{
 						$app->set('name', $this->args('name'));
+						$app->set('app_url', $this->args('app_url'));
 						$app->save();
 					
 						$this->forwardToUrl($app->getUrl());
@@ -106,8 +107,8 @@
 					else
 					{
 						$this->set('errors', $errors);
-						$this->set('errorfields', $errors);
-						$this->set('megaerror', "There was an error editing your app.");
+						$this->set('errorfields', $errorfields);
+						$this->set('error', "There was an error editing your app.");
 					}
 				}				
 			}
@@ -131,16 +132,18 @@
 					throw new Exception("You are not authorized to delete this app.");
 
 				$this->set('app', $app);
+				$this->setTitle('Delete App - ' . $app->getName());
 
 				if ($this->args('submit'))
 				{
 					$app->delete();
 					
-					$this->forwardToUrl("/api/v1");
+					$this->forwardToUrl("/apps");
 				}				
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('Delete App - Error');
 				$this->set('megaerror', $e->getMessage());
 			}			
 		}
@@ -169,7 +172,6 @@
 			}						
 		}
 		
-		//todo: this needs to be made.
 		public function authorize_app()
 		{
 			$this->assertLoggedIn();
@@ -188,6 +190,8 @@
 				if (!$app->isActive())
 					throw new Exception("That application is not active.");
 
+				$this->setTitle("Authorize App - " . $app->getName());
+
 				//okay, save it!
 				$token->set('user_id', User::$me->id);
 				$token->set('verifier', mt_rand(0, 99999));
@@ -198,6 +202,7 @@
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('Authorize App - Error');
 				$this->set('megaerror', $e->getMessage());
 			}	
 		}

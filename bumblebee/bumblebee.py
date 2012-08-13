@@ -4,8 +4,8 @@ import multiprocessing
 import time
 
 config = {
-  'consumer_key' : '7f16659a9d83655c88e75e28b72223ca4e059b9b',
-  'consumer_secret' : '78743f8a1c35830b80e724a87431be0c19812e3a',
+  'consumer_key' : '4b99f7bb861ad3fab5b3d4a189c81c0b893c043f',
+  'consumer_secret' : 'c917f6ade3945e1acb9645dd1d7ee5d72993c6c9',
   'token_key' : '86125f53cad61d22b8390d1daf52c3b563107852',
   'token_secret' : '087c013a0b4f72cdbaa8bd1535f296690f3037b9'
 }
