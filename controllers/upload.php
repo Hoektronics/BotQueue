@@ -22,8 +22,7 @@
 		{
 			$this->assertLoggedIn();
 			
-			$queues = User::$me->getQueues()->getAll();
-			$this->set('queue', $queues[0]['Queue']);
+			$this->setTitle("Step 1 of 2: Upload File");
 		}
 		
 		public function uploader()
@@ -33,7 +32,7 @@
 			$this->setArg('label');
 
 			//where you want me go?
-			$redirect = "http://" . SITE_HOSTNAME . "/dispatcher.php?controller=upload&view=success&payload=$payload";
+			$redirect = "http://" . SITE_HOSTNAME . "/upload/success/$payload";
 			$acl = "public-read";
 			$expiration = gmdate("Y-m-d\TH:i:s\Z", strtotime("+1 day"));
 			
@@ -74,19 +73,16 @@
 			//handle our upload
 			try
 			{
+				//some basic error checking.
 				if (!preg_match('/gcode$/i', $this->args('key')))
-					throw new Exception("Only GCode files are allowed at this time.");
+					throw new Exception("Only .gcode files are allowed at this time.");
 
+				//make our file.
 				$info = $this->_lookupFileInfo();
-				
-				$queue = new Queue($payload['queue_id']);				
-				if (!$queue->canAdd())
-					throw new Exception("You don't have access to add a job to this queue.");
-				
 				$file = $this->_createS3File();
-				$job = $queue->addGCodeFile($file);
 				
-				$this->forwardToUrl($queue->getUrl());
+				//send us to step 2.
+				$this->forwardToUrl("/job/create/file:{$file->id}");
 			}
 			//did anything go wrong?
 			catch (Exception $e)
@@ -155,6 +151,7 @@
 	
 			//create new s3 file
 			$file = new S3File();
+			$file->set('user_id', User::$me->id);
 			$file->set('type', $info['type']);
 			$file->set('size', $info['size']);
 			$file->set('hash', $info['hash']);

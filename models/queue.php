@@ -76,7 +76,7 @@
 		{
 			$jobs = array();
 			
-			for ($i=0; $i++; $i<$qty)
+			for ($i=0; $i<$qty; $i++)
 			{
 				$job = new Job();
 				$job->set('user_id', User::$me->id);

@@ -79,7 +79,7 @@
 					$bot->save();
 					
 					//todo: send a confirmation email.
-					Activity::log("registered a new bot named " . $bot->getLink(), $bot);
+					Activity::log("registered a new bot named " . $bot->getLink());
 
 					$this->forwardToUrl($bot->getUrl());
 				}

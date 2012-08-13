@@ -65,6 +65,7 @@ RewriteRule ^queue:([0-9]+)$												dispatcher.php?controller=queue&view=vie
 
 #uploader
 RewriteRule ^upload$												dispatcher.php?controller=upload&view=home [NC,L]
+RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&view=success&payload=$1 [NC,L,QSA]
 
 #bot stuff.
 RewriteRule ^bots$												dispatcher.php?controller=bot&view=home [NC,L]
@@ -74,6 +75,7 @@ RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id
 #jobs stuff.
 RewriteRule ^jobs$												dispatcher.php?controller=job&view=home [NC,L]
 RewriteRule ^job:([0-9]+)$												dispatcher.php?controller=job&view=view&id=$1 [NC,L]
+RewriteRule ^job/create/file:([0-9]+)$												dispatcher.php?controller=job&view=create&file_id=$1 [NC,L]
 
 #help stuff.
 RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]

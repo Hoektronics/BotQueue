@@ -63,5 +63,61 @@
 		{
 			$this->setArg('jobs');
 		}
+
+		public function create()
+		{
+			$this->assertLoggedIn();
+			
+			if ($this->args('step2'))
+				$this->setTitle('Step 2 of 2: Create Job');
+			else
+				$this->setTitle('Create new Job');
+
+			//load up our queues.
+			$queues = User::$me->getQueues()->getAll();
+			foreach ($queues AS $row)
+			{
+				$q = $row['Queue'];
+				$data[$q->id] = $q->getName();
+			}
+			$this->set('queues', $data);
+				
+			try
+			{
+				$file = new S3File($this->args('file_id'));
+				if (!$file->isHydrated())
+					throw new Exception("That file does not exist.");
+				
+				if ($file->get('user_id') != User::$me->id)
+					throw new Exception("You do not have access to this file.");
+
+				$this->set('file', $file);
+					
+				if ($this->args('submit'))
+				{
+					//pull in our quantity
+					$quantity = (int)$this->args('quantity');
+					$quantity = max(1, $quantity);
+					$quantity = min(1000, $quantity);
+					
+					//queue error checking.
+					$queue = new Queue($this->args('queue_id'));
+					if (!$queue->isHydrated())
+						throw new Exception("That queue does not exist.");
+					if (!$queue->canAdd())
+						throw new Exception("You do not have permission to add to that queue.");
+					
+					//okay, we good?
+					$queue->addGCodeFile($file, $quantity);
+					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
+						
+					$this->forwardToUrl($queue->getUrl());
+				}
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}
+		}
 	}
 ?>
