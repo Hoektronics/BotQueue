@@ -7,9 +7,6 @@ v1 Release - Sep 1, 2012
 		* headers
 		* pagination
 
-  * Install
-  	* 100% working Amazon bootup script.
-
 	* Queue Functionality:
 		* reordering of job priorities
 		* view.statistics (% pass / fail, # of hours, etc)
@@ -20,7 +17,7 @@ v1 Release - Sep 1, 2012
 		* re-print job (duplicate job, same file)
 		* cancel job
 		* delete job
-		* job edit? - what does this consist of?
+		* edit job??
 		
 	* Bot areas
 		* toggle online/offline
@@ -34,6 +31,12 @@ v1 Release - Sep 1, 2012
 	* Add content to /help
 	* Add content to /app
 	* Create nice looking footer
+
+  * 100% working Amazon bootup script.
+
+  * SSL certificate for botqueue.
+		* self-signed for dev
+		* official / trusted
 
 * API
 	* verify that all calls in API V1 are implemented in python client (and functioning)
@@ -87,3 +90,5 @@ v2 Release
 * sqlite for local data storage
 * bot current status / mini-dashboard with machine vitals
 * grouping of jobs into batches or something?
+* simple script for installing botqueue onto a standalone ubuntu machine
+
