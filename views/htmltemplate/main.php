@@ -131,13 +131,28 @@
 <br><br><br><br>
 
 <!-- Footer -->
-<div class="footer">
-		&copy; <?= date("Y") ?> <a href="/"><?= COMPANY_NAME ?></a><br/>
-		This site is powered by <a href="http://www.botqueue.com">BotQueue</a>.<br/>
-		Generated in <?= round(microtime(true) - START_TIME, 3) ?> seconds.
-		
-		<?= Controller::$content_for['footer']; ?>
-</div>
+<hr>
+
+<footer>
+	<div class="row">
+		<div class="span6">
+			<h3>Links</h3>
+			<a href="/about">About</a><br/>
+			<a href="http://www.hoektronics.com">Blog</a><br/>
+			<a href="https://twitter.com/hoeken">Twitter</a><br/>
+			<a href="irc://irc.freenode.net/botqueue">Freenode #BotQueue</a><br/>
+			<a href="https://groups.google.com/d/forum/botqueue">Google Groups</a><br/>
+		</div>
+		<div class="span6">
+			<h3>Info</h3>
+			Made by <a href="http://www.zachhoeken.com">Zach Hoeken</a>. Send comments to <a href="mailto:zach@hoektronics.com">zach@hoektronics.com</a>.<br/>
+			Software licensed under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL v3.0</a>. Code at <a href="https://github.com/Hoektronics/BotQueue">GitHub</a>.<br/>
+			&copy; <?= date("Y") ?> <a href="http://www.hoektronics.com"><?= COMPANY_NAME ?></a>. Powered by <a href="http://www.botqueue.com">BotQueue</a>.<br/>
+			Generated in <?= round(microtime(true) - START_TIME, 3) ?> seconds.			
+		</div>
+	</div>
+	<br/>
+</footer>
 
 </div><!-- /container -->
 

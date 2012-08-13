@@ -2,8 +2,6 @@ v1 Release - Sep 1, 2012
 
 * Website:
 
-	* Create nice looking footer
-
   * Add activity logs to various job steps
 
 	* Job functionality
@@ -42,7 +40,9 @@ v1 Release - Sep 1, 2012
 
 * App
 
-	* local flat file for config storage (json?)
+	* read and write config.txt file as json to load config values.
+
+	* integrate authorize.py so it runs automatically on first run.
 
   * Some sort of inter-process communication system for telling worker processes what to do.
 		* stop+drop job
@@ -63,6 +63,8 @@ v1 Release - Sep 1, 2012
 	* Allow pausing / canceling of print jobs.
 	
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
+	
+	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
 
 v2 Release
 
