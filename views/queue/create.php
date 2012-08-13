@@ -6,7 +6,7 @@
  <input type="hidden" name="submit" value="1">
  <fieldset>
     <div class="control-group <?=$errorfields['name']?>">
-      <label class="control-label" for="iname">Text input</label>
+      <label class="control-label" for="iname">Queue Name</label>
       <div class="controls">
         <input type="text" class="input-xlarge" id="iname" name="name" value="<?=$name?>">
 				<? if ($errors['name']): ?>

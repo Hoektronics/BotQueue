@@ -231,5 +231,15 @@
 		{
 			return $this->getBasename();
 		}
+		
+		public function getUrl()
+		{
+			return $this->getRealUrl();
+		}
+		
+		public function getLink()
+		{
+			return '<a href="' . $this->getUrl() . '">' . $this->getName() . '</a>';
+		}
 	}
 ?>

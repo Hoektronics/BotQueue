@@ -38,11 +38,19 @@
 			//did we really get someone?
 			if (!$job->isHydrated())
 				$this->set('megaerror', "Could not find that job.");
+
+			$this->setTitle('View Job - ' . $job->getName());
 				
 			//errors?
 			if (!$this->get('megaerror'))
 			{
+				$this->setTitle('View Job - ' . $job->getName());
+
 				$this->set('job', $job);
+				$this->set('file', $job->getFile());
+				$this->set('queue', $job->getQueue());
+				$this->set('bot', $job->getBot());
+				$this->set('creator', $job->getUser());
 			}
 		}
 			

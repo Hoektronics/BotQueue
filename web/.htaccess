@@ -82,7 +82,7 @@ RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
 
 #help stuff.
-RewriteRule ^app$												dispatcher.php?controller=app&view=home [NC,L]
+RewriteRule ^apps$												dispatcher.php?controller=app&view=home [NC,L]
 
 #api v1.
 RewriteRule ^api/v1$												dispatcher.php?controller=apiv1&view=home [NC,L]

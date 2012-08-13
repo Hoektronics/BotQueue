@@ -30,28 +30,41 @@
 		{
 			$this->assertLoggedIn();
 			
-			try
+			$this->setTitle("Register your App");
+			
+			if ($this->args('submit'))
 			{
-				if ($this->args('submit'))
+				if (!$this->args('name'))
 				{
-					if (!$this->args('name'))
-						throw new Exception("You must enter a name.");
-					
+					$errors['name'] = 'You must enter a name.';
+					$errorfields['name'] = 'error';
+				}
+				if (!$this->args('app_url'))
+				{
+					$errors['app_url'] = 'You must enter an app URL.';
+					$errorfields['app_url'] = 'error';
+				}
+				
+				if (empty($errors))
+				{
+				
 					$app = new OAuthConsumer();
 					$app->set('name', $this->args('name'));
+					$app->set('app_url', $this->args('app_url'));
 					$app->set('user_id', User::$me->id);
 					$app->set('consumer_key', MyOAuthProvider::generateToken());
 					$app->set('consumer_secret', MyOAuthProvider::generateToken());
 					$app->set('active', 1);
 					$app->save();
-					
+				
 					$this->forwardToUrl($app->getUrl());
-				}				
-			}
-			catch (Exception $e)
-			{
-				$this->set('megaerror', $e->getMessage());
-			}
+				}
+				else
+				{
+					$this->set('errors', $errors);
+					$this->set('errorfields', $errorfields);
+				}
+			}				
 		}
 		
 		public function edit_app()
@@ -67,26 +80,40 @@
 					throw new Exception("You are not authorized to edit this app.");
 
 				$this->set('app', $app);
+				$this->setTitle('Edit App - ' . $app->getName());
 
 				if ($this->args('submit'))
 				{
 					if (!$this->args('name'))
 					{
-						$errors = array();
 						$errors['name'] = "You must enter a name.";
-						$this->set('errors', $errors);
+						$errorfields['name'] = 'error';
 					}
-					else
+					
+					if (!$this->args('app_url'))
+					{
+						$errors['app_url'] = "You must enter a url for the app.";
+						$errorfields['app_url'] = 'error';
+					}
+					
+					if (empty($errors))
 					{
 						$app->set('name', $this->args('name'));
 						$app->save();
 					
 						$this->forwardToUrl($app->getUrl());
 					}
+					else
+					{
+						$this->set('errors', $errors);
+						$this->set('errorfields', $errors);
+						$this->set('megaerror', "There was an error editing your app.");
+					}
 				}				
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('Edit App - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
 		}
@@ -122,6 +149,7 @@
 		{
 			$this->assertLoggedIn();
 
+
 			try
 			{
 				$app = new OAuthConsumer($this->args('app_id'));
@@ -130,10 +158,13 @@
 				if (!User::$me->isAdmin() && $app->get('user_id') != User::$me->id)
 					throw new Exception("You are not authorized to view this app.");
 
+				$this->setTitle("View App - " . $app->getName());
+
 				$this->set('app', $app);
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('View App - Error');
 				$this->set('megaerror', $e->getMessage());
 			}						
 		}
@@ -184,17 +215,21 @@
 				if (!User::$me->isAdmin() && $token->get('user_id') != User::$me->id)
 					throw new Exception("You are not authorized to delete this app.");
 
+				$app = $token->getConsumer();
+				$this->setTitle('Revoke App Permissions - ' . $app->getName());
+
 				$this->set('token', $token);
-				$this->set('app', $token->getConsumer());
+				$this->set('app', $app);
 
 				if ($this->args('submit'))
 				{
 					$token->delete();
-					$this->forwardToUrl("/api/v1");
+					$this->forwardToUrl("/apps");
 				}				
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('Error');
 				$this->set('megaerror', $e->getMessage());
 			}				
 		}

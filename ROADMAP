@@ -18,8 +18,8 @@ v1 Release - Sep 1, 2012
 		* select quantity after upload
 		* select queue after upload
 		* re-print job (duplicate job, same file)
-		* cancel/delete job
-		* job view
+		* cancel job
+		* delete job
 		* job edit? - what does this consist of?
 		
 	* Bot areas
@@ -31,10 +31,15 @@ v1 Release - Sep 1, 2012
 
   * Add activity logs to various job steps
 
+	* Add content to /help
+	* Add content to /app
+	* Create nice looking footer
+
 * API
 	* verify that all calls in API V1 are implemented in python client (and functioning)
 	* implement job creation via URL download
 	* implement job creation via HTTP file POST
+	* make sure we have CRUD for all operations
 
 * App
 
