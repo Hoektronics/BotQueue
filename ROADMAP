@@ -2,18 +2,11 @@ v1 Release - Sep 1, 2012
 
 * Website:
 
-  * Fully implement bootstrap
-		* forms
-		* headers
-		* pagination
+	* Create nice looking footer
 
-	* Queue Functionality:
-		* reordering of job priorities
-		* view.statistics (% pass / fail, # of hours, etc)
+  * Add activity logs to various job steps
 
 	* Job functionality
-		* select quantity after upload
-		* select queue after upload
 		* re-print job (duplicate job, same file)
 		* cancel job
 		* delete job
@@ -26,11 +19,14 @@ v1 Release - Sep 1, 2012
 		* delete page
 		* update last_seen whenever a bot does an activity.
 
-  * Add activity logs to various job steps
+	* Queue Functionality:
+		* reordering of job priorities
+		* view.statistics (% pass / fail, # of hours, etc)
+
+	* Add pagination to pages that need it (queue, activity, etc)
 
 	* Add content to /help
 	* Add content to /app
-	* Create nice looking footer
 
   * 100% working Amazon bootup script.
 

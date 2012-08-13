@@ -239,8 +239,6 @@
 			}				
 		}
 		
-		//TODO: split everything below into its own controller?  app registration vs API
-		
 		public function endpoint()
 		{
 			$provider = new MyOAuthProvider();

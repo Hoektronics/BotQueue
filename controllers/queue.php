@@ -77,6 +77,7 @@
 			//errors?
 			if (!$this->get('megaerror'))
 			{
+				$this->setTitle("View Queue - " . $q->getName());
 				$this->set('queue', $q);
 				$this->set('jobs', $q->getJobs()->getRange(0, 50));
 			}

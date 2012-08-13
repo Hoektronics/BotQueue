@@ -6,8 +6,8 @@ import time
 config = {
   'consumer_key' : '4b99f7bb861ad3fab5b3d4a189c81c0b893c043f',
   'consumer_secret' : 'c917f6ade3945e1acb9645dd1d7ee5d72993c6c9',
-  'token_key' : '86125f53cad61d22b8390d1daf52c3b563107852',
-  'token_secret' : '087c013a0b4f72cdbaa8bd1535f296690f3037b9'
+  'token_key' : 'ecfadaa22dfa54e6fb801e44ff5c04566f2582aa',
+  'token_secret' : 'b06af89a7dcc34f19c537ba68bf415c22348da91'
 }
 
 workerconfig = {
@@ -36,7 +36,7 @@ if (bots['status'] == 'success'):
     workers.append(link)
     time.sleep(0.5) # give us enough time to avoid contention when getting jobs.
 else:
-  print "Bot list failure."
+  print "Bot list failure: %s" % bots['error']
 
 for link in workers:
   link['process'].join()
