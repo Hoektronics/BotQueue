@@ -34,12 +34,15 @@
 		<table class="table table-striped table-bordered table-condensed">
 			<tbody>
 				<tr>
-					<th>Actions:</th>
+					<th>Manage:</th>
 					<td>
-						edit
-						cancel
-						delete
-						re-run
+						<? if ($job->get('status') == 'available'): ?>
+							<a href="<?=$job->getUrl()?>/edit">edit</a>
+						<? endif ?>
+						<? if ($job->get('status') != 'taken'): ?>
+							<a href="<?=$job->getUrl()?>/delete">delete</a>
+						<? endif ?>
+						<a href="/job/create/file:<?=$job->get('file_id')?>">re-run</a>
 					</td>
 				</tr>
 				<tr>

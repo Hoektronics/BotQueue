@@ -77,6 +77,9 @@ RewriteRule ^jobs$												dispatcher.php?controller=job&view=home [NC,L]
 RewriteRule ^job:([0-9]+)$												dispatcher.php?controller=job&view=view&id=$1 [NC,L]
 RewriteRule ^job/create/file:([0-9]+)$												dispatcher.php?controller=job&view=create&file_id=$1 [NC,L]
 
+#file stuff
+RewriteRule ^file:([0-9]+)$												dispatcher.php?controller=job&view=file&id=$1 [NC,L]
+
 #help stuff.
 RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
 

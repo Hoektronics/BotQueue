@@ -2,14 +2,10 @@ v1 Release - Sep 1, 2012
 
 * Website:
 
-  * Add activity logs to various job steps
-
 	* Job functionality
-		* re-print job (duplicate job, same file)
-		* cancel job
 		* delete job
-		* edit job??
-		
+		* edit job: change queue id
+				
 	* Bot areas
 		* toggle online/offline
 		* statistics (% pass / fail, # of hours, etc)
@@ -21,12 +17,22 @@ v1 Release - Sep 1, 2012
 		* reordering of job priorities
 		* view.statistics (% pass / fail, # of hours, etc)
 
+	* User
+		* tidy up user page
+
 	* Add pagination to pages that need it (queue, activity, etc)
 
 	* Add content to /help
 	* Add content to /app
 
+  * Add activity logs to various job steps
+		* who can see activity?
+		* make it look better (de-emphasize relative time)
+
   * 100% working Amazon bootup script.
+
+	* security / privacy audit on controller / views
+		* megaerror being followed?
 
   * SSL certificate for botqueue.
 		* self-signed for dev

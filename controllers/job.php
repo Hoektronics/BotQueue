@@ -53,6 +53,32 @@
 				$this->set('creator', $job->getUser());
 			}
 		}
+		
+		public function file()
+		{
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$file = new S3File($this->args('id'));
+
+				//did we really get someone?
+				if (!$file->isHydrated())
+					throw new Exception("Could not find that file.");
+				if ($file->get('user_id') != User::$me->id)
+					throw new Exception("You do not own that file.");
+			
+				$this->setTitle('View File - ' . $file->getName());
+
+				$this->set('file', $file);
+				$this->set('creator', $file->getUser());
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('View File - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
+		}
 			
 		public function draw_jobs()
 		{

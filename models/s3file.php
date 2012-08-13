@@ -234,12 +234,12 @@
 		
 		public function getUrl()
 		{
-			return $this->getRealUrl();
+			return "/file:{$this->id}";
 		}
 		
-		public function getLink()
+		public function getUser()
 		{
-			return '<a href="' . $this->getUrl() . '">' . $this->getName() . '</a>';
+			return new User($this->get('user_id'));
 		}
 	}
 ?>
