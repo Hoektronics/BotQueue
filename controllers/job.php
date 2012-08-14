@@ -53,6 +53,97 @@
 				$this->set('creator', $job->getUser());
 			}
 		}
+
+		public function edit()
+		{
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if ($job->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this job.");
+				if ($job->get('status') != 'available')
+					throw new Exception("You can only edit jobs that have not been taken yet.");
+
+				$this->setTitle('Edit Job - ' . $job->getName());
+				$this->set('job', $job);
+
+				//load up our queues.
+				$queues = User::$me->getQueues()->getAll();
+				foreach ($queues AS $row)
+				{
+					$q = $row['Queue'];
+					$data[$q->id] = $q->getName();
+				}
+				$this->set('queues', $data);
+				
+				if ($this->args('submit'))
+				{
+					$queue = new Queue($this->args('queue_id'));
+					if (!$queue->canAdd())
+						throw new Exception("That is not a valid queue.");
+					
+					$job->set('queue_id', $queue->id);
+					$job->save();
+					
+					$this->forwardToUrl($job->getUrl());
+				}
+				
+				//errors?
+				if (!$this->get('megaerror'))
+				{
+					$this->set('file', $job->getFile());
+					$this->set('queue', $job->getQueue());
+					$this->set('bot', $job->getBot());
+					$this->set('creator', $job->getUser());
+				}
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('View Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
+		}
+
+		public function delete()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if ($job->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this job.");
+				if ($job->get('status') == 'taken')
+					throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
+
+				$this->set('job', $job);
+				$this->setTitle('Delete Job - ' . $job->getName());
+
+				if ($this->args('submit'))
+				{
+					$job->delete();
+					
+					$this->forwardToUrl("/jobs");
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Delete Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
 		
 		public function file()
 		{

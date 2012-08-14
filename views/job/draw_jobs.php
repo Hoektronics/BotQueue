@@ -30,7 +30,15 @@
 					<? else: ?>
 						<td>n/a</td>
 					<?endif?>
-					<td>delete re-run</td>
+					<td>
+						<? if ($j->get('status') == 'available'): ?>
+							<a class="btn btn-mini" href="<?=$j->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
+						<? endif ?>
+						<? if ($j->get('status') != 'taken'): ?>
+							<a class="btn btn-mini" href="<?=$j->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
+						<? endif ?>
+						<a class="btn btn-mini" href="/job/create/file:<?=$j->get('file_id')?>"><i class="icon-repeat"></i> re-run</a>
+					</td>
 				</tr>
 			<?endforeach?>
 		</tbody>

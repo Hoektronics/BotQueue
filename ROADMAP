@@ -2,20 +2,16 @@ v1 Release - Sep 1, 2012
 
 * Website:
 
-	* Job functionality
-		* delete job
-		* edit job: change queue id
-				
+	* Queue Functionality:
+		* reordering of job priorities
+		* view.statistics (% pass / fail, # of hours, etc)
+
 	* Bot areas
 		* toggle online/offline
 		* statistics (% pass / fail, # of hours, etc)
 		* edit page
 		* delete page
 		* update last_seen whenever a bot does an activity.
-
-	* Queue Functionality:
-		* reordering of job priorities
-		* view.statistics (% pass / fail, # of hours, etc)
 
 	* User
 		* tidy up user page
@@ -43,6 +39,7 @@ v1 Release - Sep 1, 2012
 	* implement job creation via URL download
 	* implement job creation via HTTP file POST
 	* make sure we have CRUD for all operations
+	* modify file information in jobs to use $file->getAPIData()
 
 * App
 

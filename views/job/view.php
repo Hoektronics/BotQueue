@@ -37,12 +37,12 @@
 					<th>Manage:</th>
 					<td>
 						<? if ($job->get('status') == 'available'): ?>
-							<a href="<?=$job->getUrl()?>/edit">edit</a>
+							<a class="btn btn-mini" href="<?=$job->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
 						<? endif ?>
 						<? if ($job->get('status') != 'taken'): ?>
-							<a href="<?=$job->getUrl()?>/delete">delete</a>
+							<a class="btn btn-mini" href="<?=$job->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
 						<? endif ?>
-						<a href="/job/create/file:<?=$job->get('file_id')?>">re-run</a>
+						<a class="btn btn-mini" href="/job/create/file:<?=$job->get('file_id')?>"><i class="icon-repeat"></i> re-run</a>
 					</td>
 				</tr>
 				<tr>
