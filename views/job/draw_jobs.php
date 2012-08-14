@@ -3,6 +3,7 @@
 		<thead>
 			<tr>
 				<th></th>
+				<th>#</th>
 				<th>Name</th>
 				<th>Status</th>
 				<th>Elapsed</th>
@@ -17,6 +18,7 @@
 				<? $bot = $j->getBot() ?>
 				<tr id="job_<?=$j->id?>">
 					<td><i class="icon-resize-vertical"></i></td>
+					<td><?=$j->id?></td>
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getStatusHTML()?></td>
 					<td><?=$j->getElapsedText()?></td>

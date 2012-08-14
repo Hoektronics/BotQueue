@@ -26,7 +26,7 @@
 			{
 				$this->set('queues', User::$me->getQueues()->getRange(0, 10));
 				$this->set('bots', User::$me->getBots()->getRange(0, 10));
-				$this->set('jobs', User::$me->getJobs()->getRange(0, 10));
+				$this->set('jobs', User::$me->getJobs(null, 'user_sort', 'DESC')->getRange(0, 10));
       	$this->set('activities', Activity::getStream()->getRange(0, 11));
 			}
 		}

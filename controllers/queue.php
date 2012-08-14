@@ -79,7 +79,9 @@
 			{
 				$this->setTitle("View Queue - " . $q->getName());
 				$this->set('queue', $q);
-				$this->set('jobs', $q->getJobs()->getRange(0, 50));
+				$this->set('active', $q->getActiveJobs()->getRange(0, 20));
+				$this->set('complete', $q->getJobs('complete', 'user_sort', 'DESC')->getRange(0, 20));
+				$this->set('failure', $q->getJobs('failure', 'user_sort', 'DESC')->getRange(0, 20));
 			}
 		}
 		

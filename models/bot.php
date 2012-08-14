@@ -77,13 +77,17 @@
 			return new Job($this->get('job_id'));
 		}
 		
-		public function getJobs()
+		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
+			if ($status !== null)
+				$statusSql = " AND status = '{$status}'";
+				
 			$sql = "
 				SELECT id
 				FROM jobs
 				WHERE bot_id = {$this->id}
-				ORDER BY user_sort ASC
+					{$statusSql}
+				ORDER BY {$sortField} {$sortOrder}
 			";
 			return new Collection($sql, array('Job' => 'id'));
 		}

@@ -109,7 +109,7 @@
 				$this->set('bot', $bot);
 				$this->set('queue', $bot->getQueue());
 				$this->set('job', $bot->getCurrentJob());
-				$this->set('jobs', $bot->getJobs()->getRange(0, 50));
+				$this->set('jobs', $bot->getJobs(null, 'user_sort', 'DESC')->getRange(0, 50));
 			}
 		}
 			

@@ -299,7 +299,7 @@
 			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
 		}
 
-		public function getJobs($status = null)
+		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
 				$statusSQL = " AND status = '{$status}'";
@@ -308,8 +308,8 @@
 				SELECT id
 				FROM jobs
 				WHERE user_id = {$this->id}
-					{$statusSQL}
-				ORDER BY user_sort ASC
+					{$statusSql}
+				ORDER BY {$sortField} {$sortOrder}
 			";
 
 			return new Collection($sql, array('Job' => 'id'));

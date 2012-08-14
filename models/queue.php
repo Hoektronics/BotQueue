@@ -57,7 +57,7 @@
 			return "/queue:" . $this->id;
 		}
 		
-		public function getJobs($status = null)
+		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
 				$statusSql = " AND status = '{$status}'";
@@ -67,9 +67,21 @@
 				FROM jobs
 				WHERE queue_id = '{$this->id}'
 					{$statusSql}
-				ORDER BY user_sort ASC
+				ORDER BY {$sortField} {$sortOrder}
 			";
 			return new Collection($sql, array('Job' => 'id'));
+		}
+		
+		public function getActiveJobs($sortField = 'user_sort', $sortOrder = 'ASC')
+		{
+			$sql = "
+				SELECT id
+				FROM jobs
+				WHERE queue_id = '{$this->id}'
+					AND status IN ('available', 'taken')
+				ORDER BY {$sortField} {$sortOrder}
+			";
+			return new Collection($sql, array('Job' => 'id'));			
 		}
 		
 		public function addGCodeFile($file, $qty = 1)
