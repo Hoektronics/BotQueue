@@ -309,7 +309,7 @@
 				FROM jobs
 				WHERE user_id = {$this->id}
 					{$statusSQL}
-				ORDER BY name
+				ORDER BY user_sort ASC
 			";
 
 			return new Collection($sql, array('Job' => 'id'));

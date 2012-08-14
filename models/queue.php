@@ -57,7 +57,7 @@
 			return "/queue:" . $this->id;
 		}
 		
-		public function getJobs($status = null, $order = null)
+		public function getJobs($status = null)
 		{
 			if ($status !== null)
 				$statusSql = " AND status = '{$status}'";
@@ -67,7 +67,7 @@
 				FROM jobs
 				WHERE queue_id = '{$this->id}'
 					{$statusSql}
-				ORDER BY user_sort, id DESC
+				ORDER BY user_sort ASC
 			";
 			return new Collection($sql, array('Job' => 'id'));
 		}
@@ -78,6 +78,8 @@
 			
 			for ($i=0; $i<$qty; $i++)
 			{
+				$sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+				
 				$job = new Job();
 				$job->set('user_id', User::$me->id);
 				$job->set('queue_id', $this->id);
@@ -85,6 +87,7 @@
 				$job->set('name', $file->get('path'));
 				$job->set('status', 'available');
 				$job->set('created', date("Y-m-d H:i:s"));
+				$job->set('user_sort', $sort);
 				$job->save();
 
 				$jobs[] = $job;

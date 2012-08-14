@@ -83,7 +83,7 @@
 				SELECT id
 				FROM jobs
 				WHERE bot_id = {$this->id}
-				ORDER BY end
+				ORDER BY user_sort ASC
 			";
 			return new Collection($sql, array('Job' => 'id'));
 		}

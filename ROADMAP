@@ -3,7 +3,8 @@ v1 Release - Sep 1, 2012
 * Website:
 
 	* Queue Functionality:
-		* reordering of job priorities
+		* verify that we're on FIFO
+		* update views so we're sorting properly (show latest first)
 		* view.statistics (% pass / fail, # of hours, etc)
 
 	* Bot areas

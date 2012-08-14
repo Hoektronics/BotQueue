@@ -97,8 +97,12 @@ class Model
 	 */
 	public function set($name, $value)
 	{
-		$this->dirtyFields[$name] = 1;
-		$this->data[$name] = $value;
+		//its not dirty if its the same.
+		if ($this->data[$name] !== $value)
+		{
+			$this->dirtyFields[$name] = 1;
+			$this->data[$name] = $value;
+		}
 	}
 
 	/**

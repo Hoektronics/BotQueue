@@ -83,6 +83,50 @@
 			}
 		}
 		
+		//ajax function
+		public function update_sort()
+		{
+			$this->assertLoggedIn();
+			
+			if (!$this->args('jobs'))
+				die("Error: You didn't pass any jobs in.");
+				
+			$jobs = explode(",", $this->args('jobs'));
+			if (count($jobs) < 1)
+				die("Error: You need to pass in at least 2 jobs.");
+				
+			//load up our ids.
+			$jids = array();
+			foreach ($jobs AS $job)
+			{
+				$jarray = explode("_", $job);
+				$jid = (int)$jarray[1];
+				if (!$jid)
+					die("Error: format must be a csv of job_### where ### is the job id.");
+				$jids[] = $jid;
+			}
+			
+			//find our our current max
+			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" . implode($jids, ",") . ")";
+			$min = (int)db()->getValue($sql);
+			
+			//now actually update.
+			foreach ($jids AS $jid)
+			{
+				$job = new Job($jid);
+				if ($job->get('user_id') == User::$me->id)
+				{
+					$job->set('user_sort', $min);
+					$job->save();
+					$min++;
+				}
+				else
+					die("Error: Job {$jid} is not your job.");
+			}
+
+			die("OK");
+		}
+		
 		public function draw_queues()
 		{
 			$this->setArg('queues');
