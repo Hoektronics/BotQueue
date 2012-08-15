@@ -115,11 +115,40 @@
 				$this->set('job', $bot->getCurrentJob());
 				$this->set('jobs', $bot->getJobs(null, 'user_sort', 'DESC')->getRange(0, 50));
 				$this->set('stats', $bot->getStats());
+				$this->set('owner', $bot->getUser());
 			}
 			catch (Exception $e)
 			{
 				$this->set('megaerror', $e->getMessage());
 				$this->setTitle("View Bot - Error");
+			}
+		}
+
+		public function set_status()
+		{
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+				if ($bot->get('status') == 'working' && $this->args('status') == 'offline')
+					throw new Exception("You cannot take a working bot offline through the web interface.  Use the client app instead.");
+				
+				$bot->set('status', $this->args('status'));
+				$bot->save();
+				
+				$this->forwardToUrl($bot->getUrl());
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("Change Bot Status - Error");
 			}
 		}
 			

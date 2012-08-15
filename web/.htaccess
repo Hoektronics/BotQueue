@@ -71,6 +71,9 @@ RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&vi
 RewriteRule ^bots$												dispatcher.php?controller=bot&view=home [NC,L]
 RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
+RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=edit&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
 
 #jobs stuff.
 RewriteRule ^jobs$												dispatcher.php?controller=job&view=home [NC,L]

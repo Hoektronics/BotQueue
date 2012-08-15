@@ -3,7 +3,6 @@ v1 Release - Sep 1, 2012
 * Website:
 
 	* Bot areas
-		* toggle online/offline
 		* edit page
 		* delete page
 		* update last_seen whenever a bot does an activity.
