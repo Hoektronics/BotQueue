@@ -138,7 +138,7 @@
 				SELECT sum(start - created) as wait, sum(end - start) as runtime, sum(end - created) as total
 				FROM jobs
 				WHERE status = 'complete'
-							AND queue_id = {$this->id}
+					AND queue_id = {$this->id}
 			";
 
 			$stats = db()->getArray($sql);

@@ -95,21 +95,31 @@
 		
 		public function view()
 		{
-			//how do we find them?
-			if ($this->args('id'))
-				$bot = new Bot($this->args('id'));
-
-			//did we really get someone?
-			if (!$bot->isHydrated())
-				$this->set('megaerror', "Could not find that bot.");
-				
-			//errors?
-			if (!$this->get('megaerror'))
+			try
 			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+				
+				$this->setTitle("View Bot - " . $bot->getName());
+				
+				//errors?
 				$this->set('bot', $bot);
 				$this->set('queue', $bot->getQueue());
 				$this->set('job', $bot->getCurrentJob());
 				$this->set('jobs', $bot->getJobs(null, 'user_sort', 'DESC')->getRange(0, 50));
+				$this->set('stats', $bot->getStats());
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("View Bot - Error");
 			}
 		}
 			

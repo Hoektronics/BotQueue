@@ -4,7 +4,6 @@ v1 Release - Sep 1, 2012
 
 	* Bot areas
 		* toggle online/offline
-		* statistics (% pass / fail, # of hours, etc)
 		* edit page
 		* delete page
 		* update last_seen whenever a bot does an activity.
