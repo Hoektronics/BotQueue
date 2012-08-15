@@ -1,0 +1,1 @@
+<input type="hidden" id="<?=$field->id?>" name="<?=$field->name?>" value="<?=$field->getValue()?>"/>

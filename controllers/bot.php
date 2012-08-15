@@ -156,5 +156,114 @@
 		{
 			$this->setArg('bots');
 		}
+		
+		public function edit()
+		{
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+
+				$this->setTitle('Edit Bot - ' . $bot->getName());
+
+				//load up our form.
+				$form = $this->_createBotForm($bot);
+				$form->action = $bot->getUrl() . "/edit";
+
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+					$bot->set('queue_id', $form->data('queue_id'));
+					$bot->set('name', $form->data('name'));
+					$bot->set('manufacturer', $form->data('manufacturer'));
+					$bot->set('model', $form->data('model'));
+					$bot->set('electronics', $form->data('electronics'));
+					$bot->set('firmware', $form->data('firmware'));
+					$bot->set('extruder', $form->data('extruder'));
+					$bot->set('status', 'idle');
+					$bot->save();
+				
+					$this->forwardToUrl($bot->getUrl());						
+				}
+				
+				$this->set('form', $form);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("Bot Edit - Error");
+			}			
+		}
+		
+		private function _createBotForm($bot)
+		{
+			//load up our queues.
+			$queues = User::$me->getQueues()->getAll();
+			foreach ($queues AS $row)
+			{
+				$q = $row['Queue'];
+				$qs[$q->id] = $q->getName();
+			}
+
+			$form = new Form();
+			
+			$form->add(new TextField(array(
+				'name' => 'name',
+				'label' => 'Bot Name',
+				'help' => 'What should humans call your bot?',
+				'required' => true,
+				'value' => $bot->get('name')
+			)));
+			
+			$form->add(new SelectField(array(
+				'name' => 'queue_id',
+				'label' => 'Queue',
+				'help' => 'Which queue does this bot pull jobs from?',
+				'required' => true,
+				'value' => $bot->get('queue_id'),
+				'options' => $qs
+			)));
+
+			$form->add(new TextField(array(
+				'name' => 'manufacturer',
+				'label' => 'Manufacturer',
+				'help' => 'Which company (or person) built your bot?',
+				'required' => true,
+				'value' => $bot->get('manufacturer')
+			)));
+
+			$form->add(new TextField(array(
+				'name' => 'model',
+				'label' => 'Model',
+				'help' => 'What is the model or name of your bot design?',
+				'required' => true,
+				'value' => $bot->get('model')
+			)));
+
+			$form->add(new TextField(array(
+				'name' => 'electronics',
+				'label' => 'Electronics',
+				'help' => 'What electronics are you using to control your bot?',
+				'required' => true,
+				'value' => $bot->get('electronics')
+			)));
+
+			$form->add(new TextField(array(
+				'name' => 'firmware',
+				'label' => 'Firmware',
+				'help' => 'What firmware are you running on your electronics?',
+				'required' => true,
+				'value' => $bot->get('firmware')
+			)));
+			
+			return $form;
+		}
 	}
 ?>

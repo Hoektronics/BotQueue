@@ -18,26 +18,34 @@
 
 	class FormController extends Controller
 	{
-		private function _global()
+		public function vertical_form()
 		{
-			$this->setArg('name');
-			$this->setArg('value');
-			$this->setArg('error');
-
-			$id = $this->args('id');
-			if ($id)
-				$this->set('id', "id=\"$id\"");
-								
-			$onchange = $this->args('onchange');
-			if ($onchange)
-				$this->set('onchange', "onchange=\"$onchange\"");
+			$this->_form();
 		}
-	
+		
+		public function hiddenfield()
+		{
+			$this->_field();
+		}
+
+		public function textfield()
+		{
+			$this->_field();
+		}
+
 		public function selectfield()
 		{
-			$this->_global();
-			
-			$this->setArg('options');
+			$this->_field();
+		}
+
+		private function _form()
+		{
+			$this->setArg('form');
+		}
+
+		private function _field()
+		{
+			$this->setArg('field');
 		}
 	}
 ?>

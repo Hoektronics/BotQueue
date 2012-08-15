@@ -23,6 +23,7 @@ v1 Release - Sep 1, 2012
 
 	* security / privacy audit on controller / views
 		* megaerror being followed?
+		* assertLoggedIn() being used
 
   * SSL certificate for botqueue.
 		* self-signed for dev
@@ -45,6 +46,8 @@ v1 Release - Sep 1, 2012
 		* stop+drop job
 		* online / offline
 		* stop process
+		
+	* Method for website to communicate state change to active clients (ie: bot.offline -> bot.online)
 		
 	* some sort of flow to resolve bots in a bad state.
 
@@ -79,11 +82,12 @@ v2 Release
 
 * Slicers + Profiles
 * Pull in files from internet (Thingiverse, GrabCAD, etc)
-* Remove/lower Amazon requirements for non-amazon / non-public installs.
-* Private jobs.
+* Reduce Amazon requirements for non-amazon / non-public installs.
+* Private jobs?
 * Add public / private queues.  Default to private.
 * sqlite for local data storage
 * bot current status / mini-dashboard with machine vitals
 * grouping of jobs into batches or something?
 * simple script for installing botqueue onto a standalone ubuntu machine
+* full page statistics for bot / queue with graphs
 
