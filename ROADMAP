@@ -2,9 +2,6 @@ v1 Release - Sep 1, 2012
 
 * Website:
 
-	* Queue Functionality:
-		* view.statistics (% pass / fail, # of hours, etc)
-
 	* Bot areas
 		* toggle online/offline
 		* statistics (% pass / fail, # of hours, etc)

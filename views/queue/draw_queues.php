@@ -3,10 +3,10 @@
 		<thead>
 			<tr>
 				<th>Name</th>
-				<th>Available</th>
-				<th>Working</th>
-				<th>Completed</th>
-				<th>Failed</th>
+				<th colspan="2">Available</th>
+				<th colspan="2">Working</th>
+				<th colspan="2">Completed</th>
+				<th colspan="2">Failed</th>
 				<th>Total</th>
 			</tr>
 		</thead>
@@ -17,9 +17,13 @@
 				<tr>
 					<td><?=$q->getLink()?></td>
 					<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span></td>
+					<td><?= round($stats['available_pct'], 2)?>%</td>
 					<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span></td>
+					<td><?= round($stats['taken_pct'], 2)?>%</td>
 					<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span></td>
+					<td><?= round($stats['complete_pct'], 2)?>%</td>
 					<td><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$stats['failure'] ?></span></td>
+					<td><?= round($stats['failure_pct'], 2)?>%</td>
 					<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
 				</tr>
 			<?endforeach?>

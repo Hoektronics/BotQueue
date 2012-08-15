@@ -2,19 +2,64 @@
 	<div class="megaerror"><?=$megaerror?></div>
 <? else: ?>
 	<div class="row">
-		<div class="span12">
+		<div class="span8">
 			<h3>Active Jobs</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $active))?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="span6">
 			<h3>Completed Jobs</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $complete))?>
-		</div>
-		<div class="span6">
 			<h3>Failed Jobs</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $failure))?>
+		</div>
+		<div class="span4">
+			<h3>Statistics</h3>
+			<table class="table table-striped table-bordered table-condensed">
+				<tbody>
+					<tr>
+						<th>Total Wait Time</th>
+						<td><?= Utility::getElapsed($stats['total_waittime'])?></td>
+					</tr>
+					<tr>
+						<th>Total Run Time</th>
+						<td><?= Utility::getElapsed($stats['total_runtime'])?></td>
+					</tr>
+					<tr>
+						<th>Total Overall Time</th>
+						<td><?= Utility::getElapsed($stats['total_time'])?></td>
+					</tr>
+					<tr>
+						<th>Average Wait Time</th>
+						<td><?= Utility::getElapsed($stats['avg_waittime'])?></td>
+					</tr>
+					<tr>
+						<th>Average Run Time</th>
+						<td><?= Utility::getElapsed($stats['avg_runtime'])?></td>
+					</tr>
+					<tr>
+						<th>Average Overall Time</th>
+						<td><?= Utility::getElapsed($stats['avg_time'])?></td>
+					</tr>
+					<tr>
+						<th>Available Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span> (<?= round($stats['available_pct'], 2)?>%)</td>
+					</tr>
+					<tr>
+						<th>Taken Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span> (<?= round($stats['taken_pct'], 2)?>%)</td>
+					</tr>
+					<tr>
+						<th>Complete Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span> (<?= round($stats['complete_pct'], 2)?>%)</td>
+					</tr>
+					<tr>
+						<th>Failed Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$stats['failure'] ?></span> (<?= round($stats['failure_pct'], 2)?>%)</td>
+					</tr>
+					<tr>
+						<th>Total Jobs</th>
+						<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 <? endif ?>

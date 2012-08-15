@@ -121,12 +121,35 @@
 			$stats = db()->getArray($sql);
 			if (!empty($stats))
 			{
+				//load up our stats
 				foreach ($stats AS $row)
 				{
 					$data[$row['status']] = $row['cnt'];
 					$data['total'] += $row['cnt'];
 				}
+				
+				//calculate percentages
+				foreach ($stats AS $row)
+					$data[$row['status'] . '_pct'] = ($row['cnt'] / $data['total']) * 100;
 			}
+			
+			//pull in our time based stats.
+			$sql = "
+				SELECT sum(start - created) as wait, sum(end - start) as runtime, sum(end - created) as total
+				FROM jobs
+				WHERE status = 'complete'
+							AND queue_id = {$this->id}
+			";
+
+			$stats = db()->getArray($sql);
+			
+			$data['total_waittime'] = (int)$stats[0]['wait'];
+			$data['total_runtime'] = (int)$stats[0]['runtime'];
+			$data['total_time'] = (int)$stats[0]['total'];
+			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
+			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
+			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+
 			return $data;
 		}
 	}
