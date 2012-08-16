@@ -201,7 +201,42 @@
 				$this->setTitle("Bot Edit - Error");
 			}			
 		}
-		
+
+		public function delete()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if ($bot->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this bot.");
+				if ($bot->get('status') == 'working')
+					throw new Exception("You cannot delete bots that are currently working.  First, use the client software to cancel the job and then delete the bot.");
+
+				$this->set('bot', $bot);
+				$this->setTitle('Delete Bot - ' . $bot->getName());
+
+				if ($this->args('submit'))
+				{
+					$bot->delete();
+					
+					$this->forwardToUrl("/bots");
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Delete Bot - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
+				
 		private function _createBotForm($bot)
 		{
 			//load up our queues.

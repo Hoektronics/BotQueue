@@ -578,6 +578,9 @@
 			$job->set('progress', (float)$this->args('progress'));
 			$job->save();
 			
+			$bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->save();
+			
 			return $job->getAPIData();
 		}
 
@@ -630,6 +633,10 @@
 			$jobs = $bot->getQueue()->getJobs('available')->getRange(0, 1);
 			if (!empty($jobs))
 				$data = $jobs[0]['Job']->getAPIData();
+			
+			//record our bot as having checked in.
+			$bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->save();
 			
 			return $data;			
 		}

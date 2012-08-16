@@ -129,6 +129,7 @@
 			
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');
+			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
 		
@@ -149,6 +150,7 @@
 			
 			$this->set('job_id', 0);
 			$this->set('status', 'idle');
+			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
 
@@ -169,6 +171,7 @@
 			
 			$this->set('job_id', 0);
 			$this->set('status', 'idle');
+			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
 		
@@ -220,6 +223,18 @@
 			$data['avg_time'] = $stats[0]['total'] / $data['total'];
 
 			return $data;
+		}
+		
+		public function delete()
+		{
+			//delete our jobs.
+			$jobs = $this->getJobs()->getAll();
+			foreach ($jobs AS $row)
+			{
+				$row['Job']->delete();
+			}
+			
+			parent::delete();
 		}
 	}
 ?>

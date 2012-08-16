@@ -39,6 +39,12 @@
 			//did we really get someone?
 			if (!$user->isHydrated())
 				$this->set('megaerror', "Could not find that user.");
+
+			//set our title.
+			if ($user->isMe())
+				$this->setTitle("Welcome, " . $user->getName());
+			else
+				$this->setTitle("About " . $user->getName());
 				
 			//errors?
 			if (!$this->get('megaerror'))
@@ -50,8 +56,6 @@
 				$collection = $user->getActivityStream();
 				$this->set('activities', $collection->getRange(0, 25));
 				$this->set('activity_total', $collection->count());
-				
-				$this->setSidebar(Controller::byName('user')->renderView('sidebar', array('user' => $user)));
 			}
 		}
 

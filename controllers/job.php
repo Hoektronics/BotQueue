@@ -189,15 +189,6 @@
 				$this->setTitle('Step 2 of 2: Create Job');
 			else
 				$this->setTitle('Create new Job');
-
-			//load up our queues.
-			$queues = User::$me->getQueues()->getAll();
-			foreach ($queues AS $row)
-			{
-				$q = $row['Queue'];
-				$data[$q->id] = $q->getName();
-			}
-			$this->set('queues', $data);
 				
 			try
 			{
@@ -209,16 +200,21 @@
 					throw new Exception("You do not have access to this file.");
 
 				$this->set('file', $file);
+
+				//load up our form.
+				$form = $this->_createJobForm($file);
+				$form->action = "/job/create/file:{$file->id}";
 					
-				if ($this->args('submit'))
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
 				{
 					//pull in our quantity
-					$quantity = (int)$this->args('quantity');
+					$quantity = (int)$form->data('quantity');
 					$quantity = max(1, $quantity);
 					$quantity = min(1000, $quantity);
 					
 					//queue error checking.
-					$queue = new Queue($this->args('queue_id'));
+					$queue = new Queue($form->data('queue_id'));
 					if (!$queue->isHydrated())
 						throw new Exception("That queue does not exist.");
 					if (!$queue->canAdd())
@@ -230,11 +226,50 @@
 						
 					$this->forwardToUrl($queue->getUrl());
 				}
+				
+				$this->set('form', $form);
 			}
 			catch (Exception $e)
 			{
 				$this->set('megaerror', $e->getMessage());
 			}
+		}
+		
+		private function _createJobForm($file)
+		{
+			//load up our queues.
+			$queues = User::$me->getQueues()->getAll();
+			foreach ($queues AS $row)
+			{
+				$q = $row['Queue'];
+				$qs[$q->id] = $q->getName();
+			}
+
+			$form = new Form();
+			
+			$form->add(new DisplayField(array(
+				'label' => 'File',
+				'help' => 'The file that will be printed.',
+				'value' => $file->getLink()
+			)));
+			
+			$form->add(new SelectField(array(
+				'name' => 'queue_id',
+				'label' => 'Queue',
+				'help' => 'Which queue are you adding this job to?',
+				'required' => true,
+				'options' => $qs
+			)));		
+			
+			$form->add(new TextField(array(
+				'name' => 'quantity',
+				'label' => 'Quantity',
+				'help' => 'How many copies? Minimum 1, Maximum 100',
+				'required' => true,
+				'value' => 1
+			)));
+		
+			return $form;
 		}
 	}
 ?>

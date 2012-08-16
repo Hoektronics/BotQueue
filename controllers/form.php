@@ -38,6 +38,11 @@
 			$this->_field();
 		}
 
+		public function displayfield()
+		{
+			$this->_field();
+		}
+
 		private function _form()
 		{
 			$this->setArg('form');

@@ -187,4 +187,14 @@
 			parent::__construct($opts);
 		}
 	}
+	
+	class DisplayField extends FormField
+	{		
+		public function validate($data)
+		{
+			$this->hasError = false;
+
+			return true;
+		}
+	}
 ?>
