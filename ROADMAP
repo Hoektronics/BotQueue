@@ -2,17 +2,13 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
-	* Pagination:
-		* Add pagination to pages that need it (queue, activity, etc)
-		* Update pagination controller / view to use bootstrap
-
-	* Add content to /help
-	* Add content to /app
-
   * Add activity logs to various job steps
 		* who can see activity?
 		* make it look better (de-emphasize relative time)
 		* add icons?
+
+	* Add content to /help
+	* Add content to /app
 
   * 100% working Amazon bootup script.
 

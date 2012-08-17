@@ -23,7 +23,14 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Queues");
-			$this->set('queues', User::$me->getQueues()->getRange(0, 100));
+			$collection = User::$me->getQueues();
+      $per_page = 20;
+      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+      $this->set('per_page', $per_page);
+      $this->set('total', $collection->count());
+      $this->set('page', $page);
+      $this->set('queues', $collection->getPage($page, $per_page));
 		}
 		
 		public function create()
@@ -73,15 +80,31 @@
 			//did we really get someone?
 			if (!$q->isHydrated())
 				$this->set('megaerror', "Could not find that queue.");
+			if (!$q->isMine())
+				$this->set('megaerror', "You do not have permission to view this queue.");
 				
 			//errors?
 			if (!$this->get('megaerror'))
 			{
 				$this->setTitle("View Queue - " . $q->getName());
 				$this->set('queue', $q);
-				$this->set('active', $q->getActiveJobs()->getRange(0, 20));
-				$this->set('complete', $q->getJobs('complete', 'user_sort', 'DESC')->getRange(0, 20));
-				$this->set('failure', $q->getJobs('failure', 'user_sort', 'DESC')->getRange(0, 20));
+
+				$available = $q->getJobs('available', 'user_sort', 'DESC');
+				$this->set('available', $available->getRange(0, 20));
+				$this->set('available_count', $available->count());
+				
+				$taken = $q->getJobs('taken', 'user_sort', 'DESC');
+				$this->set('taken', $taken->getRange(0, 20));
+				$this->set('taken_count', $taken->count());
+				
+				$complete = $q->getJobs('complete', 'user_sort', 'DESC');
+				$this->set('complete', $complete->getRange(0, 20));
+				$this->set('complete_count', $complete->count());
+				
+				$failure = $q->getJobs('failure', 'user_sort', 'DESC');
+				$this->set('failure', $failure->getRange(0, 20));
+				$this->set('failure_count', $failure->count());
+				
 				$this->set('stats', $q->getStats());
 			}
 		}
@@ -128,6 +151,65 @@
 			}
 
 			die("OK");
+		}
+
+		public function listjobs()
+		{
+			$this->assertLoggedIn();
+			
+			try
+			{
+				//did we get a queue?
+				$queue = new Queue($this->args('id'));
+				if (!$queue->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if (!$queue->isMine())
+					throw new Exception("You do not have permission to view this queue.");
+				$this->set('queue', $queue);
+
+				//what sort of jobs to view?
+				$status = $this->args('status');
+				if ($status == 'available')
+				{
+					$this->setTitle($queue->getName() . "'s Available Jobs");
+					$collection = $queue->getJobs($status);
+				}
+				else if ($status == 'taken')
+				{
+					$this->setTitle($queue->getName() . "'s Working Jobs");
+					$collection = $queue->getJobs($status);
+				}
+				else if ($status == 'complete')
+				{
+					$this->setTitle($queue->getName() . "'s Finished Jobs");
+					$collection = $queue->getJobs($status);
+				}
+				else if ($status == 'failure')
+				{
+					$this->setTitle($queue->getName() . "'s Failed Jobs");
+					$collection = $queue->getJobs($status);	
+				}
+				else if ($status == 'all')
+				{
+					$this->setTitle($queue->getName() . "'s Jobs");
+					$collection = $queue->getJobs(null);
+				}
+				else				
+					throw new Exception("That is not a valid status!");
+				
+	      $per_page = 20;
+	      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+	      $this->set('per_page', $per_page);
+	      $this->set('total', $collection->count());
+	      $this->set('page', $page);
+	      $this->set('jobs', $collection->getPage($page, $per_page));	
+				$this->set('status', $status);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 		
 		public function draw_queues()

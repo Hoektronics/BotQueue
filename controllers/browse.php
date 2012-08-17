@@ -59,12 +59,18 @@
 			$this->setArg('page');
 			$this->setArg('base_url');
 			$this->setArg('fragment');
+			
+			$total_pages = ceil($this->get('total') / $per_page);
+			$min_page = max(1, $this->args('page') - 5);
+			$max_page = min($total_pages, $this->args('page') + 5);
 
 			//send new vars.
 			$this->set('per_page', $per_page);
 			$this->set('prev_page', $this->get('page') - 1);
 			$this->set('next_page', $this->get('page') + 1);
-			$this->set('max_page', ceil($this->get('total') / $per_page));
+			$this->set('total_pages', $total_pages);
+			$this->set('min_page', $min_page);
+			$this->set('max_page', $max_page);
 			$this->set('fragment', $this->get('fragment'));
 		}
 	}

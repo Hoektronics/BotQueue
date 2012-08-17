@@ -3,12 +3,33 @@
 <? else: ?>
 	<div class="row">
 		<div class="span8">
-			<h3>Active Jobs</h3>
+			<h3>
+				Available Jobs
+				:: 1-<?=min(10, $available_count)?> of <?=$available_count?> :: <a href="<?=$queue->getUrl()?>/jobs/available">see all</a>
+			</h3>
+			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $available))?>
+			<br/><br/>
+
+			<h3>
+				Working Jobs
+				:: 1-<?=min(10, $taken_count)?> of <?=$taken_count?> :: <a href="<?=$queue->getUrl()?>/jobs/taken">see all</a>
+			</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $active))?>
-			<h3>Completed Jobs</h3>
+			<br/><br/>
+			
+			<h3>
+				Completed Jobs
+				:: 1-<?=min(10, $complete_count)?> of <?=$complete_count?> :: <a href="<?=$queue->getUrl()?>/jobs/complete">see all</a>
+			</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $complete))?>
-			<h3>Failed Jobs</h3>
+			<br/><br/>
+			
+			<h3>
+				Failed Jobs
+				:: 1-<?=min(10, $failure_count)?> of <?=$failure_count?> :: <a href="/jobs/failure">see all</a>
+			</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $failure))?>
+
 		</div>
 		<div class="span4">
 			<h3>Statistics</h3>

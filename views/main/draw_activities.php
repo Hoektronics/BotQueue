@@ -1,14 +1,18 @@
 <? if (!empty($activities)): ?>
 	<table class="table table-striped table-bordered table-condensed">
+		<thead>
+			<th>Who</th>
+			<th>What</th>
+			<th>When</th>
+		</thead>
 		<tbody>
 			<? foreach ($activities AS $row): ?>
 				<? $user = $row['User'] ?>
 				<? $activity = $row['Activity'] ?>
 				<tr>
-					<td valign="top" align="left">
-						<?= $user->getLink() ?> <?= $activity->get('activity') ?>
-						<?= Utility::getTimeAgo($activity->get('action_date')) ?>
-					</td>
+					<td><?= $user->getLink() ?></td>
+					<td><?= $activity->get('activity') ?></td>
+					<td><?= Utility::getTimeAgo($activity->get('action_date')) ?></td>
 				</tr>
 			<? endforeach ?>
 		</tbody>

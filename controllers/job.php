@@ -23,10 +23,57 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Jobs");
-			$this->set('available', User::$me->getJobs('available')->getRange(0, 10));
-			$this->set('taken', User::$me->getJobs('taken')->getRange(0, 10));
-			$this->set('complete', User::$me->getJobs('complete')->getRange(0, 10));
-			$this->set('failure', User::$me->getJobs('failure')->getRange(0, 10));
+			
+			$available = User::$me->getJobs('available');
+			$this->set('available', $available->getRange(0, 10));
+			$this->set('available_count', $available->count());
+			
+			$taken = User::$me->getJobs('taken');
+			$this->set('taken', $taken->getRange(0, 10));
+			$this->set('taken_count', $taken->count());
+			
+			$complete = User::$me->getJobs('complete');
+			$this->set('complete', $complete->getRange(0, 10));
+			$this->set('complete_count', $complete->count());
+			
+			$failure = User::$me->getJobs('failure');
+			$this->set('failure', $failure->getRange(0, 10));
+			$this->set('failure_count', $failure->count());
+		}
+		
+		public function listjobs()
+		{
+			$this->assertLoggedIn();
+			
+			$status = $this->args('status');
+
+			try
+			{
+				if ($status == 'available')
+					$this->setTitle(User::$me->getName() . "'s Available Jobs");
+				else if ($status == 'taken')
+					$this->setTitle(User::$me->getName() . "'s Working Jobs");
+				else if ($status == 'complete')
+					$this->setTitle(User::$me->getName() . "'s Finished Jobs");
+				else if ($status == 'failure')
+					$this->setTitle(User::$me->getName() . "'s Failed Jobs");
+				else
+					throw new Exception("That is not a valid status!");
+				
+				$collection = User::$me->getJobs($status);
+	      $per_page = 20;
+	      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+	      $this->set('per_page', $per_page);
+	      $this->set('total', $collection->count());
+	      $this->set('page', $page);
+	      $this->set('jobs', $collection->getPage($page, $per_page));	
+				$this->set('status', $status);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 
 		public function view()

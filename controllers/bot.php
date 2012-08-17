@@ -23,7 +23,15 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Bots");
-			$this->set('bots', User::$me->getBots()->getRange(0, 20));
+
+			$collection = User::$me->getBots();
+      $per_page = 20;
+      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+      $this->set('per_page', $per_page);
+      $this->set('total', $collection->count());
+      $this->set('page', $page);
+      $this->set('bots', $collection->getPage($page, $per_page));
 		}
 
 		public function register()

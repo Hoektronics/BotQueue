@@ -24,10 +24,21 @@
 			
 			if (User::isLoggedIn())
 			{
-				$this->set('queues', User::$me->getQueues()->getRange(0, 10));
-				$this->set('bots', User::$me->getBots()->getRange(0, 10));
-				$this->set('jobs', User::$me->getJobs(null, 'user_sort', 'DESC')->getRange(0, 10));
-      	$this->set('activities', Activity::getStream()->getRange(0, 11));
+				$queues = User::$me->getQueues();
+				$this->set('queues', $queues->getRange(0, 10));
+				$this->set('queue_count', $queues->count());
+
+				$bots = User::$me->getBots();
+				$this->set('bots', $bots->getRange(0, 10));
+				$this->set('bot_count', $bots->count());
+
+				$jobs = User::$me->getJobs(null, 'user_sort', 'DESC');
+				$this->set('jobs', $jobs->getRange(0, 10));
+				$this->set('job_count', $jobs->count());
+				
+				$activities = Activity::getStream();
+      	$this->set('activities', $activities->getRange(0, 10));
+				$this->set('activity_count', $activities->count());
 			}
 		}
 		
@@ -36,7 +47,7 @@
 			$this->setTitle('Activity Log');
 			
 			$collection = Activity::getStream();
-      $per_page = 25;
+      $per_page = 20;
       $page = $collection->putWithinBounds($this->args('page'), $per_page);
     
       $this->set('per_page', $per_page);

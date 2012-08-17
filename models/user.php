@@ -308,7 +308,7 @@
 				SELECT id
 				FROM jobs
 				WHERE user_id = {$this->id}
-					{$statusSql}
+					{$statusSQL}
 				ORDER BY {$sortField} {$sortOrder}
 			";
 

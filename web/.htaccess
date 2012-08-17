@@ -59,16 +59,17 @@ RewriteRule ^user:([0-9]+)/resetpass:([0-9a-zA-Z]{40})$					dispatcher.php?contr
 RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?$						dispatcher.php?controller=user&view=activity&id=$1&page=$3 [NC,L]
 
 #queue stuff.
-RewriteRule ^queues$												dispatcher.php?controller=queue&view=home [NC,L]
+RewriteRule ^queues(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=home&page=$2 [NC,L]
 RewriteRule ^queue/create$												dispatcher.php?controller=queue&view=create [NC,L]
 RewriteRule ^queue:([0-9]+)$												dispatcher.php?controller=queue&view=view&id=$1 [NC,L]
+RewriteRule ^queue:([0-9]+)/jobs/(available|taken|failure|complete)(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=listjobs&id=$1&status=$2&page=$4 [NC,L]
 
 #uploader
 RewriteRule ^upload$												dispatcher.php?controller=upload&view=home [NC,L]
 RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&view=success&payload=$1 [NC,L,QSA]
 
 #bot stuff.
-RewriteRule ^bots$												dispatcher.php?controller=bot&view=home [NC,L]
+RewriteRule ^bots(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=home&page=$2 [NC,L]
 RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
@@ -77,6 +78,7 @@ RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=
 
 #jobs stuff.
 RewriteRule ^jobs$												dispatcher.php?controller=job&view=home [NC,L]
+RewriteRule ^jobs/(available|taken|failure|complete)(/page:([0-9]+))?$												dispatcher.php?controller=job&view=listjobs&status=$1&page=$3 [NC,L]
 RewriteRule ^job:([0-9]+)$												dispatcher.php?controller=job&view=view&id=$1 [NC,L]
 RewriteRule ^job:([0-9]+)/edit$												dispatcher.php?controller=job&view=edit&id=$1 [NC,L]
 RewriteRule ^job:([0-9]+)/delete$												dispatcher.php?controller=job&view=delete&id=$1 [NC,L]

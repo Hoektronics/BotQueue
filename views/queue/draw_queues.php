@@ -14,6 +14,13 @@
 			<? foreach ($queues AS $row): ?>
 				<? $q = $row['Queue'] ?>
 				<? $stats = $q->getStats() ?>
+				<?
+					$total['available'] += $stats['available'];
+					$total['taken'] += $stats['taken'];
+					$total['complete'] += $stats['complete'];
+					$total['failure'] += $stats['failure'];
+					$total['total'] += $stats['total'];
+				?>
 				<tr>
 					<td><?=$q->getLink()?></td>
 					<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span></td>
@@ -27,6 +34,20 @@
 					<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
 				</tr>
 			<?endforeach?>
+			<? if (count($queues) > 1): ?>
+				<tr>
+					<th>Total</th>
+					<th><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$total['available'] ?></span></th>
+					<th><?= round(($total['available'] / $total['total'])*100, 2)?>%</th>
+					<th><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$total['taken'] ?></span></th>
+					<th><?= round(($total['taken'] / $total['total'])*100, 2)?>%</th>
+					<th><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$total['complete'] ?></span></th>
+					<th><?= round(($total['complete'] / $total['total'])*100, 2)?>%</th>
+					<th><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$total['failure'] ?></span></th>
+					<th><?= round(($total['failure'] / $total['total'])*100, 2)?>%</th>
+					<th><span class="label label-inverse"><?= (int)$total['total'] ?></span></th>
+				</tr>
+			<? endif ?>
 		</tbody>
 	</table>
 <? else: ?>
