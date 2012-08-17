@@ -127,7 +127,10 @@
 	</div>
 	<div class="row">
 		<div class="span12">
-			<h3>Jobs</h3>
+			<h3>
+				Jobs
+				:: 1-<?=min(10, $job_count)?> of <?=$job_count?> :: <a href="<?=$bot->getUrl()?>/jobs">see all</a>
+			</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $jobs)) ?>
 		</div>
 	</div>

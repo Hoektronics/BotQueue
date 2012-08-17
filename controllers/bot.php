@@ -121,7 +121,10 @@
 				$this->set('bot', $bot);
 				$this->set('queue', $bot->getQueue());
 				$this->set('job', $bot->getCurrentJob());
-				$this->set('jobs', $bot->getJobs(null, 'user_sort', 'DESC')->getRange(0, 50));
+
+				$jobs = $bot->getJobs(null, 'user_sort', 'DESC');
+				$this->set('jobs', $jobs->getRange(0, 50));
+				$this->set('job_count', $jobs->count());
 				$this->set('stats', $bot->getStats());
 				$this->set('owner', $bot->getUser());
 			}
@@ -243,6 +246,40 @@
 				$this->setTitle('Delete Bot - Error');
 				$this->set('megaerror', $e->getMessage());
 			}			
+		}
+
+		public function listjobs()
+		{
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+				$this->set('bot', $bot);
+				
+				$this->setTitle("Bot Jobs - " . $bot->getName());
+				
+				$collection = $bot->getJobs();
+	      $per_page = 20;
+	      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+	      $this->set('per_page', $per_page);
+	      $this->set('total', $collection->count());
+	      $this->set('page', $page);
+	      $this->set('jobs', $collection->getPage($page, $per_page));	
+				$this->set('status', $status);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("View Bot - Error");
+			}
 		}
 				
 		private function _createBotForm($bot)
