@@ -58,7 +58,7 @@
 					$q->save();
 					
 					//todo: send a confirmation email.
-					Activity::log("created a new queue named " . $q->getLink());
+					Activity::log("created a new queue named " . $q->getLink() . ".");
 
 					$this->forwardToUrl($q->getUrl());
 				}

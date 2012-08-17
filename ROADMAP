@@ -2,11 +2,6 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
-  * Add activity logs to various job steps
-		* who can see activity?
-		* make it look better (de-emphasize relative time)
-		* add icons?
-
 	* Add content to /help
 	* Add content to /app
 
@@ -26,6 +21,7 @@ v1 Release - Goal: Sep 1, 2012
 	* implement job creation via HTTP file POST
 	* make sure we have CRUD for all operations
 	* modify file information in jobs to use $file->getAPIData()
+	* move all app calls to app controller.
 
 * App
 

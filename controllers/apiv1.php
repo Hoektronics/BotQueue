@@ -56,6 +56,8 @@
 					$app->set('consumer_secret', MyOAuthProvider::generateToken());
 					$app->set('active', 1);
 					$app->save();
+					
+					Activity::log("registered a new app named " . $app->getLink() . ".");
 				
 					$this->forwardToUrl($app->getUrl());
 				}
@@ -102,6 +104,8 @@
 						$app->set('app_url', $this->args('app_url'));
 						$app->save();
 					
+						Activity::log("edited the app named " . $app->getLink() . ".");
+
 						$this->forwardToUrl($app->getUrl());
 					}
 					else
@@ -136,6 +140,8 @@
 
 				if ($this->args('submit'))
 				{
+					Activity::log("deleted the app named <strong>" . $app->getName() . "</strong>.");
+
 					$app->delete();
 					
 					$this->forwardToUrl("/apps");
@@ -197,6 +203,8 @@
 				$token->set('verifier', mt_rand(0, 99999));
 				$token->save();
 				
+				Activity::log("installed the app named " . $app->getLink() . ".");
+
 				$this->set('token', $token);
 				$this->set('app', $app);
 			}
@@ -228,6 +236,8 @@
 
 				if ($this->args('submit'))
 				{
+					Activity::log("removed the app named " . $app->getLink() . ".");
+
 					$token->delete();
 					$this->forwardToUrl("/apps");
 				}				
@@ -373,6 +383,8 @@
 			$q->set('name', $this->args('name'));
 			$q->set('user_id', User::$me->id);
 			$q->save();
+
+			Activity::log("created a queue named " . $q->getLink() . " via the API.");
 			
 			return $q->getAPIData();
 		}
@@ -426,6 +438,8 @@
 			{
 				throw new Exception("Unknown job creation method.");
 			}
+
+			Activity::log("created " count($jobs) . " new " Utility::pluralizeWord('job', count($jobs)) . " via the API.");
 			
 			$data = array();
 			if (!empty($jobs))
@@ -484,6 +498,8 @@
 			$data = array();
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
+
+			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " job via the API.");
 			
 			return $data;
 		}
@@ -508,6 +524,8 @@
 				throw new Exception("You cannot drop this job.");
 				
 			$bot->dropJob($job);
+
+			Activity::log($bot->getLink() . " bot dropped the " . $job->getLink() . " job via the API.");
 			
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
@@ -526,6 +544,8 @@
 
 			if (!$job->canDelete($job))
 				throw new Exception("You cannot delete this job.");
+
+			Activity::log("cancelled the <strong>" . $job->getName() . "</strong> job via the API.");
 				
 			$job->cancelJob();
 
@@ -552,6 +572,8 @@
 				throw new Exception("You cannot complete this job.");
 				
 			$bot->completeJob($job);
+
+			Activity::log($bot->getLink() . " bot completed the " . $job->getLink() . " job via the API.");
 			
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
@@ -663,6 +685,8 @@
 			$bot->set('extruder', $this->args('extruder'));
 			$bot->set('status', 'idle');
 			$bot->save();
+
+			Activity::log("registered the new bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
 		}
@@ -693,6 +717,8 @@
 			$bot->set('firmware', $this->args('firmware'));
 			$bot->set('extruder', $this->args('extruder'));
 			$bot->save();
+
+			Activity::log("updated the bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
 		}
@@ -708,6 +734,8 @@
 
 			$bot->set('status', $this->args('status'));
 			$bot->save();
+
+			Activity::log("updated the status of the bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
 		}

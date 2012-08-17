@@ -151,6 +151,11 @@
 				if ($bot->get('status') == 'working' && $this->args('status') == 'offline')
 					throw new Exception("You cannot take a working bot offline through the web interface.  Use the client app instead.");
 				
+				if ($this->args('status') == 'offline')
+					Activity::log("took the bot " . $bot->getLink() . " offline.");
+				else
+					Activity::log("brought the bot " . $bot->getLink() . " online.");
+
 				$bot->set('status', $this->args('status'));
 				$bot->save();
 				
@@ -200,6 +205,8 @@
 					$bot->set('extruder', $form->data('extruder'));
 					$bot->set('status', 'idle');
 					$bot->save();
+
+					Activity::log("edited the bot " . $bot->getLink() . ".");
 				
 					$this->forwardToUrl($bot->getUrl());						
 				}
@@ -236,6 +243,8 @@
 
 				if ($this->args('submit'))
 				{
+					Activity::log("deleted the bot <strong>" . $bot->getName() . "</strong>.");
+
 					$bot->delete();
 					
 					$this->forwardToUrl("/bots");

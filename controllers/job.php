@@ -137,6 +137,8 @@
 					
 					$job->set('queue_id', $queue->id);
 					$job->save();
+
+					Activity::log("edited the job " . $job->getLink() . ".");
 					
 					$this->forwardToUrl($job->getUrl());
 				}
@@ -180,6 +182,8 @@
 
 				if ($this->args('submit'))
 				{
+					Activity::log("deleted the job <strong>" . $job->getName() . "</strong>.");
+
 					$job->delete();
 					
 					$this->forwardToUrl("/jobs");

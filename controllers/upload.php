@@ -80,6 +80,8 @@
 				//make our file.
 				$info = $this->_lookupFileInfo();
 				$file = $this->_createS3File();
+
+				Activity::log("uploaded a new file called " . $file->getLink() . ".");
 				
 				//send us to step 2.
 				$this->forwardToUrl("/job/create/file:{$file->id}");
