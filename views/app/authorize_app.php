@@ -20,7 +20,7 @@
 		<div class="span6">
 			<div class="alert alert-block alert-error">
 			  <h4 class="alert-heading">Deny it:</h4>
-				<a href="/api/v1/revoke?token=<?=$token->get('token')?>&submit=1">Click here</a>, or just ignore this page and no access will be granted.
+				<a href="/app/revoke/<?=$token->get('token')?>?submit=1">Click here</a>, or just ignore this page and no access will be granted.
 			</div>
 		</div>
 <? endif ?>

@@ -95,16 +95,17 @@ RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
 
 #help stuff.
-RewriteRule ^apps$											          	dispatcher.php?controller=app&view=home [NC,L]
-RewriteRule ^app/register$												dispatcher.php?controller=app&view=register_app [NC,L]
-RewriteRule ^app:([0-9]+)$										dispatcher.php?controller=app&view=view_app&app_id=$1 [NC,L]
-RewriteRule ^app:([0-9]+)/edit$							dispatcher.php?controller=app&view=edit_app&app_id=$1 [NC,L]
-RewriteRule ^app:([0-9]+)/delete$						dispatcher.php?controller=app&view=delete_app&app_id=$1 [NC,L]
+RewriteRule ^apps$											        dispatcher.php?controller=app&view=home [NC,L]
+RewriteRule ^app/register$											dispatcher.php?controller=app&view=register_app [NC,L]
+RewriteRule ^app:([0-9]+)$										  dispatcher.php?controller=app&view=view_app&app_id=$1 [NC,L]
+RewriteRule ^app:([0-9]+)/edit$							    dispatcher.php?controller=app&view=edit_app&app_id=$1 [NC,L]
+RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=delete_app&app_id=$1 [NC,L]
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
-RewriteRule ^app/revoke/([0-9a-fA-F]+)$											  	dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L]
+RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
 
 #api v1.
-RewriteRule ^api/v1/endpoint$												apiv1.php [NC,L,QSA]
+RewriteRule ^api/v1$												    dispatcher.php?controller=app&view=home [NC,L]
+RewriteRule ^api/v1/endpoint$										apiv1.php [NC,L,QSA]
 
 #username wildcard pages.  must be at the very end to avoid conflicting with other pages
 RewriteRule ^([-_a-zA-Z0-9]+)$											dispatcher.php?controller=user&view=profile&username=$1 [NC,L]

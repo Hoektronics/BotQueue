@@ -2,7 +2,7 @@
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? endif ?>
 
-<form class="form-horizontal" method="post" autocomplete="off" action="/api/v1/register">
+<form class="form-horizontal" method="post" autocomplete="off" action="/app/register">
  <input type="hidden" name="submit" value="1">
  <fieldset>
    <div class="control-group <?=$errorfields['name']?>">
