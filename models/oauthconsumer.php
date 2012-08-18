@@ -20,7 +20,7 @@
 		
 		public function getUrl()
 		{
-			return '/api/v1/app:' . $this->id;
+			return '/app:' . $this->id;
 		}
 		
 		public function getName()

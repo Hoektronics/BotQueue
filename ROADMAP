@@ -16,12 +16,12 @@ v1 Release - Goal: Sep 1, 2012
 		* official / trusted (need to get emails setup!)
 
 * API
+	* move all app calls to app controller.
+	* make sure we have CRUD for all operations
 	* verify that all calls in API V1 are implemented in python client (and functioning)
 	* implement job creation via URL download
 	* implement job creation via HTTP file POST
-	* make sure we have CRUD for all operations
 	* modify file information in jobs to use $file->getAPIData()
-	* move all app calls to app controller.
 
 * App
 

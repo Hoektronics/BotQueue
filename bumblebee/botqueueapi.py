@@ -4,7 +4,7 @@ import json
 
 class BotQueueAPI():
   
-  authorize_url = 'http://www.botqueue.com/api/v1/authorize'
+  authorize_url = 'http://www.botqueue.com/app/authorize'
   endpoint_url = 'http://www.botqueue.com/api/v1/endpoint'
   
   #todo: 2 constructors, or a separate call to setToken()?

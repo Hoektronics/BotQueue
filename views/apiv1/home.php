@@ -17,7 +17,7 @@
 
 				<tr>
 					<td><?=$a->getLink()?></td>
-					<td><a href="/api/v1/revoke?token=<?=$t->get('token')?>">revoke</a></td>
+					<td><a href="/apps/revoke/<?=$t->get('token')?>">revoke</a></td>
 				</tr>
 			<? endforeach ?>
 		</tbody>
