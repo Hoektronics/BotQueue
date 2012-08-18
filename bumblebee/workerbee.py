@@ -4,16 +4,24 @@ import tempfile
 import urllib2
 import os
 import sys
+import hive
+import botqueueapi
 
 class WorkerBee():
   
   data = {}
   
-  def __init__(self, api, config, data):
-    self.api = api
-    self.config = config
+  def __init__(self, data):
+
+    self.global_config = hive.config.get()
+    for row in self.global_config['workers']:
+      if row['name'] == data['name']:
+        self.config = row
+
+    self.api = botqueueapi.BotQueueAPI(self.global_config['app']['consumer_key'], self.global_config['app']['consumer_secret'])
+    self.api.setToken(self.global_config['app']['token_key'], self.global_config['app']['token_secret'])
     self.data = data
-    self.driver = self.driverFactory(config)
+    self.driver = self.driverFactory()
     self.startup()
 
   def startup(self):
@@ -39,7 +47,7 @@ class WorkerBee():
   def log(self, message):
     print "%s: %s" % (self.data['name'], message)
 
-  def driverFactory(self, config):
+  def driverFactory(self):
     if (self.config['driver'] == 's3g'):
       return drivers.S3GDriver(self.config);
     elif (self.config['driver'] == 'passthru'):
@@ -62,6 +70,7 @@ class WorkerBee():
         self.processJob()
       else: #we're either error, maintenance, or offline... wait until that changes
         time.sleep(10) # sleep for a second to not hog resources
+        self.getOurInfo()
         self.log("waiting for bot to be fixed")
 
   def getOurInfo(self):

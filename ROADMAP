@@ -17,13 +17,12 @@ v1 Release - Goal: Sep 1, 2012
 
 * API
 	* make sure we have CRUD for all operations
+	* verify that all calls in API V1 are implemented in python client (and functioning)
 
 * App
 
-	* verify that all calls in API V1 are implemented in python client (and functioning)
-	* read and write config.txt file as json to load config values.
-
-	* integrate authorize.py so it runs automatically on first run.
+	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
+	* integrate authorize.py so it runs automatically on first run (or on auth related errors)
 
   * Some sort of inter-process communication system for telling worker processes what to do.
 		* stop+drop job
@@ -47,7 +46,6 @@ v1 Release - Goal: Sep 1, 2012
 	
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 	
-	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
 
 v2 Release - unknown date
 
