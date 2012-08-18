@@ -16,15 +16,11 @@ v1 Release - Goal: Sep 1, 2012
 		* official / trusted (need to get emails setup!)
 
 * API
-	* move all app calls to app controller.
 	* make sure we have CRUD for all operations
-	* verify that all calls in API V1 are implemented in python client (and functioning)
-	* implement job creation via URL download
-	* implement job creation via HTTP file POST
-	* modify file information in jobs to use $file->getAPIData()
 
 * App
 
+	* verify that all calls in API V1 are implemented in python client (and functioning)
 	* read and write config.txt file as json to load config values.
 
 	* integrate authorize.py so it runs automatically on first run.
@@ -80,3 +76,7 @@ v2 Release - unknown date
 * simple script for installing botqueue onto a standalone ubuntu machine
 * full page statistics for bot / queue with graphs
 * user area - figure out public / private stuff.
+
+* API
+	* implement job creation via URL download
+	* implement job creation via HTTP file POST

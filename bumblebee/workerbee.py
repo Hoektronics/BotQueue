@@ -21,12 +21,13 @@ class WorkerBee():
     
     #we shouldn't startup in a working or completed state... that implies some sort of error.
     if (self.data['status'] == 'working' or self.data['status'] == 'finished'):
-      result = self.api.cancelJob(self.data['job_id'])
-      self.log("Cancelling job.")
+      print self.data['job']['id']
+      result = self.api.dropJob(self.data['job']['id'])
+      self.log("Dropping existing job.")
       if (result['status'] == 'success'):
-          self.job = result['data']
+        self.getOurInfo()
       else:
-        raise Exception("Unable to clear stale job.")
+        raise Exception("Unable to clear stale job: %s" % result['error'])
 
     #connect to our driver.
     try:
@@ -62,6 +63,14 @@ class WorkerBee():
       else: #we're either error, maintenance, or offline... wait until that changes
         time.sleep(10) # sleep for a second to not hog resources
         self.log("waiting for bot to be fixed")
+
+  def getOurInfo(self):
+    self.log("Looking for new job.")
+    result = self.api.getBotInfo(self.data['id'])
+    if (result['status'] == 'success'):
+      self.data = result['data']
+    else:
+      raise Exception("Error looking up our info: %s" % result['error'])
       
   def getNewJob(self):
     self.log("Looking for new job.")
@@ -84,12 +93,12 @@ class WorkerBee():
   def downloadJob(self):
 
     #load up our url and request params
-    request = urllib2.Request(self.job['file'])
+    request = urllib2.Request(self.job['file']['url'])
     #request.add_header('User-agent', 'Chrome XXX')
     urlfile = urllib2.urlopen(request)
     self.jobFile = tempfile.NamedTemporaryFile()
 
-    self.log("downloading %s." % self.job['file'])
+    self.log("downloading %s." % self.job['file']['url'])
 
     #todo: don't forget to check the sha1 hash.
     self.fileSize = 0

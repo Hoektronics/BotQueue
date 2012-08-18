@@ -241,5 +241,17 @@
 		{
 			return new User($this->get('user_id'));
 		}
+		
+		public function getAPIData()
+		{
+			$d = array();
+			$d['id'] = $this->id;
+			$d['name'] = $this->getName();
+			$d['url'] = $this->getRealUrl();
+			$d['type'] = $this->get('type');
+			$d['md5'] = $this->get('hash');
+
+			return $d;
+		}
 	}
 ?>

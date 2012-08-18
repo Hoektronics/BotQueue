@@ -44,6 +44,10 @@
 			$r['model'] = $this->get('model');
 			$r['status'] = $this->get('status');
 			$r['last_seen'] = $this->get('last_seen');
+			
+			$job = $this->getCurrentJob();
+			if ($job->isHydrated())
+				$r['job'] = $job->getAPIData();
 
 			return $r;
 		}
@@ -135,7 +139,7 @@
 		
 		public function canDrop($job)
 		{
-			if ($job->get('bot_id') == $this->id && ($job->get('status') == 'working' || $job->get('status') == 'failure'))
+			if ($job->get('bot_id') == $this->id && ($job->get('status') == 'taken' || $job->get('status') == 'failure'))
 				return true;
 			else
 				return false;

@@ -75,7 +75,7 @@
 			$d['id'] = $this->id;
 			$d['name'] = $this->getName();
 			$d['queue'] = $this->get('queue_id');
-			$d['file'] = $this->getFile()->getRealUrl();
+			$d['file'] = $this->getFile()->getAPIData();
 			$d['status'] = $this->get('status');
 			$d['start'] = $this->get('start');
 			$d['end'] = $this->get('end');

@@ -49,7 +49,7 @@ try:
         if (len(jobs['data'])):
           print "\tJob Id, Name, Status"
           for job in jobs['data']:
-            print "\t%d, %s, %s, %s" % (int(job['id']), job['name'], job['status'], job['file'])
+            print "\t%d, %s, %s, %s" % (int(job['id']), job['name'], job['status'], job['file']['name'])
       else:
         print "\tget jobs failed."
   else:
