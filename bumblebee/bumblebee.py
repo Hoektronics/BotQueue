@@ -5,38 +5,44 @@ import time
 import hive
 
 def loadbot(pipe, data):
-  print "Loading bot %s" % data['name']
-  worker = workerbee.WorkerBee(data)
-  worker.run();
+  try:
+    print "Loading bot %s" % data['name']
+    worker = workerbee.WorkerBee(data)
+    worker.run();
+  except KeyboardInterrupt as e:
+    print "Bot %s exiting from keyboard interrupt." % data['name']
 
 def main():
   
-  workers = []
   config = hive.config.get()
-  
   hive.debug.pprint(config)
 
-  wb = botqueueapi.BotQueueAPI(config['app']['consumer_key'], config['app']['consumer_secret'])
-  wb.setToken(config['app']['token_key'], config['app']['token_secret'])
-  bots = wb.listBots()
-  if (bots['status'] == 'success'):
-    for row in bots['data']:
+  wb = botqueueapi.BotQueueAPI()
+
+  try:
+    workers = []
+    bots = wb.listBots()
+    if (bots['status'] == 'success'):
+      for row in bots['data']:
       
-      if (isOurBot(row)):
-        parent_conn, child_conn = multiprocessing.Pipe()
-        p = multiprocessing.Process(target=loadbot, args=(child_conn,row,))
-        p.start()
-        link = { 'process' : p, 'pipe' : parent_conn }
-        workers.append(link)
-        time.sleep(0.5) # give us enough time to avoid contention when getting jobs.
-      else:
-        hive.log("Skipping bot %s" % row['name'])
-  else:
-    print "Bot list failure: %s" % bots['error']
+        if (isOurBot(row)):
+          parent_conn, child_conn = multiprocessing.Pipe()
+          p = multiprocessing.Process(target=loadbot, args=(child_conn,row,))
+          p.start()
+          link = { 'process' : p, 'pipe' : parent_conn }
+          workers.append(link)
+          time.sleep(0.5) # give us enough time to avoid contention when getting jobs.
+        else:
+          hive.log("Skipping bot %s" % row['name'])
+    else:
+      print "Bot list failure: %s" % bots['error']
 
-  for link in workers:
-    link['process'].join()
+    for link in workers:
+      link['process'].join()
+  except KeyboardInterrupt as e:
+    pass
 
+  
 def isOurBot(bot):
   config = hive.config.get()
 

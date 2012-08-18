@@ -1,6 +1,8 @@
 import urlparse
 import oauth2 as oauth
 import json
+import hive
+import webbrowser
 
 class BotQueueAPI():
   
@@ -8,8 +10,14 @@ class BotQueueAPI():
   endpoint_url = 'http://www.botqueue.com/api/v1/endpoint'
   
   #todo: 2 constructors, or a separate call to setToken()?
-  def __init__(self, consumer_key, consumer_secret):
-    self.consumer = oauth.Consumer(consumer_key, consumer_secret)
+  def __init__(self):
+    config = hive.config.get()
+
+    self.consumer = oauth.Consumer(config['app']['consumer_key'], config['app']['consumer_secret'])
+    if config['app']['token_key']:
+      self.setToken(config['app']['token_key'], config['app']['token_secret'])
+    else:
+      self.authorize()
 
   def setToken(self, token_key, token_secret):
     self.token = oauth.Token(token_key, token_secret)
@@ -72,6 +80,45 @@ class BotQueueAPI():
       return result['data']
     else:
       raise Exception("Error converting token: %s" % result['error'])
+
+  def authorize(self  ):
+    try:
+      # Step 1: Get a request token. This is a temporary token that is used for 
+      # having the user authorize an access token and to sign the request to obtain 
+      # said access token.
+      result = self.requestToken();
+
+      # Step 2: Redirect to the provider. Since this is a CLI script we do not 
+      # redirect. In a web application you would redirect the user to the URL
+      # below.
+      print
+      print "Go to the following link in your browser: %s" % self.getAuthorizeUrl()
+      print 
+      webbrowser.open_new(self.getAuthorizeUrl())
+  
+      # After the user has granted access to you, the consumer, the provider will
+      # redirect you to whatever URL you have told them to redirect to. You can 
+      # usually define this in the oauth_callback argument as well.
+      accepted = 'n'
+      while accepted.lower() == 'n':
+          accepted = raw_input('Have you authorized me? (y/n) ')
+      oauth_verifier = raw_input('What is the PIN? ')
+
+      # Step 3: Once the consumer has redirected the user back to the oauth_callback
+      # URL you can request the access token the user has approved. You use the 
+      # request token to sign this request. After this is done you throw away the
+      # request token and use the access token returned. You should store this 
+      # access token somewhere safe, like a database, for future use.
+      self.convertToken(oauth_verifier)
+    
+      config = hive.config.get()
+      config['app']['token_key'] = self.token.key
+      config['app']['token_secret'] = self.token.secret
+      hive.config.save(config)
+
+    except Exception as ex:
+      print "There was a problem authorizing the app: %s" % (ex)
+      raise RuntimeError("There was a problem authorizing the app: %s" % (ex))
 
   def listQueues(self):
     return self.apiCall('listqueues')

@@ -18,8 +18,7 @@ class WorkerBee():
       if row['name'] == data['name']:
         self.config = row
 
-    self.api = botqueueapi.BotQueueAPI(self.global_config['app']['consumer_key'], self.global_config['app']['consumer_secret'])
-    self.api.setToken(self.global_config['app']['token_key'], self.global_config['app']['token_secret'])
+    self.api = botqueueapi.BotQueueAPI()
     self.data = data
     self.driver = self.driverFactory()
     self.startup()
@@ -126,23 +125,26 @@ class WorkerBee():
     currentPosition = 0
     lastUpdate = time.time()
 
-    #loop through all our lines.
-    for linenum, line in enumerate(self.jobFile):
-      try:
-        #print "%d: %s" % (linenum, line)
-        self.driver.execute(line)
-        currentPosition = currentPosition + len(line)
-        
-        # this will really need to happen outside our thread, so we don't interrupt printing.
-        # Update our print status every X lines/bytes/minutes
-        latest = float(currentPosition) / float(self.fileSize)*100
-        if (time.time() - lastUpdate > 30):
-          self.log("%0.2f%%" % latest)
-          lastUpdate = time.time()
-          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
-      except Exception as ex:
-        #todo: handle any errors from the driver, such as loss of comms or printer failure
-        self.log(ex)
+    self.driver.executeGCodeFile(self.jobFile)
+
+    # #loop through all our lines.
+    # for linenum, line in enumerate(self.jobFile):
+    #   try:
+    #     #print "%d: %s" % (linenum, line)
+    #     self.driver.execute(line)
+    #     currentPosition = currentPosition + len(line)
+    #     
+    #     # this will really need to happen outside our thread, so we don't interrupt printing.
+    #     # Update our print status every X lines/bytes/minutes
+    #     latest = float(currentPosition) / float(self.fileSize)*100
+    #     if (time.time() - lastUpdate > 30):
+    #       self.log("%0.2f%%" % latest)
+    #       lastUpdate = time.time()
+    #       self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+    #   except Exception as ex:
+    #     #todo: handle any errors from the driver, such as loss of comms or printer failure
+    #     self.log(ex)
+
     self.log("Print finished.")
     
     #delete the job file

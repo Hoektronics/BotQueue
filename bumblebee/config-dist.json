@@ -2,8 +2,8 @@
 	"app" : {
 	  "consumer_key" : "4b99f7bb861ad3fab5b3d4a189c81c0b893c043f",
 	  "consumer_secret" : "c917f6ade3945e1acb9645dd1d7ee5d72993c6c9",
-	  "token_key" : "c92a846bd9d5aee6ed17ca828ce8abf081363a24",
-	  "token_secret" : "b86f8ebb372c35d8042833f5ba83a6018b1c3803"
+	  "token_key" : "",
+	  "token_secret" : ""
 	},
 	"workers" : [
 		{

@@ -1,5 +1,7 @@
 import json
 import pprint
+import os
+import shutil
 
 def log(message):
   print message
@@ -17,7 +19,9 @@ class BeeConfig():
 
   def load(self):
     try:
-      f = open("config.json")
+      if not os.path.exists("config.json"):
+        shutil.copy("config-dist.json", "config.json")
+      f = open("config.json", "r")
       self.data = json.load(f)
       f.close()
     
@@ -28,8 +32,8 @@ class BeeConfig():
       
     
   def save(self, data):
-    f = open("config.json")
-    json.dump(f, data)
+    f = open("config.json", "w")
+    f.write(json.dumps(data))
     f.close()
     
     self.data = data
