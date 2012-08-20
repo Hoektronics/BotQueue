@@ -2,3 +2,5 @@
 *.DS_Store
 extensions/config.php
 bumblebee/config.json
+bumblebee/cache*
+botqueue.tmproj
