@@ -14,17 +14,12 @@ def loadbot(pipe, data):
 
 def main():
   
-  config = hive.config.get()
-  hive.debug.pprint(config)
-
   wb = botqueueapi.BotQueueAPI()
-
   try:
     workers = []
     bots = wb.listBots()
     if (bots['status'] == 'success'):
       for row in bots['data']:
-      
         if (isOurBot(row)):
           parent_conn, child_conn = multiprocessing.Pipe()
           p = multiprocessing.Process(target=loadbot, args=(child_conn,row,))
@@ -42,7 +37,6 @@ def main():
   except KeyboardInterrupt as e:
     pass
 
-  
 def isOurBot(bot):
   config = hive.config.get()
 

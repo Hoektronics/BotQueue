@@ -2,6 +2,8 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
+	* fix re-run job to pass in job id and pull both file and queue info from that.
+
 	* Add content to /help
 	* Add content to /app
 
@@ -21,8 +23,9 @@ v1 Release - Goal: Sep 1, 2012
 
 * App
 
+	* convert to thread-based driver model for better updating of progress
+
 	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
-	* integrate authorize.py so it runs automatically on first run (or on auth related errors)
 
   * Some sort of inter-process communication system for telling worker processes what to do.
 		* stop+drop job
