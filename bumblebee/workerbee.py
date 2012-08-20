@@ -50,15 +50,18 @@ class WorkerBee():
         raise Exception("Unable to clear stale job: %s" % result['error'])
 
   def log(self, message):
-    print "[%s] %s: %s" % (strftime("%Y-%m-%d %H:%M:%S", self.data['name'], message)
+    print "[%s] %s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), self.data['name'], message)
 
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
-      return drivers.S3GDriver(self.config);
+      import drivers.s3gdriver
+      return drivers.s3gdriver(self.config);
     elif (self.config['driver'] == 'printcore'):
-      return drivers.Printcore(self.config)
+      import drivers.printcore
+      return drivers.printcoredriver(self.config)
     elif (self.config['driver'] == 'dummy'):
-      return drivers.DummyDriver(self.config)
+      import drivers.dummydriver
+      return drivers.dummydriver.dummydriver(self.config)
     else:
       raise Exception("Unknown driver specified.")
       
@@ -201,6 +204,7 @@ class WorkerBee():
     lastUpdate = time.time()
 
     try:
+      #todo: switch to threaded.
       while 1:
         line = self.jobFile.readline()
         if not line:
