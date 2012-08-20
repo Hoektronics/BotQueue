@@ -202,32 +202,18 @@ class WorkerBee():
     self.downloadJob()
     currentPosition = 0
     lastUpdate = time.time()
-
-    try:
-      #todo: switch to threaded.
-      while 1:
-        line = self.jobFile.readline()
-        if not line:
-            break
-        #print "%d: %s" % (linenum, line)
-        self.driver.execute(line)
-        currentPosition = currentPosition + len(line)
-        
-        # this will really need to happen outside our thread, so we don't interrupt printing.
-        # Update our print status every X lines/bytes/minutes
-        latest = float(currentPosition) / float(self.fileSize)*100
-        if (time.time() - lastUpdate > 15):
-          self.log("print: %0.2f%%" % latest)
-          lastUpdate = time.time()
-          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
-    except Exception as ex:
-      #todo: handle any errors from the driver, such as loss of comms or printer failure
-      self.log(ex)
-    finally:
-      self.jobFile.close()
+    #try:
+    self.driver.startPrint(self.jobFile, self.fileSize)
+    while self.driver.isRunning():
+      latest = self.driver.getPercentage()
+      self.log("print: %0.2f%%" % latest)
+      if (time.time() - lastUpdate > 15):
+        lastUpdate = time.time()
+        self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+      time.sleep(1)
 
     self.log("Print finished.")
-    
+  
     #finish the job online, and mark as completed.
     result = self.api.completeJob(self.job['id'])
     if result['status'] == 'success':
@@ -235,3 +221,26 @@ class WorkerBee():
       self.data = result['data']['bot']
     else:
       raise Exception("Error completing job: %s" % result['error'])
+      
+      #todo: switch to threaded.
+      # while 1:
+      #   line = self.jobFile.readline()
+      #   if not line:
+      #       break
+      #   #print "%d: %s" % (linenum, line)
+      #   self.driver.execute(line)
+      #   currentPosition = currentPosition + len(line)
+      #   
+      #   # this will really need to happen outside our thread, so we don't interrupt printing.
+      #   # Update our print status every X lines/bytes/minutes
+      #   latest = float(currentPosition) / float(self.fileSize)*100
+      #   if (time.time() - lastUpdate > 15):
+      #     self.log("print: %0.2f%%" % latest)
+      #     lastUpdate = time.time()
+      #     self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+    # except Exception as ex:
+    #   #todo: handle any errors from the driver, such as loss of comms or printer failure
+    #   self.log(ex)
+    #   raise ex
+    # finally:
+    self.jobFile.close()

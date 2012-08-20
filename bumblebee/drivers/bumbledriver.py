@@ -1,52 +1,64 @@
 import time
+from threading import Thread
 
-class bumbledriver():
+class bumbledriver(object):
 
-  lastUpdate = 0
-  
   def __init__(self, config):
     self.config = config
-    self.lastUpdate = 0
+    self.printing = False
+    self.paused = False
+    self.connected = False
+    self.filesize = 0
 
   # execute one line
   # def execute(self, line):
   #   pass
 
   def connect(self):
-    pass
+    self.connected = True
     
   def disconnect(self):
-    pass
+    self.connected = False
     
   def pause(self):
-    pass
+    self.paused = True
     
   def resume(self):
-    pass
+    self.paused = False
 
-  def startPrint(self, file):
-    pass
+  def startPrint(self, jobfile, filesize):
+    if(self.isRunning() or not self.isConnected()):
+        return False
+
+    self.jobfile = jobfile
+    self.filesize = filesize
+    self.printing=True
+    Thread(target=self.printThreadEntry).start()
 
   def printThreadEntry(self):
-    pass
+    self.executeFile()
+    self.finishPrint()
 
-  def sendGCode(self, line):
+  def executeFile(self):
     pass
     
-  def sendGCodeNow(self, line):
-    pass
+  def finishPrint(self):
+    self.printing = False
     
   def getPercentage(self):
-    pass
+    return 0
 
   def getStatus(self):
     pass
 
-  def isConnected():
-    pass
+  def isConnected(self):
+    return self.connected
     
-  def isRunning():
-    pass
+  def isRunning(self):
+    return self.printing
+    
+  def isPaused(self):
+    return self.paused
 
   # this will really need to happen outside our thread, so we don't interrupt printing.
   def phoneHome(self, latest):
