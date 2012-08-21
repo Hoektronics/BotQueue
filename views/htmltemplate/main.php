@@ -116,10 +116,12 @@
 
 <!-- Content -->
 <section id="content">
-  <div class="page-header">
-    <h1><?=$title?></h1>
-  </div>
-
+	<? if ($title): ?>
+	  <div class="page-header">
+	    <h1><?=$title?></h1>
+	  </div>
+	<? endif ?>
+	
   <!-- Headings & Paragraph Copy -->
 	<div class="row">
 	  <div class="span12">
