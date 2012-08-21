@@ -31,6 +31,7 @@ class printcore():
         self.online=False #The printer has responded to the initial command and is active
         self.printing=False #is a print currently running, true if printing, false if paused
         self.mainqueue=[] 
+        self.jobfile=None
         self.priqueue=[]
         self.queueindex=0
         self.lineno=0
@@ -159,8 +160,8 @@ class printcore():
     def _checksum(self,command):
         return reduce(lambda x,y:x^y, map(ord,command))
         
-    def startprint(self,data):
-        """Start a print, data is an array of gcode commands.
+    def startprint(self,jobfile):
+        """Start a print, data is an open file object for printing.
         returns True on success, False if already printing.
         The print queue will be replaced with the contents of the data array, the next line will be set to 0 and the firmware notified.
         Printing will then start in a parallel thread.
@@ -168,7 +169,9 @@ class printcore():
         if(self.printing or not self.online or not self.printer):
             return False
         self.printing=True
-        self.mainqueue=[]+data
+        self.mainqueue=[]
+        self.jobfile = jobfile
+        self.jobfile.seek(0)
         self.lineno=0
         self.queueindex=0
         self.resendfrom=-1
@@ -195,8 +198,7 @@ class printcore():
     
     def send(self,command):
         """Adds a command to the checksummed main command queue if printing, or sends the command immediately if not printing
-        """
-        
+        """       
         if(self.printing):
             self.mainqueue+=[command]
         else:
@@ -236,40 +238,57 @@ class printcore():
         #callback for printing done
         
     def _sendnext(self):
+        #are we connected?
         if(not self.printer):
             return
+        
+        #wait until we're ready for data
         while not self.clear:
             time.sleep(0.001)
         self.clear=False
+        
+        #we have to be online and ready to go.
         if not (self.printing and self.printer and self.online):
             self.clear=True
             return
+        
+        #handle resending of gcode lines as needed.
         if(self.resendfrom<self.lineno and self.resendfrom>-1):
             self._send(self.sentlines[self.resendfrom],self.resendfrom,False)
             self.resendfrom+=1
             return
         self.sentlines={}
         self.resendfrom=-1
+
+        #any priority lines that need to be sent out immediately?
         for i in self.priqueue[:]:
             self._send(i)
             del(self.priqueue[0])
             return
-        if(self.printing and self.queueindex<len(self.mainqueue)):
-            tline=self.mainqueue[self.queueindex]
-            tline=tline.split(";")[0]
-            if(len(tline)>0):
-                self._send(tline,self.lineno,True)
-                self.lineno+=1
-            else:
-                self.clear=True
-            self.queueindex+=1
+
+        #okay, pull stuff out of the queue.
+        if self.queueindex<len(self.mainqueue)):
+              tline=self.mainqueue[self.queueindex]
+              tline=tline.split(";")[0]
+              if(len(tline)>0):
+                  self._send(tline,self.lineno,True)
+                  self.lineno+=1
+              else:
+                  self.clear=True
+              self.queueindex+=1
+        #okay, we need more lines... do it.
         else:
-            self.printing=False
-            self.clear=True
-            if(not self.paused):
-                self.queueindex=0
-                self.lineno=0
-                self._send("M110",-1, True)
+            tline = self.jobfile.readline()
+            if tline:
+              self.send(tline)
+            else:
+              #okay, we must be done!
+              self.printing=False
+              self.clear=True
+              if(not self.paused):
+                  self.queueindex=0
+                  self.lineno=0
+                  self._send("M110",-1, True)
             
     def _send(self, command, lineno=0, calcchecksum=False):
         if(calcchecksum):
@@ -324,8 +343,8 @@ if __name__ == '__main__':
     p=printcore(port,baud)
     p.loud = loud
     time.sleep(2)
-    gcode=[i.replace("\n","") for i in open(filename)]
-    p.startprint(gcode)
+    jobfile = open(filename)
+    p.startprint(jobfile)
 
     try:
         if statusreport:

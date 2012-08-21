@@ -8,11 +8,11 @@ class bumbledriver(object):
     self.printing = False
     self.paused = False
     self.connected = False
+    self.jobfile = None
     self.filesize = 0
 
-  # execute one line
-  # def execute(self, line):
-  #   pass
+  def executeFile(self):
+    pass
 
   def connect(self):
     self.connected = True
@@ -39,9 +39,6 @@ class bumbledriver(object):
     self.executeFile()
     self.finishPrint()
 
-  def executeFile(self):
-    pass
-    
   def finishPrint(self):
     self.printing = False
     
