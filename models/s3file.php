@@ -250,6 +250,7 @@
 			$d['url'] = $this->getRealUrl();
 			$d['type'] = $this->get('type');
 			$d['md5'] = $this->get('hash');
+			$d['size'] = $this->get('size');
 
 			return $d;
 		}

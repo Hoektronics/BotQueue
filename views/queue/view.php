@@ -14,7 +14,7 @@
 				Working Jobs
 				:: 1-<?=min(10, $taken_count)?> of <?=$taken_count?> :: <a href="<?=$queue->getUrl()?>/jobs/taken">see all</a>
 			</h3>
-			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $active))?>
+			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $taken))?>
 			<br/><br/>
 			
 			<h3>

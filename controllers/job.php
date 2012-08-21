@@ -243,18 +243,33 @@
 				
 			try
 			{
-				$file = new S3File($this->args('file_id'));
+				if ($this->args('job_id'))
+				{
+					$job = new Job($this->args('job_id'));
+					if (!$job->isHydrated())
+						throw new Exception("That job does not exist.");
+					if ($job->get('user_id') != User::$me->id)
+						throw new Exception("You do not own this job.");
+					
+					$file = $job->getFile();
+					$queue_id = $job->get('queue_id');
+				}
+				else
+					$file = new S3File($this->args('file_id'));
+
 				if (!$file->isHydrated())
 					throw new Exception("That file does not exist.");
-				
 				if ($file->get('user_id') != User::$me->id)
 					throw new Exception("You do not have access to this file.");
 
 				$this->set('file', $file);
 
 				//load up our form.
-				$form = $this->_createJobForm($file);
-				$form->action = "/job/create/file:{$file->id}";
+				$form = $this->_createJobForm($file, $queue_id);
+				if (isset($job))
+					$form->action = "/job/create/job:{$job->id}";
+				else
+					$form->action = "/job/create/file:{$file->id}";
 					
 				//handle our form
 				if ($form->checkSubmitAndValidate($this->args()))
@@ -286,7 +301,7 @@
 			}
 		}
 		
-		private function _createJobForm($file)
+		private function _createJobForm($file, $queue_id)
 		{
 			//load up our queues.
 			$queues = User::$me->getQueues()->getAll();
@@ -309,7 +324,8 @@
 				'label' => 'Queue',
 				'help' => 'Which queue are you adding this job to?',
 				'required' => true,
-				'options' => $qs
+				'options' => $qs,
+				'value' => $queue_id
 			)));		
 			
 			$form->add(new TextField(array(

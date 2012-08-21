@@ -39,7 +39,7 @@
 						<? if ($j->get('status') != 'taken'): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
 						<? endif ?>
-						<a class="btn btn-mini" href="/job/create/file:<?=$j->get('file_id')?>"><i class="icon-repeat"></i> re-run</a>
+						<a class="btn btn-mini" href="/job/create/job:<?=$j->id?>"><i class="icon-repeat"></i> re-run</a>
 					</td>
 				</tr>
 			<?endforeach?>

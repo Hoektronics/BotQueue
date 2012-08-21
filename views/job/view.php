@@ -45,7 +45,7 @@
 							<? if ($job->get('status') != 'taken'): ?>
 								<a class="btn btn-mini" href="<?=$job->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
 							<? endif ?>
-							<a class="btn btn-mini" href="/job/create/file:<?=$job->get('file_id')?>"><i class="icon-repeat"></i> re-run</a>
+							<a class="btn btn-mini" href="/job/create/job:<?=$job->id?>"><i class="icon-repeat"></i> re-run</a>
 						</td>
 					</tr>
 					<tr>
