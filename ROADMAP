@@ -2,6 +2,8 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
+	* fix re-run job to pass in job id and pull both file and queue info from that.
+
 	* Add content to /help
 	* Add content to /app
 
@@ -17,27 +19,22 @@ v1 Release - Goal: Sep 1, 2012
 
 * API
 	* make sure we have CRUD for all operations
-
-* App
-
 	* verify that all calls in API V1 are implemented in python client (and functioning)
-	* read and write config.txt file as json to load config values.
 
-	* integrate authorize.py so it runs automatically on first run.
+* Bumblebee
 
+	* fix json config writing to use indent = 1 or 2 for easier human editing later.
+	* convert to thread-based driver model for better updating of progress
+	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
   * Some sort of inter-process communication system for telling worker processes what to do.
 		* stop+drop job
 		* online / offline
 		* stop process
-		
 	* Method for website to communicate state change to active clients (ie: bot.offline -> bot.online)
-		
 	* some sort of flow to resolve bots in a bad state.
-
 	* Driver based system for controlling multiple types of machines.
 		* Use pronterface backend for passthrough style machines
 		* Use s3g python interface for MakerBot machines
-
 	* If new machines are found, it will prompt the user to register them.
 	* Allow user to manually add new machines & configure them (serial port, speed, etc)
 	* Allow toggling machine between online/offline states
@@ -47,7 +44,6 @@ v1 Release - Goal: Sep 1, 2012
 	
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 	
-	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
 
 v2 Release - unknown date
 
