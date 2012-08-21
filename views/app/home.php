@@ -2,26 +2,24 @@
 	<div class="span6">
 		<h2>Bumblebee</h2>
 		<p>
-			Bumblebee is a cross-platform python app designed to interface with BotQueue.  This application will pull down jobs from BotQueue, and drive your 3D printer to produce them.  It is currently capable of controlling the following machines:  (STILL UNDER DEVELOPMENT!!!)
+			Bumblebee is the software that runs on your computer itself and turns it into a herder of bots.  This application will pull down jobs from BotQueue.com, and direct your 3D printer to create them.  To get nerdy, it is a cross-platform (w/m/l) python app designed to interface with BotQueue.  It is under heavy development and currently only has a commandline interface.
+		</p>
+		<p>
+			It is can control the following types of machines:
 			<ul>
-				<li>MakerBot Thing-o-Matic</li>
+				<li>Most RepRap Machines (w/ <a href="https://github.com/grbl/grbl/">grbl</a>, <a href="https://github.com/kliment/Sprinter">Sprinter</a>, <a href="https://github.com/ErikZalm/Marlin/">marlin</a>, etc)</li>
 				<li>MakerBot Replicator</li>
-				<li>Any machine using <a href="https://github.com/grbl/grbl/">grbl</a>, <a href="https://github.com/kliment/Sprinter">Sprinter</a>, <a href="https://github.com/ErikZalm/Marlin/">marlin</a>, or other direct gcode parsing firmware</li>
 			</ul>
 		</p>
-		<h3>Getting Bumblebee</h3>
+		<h3>Getting and Using Bumblebee</h3>
 		<p>
-			Bumblebee is currently under development, and a release will be made soon.  In the meantime, you can get it from the <a href="git@github.com:Hoektronics/BotQueue.git">BotQueue github repository</a>.
-		</p>
-		<h3>Installing Bumblebee</h3>
-		<p>
-			TBD.
+			Bumblebee is currently under development, and a release will be made soon.  In the meantime, you can get it from the <a href="git@github.com:Hoektronics/BotQueue.git">BotQueue github repository</a>.  You can find usage instructions on the <a href="/help">help</a> page.
 		</p>
 	</div>
 	<div class="span6">
 		<h2>Users - Your Authorized Apps</h2>
 		<p>
-			These are the apps that you have authorized to have access to your account.  If you use multiple computers, the same app may be listed multiple times below.  If you want to remove an app's access to your account, simply click the revoke link.
+		These are the apps that you have authorized to have access to your account.  If you use multiple computers, the same app may be listed multiple times below.  If you want to remove an app's access to your account, simply click the revoke link.
 		</p>
 		<? if (!empty($authorized)): ?>
 			<table class="table table-striped table-bordered table-condensed">

@@ -3,40 +3,45 @@ v1 Release - Goal: Sep 1, 2012
 * Website:
 
 	* Add ETA field to job view / list
-	* Add content to /app
 
 	* security / privacy audit on controller / views
 		* megaerror being followed?
 		* assertLoggedIn() being used
 
-  * SSL certificate for botqueue.
+  * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
+		
+	* 2 new job statuses:
+		* downloading
+		* human required
 
 * API
 	* make sure we have CRUD for all operations
 	* verify that all calls in API V1 are implemented in python client (and functioning)
 
 * Bumblebee
-
 	* printcore
 		* make workerbee recognize when a driver does not connect.
 		* fix startup to wait for connection.
 	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
   * bots need to pause between jobs and wait for user to remove finished piece
-	* Some sort of inter-process communication system for telling worker processes what to do.
-		* stop+drop job
+
+	* Queen -> Worker pheremones
 		* online / offline
+		* stop job
 		* pause
 		* resume
-	* Method for website to communicate state change to active clients (ie: bot.offline -> bot.online)
+
+	* Worker -> Queen pheremones
+		* job finished
+		* print error
+		* user intervention required (and a message)
+		* status update (including percentage)
+
 	* some sort of flow to resolve bots in a bad state.
-	* Allow toggling machine between online/offline states
-		* Online = ready to take jobs
-		* Offline = does not take jobs
-	* Allow pausing / canceling of print jobs.
+	* Allow pausing / canceling of print jobs through website.
 	* Use s3g python library for MakerBot machines
-	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 	
 
 v2 Release - unknown date
@@ -72,6 +77,7 @@ v2 Release - unknown date
 * API
 	* implement job creation via URL download
 	* implement job creation via HTTP file POST
-
+		* use Poster to send HTTP files: http://atlee.ca/software/poster/
   * 100% working Amazon bootup script.
-
+* job log history to see what bot did what to each job.
+* Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
