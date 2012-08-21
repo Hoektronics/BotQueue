@@ -9,10 +9,6 @@
 		{
 			"name" : "Zoltron6",
 			"driver" : "dummy"
-		},
-		{
-			"name" : "HoekBot",
-			"driver" : "dummy"
 		}
 	]
 }

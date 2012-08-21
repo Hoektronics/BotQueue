@@ -33,7 +33,7 @@ class BeeConfig():
     
   def save(self, data):
     f = open("config.json", "w")
-    f.write(json.dumps(data))
+    f.write(json.dumps(data, indent=2))
     f.close()
     
     self.data = data

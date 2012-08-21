@@ -1,30 +1,36 @@
 import bumbledriver
 import printcore
+import time
+from threading import Thread
 
 #todo: this whole thing sucks.  we need a much better way to interface with this.
 class printcoredriver(bumbledriver.bumbledriver):
   def __init__(self, config):
     super(printcoredriver, self).__init__(config)
     
-    self.p = printcore(config['port'],config['baud'])
-    self.p.loud = True
+    self.p = printcore.printcore()
+    self.p.loud = False
+    time.sleep(2)
 
   def startPrint(self, jobfile, filesize):
-    p.startprint(jobfile)
-    self.filesize = filesize
+    self.printing=True
+    time.sleep(5) #wait for driver to initialize fully
+    self.p.startprint(jobfile)
+    Thread(target=self.printThreadEntry).start()
 
   #this doesn't do much, just a thread to watch our thread indirectly.
   def executeFile(self):
     try:
-      while(p.printing):
-        time.sleep(1)
+      #time.sleep(10) #give it time to start up.
+      while(self.p.printing):
+        self.printing = self.p.printing
     except Exception as ex:
-      
+      raise
     finally:
-      p.disconnect()
+      self.p.disconnect()
     
   def getPercentage(self):
-    return p.getPercentage()
+    return self.p.get_percentage()
     
   def pause(self):
     self.p.pause()
@@ -35,8 +41,9 @@ class printcoredriver(bumbledriver.bumbledriver):
     super(printcoredriver, self).resume()
 
   def connect(self):
-    self.p.connect()
-    super(printcoredriver, self).connect()
+    if not self.isConnected():
+      self.p.connect(self.config['port'], self.config['baud'])
+      super(printcoredriver, self).connect()
     
   def disconnect(self):
     self.p.disconnect()

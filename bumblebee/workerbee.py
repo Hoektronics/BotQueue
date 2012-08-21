@@ -55,10 +55,10 @@ class WorkerBee():
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
       import drivers.s3gdriver
-      return drivers.s3gdriver(self.config);
+      return drivers.s3gdriver.s3gdriver(self.config);
     elif (self.config['driver'] == 'printcore'):
-      import drivers.printcore
-      return drivers.printcoredriver(self.config)
+      import drivers.printcoredriver
+      return drivers.printcoredriver.printcoredriver(self.config)
     elif (self.config['driver'] == 'dummy'):
       import drivers.dummydriver
       return drivers.dummydriver.dummydriver(self.config)

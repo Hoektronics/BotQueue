@@ -32,6 +32,8 @@ class printcore():
         self.printing=False #is a print currently running, true if printing, false if paused
         self.mainqueue=[] 
         self.jobfile=None
+        self.filesize = 0
+        self.sentbytes = 0
         self.priqueue=[]
         self.queueindex=0
         self.lineno=0
@@ -99,14 +101,17 @@ class printcore():
             except SelectError, e:
                 if 'Bad file descriptor' in e.args[1]:
                     print "Can't read from printer (disconnected?)."
+                    print e
                     break
                 else:
                     raise
             except SerialException, e:
                 print "Can't read from printer (disconnected?)."
+                print e
                 break
             except OSError, e:
                 print "Can't read from printer (disconnected?)."
+                print e
                 break
 
             if(len(line)>1):
@@ -167,17 +172,22 @@ class printcore():
         Printing will then start in a parallel thread.
         """
         if(self.printing or not self.online or not self.printer):
+            print "bailing... because of %s %s %s" % (self.printing, self.online, self.printer)
             return False
         self.printing=True
         self.mainqueue=[]
         self.jobfile = jobfile
+      
+        #get our file size
+        self.jobfile.seek(0, 2)
+        self.filesize = self.jobfile.tell()
         self.jobfile.seek(0)
+        print "file size: %s" % self.filesize
+
         self.lineno=0
         self.queueindex=0
         self.resendfrom=-1
         self._send("M110",-1, True)
-        if len(data)==0:
-            return True
         self.clear=False
         Thread(target=self._print).start()
         return True
@@ -227,6 +237,8 @@ class printcore():
             except:
                 pass
         while(self.printing and self.printer and self.online):
+            #print "in printcore thread"
+            #time.sleep(1)
             self._sendnext()
         self.log=[]
         self.sent=[]
@@ -266,30 +278,44 @@ class printcore():
             del(self.priqueue[0])
             return
 
-        #okay, pull stuff out of the queue.
-        if self.queueindex<len(self.mainqueue)):
-              tline=self.mainqueue[self.queueindex]
-              tline=tline.split(";")[0]
-              if(len(tline)>0):
-                  self._send(tline,self.lineno,True)
-                  self.lineno+=1
-              else:
-                  self.clear=True
-              self.queueindex+=1
-        #okay, we need more lines... do it.
-        else:
+        #try to keep our queue happy.
+        while self.queueindex < (len(self.mainqueue)+50):
             tline = self.jobfile.readline()
             if tline:
-              self.send(tline)
+                #print "adding line"
+                self.mainqueue+=[tline.rstrip()]
             else:
-              #okay, we must be done!
-              self.printing=False
-              self.clear=True
-              if(not self.paused):
-                  self.queueindex=0
-                  self.lineno=0
-                  self._send("M110",-1, True)
-            
+                #print "end of file!"
+                break
+        
+        #okay, pull stuff out of the queue.
+        if self.queueindex<len(self.mainqueue):
+            tline=self.mainqueue[self.queueindex]
+            self.sentbytes = self.sentbytes + len(tline) #keep track of how far we are, in bytes
+            tline=tline.split(";")[0]
+            if(len(tline)>0):
+                self._send(tline,self.lineno,True)
+                self.lineno+=1
+            else:
+                self.clear=True
+            self.queueindex+=1
+        #okay, we're all out of lines now.
+        else:
+            print "we're out of lines"
+            #okay, we must be done!
+            self.printing=False
+            self.clear=True
+            if(not self.paused):
+                self.queueindex=0
+                self.lineno=0
+                self._send("M110",-1, True)
+        
+    def get_percentage(self):
+      if self.filesize:
+        return float(self.sentbytes) / float(self.filesize)*100
+      else:
+        return 0
+
     def _send(self, command, lineno=0, calcchecksum=False):
         if(calcchecksum):
             prefix="N"+str(lineno)+" "+command

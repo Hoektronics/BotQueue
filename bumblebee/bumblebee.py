@@ -13,10 +13,8 @@ def loadbot(pipe, data):
     print "Bot %s exiting from keyboard interrupt." % data['name']
 
 def main():
-  #add the drivers folder
-  #addModuleFolder("drivers")
-  
   #load up our bots and start processing them.
+  print "Started up, loading bot list."
   wb = botqueueapi.BotQueueAPI()
   try:
     workers = []
@@ -48,17 +46,6 @@ def isOurBot(bot):
       return True
       
   return False
-
-def addModuleFolder(folder):
-  # realpath() with make your script run, even if you symlink it :)
-  cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
-  if cmd_folder not in sys.path:
-     sys.path.insert(0, cmd_folder)
-
-  # use this if you want to include modules from a subforder
-  cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0], folder)))
-  if cmd_subfolder not in sys.path:
-     sys.path.insert(0, cmd_subfolder)
 
 if __name__ == '__main__':
   main()
