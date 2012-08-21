@@ -2,12 +2,8 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
-	* fix re-run job to pass in job id and pull both file and queue info from that.
-
-	* Add content to /help
+	* Add ETA field to job view / list
 	* Add content to /app
-
-  * 100% working Amazon bootup script.
 
 	* security / privacy audit on controller / views
 		* megaerror being followed?
@@ -23,25 +19,23 @@ v1 Release - Goal: Sep 1, 2012
 
 * Bumblebee
 
-	* fix json config writing to use indent = 1 or 2 for easier human editing later.
-	* convert to thread-based driver model for better updating of progress
+	* printcore
+		* make workerbee recognize when a driver does not connect.
+		* fix startup to wait for connection.
 	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
-  * Some sort of inter-process communication system for telling worker processes what to do.
+  * bots need to pause between jobs and wait for user to remove finished piece
+	* Some sort of inter-process communication system for telling worker processes what to do.
 		* stop+drop job
 		* online / offline
-		* stop process
+		* pause
+		* resume
 	* Method for website to communicate state change to active clients (ie: bot.offline -> bot.online)
 	* some sort of flow to resolve bots in a bad state.
-	* Driver based system for controlling multiple types of machines.
-		* Use pronterface backend for passthrough style machines
-		* Use s3g python interface for MakerBot machines
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
 	* Allow toggling machine between online/offline states
 		* Online = ready to take jobs
 		* Offline = does not take jobs
 	* Allow pausing / canceling of print jobs.
-	
+	* Use s3g python library for MakerBot machines
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 	
 
@@ -72,7 +66,12 @@ v2 Release - unknown date
 * simple script for installing botqueue onto a standalone ubuntu machine
 * full page statistics for bot / queue with graphs
 * user area - figure out public / private stuff.
-
+* new machine discovery
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
 * API
 	* implement job creation via URL download
 	* implement job creation via HTTP file POST
+
+  * 100% working Amazon bootup script.
+

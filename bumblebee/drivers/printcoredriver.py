@@ -20,14 +20,8 @@ class printcoredriver(bumbledriver.bumbledriver):
 
   #this doesn't do much, just a thread to watch our thread indirectly.
   def executeFile(self):
-    try:
-      #time.sleep(10) #give it time to start up.
-      while(self.p.printing):
-        self.printing = self.p.printing
-    except Exception as ex:
-      raise
-    finally:
-      self.p.disconnect()
+    while(self.p.printing):
+      self.printing = self.p.printing
     
   def getPercentage(self):
     return self.p.get_percentage()

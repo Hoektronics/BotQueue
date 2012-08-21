@@ -182,7 +182,7 @@ class printcore():
         self.jobfile.seek(0, 2)
         self.filesize = self.jobfile.tell()
         self.jobfile.seek(0)
-        print "file size: %s" % self.filesize
+        self.sentbytes = 0
 
         self.lineno=0
         self.queueindex=0
@@ -301,7 +301,6 @@ class printcore():
             self.queueindex+=1
         #okay, we're all out of lines now.
         else:
-            print "we're out of lines"
             #okay, we must be done!
             self.printing=False
             self.clear=True
