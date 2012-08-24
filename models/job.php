@@ -117,7 +117,7 @@
 				$end = strtotime($this->get('end'));
 			}
 			
-			return $end - $start			
+			return $end - $start;			
 		}
 		
 		public function getElapsedText()

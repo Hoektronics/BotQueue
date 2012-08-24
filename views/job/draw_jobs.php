@@ -7,6 +7,7 @@
 				<th>Name</th>
 				<th>Status</th>
 				<th>Elapsed</th>
+				<th>ETA</th>
 				<th>Progress</th>
 				<th>Bot</th>
 				<th>Manage</th>
@@ -22,6 +23,7 @@
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getStatusHTML()?></td>
 					<td><?=$j->getElapsedText()?></td>
+					<td><?=$j->getEstimatedText()?></td>
 					<td align="right" style="width: 300px">
 						<div class="progress progress-striped">
 						  <div class="bar" style="width: <?=round($j->get('progress'))?>%;"></div>

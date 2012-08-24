@@ -27,22 +27,22 @@
 				//remove our token, if we got one.
 				if ($_COOKIE['token'])
 				{
-					$data = base64_decode($_COOKIE['token']);
+					$data = unserialize(base64_decode($_COOKIE['token']));
 					$token = Token::byToken($data['token']);
 					$token->delete();
 				}
 			
 				//unset specific variables.
-			    setcookie('token', '', time()-42000, '/', SITE_HOSTNAME);
+		    setcookie('token', '', time()-420000, '/', SITE_HOSTNAME);
 				unset($_SESSION['userid']);
 
 				//nuke the session.
 				if (isset($_COOKIE[session_name()]))
-				    setcookie(session_name(), '', time()-42000, '/');
+			    setcookie(session_name(), '', time()-420000, '/');
 
 				session_unset();
 				session_destroy();
-				
+
 				$this->forwardToUrl("/");
 			}
 		}

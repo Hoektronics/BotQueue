@@ -2,10 +2,6 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
-	* Add ETA field to job view / list
-
-	* find out why logging out doesnt work, lol.
-
 	* security / privacy audit on controller / views
 		* megaerror being followed?
 		* assertLoggedIn() being used

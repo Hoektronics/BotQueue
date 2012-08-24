@@ -19,17 +19,28 @@
 					</tr>
 					<tr>
 						<th>Started:</th>
-						<td><?= Utility::formatDate($job->get('start'))?> (<?=Utility::relativeTime($job->get('start'))?>)</td>
+						<? if (strtotime($job->get('start')) > 0): ?>
+							<td><?= Utility::formatDate($job->get('start'))?> (<?=Utility::relativeTime($job->get('start'))?>)</td>
+						<? else: ?>
+							<td>n/a</td>
+						<? endif?>
 					</tr>
 					<tr>
 						<th>Finished:</th>
-						<td><?= Utility::formatDate($job->get('end'))?> (<?=Utility::relativeTime($job->get('end'))?>)</td>
+						<? if (strtotime($job->get('end')) > 0): ?>
+							<td><?= Utility::formatDate($job->get('end'))?> (<?=Utility::relativeTime($job->get('end'))?>)</td>
+						<? else: ?>
+							<td>n/a</td>
+						<? endif?>
 					</tr>
 					<tr>
 						<th>Elapsed:</th>
 						<td><?=$job->getElapsedText()?></td>
 					</tr>
-
+					<tr>
+						<th>Remaining:</th>
+						<td><?=$job->getEstimatedText()?></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
