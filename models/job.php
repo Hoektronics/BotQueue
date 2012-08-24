@@ -99,7 +99,7 @@
 			$this->save();
 		}
 		
-		public function getElapsedText()
+		public function getElapsedTime()
 		{
 			if ($this->get('status') == 'available')
 			{
@@ -116,8 +116,31 @@
 				$start = strtotime($this->get('start'));
 				$end = strtotime($this->get('end'));
 			}
+			
+			return $end - $start			
+		}
+		
+		public function getElapsedText()
+		{
+			return Utility::getElapsed($this->getElapsedTime());
+		}
 
-			return Utility::getElapsed($end - $start);
+		public function getEstimatedTime()
+		{
+			//okay, now estimate it for us.
+			$elapsed = $this->getElapsedTime();
+			if ($this->get('progress') > 0)
+			{
+				$total = (100 / $this->get('progress')) * $elapsed;
+				return $total - $elapsed;
+			}
+			
+			return 0;
+		}
+
+		public function getEstimatedText()
+		{
+			return Utility::getElapsed($this->getEstimatedTime());
 		}
 	}
 ?>
