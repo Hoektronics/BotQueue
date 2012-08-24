@@ -1,6 +1,6 @@
 <? if ($megaerror): ?>
-	<div class="BaseError"><?=$megaerror?></div>
-<? else: ?>
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+<? else: ?>	
 	<? if ($status): ?>
 		<div class="BaseStatus"><?=$status?></div>
 	<? elseif ($error): ?>

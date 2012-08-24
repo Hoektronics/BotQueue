@@ -1,6 +1,6 @@
 <? if ($megaerror): ?>
-	<div class="BaseError"><?=$megaerror?></div>
-<? else: ?>
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+<? else: ?>	
 	<table class="table table-striped table-bordered table-condensed">
 		<tbody>
 			<? if ($user->get('location')): ?>

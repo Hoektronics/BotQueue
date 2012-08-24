@@ -20,35 +20,37 @@
 	{
 		public function home()
 		{
+			$this->assertLoggedIn();
 		}
 		
 		public function profile()
 		{
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-			else if ($this->args('username'))
-				$user = User::byUsername($this->args('username'));
-			else
-				$user = new User();
+			$this->assertLoggedIn();
 
-			//redirects!
-			if ($_COOKIE['viewmode'] == 'iphone')
-				$this->forwardToUrl($user->getiPhoneUrl());
-
-			//did we really get someone?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-
-			//set our title.
-			if ($user->isMe())
-				$this->setTitle("Welcome, " . $user->getName());
-			else
-				$this->setTitle("About " . $user->getName());
-				
-			//errors?
-			if (!$this->get('megaerror'))
+			try
 			{
+				//how do we find them?
+				if ($this->args('id'))
+					$user = new User($this->args('id'));
+				else if ($this->args('username'))
+					$user = User::byUsername($this->args('username'));
+				else
+					$user = new User();
+
+				//redirects!
+				if ($_COOKIE['viewmode'] == 'iphone')
+					$this->forwardToUrl($user->getiPhoneUrl());
+
+				//did we really get someone?
+				if (!$user->isHydrated())
+					throw new Exception("Could not find that user.");
+
+				//set our title.
+				if ($user->isMe())
+					$this->setTitle("Welcome, " . $user->getName());
+				else
+					$this->setTitle("About " . $user->getName());
+				
 				$this->set('user', $user);
 				//$this->set('photo', $user->getProfileImage());
 
@@ -57,27 +59,33 @@
 				$this->set('activities', $collection->getRange(0, 25));
 				$this->set('activity_total', $collection->count());
 			}
+			catch (Exception $e)
+			{
+				$this->setTitle('View User - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 
 		public function activity()
 		{
-			$this->setTitle('Activity Log');
+			$this->assertLoggedIn();
 
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-			else if ($this->args('username'))
-				$user = User::byUsername($this->args('username'));
-			else
-				$user = new User();
-
-			//did we really get someone?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-				
-			//errors?
-			if (!$this->get('megaerror'))
+			try
 			{
+				$this->setTitle('Activity Log');
+
+				//how do we find them?
+				if ($this->args('id'))
+					$user = new User($this->args('id'));
+				else if ($this->args('username'))
+					$user = User::byUsername($this->args('username'));
+				else
+					$user = new User();
+
+				//did we really get someone?
+				if (!$user->isHydrated())
+					throw new Exception("Could not find that user.");
+				
 				$this->set('user', $user);
 
 				$this->setTitle('Activity Log - ' . $user->getName());
@@ -93,64 +101,37 @@
 				$this->set('page', $page);
 				$this->set('activities', $collection->getPage($page, $per_page));
 			}
-		}
-		
-		public function profileimage()
-		{
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-			else if ($this->args('username'))
-				$user = User::byUsername($this->args('username'));
-			else if ($this->args('user') instanceOf User)
-				$user = $this->args('user');
-			else
-				$user = User::$me;
-				
-			//are we cool?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-			//are we cool to edit
-			else if ($user->canEdit())
+			catch (Exception $e)
 			{
-				$this->set('user', $user);
-				$this->set('image', $user->getProfileImage());
+				$this->setTitle('View User - Error');
+				$this->set('megaerror', $e->getMessage());
 			}
-			else
-				$this->set('megaerror', "You do not have permission to edit this user.");
-		}
-		
-		public function sidebar()
-		{
-			if ($this->args('user'))
-				$user = $this->args('user');
-			else
-				$user = new User($this->args('id'));
-
-			if (!$user->isHydrated())
-				die("Could not find that user.");
-				
-			$this->set('user', $user);
 		}
 		
 		public function edit()
 		{
-			$this->setTitle("Edit Profile");
+			$this->assertLoggedIn();
 
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-			else if ($this->args('username'))
-				$user = User::byUsername($this->args('username'));
-			else
-				$user = User::$me;
-
-			//are we cool?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-			//are we cool to edit
-			else if ($user->isMe() || User::isAdmin())
+			try
 			{
+				$this->setTitle("Edit Profile");
+
+				//how do we find them?
+				if ($this->args('id'))
+					$user = new User($this->args('id'));
+				else if ($this->args('username'))
+					$user = User::byUsername($this->args('username'));
+				else
+					$user = User::$me;
+
+				//are we cool?
+				if (!$user->isHydrated())
+					throw new Exception("Could not find that user.");
+				//are we cool to edit
+				else if (!$user->isMe() && !User::isAdmin())
+					throw new Exception("You do not have permission to edit this user.");
+
+				//did we get a form submission?
 				if ($this->args('submit'))
 				{
 					// birthday boy?					
@@ -161,7 +142,7 @@
 						else
 							$errors['birthday'] = "We couldn't understand your birthday.  Try using MM/DD/YYY.";
 					}
-					
+				
 					// email change?
 					if (Verify::email($this->args('email')))
 						$user->set('email', $this->args('email'));
@@ -176,7 +157,7 @@
 						else
 							$errors['password'] = "Your passwords did not match.";
 					}
-					
+				
 					$user->set('first_name', stripslashes($this->args('first_name')));
 					$user->set('last_name', stripslashes($this->args('last_name')));
 
@@ -186,7 +167,7 @@
 							Activity::log("edited their profile.");
 						else
 							Activity::log("edited " . $this->args('username') . "'s profile.");
-						
+					
 						$user->save();
 						$this->set('status', "Your " . $user->getLink("profile information") . " has been updated.");
 					}
@@ -195,32 +176,40 @@
 						$this->set('errors', $errors);
 						$this->set('error', "Uh oh, there was an error!");
 					}
-				}
 			
-				$this->set('user', $user);
+					$this->set('user', $user);
+				}
 			}
-			else
-				$this->set('megaerror', "You do not have permission to edit this user.");
+			catch (Exception $e)
+			{
+				$this->setTitle('Edit User - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 
 		public function changepass()
 		{
-			$this->setTitle("Edit Password");
+			$this->assertLoggedIn();
 
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-			else if ($this->args('username'))
-				$user = User::byUsername($this->args('username'));
-			else
-				$user = User::$me;
-
-			//are we cool?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-			//are we cool to edit
-			else if ($user->isMe() || User::isAdmin())
+			try
 			{
+				$this->setTitle("Edit Password");
+
+				//how do we find them?
+				if ($this->args('id'))
+					$user = new User($this->args('id'));
+				else if ($this->args('username'))
+					$user = User::byUsername($this->args('username'));
+				else
+					$user = User::$me;
+
+				//are we cool?
+				if (!$user->isHydrated())
+					throw new Exception("Could not find that user.");
+				//are we cool to edit
+				if (!$user->isMe() && !User::isAdmin())
+					throw new Exception("You do not have permission to edit this user.");
+					
 				if ($this->args('submit'))
 				{
 					if (!$this->args('changepass1') || !$this->args('changepass2'))
@@ -245,63 +234,83 @@
 			
 				$this->set('user', $user);
 			}
-			else
-				$this->set('megaerror', "You do not have permission to edit this user.");
+			catch (Exception $e)
+			{
+				$this->setTitle('Edit User - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 				
 		public function resetpass()
 		{
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-			else if ($this->args('username'))
-				$user = User::byUsername($this->args('username'));
-			else
-				$user = User::$me;
-
-			//are we cool?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-
-			//is that hash good?  pass it bro!
-			if ($user->get('pass_reset_hash') == $this->args('hash'))
+			try
 			{
+				//how do we find them?
+				if ($this->args('id'))
+					$user = new User($this->args('id'));
+				else if ($this->args('username'))
+					$user = User::byUsername($this->args('username'));
+				else
+					$user = User::$me;
+
+				//are we cool?
+				if (!$user->isHydrated())
+					$this->set('megaerror', "Could not find that user.");
+
+				//is that hash good?  pass it bro!
+				if ($user->get('pass_reset_hash') != $this->args('hash'))
+					throw new Exception("Invalid hash.  Die hacker scum.");
+
 				//one time use only.
 				$user->set('pass_reset_hash', '');
 				$user->set('force_password_change', 1);
 				$user->save();
-				
+			
 				User::createLogin($user);
-				
+			
 				$this->forwardToUrl('/');
 			}
-			else
-				$this->set('megaerror', "Invalid hash.  Die hacker scum.");
+			catch (Exception $e)
+			{
+				$this->setTitle('Reset Pass - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 		
 		public function delete()
 		{
-			$this->setTitle("Delete User");
+			$this->assertLoggedIn();
 
-			//how do we find them?
-			if ($this->args('id'))
-				$user = new User($this->args('id'));
-				
-			//are we cool?
-			if (!$user->isHydrated())
-				$this->set('megaerror', "Could not find that user.");
-			//are we cool to edit
-			else if ($user->get('is_admin'))
-				$this->set('megaerror', "You cannot delete admins.");
-			else if (!User::isAdmin())
-				$this->set('megaerror', "You are not an admin and cannot delete users.");
-			else if ($this->args('submit'))
+			try
 			{
-				$user->delete();
-				$this->set('status', "The user has been deleted!");
-			}
+				$this->setTitle("Delete User");
+
+				//how do we find them?
+				if ($this->args('id'))
+					$user = new User($this->args('id'));
+				
+				//are we cool?
+				if (!$user->isHydrated())
+					throw new Exception("Could not find that user.");
+				//are we cool to edit
+				if ($user->get('is_admin'))
+					throw new Exception("You cannot delete admins.");
+				if (!User::isAdmin())
+					throw new Exception("You are not an admin and cannot delete users.");
+				
+				if ($this->args('submit'))
+				{
+					$user->delete();
+					$this->set('status', "The user has been deleted!");
+				}
 			
-			$this->set('user', $user);
+				$this->set('user', $user);
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Delete User - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 		
 		public function loginandregister()

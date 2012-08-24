@@ -89,6 +89,7 @@
 			//did anything go wrong?
 			catch (Exception $e)
 			{
+				$this->setTitle("Upload File - Error");
 				$this->set('megaerror', $e->getMessage());
 			}				
 		}

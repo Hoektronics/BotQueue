@@ -1,7 +1,7 @@
 <? if ($megaerror): ?>
-	<div class="BaseError"><?=$megaerror?></div>
-<? else: ?>
-	<?
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+<? else: ?>	
+<?
 		echo Controller::byName('browse')->renderView('pagination_info', array(
 			'page' => $page,
 			'per_page' => $per_page,

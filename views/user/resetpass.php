@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<div class="BaseError"><?=$megaerror?></div>
-<? else: ?>
-Hmm.  You shouldnt get here.
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+<? else: ?>	
+	Hmm.  You shouldnt get here.
 <? endif ?>

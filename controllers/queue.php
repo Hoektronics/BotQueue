@@ -73,39 +73,45 @@
 		
 		public function view()
 		{
-			//how do we find them?
-			if ($this->args('id'))
-				$q = new Queue($this->args('id'));
+			$this->assertLoggedIn();
 
-			//did we really get someone?
-			if (!$q->isHydrated())
-				$this->set('megaerror', "Could not find that queue.");
-			if (!$q->isMine())
-				$this->set('megaerror', "You do not have permission to view this queue.");
-				
-			//errors?
-			if (!$this->get('megaerror'))
+			try
 			{
+				//how do we find them?
+				if ($this->args('id'))
+					$q = new Queue($this->args('id'));
+
+				//did we really get someone?
+				if (!$q->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if (!$q->isMine())
+					throw new Exception("You do not have permission to view this queue.");
+				
 				$this->setTitle("View Queue - " . $q->getName());
 				$this->set('queue', $q);
 
 				$available = $q->getJobs('available', 'user_sort', 'DESC');
 				$this->set('available', $available->getRange(0, 20));
 				$this->set('available_count', $available->count());
-				
+			
 				$taken = $q->getJobs('taken', 'user_sort', 'DESC');
 				$this->set('taken', $taken->getRange(0, 20));
 				$this->set('taken_count', $taken->count());
-				
+			
 				$complete = $q->getJobs('complete', 'user_sort', 'DESC');
 				$this->set('complete', $complete->getRange(0, 20));
 				$this->set('complete_count', $complete->count());
-				
+			
 				$failure = $q->getJobs('failure', 'user_sort', 'DESC');
 				$this->set('failure', $failure->getRange(0, 20));
 				$this->set('failure_count', $failure->count());
-				
+			
 				$this->set('stats', $q->getStats());
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('View Queue - Error');
+				$this->set('megaerror', $e->getMessage());
 			}
 		}
 		
@@ -208,6 +214,7 @@
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('View Queue - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
 		}

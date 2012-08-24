@@ -1,6 +1,6 @@
 <? if ($megaerror): ?>
-	<div class="BaseError"><?=$megaerror?></div>
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
-	<!-- we shouldnt ever get here... -->
+	<!-- we shouldnt ever get here b/c of controller redirect. -->
 	<div class="BaseStatus">Your file was uploaded successfully.</div>
 <? endif ?>

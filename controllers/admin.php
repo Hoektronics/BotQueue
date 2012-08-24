@@ -20,10 +20,7 @@
 	{
 		public function home()
 		{
-		}
-		
-		public function sidebar()
-		{
+			$this->assertAdmin();
 		}
 	}
 ?>

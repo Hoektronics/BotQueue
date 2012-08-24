@@ -1,7 +1,3 @@
-<? if ($error): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $error))?>
-<? endif ?>
-	
 <div class="row">
 	<div class="span6">
 		<?= Controller::byName('upload')->renderView('uploader', array(

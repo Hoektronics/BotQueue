@@ -2,9 +2,7 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
-	* security / privacy audit on controller / views
-		* megaerror being followed?
-		* assertLoggedIn() being used
+	* convert bot set status to ajax
 
   * SSL certificate for botqueue.com
 		* self-signed for dev

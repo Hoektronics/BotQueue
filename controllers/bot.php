@@ -103,6 +103,8 @@
 		
 		public function view()
 		{
+			$this->assertLoggedIn();
+
 			try
 			{
 				//how do we find them?
@@ -135,8 +137,11 @@
 			}
 		}
 
+		//TODO: convert to AJAX
 		public function set_status()
 		{
+			$this->assertLoggedIn();
+
 			try
 			{
 				//how do we find them?
@@ -175,6 +180,8 @@
 		
 		public function edit()
 		{
+			$this->assertLoggedIn();
+
 			try
 			{
 				//how do we find them?
@@ -259,6 +266,8 @@
 
 		public function listjobs()
 		{
+			$this->assertLoggedIn();
+
 			try
 			{
 				//how do we find them?

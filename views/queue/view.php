@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<div class="megaerror"><?=$megaerror?></div>
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
 	<div class="row">
 		<div class="span8">

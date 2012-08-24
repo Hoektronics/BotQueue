@@ -72,37 +72,50 @@
 			}
 			catch (Exception $e)
 			{
+				$this->setTitle('View Jobs - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
 		}
 
 		public function view()
 		{
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
+			$this->assertLoggedIn();
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				$this->set('megaerror', "Could not find that job.");
-
-			$this->setTitle('View Job - ' . $job->getName());
-				
-			//errors?
-			if (!$this->get('megaerror'))
+			try
 			{
-				$this->setTitle('View Job - ' . $job->getName());
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
 
-				$this->set('job', $job);
-				$this->set('file', $job->getFile());
-				$this->set('queue', $job->getQueue());
-				$this->set('bot', $job->getBot());
-				$this->set('creator', $job->getUser());
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+
+				$this->setTitle('View Job - ' . $job->getName());
+				
+				//errors?
+				if (!$this->get('megaerror'))
+				{
+					$this->setTitle('View Job - ' . $job->getName());
+
+					$this->set('job', $job);
+					$this->set('file', $job->getFile());
+					$this->set('queue', $job->getQueue());
+					$this->set('bot', $job->getBot());
+					$this->set('creator', $job->getUser());
+				}
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('View Job - Error');
+				$this->set('megaerror', $e->getMessage());
 			}
 		}
 
 		public function edit()
 		{
+			$this->assertLoggedIn();
+
 			try
 			{
 				//how do we find them?
@@ -154,7 +167,7 @@
 			}
 			catch (Exception $e)
 			{
-				$this->setTitle('View Job - Error');
+				$this->setTitle('Edit Job - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
 		}

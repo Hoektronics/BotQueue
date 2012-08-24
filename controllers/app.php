@@ -20,8 +20,11 @@
 	{
 		public function home()
 		{
-			$this->set('apps', User::$me->getMyApps()->getAll());
-			$this->set('authorized', User::$me->getAuthorizedApps()->getAll());
+			if (User::isLoggedIn())
+			{
+				$this->set('apps', User::$me->getMyApps()->getAll());
+				$this->set('authorized', User::$me->getAuthorizedApps()->getAll());				
+			}
 		}
 		
 		public function register_app()
@@ -155,7 +158,6 @@
 		public function view_app()
 		{
 			$this->assertLoggedIn();
-
 
 			try
 			{

@@ -11,11 +11,11 @@
 	?>
 	<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $jobs)); ?>
 	<?
-	echo Controller::byName('browse')->renderView('pagination', array(
-		'page' => $page,
-		'per_page' => $per_page,
-		'base_url' => $queue->getUrl() . "/jobs/{$status}",
-		'total' => $total
-	));
-?>
+		echo Controller::byName('browse')->renderView('pagination', array(
+			'page' => $page,
+			'per_page' => $per_page,
+			'base_url' => $queue->getUrl() . "/jobs/{$status}",
+			'total' => $total
+		));
+	?>
 <? endif ?>
