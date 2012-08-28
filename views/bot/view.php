@@ -7,18 +7,6 @@
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 					<tr>
-						<th>Manage:</th>
-						<td>
-							<? if ($bot->get('status') != 'working' && $bot->get('status') != 'offline'): ?>
-								<a class="btn btn-mini" href="<?=$bot->getUrl()?>/setstatus/offline"><i class="icon-pause"></i> take offline</a>
-							<? elseif ($bot->get('status') == 'offline'): ?>
-								<a class="btn btn-mini" href="<?=$bot->getUrl()?>/setstatus/idle"><i class="icon-play"></i> bring online</a>
-							<? endif ?>
-							<a class="btn btn-mini" href="<?=$bot->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
-							<a class="btn btn-mini" href="<?=$bot->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
-						</td>
-					</tr>
-					<tr>
 						<th>Status:</th>
 						<td><?=$bot->getStatusHTML() ?></td>
 					</tr>

@@ -2,8 +2,6 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
-	* convert bot set status to ajax
-
   * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
@@ -11,8 +9,6 @@ v1 Release - Goal: Sep 1, 2012
 	* 2 new job statuses:
 		* downloading
 		* human required
-
-
 
 * API
 	* make sure we have CRUD for all operations
@@ -79,3 +75,4 @@ v2 Release - unknown date
   * 100% working Amazon bootup script.
 * job log history to see what bot did what to each job.
 * Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
+* convert bot set status to ajax - figure out the proper way to handle taking bots online/offline... pause/unpause/stop?

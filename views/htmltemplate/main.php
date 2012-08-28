@@ -21,6 +21,10 @@
     <link href="/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="/css/botqueue.css" rel="stylesheet">
 
+    <!-- Le jquery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+
 		<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		 <script type="text/javascript">
 		   var _gaq = _gaq || [];
@@ -160,8 +164,6 @@
 
 	 <!-- Le javascript -->
 	 <!-- Placed at the end of the document so the pages load faster -->
-	 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
 	 <script src="/js/botqueue.js"></script>
 	 <script src="/js/bootstrap.js"></script>
   </body>

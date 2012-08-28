@@ -54,17 +54,17 @@
 
 		public function getStatusHTML()
 		{
-			return "<span class=\"label " . $this->getStatusHTMLClass() . "\">" . $this->get('status') . "</span>";
+		  return Controller::byName('bot')->renderView('statusbutton', array('bot' => $this));
 		}
 		
 		public function getStatusHTMLClass()
 		{
 			$s2c = array(
-				'working' => 'label-info',
-				'complete' => 'label-success',
-				'failure' => 'label-important',
-				'maintenance' => 'label-warning',
-				'offline' => 'label-inverse',
+				'working' => 'info',
+				'complete' => 'success',
+				'failure' => 'important',
+				'maintenance' => 'warning',
+				'offline' => 'inverse',
 			);
 			
 			return $s2c[$this->get('status')];

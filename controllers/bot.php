@@ -363,5 +363,11 @@
 			
 			return $form;
 		}
+
+    public function statusbutton()
+    {
+      $bot = $this->args('bot');
+			$this->set('bot', $bot);
+    }
 	}
 ?>
