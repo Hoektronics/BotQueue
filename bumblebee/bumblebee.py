@@ -4,17 +4,19 @@ import multiprocessing
 import time
 import hive
 
+log = hive.log.get()
+
 def loadbot(pipe, data):
   try:
-    print "Loading bot %s" % data['name']
+    log.info("Loading bot %s" % data['name'])
     worker = workerbee.WorkerBee(data)
     worker.run();
   except KeyboardInterrupt as e:
-    print "Bot %s exiting from keyboard interrupt." % data['name']
+    log.debug("Bot %s exiting from keyboard interrupt." % data['name'])
 
 def main():
   #load up our bots and start processing them.
-  print "Started up, loading bot list."
+  log.info("Started up, loading bot list.")
   wb = botqueueapi.BotQueueAPI()
   try:
     workers = []
@@ -29,9 +31,9 @@ def main():
           workers.append(link)
           time.sleep(0.5) # give us enough time to avoid contention when getting jobs.
         else:
-          hive.log("Skipping bot %s" % row['name'])
+          log.info("Skipping bot %s" % row['name'])
     else:
-      print "Bot list failure: %s" % bots['error']
+      log.error("Bot list failure: %s" % bots['error'])
 
     for link in workers:
       link['process'].join()

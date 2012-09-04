@@ -20,6 +20,9 @@ class WorkerBee():
       if row['name'] == data['name']:
         self.config = row
 
+    #we need logging!
+    self.logger = hive.log.get()
+
     #get various objects we'll need
     self.api = botqueueapi.BotQueueAPI()
     self.data = data
