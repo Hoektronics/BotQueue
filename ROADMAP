@@ -1,17 +1,11 @@
 v1 Release - Goal: Sep 1, 2012
 
 * Website:
-
   * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
 		
-	* 2 new job statuses:
-		* downloading
-		* human required
-
 * API
-	* make sure we have CRUD for all operations
 	* verify that all calls in API V1 are implemented in python client (and functioning)
 
 * Bumblebee
@@ -76,3 +70,6 @@ v2 Release - unknown date
 * job log history to see what bot did what to each job.
 * Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
 * convert bot set status to ajax - figure out the proper way to handle taking bots online/offline... pause/unpause/stop?
+* 2 new job statuses:
+	* downloading
+	* human required
