@@ -34,39 +34,28 @@ class BeeConfig():
     f.close()    
     self.data = data
 
-class BeeLogger():
+def loadLogger():
+  # create logger with 'spam_application'
+  logger = logging.getLogger('botqueue')
+  logger.setLevel(logging.DEBUG)
+  # create file handler which logs even debug messages
+  fh = logging.FileHandler('info.log')
+  fh.setLevel(logging.DEBUG)
+  # create console handler with a higher log level
+  ch = logging.StreamHandler()
+  ch.setLevel(logging.WARNING)
+  # create formatter and add it to the handlers
+  formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s')
+  fh.setFormatter(formatter)
+  ch.setFormatter(formatter)
+  # add the handlers to the logger
+  logger.addHandler(fh)
+  logger.addHandler(ch)
 
-  def __init__(self):
-    self.loaded = False
-
-  def get(self):
-    if not self.loaded:
-      self.load()
-    return logging.getLogger('botqueue')
-    
-  def load(self):
-    # create logger with 'spam_application'
-    logger = logging.getLogger('botqueue')
-    logger.setLevel(logging.DEBUG)
-    # create file handler which logs even debug messages
-    fh = logging.FileHandler('info.log')
-    fh.setLevel(logging.DEBUG)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(fh)
-    logger.addHandler(ch)
-
-    # logger.debug('Quick zephyrs blow, vexing daft Jim.')
-    # logger.info('How quickly daft jumping zebras vex.')
-    # logger.warning('Jail zesty vixen who grabbed pay from quack.')
-    # logger.error('The five boxing wizards jump quickly.')
+  # logger.debug('Quick zephyrs blow, vexing daft Jim.')
+  # logger.info('How quickly daft jumping zebras vex.')
+  # logger.warning('Jail zesty vixen who grabbed pay from quack.')
+  # logger.error('The five boxing wizards jump quickly.')
 
 config = BeeConfig()
-log = BeeLogger()
 debug = pprint.PrettyPrinter(indent=4)

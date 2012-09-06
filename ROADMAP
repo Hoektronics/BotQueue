@@ -12,7 +12,6 @@ v1 Release - Goal: Sep 1, 2012
 	* printcore
 		* make workerbee recognize when a driver does not connect.
 		* fix startup to wait for connection.
-	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
   * bots need to pause between jobs and wait for user to remove finished piece
 
 	* Queen -> Worker pheremones
