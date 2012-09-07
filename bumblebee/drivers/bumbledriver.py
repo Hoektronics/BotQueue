@@ -25,6 +25,13 @@ class bumbledriver(object):
     
   def resume(self):
     self.paused = False
+  
+  def stop(self):
+    self.printing = False
+    self.reset()
+
+  def reset(self):
+    pass
 
   def startPrint(self, jobfile, filesize):
     if(self.isRunning() or not self.isConnected()):
@@ -57,6 +64,7 @@ class bumbledriver(object):
   def isPaused(self):
     return self.paused
 
+  # is this chaff?
   # this will really need to happen outside our thread, so we don't interrupt printing.
   def phoneHome(self, latest):
     if (time.time() - self.lastUpdate > 30):

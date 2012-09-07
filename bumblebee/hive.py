@@ -34,6 +34,9 @@ class BeeConfig():
     f.close()    
     self.data = data
 
+class Object(object):
+  pass
+  
 def loadLogger():
   # create logger with 'spam_application'
   logger = logging.getLogger('botqueue')

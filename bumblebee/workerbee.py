@@ -8,18 +8,22 @@ import hive
 import botqueueapi
 import hashlib
 import logging
+import random
 
 class WorkerBee():
   
   data = {}
   
-  def __init__(self, data):
+  def __init__(self, data, pipe):
 
     #find our local config info.
     self.global_config = hive.config.get()
     for row in self.global_config['workers']:
       if row['name'] == data['name']:
         self.config = row
+        
+    #communications with our mother bee!
+    self.pipe = pipe
 
     #we need logging!
     self.log = logging.getLogger('botqueue')
@@ -46,13 +50,8 @@ class WorkerBee():
     #we shouldn't startup in a working or completed state... that implies some sort of error.
     if (self.data['status'] == 'working' or self.data['status'] == 'finished'):
       self.error("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
-      result = self.api.dropJob(self.data['job']['id'])
-      self.info("Dropping existing job.")
-      if (result['status'] == 'success'):
-        self.getOurInfo()
-      else:
-        raise Exception("Unable to clear stale job: %s" % result['error'])
-
+      self.dropJob()
+      
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
       import drivers.s3gdriver
@@ -68,29 +67,67 @@ class WorkerBee():
       
   #this is our entry point for the worker subprocess
   def run(self):
-    while True:
+    #sleep for a random time to avoid contention
+    time.sleep(random.random())
+
+    #okay, we're off!
+    running = True
+    while running:
+      #see if there are any messages from the motherbee
+      self.checkMessages()
+      
+      #idle mode means looking for a new job.
       if self.data['status'] == 'idle':
         try:
           self.getNewJob()
+          time.sleep(10) #todo: make this sleep get longer with each successive try.
         except Exception as ex:
           #todo: handle any errors from the driver, such as loss of comms or printer failure
           self.error(ex)
       elif self.data['status'] == 'working':
+        #okay, we're in work mode... handle our job.
         self.processJob()
-      else: #we're either error, maintenance, or offline... wait until that changes
-        time.sleep(10) # sleep for a bit to not hog resources
+        
+        #afterwards, all jobs go into QA mode for the user to check.
+        while self.job['status'] == 'qa':
+          self.getJobInfo() #see if our job has changed.
+          self.debug("QA wait on job %s" % self.job['status'])
+          time.sleep(10)
+
+        #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
         self.getOurInfo()
-        self.debug("waiting for bot to be fixed")
+        self.debug("Bot finished @ state %s" % self.data['status'])
+      else: #we're either error, maintenance, or offline... wait until that changes
+        self.debug("Waiting in %s mode" % self.data['status'])
+        self.getOurInfo()
+        if self.data['status'] == 'idle':
+          self.info("Going online.");
+        else:
+          time.sleep(10) # sleep for a bit to not hog resources
 
   #get bot info from the mothership
   def getOurInfo(self):
-    self.info("Looking up bot #%s." % self.data['id'])
+    self.debug("Looking up bot #%s." % self.data['id'])
     result = self.api.getBotInfo(self.data['id'])
     if (result['status'] == 'success'):
       self.data = result['data']
     else:
-      raise Exception("Error looking up our info: %s" % result['error'])
-  
+      self.error("Error looking up bot info: %s" % result['error'])
+      raise Exception("Error looking up bot info: %s" % result['error'])
+
+    #notify the mothership of our status.
+    msg = Message('status_update', self.data)
+    self.pipe.send(msg)
+
+  #get bot info from the mothership
+  def getJobInfo(self):
+    self.debug("Looking up job #%s." % self.job['id'])
+    result = self.api.getJobInfo(self.job['id'])
+    if (result['status'] == 'success'):
+      self.job = result['data']
+    else:
+      raise Exception("Error looking up job info: %s" % result['error'])
+ 
   #get a new job to process from the mothership  
   def getNewJob(self):
     self.info("Looking for new job.")
@@ -106,13 +143,12 @@ class WorkerBee():
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
       else:
-        time.sleep(10) #todo: make this sleep get longer with each successive try.
+        self.getOurInfo() #see if our status has changed.
     else:
       raise Exception("Error finding new job: %s" % result['error'])
 
   #download our job and make sure its cool
   def downloadJob(self):
-
     #prepare our file for storage
     self.checkCacheDirectory()
     self.openJobFile(self.job['file'])
@@ -199,18 +235,21 @@ class WorkerBee():
     return md5.hexdigest()
       
   def processJob(self):
-
     self.downloadJob()
     currentPosition = 0
     lastUpdate = time.time()
-    #try:
+
+    #todo: add a try block to catch any print related exceptions (this is how we can catch errors during printing.)
     self.driver.startPrint(self.jobFile, self.fileSize)
     while self.driver.isRunning():
       latest = self.driver.getPercentage()
       self.info("print: %0.2f%%" % latest)
+
+      self.checkMessages()
       if (time.time() - lastUpdate > 15):
         lastUpdate = time.time()
         self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+
       time.sleep(1)
 
     self.info("Print finished.")
@@ -222,6 +261,58 @@ class WorkerBee():
       self.data = result['data']['bot']
     else:
       raise Exception("Error completing job: %s" % result['error'])
+
+  def goOnline():
+    self.data['status'] = 'idle'
+
+  def goOffline():
+    self.data['status'] = 'offline'
+
+  def pauseJob(self):
+    self.driver.pause()
+    self.paused = True
+
+  def resumeJob(self):
+    self.driver.resume()
+    self.paused = False
+
+  def stopJob(self):
+    if self.driver.isRunning() or self.driver.isPaused():
+      self.driver.stop()      
+    
+  def dropJob(self):
+    self.stopJob()
+    
+    if(self.data['job']['id']):
+      result = self.api.dropJob(self.data['job']['id'])
+      self.info("Dropping existing job.")
+      if (result['status'] == 'success'):
+        self.getOurInfo()
+      else:
+        raise Exception("Unable to drop job: %s" % result['error'])
+
+  #loop through our workers and check them all for messages
+  def checkMessages(self):
+    if self.pipe.poll():
+      message = self.pipe.recv()
+      self.handleMessage(message)
+
+  #these are the messages we know about.
+  def handleMessage(self, message):
+    self.log.debug("Got message %s" % message.name)
+    if message.name == 'go_online':
+      self.data['status'] = 'idle'
+    elif message.name == 'go_offline':
+      self.goOnline()
+    elif message.name == 'pause_job':
+      self.pauseJob()
+    elif message.name == 'resume_job':
+      self.resumeJob()
+    elif message.name == 'stop_job':
+      self.stopJob()
+    elif message.name == 'drop_job':
+      self.dropJob()
+      pass
 
   def debug(self, msg):
     self.log.debug("%s: %s" % (self.config['name'], msg))
@@ -257,3 +348,8 @@ class WorkerBee():
     #   raise ex
     # finally:
     #self.jobFile.close()
+    
+class Message():
+  def __init__(self, name, data):
+    self.name = name
+    self.data = data

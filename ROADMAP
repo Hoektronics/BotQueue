@@ -1,6 +1,9 @@
 v1 Release - Goal: Sep 1, 2012
 
 * Website:
+
+  * add QA flow for jobs in the QA state
+
   * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
@@ -12,19 +15,22 @@ v1 Release - Goal: Sep 1, 2012
 	* printcore
 		* make workerbee recognize when a driver does not connect.
 		* fix startup to wait for connection.
+
   * bots need to pause between jobs and wait for user to remove finished piece
 
 	* Queen -> Worker pheremones
-		* online / offline
+		* go online
+		* go offline
+		* pause job
+		* resume job
 		* stop job
-		* pause
-		* resume
 
 	* Worker -> Queen pheremones
+	  * job started
 		* job finished
 		* print error
-		* user intervention required (and a message)
-		* status update (including percentage)
+		* human required (and a message)
+		* bot / job status update (including percentage)
 
 	* some sort of flow to resolve bots in a bad state.
 	* Allow pausing / canceling of print jobs through website.

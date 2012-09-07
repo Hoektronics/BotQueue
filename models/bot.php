@@ -168,7 +168,7 @@
 		
 		public function completeJob($job)
 		{
-			$job->set('status', 'complete');
+			$job->set('status', 'qa');
 			$job->set('progress', 100);
 			$job->set('end', date('Y-m-d H:i:s'));
 			$job->save();

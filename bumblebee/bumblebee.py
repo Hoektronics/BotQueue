@@ -18,7 +18,7 @@ class BumbleBee():
   def loadbot(self, pipe, data):
     try:
       self.log.info("Loading bot %s" % data['name'])
-      worker = workerbee.WorkerBee(data)
+      worker = workerbee.WorkerBee(data, pipe)
       worker.run();
     except KeyboardInterrupt as e:
       self.log.debug("Bot %s exiting from keyboard interrupt." % data['name'])
@@ -32,13 +32,17 @@ class BumbleBee():
       if (bots['status'] == 'success'):
         for row in bots['data']:
           if (self.isOurBot(row)):
+            #create our thread and start it.
             parent_conn, child_conn = multiprocessing.Pipe()
             p = multiprocessing.Process(target=self.loadbot, args=(child_conn,row,))
             p.start()
-            link = { 'process' : p, 'pipe' : parent_conn }
+            
+            #link = 'process' : p, 'pipe' : parent_conn }
+            link = hive.Object()
+            link.bot = row
+            link.process = p
+            link.pipe = parent_conn
             self.workers.append(link)
-            self.bots.append(row)
-            time.sleep(0.5) # give us enough time to avoid contention when getting jobs.
           else:
             self.log.info("Skipping unknown bot %s" % row['name'])
       else:
@@ -46,10 +50,8 @@ class BumbleBee():
 
       curses.wrapper(self.mainMenu)
 
-      #webbrowser.open_new(self.getAuthorizeUrl())
-
       for link in self.workers:
-        link['process'].join()
+        link.process.join()
     except KeyboardInterrupt as e:
       pass
 
@@ -61,19 +63,45 @@ class BumbleBee():
     quit = False
     while not quit:
       if (time.time() - lastUpdate > 1):
+        self.checkMessages()
         self.drawMenu()
       key = self.screen.getch()
       if key >= 0:
         if key == ord('.'): self.toggle()
         elif key == ord('q'):
           quit = True
+      time.sleep(0.1)
 
+  #loop through our workers and check them all for messages
+  def checkMessages(self):
+    for link in self.workers:
+      while link.pipe.poll():
+        message = link.pipe.recv()
+        self.handleMessage(link, message)
+
+  #these are the messages we know about.
+  def handleMessage(self, link, message):
+    #self.log.debug("Got message %s" % message.name)
+    if message.name == 'job_start':
+      pass
+    elif message.name == 'job_end':
+      pass
+    elif message.name == 'print_error':
+      pass
+    elif message.name == 'human_required':
+      pass
+    elif message.name == 'status_update':
+      link.bot = message.data
+      self.log.debug("Bot %s status %s" % (link.bot['name'], link.bot['status']))
+    
   def drawMenu(self):
     self.screen.clear()
-    self.screen.addstr("q = quit program\n")
-    for idx, bot in enumerate(self.bots):
-      self.screen.addstr("%s = %s\n" % (idx, bot['name']))
-    
+    self.screen.addstr("%s\n\n" % time.asctime())
+    self.screen.addstr("ID\tBOT NAME\tSTATUS\tJOB ID\tJOB NAME\tJOB STATUS\n")
+    for link in self.workers:
+      self.screen.addstr("%s\t%s\t%s" % (link.bot['id'], link.bot['name'], link.bot['status']))
+      self.screen.addstr("\n")
+    self.screen.addstr("\nq = quit program\n")
 
   def isOurBot(self, bot):
     for row in self.config['workers']:
