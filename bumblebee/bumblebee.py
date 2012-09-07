@@ -42,6 +42,7 @@ class BumbleBee():
             link.bot = row
             link.process = p
             link.pipe = parent_conn
+            link.job = None
             self.workers.append(link)
           else:
             self.log.info("Skipping unknown bot %s" % row['name'])
@@ -83,23 +84,31 @@ class BumbleBee():
   def handleMessage(self, link, message):
     #self.log.debug("Got message %s" % message.name)
     if message.name == 'job_start':
-      pass
+      link.bot = message.data.bot
+      link.job = message.data.job
     elif message.name == 'job_end':
-      pass
+      link.bot = message.data.bot
+      link.job = message.data.job
     elif message.name == 'print_error':
       pass
     elif message.name == 'human_required':
       pass
-    elif message.name == 'status_update':
+    elif message.name == 'job_update':
+      link.job = message.data
+    elif message.name == 'bot_update':
       link.bot = message.data
-      self.log.debug("Bot %s status %s" % (link.bot['name'], link.bot['status']))
+      #self.log.debug("Bot %s status %s" % (link.bot['name'], link.bot['status']))
     
   def drawMenu(self):
     self.screen.clear()
     self.screen.addstr("%s\n\n" % time.asctime())
-    self.screen.addstr("ID\tBOT NAME\tSTATUS\tJOB ID\tJOB NAME\tJOB STATUS\n")
+    self.screen.addstr("ID\tBOT NAME\tSTATUS\t%\tJOB ID\tSTATUS\n")
     for link in self.workers:
       self.screen.addstr("%s\t%s\t%s" % (link.bot['id'], link.bot['name'], link.bot['status']))
+      if link.bot['status'] == 'working' and link.job:
+        self.screen.addstr("\t%0.2f\t%s\t%s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+      else:
+        self.screen.addstr("\t-\t-\t-")
       self.screen.addstr("\n")
     self.screen.addstr("\nq = quit program\n")
 

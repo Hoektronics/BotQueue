@@ -116,7 +116,7 @@ class WorkerBee():
       raise Exception("Error looking up bot info: %s" % result['error'])
 
     #notify the mothership of our status.
-    msg = Message('status_update', self.data)
+    msg = Message('bot_update', self.data)
     self.pipe.send(msg)
 
   #get bot info from the mothership
@@ -139,6 +139,14 @@ class WorkerBee():
         if (jresult['status'] == 'success'):
           self.job = jresult['data']['job']
           self.data = jresult['data']['bot']
+
+          #notify the mothership.
+          data = hive.Object()
+          data.job = self.job
+          data.bot = self.data
+          message = Message('job_start', data)
+          self.pipe.send(message)
+
           self.info("grabbed job %s" % self.job['name'])
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
@@ -243,6 +251,12 @@ class WorkerBee():
     self.driver.startPrint(self.jobFile, self.fileSize)
     while self.driver.isRunning():
       latest = self.driver.getPercentage()
+      
+      #notify the mothership of our status.
+      self.job['progress'] = latest
+      msg = Message('job_update', self.job)
+      self.pipe.send(msg)
+      
       self.info("print: %0.2f%%" % latest)
 
       self.checkMessages()
@@ -259,6 +273,13 @@ class WorkerBee():
     if result['status'] == 'success':
       self.job = result['data']['job']
       self.data = result['data']['bot']
+
+      #notify the mothership.
+      data = hive.Object()
+      data.job = self.job
+      data.bot = self.data
+      message = Message('job_end', data)
+      self.pipe.send(message)
     else:
       raise Exception("Error completing job: %s" % result['error'])
 
