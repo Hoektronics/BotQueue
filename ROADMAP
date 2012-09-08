@@ -12,6 +12,8 @@ v1 Release - Goal: Sep 1, 2012
 	* verify that all calls in API V1 are implemented in python client (and functioning)
 
 * Bumblebee
+  * handle no internet exception: httplib2.ServerNotFoundError: Unable to find the server at www.botqueue.com
+
 	* printcore
 		* make workerbee recognize when a driver does not connect.
 		* fix startup to wait for connection.

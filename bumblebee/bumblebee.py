@@ -5,6 +5,7 @@ import time
 import hive
 import logging
 import curses
+import webbrowser
 
 class BumbleBee():
   def __init__(self):
@@ -107,6 +108,7 @@ class BumbleBee():
     elif message.name == 'job_end':
       link.bot = message.data.bot
       link.job = message.data.job
+      webbrowser.open_new("http://www.botqueue.com/job:%s/qa" % link.job['id'])
     elif message.name == 'print_error':
       pass
     elif message.name == 'human_required':

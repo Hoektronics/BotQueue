@@ -71,44 +71,48 @@ class WorkerBee():
     #sleep for a random time to avoid contention
     time.sleep(random.random())
 
-    #okay, we're off!
-    self.running = True
-    while self.running:
-      #see if there are any messages from the motherbee
-      self.checkMessages()
+    try:
+      #okay, we're off!
+      self.running = True
+      while self.running:
+        #see if there are any messages from the motherbee
+        self.checkMessages()
       
-      #did we get a shutdown notice?
-      if not self.running:
-        break
+        #did we get a shutdown notice?
+        if not self.running:
+          break
       
-      #idle mode means looking for a new job.
-      if self.data['status'] == 'idle':
-        try:
-          self.getNewJob()
-          time.sleep(10) #todo: make this sleep get longer with each successive try.
-        except Exception as ex:
-          #todo: handle any errors from the driver, such as loss of comms or printer failure
-          self.error(ex)
-      elif self.data['status'] == 'working':
-        #okay, we're in work mode... handle our job.
-        self.processJob()
-        
-        #afterwards, all jobs go into QA mode for the user to check.
-        while self.job['status'] == 'qa':
-          self.getJobInfo() #see if our job has changed.
-          self.debug("QA wait on job %s" % self.job['status'])
-          time.sleep(10)
-
-        #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
-        self.getOurInfo()
-        self.debug("Bot finished @ state %s" % self.data['status'])
-      else: #we're either error, maintenance, or offline... wait until that changes
-        self.debug("Waiting in %s mode" % self.data['status'])
-        self.getOurInfo()
+        #idle mode means looking for a new job.
         if self.data['status'] == 'idle':
-          self.info("Going online.");
-        else:
-          time.sleep(10) # sleep for a bit to not hog resources
+          try:
+            self.getNewJob()
+            time.sleep(10) #todo: make this sleep get longer with each successive try.
+          except Exception as ex:
+            #todo: handle any errors from the driver, such as loss of comms or printer failure
+            self.error(ex)
+        elif self.data['status'] == 'working':
+          #okay, we're in work mode... handle our job.
+          self.processJob()
+        
+          #afterwards, all jobs go into QA mode for the user to check.
+          while self.job['status'] == 'qa':
+            self.getJobInfo() #see if our job has changed.
+            self.debug("QA wait on job %s" % self.job['status'])
+            time.sleep(10)
+
+          #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
+          self.getOurInfo()
+          self.debug("Bot finished @ state %s" % self.data['status'])
+        else: #we're either error, maintenance, or offline... wait until that changes
+          self.debug("Waiting in %s mode" % self.data['status'])
+          self.getOurInfo()
+          if self.data['status'] == 'idle':
+            self.info("Going online.");
+          else:
+            time.sleep(10) # sleep for a bit to not hog resources
+    except Exception as ex:
+      self.log.error(ex)
+      raise ex
 
   #get bot info from the mothership
   def getOurInfo(self):
@@ -127,10 +131,11 @@ class WorkerBee():
   #get bot info from the mothership
   def getJobInfo(self):
     self.debug("Looking up job #%s." % self.job['id'])
-    result = self.api.getJobInfo(self.job['id'])
+    result = self.api.jobInfo(self.job['id'])
     if (result['status'] == 'success'):
       self.job = result['data']
     else:
+      self.error("Error looking up job info: %s" % result['error'])
       raise Exception("Error looking up job info: %s" % result['error'])
  
   #get a new job to process from the mothership  
