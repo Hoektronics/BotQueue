@@ -252,7 +252,7 @@
 				    if ($this->args('bot_failed'))
 				    {
   				    $bot->set('job_id', 0);
-        			$bot->set('status', 'error');
+        			$bot->set('status', 'maintenance');
         			$bot->save();
 				    }
 				    else

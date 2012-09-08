@@ -61,8 +61,8 @@
 		{
 			$s2c = array(
 				'working' => 'info',
-				'complete' => 'success',
-				'failure' => 'important',
+				'waiting' => 'success',
+				'error' => 'important',
 				'maintenance' => 'warning',
 				'offline' => 'inverse',
 			);
@@ -173,6 +173,7 @@
 			$job->set('end', date('Y-m-d H:i:s'));
 			$job->save();
 			
+			$this->set('status', 'waiting');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}

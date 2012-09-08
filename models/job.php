@@ -25,7 +25,7 @@
 		
 		public function getName()
 		{
-			return $this->get('name');	
+			return basename($this->get('name'));	
 		}
 
 		public function getUser()
