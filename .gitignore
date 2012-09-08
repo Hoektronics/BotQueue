@@ -4,3 +4,4 @@ extensions/config.php
 bumblebee/config.json
 bumblebee/cache*
 botqueue.tmproj
+info.log

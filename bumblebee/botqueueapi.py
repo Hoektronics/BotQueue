@@ -99,9 +99,6 @@ class BotQueueAPI():
       # After the user has granted access to you, the consumer, the provider will
       # redirect you to whatever URL you have told them to redirect to. You can 
       # usually define this in the oauth_callback argument as well.
-      accepted = 'n'
-      while accepted.lower() == 'n':
-          accepted = raw_input('Have you authorized me? (y/n) ')
       oauth_verifier = raw_input('What is the PIN? ')
 
       # Step 3: Once the consumer has redirected the user back to the oauth_callback
@@ -110,6 +107,7 @@ class BotQueueAPI():
       # request token and use the access token returned. You should store this 
       # access token somewhere safe, like a database, for future use.
       self.convertToken(oauth_verifier)
+      #TODO: fix this to be a forever loop and handle errors.
     
       config = hive.config.get()
       config['app']['token_key'] = self.token.key

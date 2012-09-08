@@ -2,6 +2,8 @@ v1 Release - Goal: Sep 1, 2012
 
 * Website:
 
+  * add QA flow for jobs in the QA state
+
   * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
@@ -10,23 +12,27 @@ v1 Release - Goal: Sep 1, 2012
 	* verify that all calls in API V1 are implemented in python client (and functioning)
 
 * Bumblebee
+  * handle no internet exception: httplib2.ServerNotFoundError: Unable to find the server at www.botqueue.com
+
 	* printcore
 		* make workerbee recognize when a driver does not connect.
 		* fix startup to wait for connection.
-	* setup actual logging: http://docs.python.org/howto/logging-cookbook.html
+
   * bots need to pause between jobs and wait for user to remove finished piece
 
 	* Queen -> Worker pheremones
-		* online / offline
+		* go online
+		* go offline
+		* pause job
+		* resume job
 		* stop job
-		* pause
-		* resume
 
 	* Worker -> Queen pheremones
+	  * job started
 		* job finished
 		* print error
-		* user intervention required (and a message)
-		* status update (including percentage)
+		* human required (and a message)
+		* bot / job status update (including percentage)
 
 	* some sort of flow to resolve bots in a bad state.
 	* Allow pausing / canceling of print jobs through website.

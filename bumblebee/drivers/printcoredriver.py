@@ -34,6 +34,10 @@ class printcoredriver(bumbledriver.bumbledriver):
     self.p.resume()
     super(printcoredriver, self).resume()
 
+  def reset(self):
+    self.p.reset()
+    super(printcoredriver, self).reset()
+    
   def connect(self):
     if not self.isConnected():
       self.p.connect(self.config['port'], self.config['baud'])
