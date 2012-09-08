@@ -51,7 +51,6 @@
 					'findnewjob',         //ok
 					'dropjob',            //ok
 					'canceljob',          //ok
-					'failjob',            //ok
 					'completejob',        //ok
 					'createjob',          //ok
 					'updatejobprogress',  //ok

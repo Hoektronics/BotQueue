@@ -168,13 +168,11 @@
 		
 		public function completeJob($job)
 		{
-			$job->set('status', 'complete');
+			$job->set('status', 'qa');
 			$job->set('progress', 100);
 			$job->set('end', date('Y-m-d H:i:s'));
 			$job->save();
 			
-			$this->set('job_id', 0);
-			$this->set('status', 'idle');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
