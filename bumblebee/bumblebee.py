@@ -51,8 +51,6 @@ class BumbleBee():
 
       curses.wrapper(self.mainMenu)
 
-      for link in self.workers:
-        link.process.join()
     except KeyboardInterrupt as e:
       pass
 
@@ -61,8 +59,8 @@ class BumbleBee():
     self.screen.nodelay(1) #non-blocking, so we can refresh the screen
 
     lastUpdate = 0
-    quit = False
-    while not quit:
+    self.quit = False
+    while not self.quit:
       if (time.time() - lastUpdate > 1):
         self.checkMessages()
         self.drawMenu()
@@ -70,8 +68,28 @@ class BumbleBee():
       if key >= 0:
         if key == ord('.'): self.toggle()
         elif key == ord('q'):
-          quit = True
-      time.sleep(0.1)
+          self.handleQuit()
+      else:
+        #sleep so we don't hog the CPU
+        time.sleep(0.1)
+
+  def handleQuit(self):
+    self.quit = True
+    self.log.info("Shutting down.")
+
+    self.screen.clear()
+    self.screen.addstr("%s\n\n" % time.asctime())
+    self.screen.addstr("Waiting for worker threads to shut down.")
+    self.screen.refresh()
+    
+    #tell all our threads to stop
+    for link in self.workers:
+      message = workerbee.Message('shutdown')
+      link.pipe.send(message)
+
+    #wait for all our threads to stop
+    for link in self.workers:
+      link.process.join()    
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
@@ -111,6 +129,7 @@ class BumbleBee():
         self.screen.addstr("\t-\t-\t-")
       self.screen.addstr("\n")
     self.screen.addstr("\nq = quit program\n")
+    self.screen.refresh()
 
   def isOurBot(self, bot):
     for row in self.config['workers']:

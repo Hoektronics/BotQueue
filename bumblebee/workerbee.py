@@ -34,6 +34,7 @@ class WorkerBee():
     self.driver = self.driverFactory()
 
     self.cacheHit = False
+    self.running = False
 
     #look at our current state to check for problems.
     self.startupCheckState()
@@ -71,10 +72,14 @@ class WorkerBee():
     time.sleep(random.random())
 
     #okay, we're off!
-    running = True
-    while running:
+    self.running = True
+    while self.running:
       #see if there are any messages from the motherbee
       self.checkMessages()
+      
+      #did we get a shutdown notice?
+      if not self.running:
+        break
       
       #idle mode means looking for a new job.
       if self.data['status'] == 'idle':
@@ -260,6 +265,12 @@ class WorkerBee():
       self.info("print: %0.2f%%" % latest)
 
       self.checkMessages()
+
+      #did we get a shutdown notice?
+      if not self.running:
+        break
+
+      #occasionally update home base.
       if (time.time() - lastUpdate > 15):
         lastUpdate = time.time()
         self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
@@ -312,6 +323,12 @@ class WorkerBee():
       else:
         raise Exception("Unable to drop job: %s" % result['error'])
 
+  def shutdown(self):
+    self.info("Shutting down.")
+    if(self.data['status'] == 'working' and self.data['job']['id']):
+      self.dropJob()
+    self.running = False
+
   #loop through our workers and check them all for messages
   def checkMessages(self):
     if self.pipe.poll():
@@ -333,6 +350,9 @@ class WorkerBee():
       self.stopJob()
     elif message.name == 'drop_job':
       self.dropJob()
+      pass
+    elif message.name == 'shutdown':
+      self.shutdown()
       pass
 
   def debug(self, msg):
@@ -371,6 +391,6 @@ class WorkerBee():
     #self.jobFile.close()
     
 class Message():
-  def __init__(self, name, data):
+  def __init__(self, name, data = None):
     self.name = name
     self.data = data
