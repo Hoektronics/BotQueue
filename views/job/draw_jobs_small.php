@@ -5,6 +5,7 @@
 				<th>#</th>
 				<th>Name</th>
 				<th>Status</th>
+				<th>%</th>
 				<th>Elapsed</th>
 			</tr>
 		</thead>
@@ -16,6 +17,7 @@
 					<td><?=$j->id?></td>
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getStatusHTML()?></td>
+					<td><?=round($j->get('progress'), 2)?>%</td>
 					<td><?=$j->getElapsedText()?></td>
 				</tr>
 			<?endforeach?>

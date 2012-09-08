@@ -25,7 +25,7 @@
 		
 		public function getName()
 		{
-			return $this->get('name');	
+			return basename($this->get('name'));	
 		}
 
 		public function getUser()
@@ -47,6 +47,7 @@
 		{
 			$s2c = array(
 				'taken' => 'label-info',
+				'qa' => 'label-warning',
 				'complete' => 'label-success',
 				'failure' => 'label-important'
 			);
@@ -79,6 +80,7 @@
 			$d['status'] = $this->get('status');
 			$d['start'] = $this->get('start');
 			$d['end'] = $this->get('end');
+			$d['progress'] = $this->get('progress');
 			
 			return $d;
 		}

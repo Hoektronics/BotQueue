@@ -208,6 +208,84 @@
 				$this->set('megaerror', $e->getMessage());
 			}			
 		}
+
+		public function qa()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if ($job->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this job.");
+				if ($job->get('status') != 'qa')
+					throw new Exception("You cannot do QA on this job.");
+
+		    $bot = $job->getBot();
+
+				$this->set('job', $job);
+				$this->set('bot', $bot);
+				
+				$this->setTitle('Finish Job - ' . $job->getName());
+
+				if ($this->args('submit'))
+				{
+				  if ($this->args('accepted'))
+				  {
+				    $bot->set('job_id', 0);
+      			$bot->set('status', 'idle');
+      			$bot->save();
+      			
+      			$job->set('status', 'complete');
+      			$job->save();
+      			
+  					Activity::log("accepted the output of job <strong>" . $job->getName() . "</strong>.");
+				  }
+				  else
+				  {
+				    if ($this->args('bot_failed'))
+				    {
+  				    $bot->set('job_id', 0);
+        			$bot->set('status', 'maintenance');
+        			$bot->save();
+				    }
+				    else
+				    {
+  				    $bot->set('job_id', 0);
+        			$bot->set('status', 'idle');
+        			$bot->save();
+				    }
+				    
+				    //TODO: make this better with an error log.
+				    if ($this->args('cancel_job'))
+				    {
+				      $job->set('status', 'failure');
+				      $job->save();
+				    }
+				    else
+				    {
+				      $job->set('status', 'available');
+				      $job->save();
+				    }
+
+  					Activity::log("rejected the output of job <strong>" . $job->getName() . "</strong>.");
+				  }
+
+					$this->forwardToUrl($job->getUrl());
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Delete Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
 		
 		public function file()
 		{
