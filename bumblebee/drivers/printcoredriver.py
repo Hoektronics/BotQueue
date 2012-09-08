@@ -22,6 +22,7 @@ class printcoredriver(bumbledriver.bumbledriver):
   def executeFile(self):
     while(self.p.printing):
       self.printing = self.p.printing
+      time.sleep(0.1)
     
   def getPercentage(self):
     return self.p.get_percentage()

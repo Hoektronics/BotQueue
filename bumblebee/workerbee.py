@@ -48,10 +48,11 @@ class WorkerBee():
 
   def startupCheckState(self):
     self.info("Bot startup")
-    #we shouldn't startup in a working or completed state... that implies some sort of error.
-    if (self.data['status'] == 'working' or self.data['status'] == 'finished'):
+    #we shouldn't startup in a working state... that implies some sort of error.
+    if (self.data['status'] == 'working'):
       self.error("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
       self.dropJob()
+      #todo: put bot into offline state.
       
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
@@ -93,25 +94,23 @@ class WorkerBee():
         elif self.data['status'] == 'working':
           #okay, we're in work mode... handle our job.
           self.processJob()
-        
-          #afterwards, all jobs go into QA mode for the user to check.
-          while self.job['status'] == 'qa':
-            self.getJobInfo() #see if our job has changed.
-            self.debug("QA wait on job %s" % self.job['status'])
-            time.sleep(10)
 
           #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
           self.getOurInfo()
           self.debug("Bot finished @ state %s" % self.data['status'])
-        else: #we're either error, maintenance, or offline... wait until that changes
+        else: #we're either waiting, error, maintenance, or offline... wait until that changes
           self.debug("Waiting in %s mode" % self.data['status'])
-          self.getOurInfo()
+          try:
+            self.getOurInfo() #see if our job has changed.
+          except Exception as e:
+            #todo: better error handling here.
+            self.error(e)
           if self.data['status'] == 'idle':
             self.info("Going online.");
           else:
             time.sleep(10) # sleep for a bit to not hog resources
     except Exception as ex:
-      self.log.error(ex)
+      self.error(ex)
       raise ex
 
   #get bot info from the mothership
@@ -267,8 +266,6 @@ class WorkerBee():
       msg = Message('job_update', self.job)
       self.pipe.send(msg)
       
-      self.info("print: %0.2f%%" % latest)
-
       self.checkMessages()
 
       #did we get a shutdown notice?
@@ -278,9 +275,10 @@ class WorkerBee():
       #occasionally update home base.
       if (time.time() - lastUpdate > 15):
         lastUpdate = time.time()
+        self.info("print: %0.2f%%" % latest)
         self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
 
-      time.sleep(1)
+      time.sleep(0.5)
 
     self.info("Print finished.")
   

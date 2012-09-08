@@ -109,6 +109,8 @@ class BumbleBee():
       link.bot = message.data.bot
       link.job = message.data.job
       webbrowser.open_new("http://www.botqueue.com/job:%s/qa" % link.job['id'])
+      self.screen.beep()
+      self.screen.flash()
     elif message.name == 'print_error':
       pass
     elif message.name == 'human_required':
