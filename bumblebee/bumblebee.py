@@ -78,18 +78,17 @@ class BumbleBee():
     self.quit = True
     self.log.info("Shutting down.")
 
-    self.screen.clear()
-    self.screen.addstr("%s\n\n" % time.asctime())
-    self.screen.addstr("Waiting for worker threads to shut down.")
-    self.screen.refresh()
-    
     #tell all our threads to stop
     for link in self.workers:
       message = workerbee.Message('shutdown')
       link.pipe.send(message)
 
     #wait for all our threads to stop
-    for link in self.workers:
+    for idx, link in enumerate(self.workers):
+      self.screen.clear()
+      self.screen.addstr("%s\n\n" % time.asctime())
+      self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (idx+1, len(self.workers)))
+      self.screen.refresh()
       link.process.join()    
 
   #loop through our workers and check them all for messages
@@ -109,8 +108,8 @@ class BumbleBee():
       link.bot = message.data.bot
       link.job = message.data.job
       webbrowser.open_new("http://www.botqueue.com/job:%s/qa" % link.job['id'])
-      self.screen.beep()
-      self.screen.flash()
+      curses.beep()
+      curses.flash()
     elif message.name == 'print_error':
       pass
     elif message.name == 'human_required':
@@ -119,16 +118,15 @@ class BumbleBee():
       link.job = message.data
     elif message.name == 'bot_update':
       link.bot = message.data
-      #self.log.debug("Bot %s status %s" % (link.bot['name'], link.bot['status']))
     
   def drawMenu(self):
     self.screen.clear()
     self.screen.addstr("%s\n\n" % time.asctime())
-    self.screen.addstr("ID\tBOT NAME\tSTATUS\t%\tJOB ID\tSTATUS\n")
+    self.screen.addstr("ID\tBOT NAME\tSTATUS\tPROGRESS\tJOB ID\tSTATUS\n")
     for link in self.workers:
       self.screen.addstr("%s\t%s\t%s" % (link.bot['id'], link.bot['name'], link.bot['status']))
-      if link.bot['status'] == 'working' and link.job:
-        self.screen.addstr("\t%0.2f\t%s\t%s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+      if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting') and link.job:
+        self.screen.addstr("\t%0.2f%%\t%s\t%s" % (float(link.job['progress']), link.job['id'], link.job['status']))
       else:
         self.screen.addstr("\t-\t-\t-")
       self.screen.addstr("\n")

@@ -51,6 +51,9 @@ class printcore():
         self.onlinecb=None#impl ()
         self.loud=False#emit sent and received lines to terminal
         self.greetings=['start','Grbl ']
+        self.error = False
+        self.errorMessage = None
+        
         if port is not None and baud is not None:
             #print port, baud
             self.connect(port, baud)
@@ -65,6 +68,7 @@ class printcore():
         self.printer=None
         self.online=False
         self.printing=False
+        self.error=False
         
     def connect(self,port=None,baud=None):
         """Set port and baudrate if given, then connect to printer
@@ -102,16 +106,24 @@ class printcore():
                 if 'Bad file descriptor' in e.args[1]:
                     print "Can't read from printer (disconnected?)."
                     print e
+                    self.error = True
+                    self.errorMessage = "Unable to talk with printer."
                     break
                 else:
+                    self.error = True
+                    self.errorMessage = "Unable to talk with printer."
                     raise
             except SerialException, e:
                 print "Can't read from printer (disconnected?)."
                 print e
+                self.error = True
+                self.errorMessage = "Unable to talk with printer."
                 break
             except OSError, e:
                 print "Can't read from printer (disconnected?)."
                 print e
+                self.error = True
+                self.errorMessage = "Unable to talk with printer."
                 break
 
             if(len(line)>1):
@@ -173,7 +185,10 @@ class printcore():
         """
         if(self.printing or not self.online or not self.printer):
             print "bailing... because of %s %s %s" % (self.printing, self.online, self.printer)
+            self.error = True
+            self.errorMessage = "Unable to talk with printer."
             return False
+
         self.printing=True
         self.mainqueue=[]
         self.jobfile = jobfile
@@ -333,6 +348,8 @@ class printcore():
             try:
                 self.printer.write(str(command+"\n"))
             except SerialException, e:
+                self.error = True
+                self.errorMessage = "Unable to talk with printer."
                 print "Can't write to printer (disconnected?)."
 
 if __name__ == '__main__':

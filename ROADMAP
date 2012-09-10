@@ -1,43 +1,39 @@
-v1 Release - Goal: Sep 1, 2012
+v1 Release - Goal: September 12, 2012
 
 * Website:
 
-  * add QA flow for jobs in the QA state
+  * add downloading state to job
+    * add datetime field for every status mode
+
+  * QA flow for jobs in the QA state
+    * highlight QA required jobs better
+    * test reject flow
+    * form-ify and ajax-ify the QA page
+
+	* Allow canceling of print jobs through website.
+	  * similar error flow to QA failure
 
   * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
-		
-* API
-	* verify that all calls in API V1 are implemented in python client (and functioning)
+
+  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
+    * show bots / bot status on right side of page above statistics
+    * ajaxify reloading of progress / page info.
 
 * Bumblebee
-  * handle no internet exception: httplib2.ServerNotFoundError: Unable to find the server at www.botqueue.com
+  * test what happens when internet goes down at random times... must be failure tolerant!
+    * handle no internet exception: httplib2.ServerNotFoundError: Unable to find the server at www.botqueue.com
+		* poll for errors in main printing loop (add hasError() and getErrorMessage() function to driver?)
 
 	* printcore
-		* make workerbee recognize when a driver does not connect.
+		* make workerbee recognize when a driver does not connect. => error mode
 		* fix startup to wait for connection.
+		* test what happens if you unplug the usb cable during operation.
+		* test what happens if you unplug the bot power during operation.
+		* check if connected on new print, if not reconnect.
 
-  * bots need to pause between jobs and wait for user to remove finished piece
-
-	* Queen -> Worker pheremones
-		* go online
-		* go offline
-		* pause job
-		* resume job
-		* stop job
-
-	* Worker -> Queen pheremones
-	  * job started
-		* job finished
-		* print error
-		* human required (and a message)
-		* bot / job status update (including percentage)
-
-	* some sort of flow to resolve bots in a bad state.
-	* Allow pausing / canceling of print jobs through website.
-	* Use s3g python library for MakerBot machines
-	
+	* Fix bot startup in working state => error mode
 
 v2 Release - unknown date
 
@@ -80,3 +76,5 @@ v2 Release - unknown date
 * 2 new job statuses:
 	* downloading
 	* human required
+* Use s3g python library for MakerBot machines
+	

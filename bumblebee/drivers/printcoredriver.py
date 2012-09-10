@@ -2,6 +2,7 @@ import bumbledriver
 import printcore
 import time
 from threading import Thread
+import logging
 
 #todo: this whole thing sucks.  we need a much better way to interface with this.
 class printcoredriver(bumbledriver.bumbledriver):
@@ -11,19 +12,29 @@ class printcoredriver(bumbledriver.bumbledriver):
     self.p = printcore.printcore()
     self.p.loud = False
     time.sleep(2)
+    self.log = logging.getLogger('botqueue')
 
   def startPrint(self, jobfile, filesize):
-    self.printing=True
-    time.sleep(5) #wait for driver to initialize fully
-    self.p.startprint(jobfile)
-    Thread(target=self.printThreadEntry).start()
+    try:
+      self.printing=True
+      self.connect()
+      while not self.isConnected():
+        time.sleep(1)
+        self.log.debug("Waiting for driver to connect.")
+      self.p.startprint(jobfile)
+      Thread(target=self.printThreadEntry).start()
+    except Exception as ex:
+      self.log.error("Error starting print: %s" % ex)
+      raise ex
 
   #this doesn't do much, just a thread to watch our thread indirectly.
   def executeFile(self):
     while(self.p.printing):
       self.printing = self.p.printing
+      self.error = self.p.error
+      self.errorMessage = self.p.errorMessage
       time.sleep(0.1)
-    
+
   def getPercentage(self):
     return self.p.get_percentage()
     
@@ -38,6 +49,9 @@ class printcoredriver(bumbledriver.bumbledriver):
   def reset(self):
     self.p.reset()
     super(printcoredriver, self).reset()
+
+  def isConnected(self):
+    return self.p.online
     
   def connect(self):
     if not self.isConnected():

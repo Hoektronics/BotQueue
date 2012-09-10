@@ -44,15 +44,26 @@ class WorkerBee():
       self.debug("Connecting to driver.")
       self.driver.connect()
     except Exception as ex:
-      self.error(ex);
+      self.errorMode(ex)
 
   def startupCheckState(self):
     self.info("Bot startup")
     #we shouldn't startup in a working state... that implies some sort of error.
     if (self.data['status'] == 'working'):
-      self.error("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
+      self.errorMode("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
+  
+  def errorMode(self, message):
+    self.error("Going into error mode: %s" % message)
+    
+    if (self.job['id']):
       self.dropJob()
-      #todo: put bot into offline state.
+              
+    #take the bot offline.
+    result = self.api.updateBotInfo({'status' : 'error', 'error_text' : message})
+    if result['status'] == 'success':
+      self.data = result['data']
+    else:
+      self.error("Error talking to mothership: %s" % result['error'])    
       
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
@@ -78,9 +89,7 @@ class WorkerBee():
       while self.running:
         #see if there are any messages from the motherbee
         self.checkMessages()
-      
-        #did we get a shutdown notice?
-        if not self.running:
+        if not self.running: #did we get a shutdown notice?
           break
       
         #idle mode means looking for a new job.
@@ -89,7 +98,6 @@ class WorkerBee():
             self.getNewJob()
             time.sleep(10) #todo: make this sleep get longer with each successive try.
           except Exception as ex:
-            #todo: handle any errors from the driver, such as loss of comms or printer failure
             self.error(ex)
         elif self.data['status'] == 'working':
           #okay, we're in work mode... handle our job.
@@ -109,6 +117,7 @@ class WorkerBee():
             self.info("Going online.");
           else:
             time.sleep(10) # sleep for a bit to not hog resources
+      self.debug("Exiting.")
     except Exception as ex:
       self.error(ex)
       raise ex
@@ -172,12 +181,16 @@ class WorkerBee():
 
     #do we need to download it?
     if not self.cacheHit:
+      #todo: do an actual API call.
+      self.job['status'] = 'downloading'
+
       #download our file.
       self.info("downloading %s to %s." % (self.job['file']['url'], self.jobFilePath))
       urlFile = self.openUrl(self.job['file']['url'])
       chunk = 4096
       md5 = hashlib.md5()
       lastUpdate = 0
+      localUpdate = 0
       self.fileSize = 0
       while 1:
         data = urlFile.read(chunk)
@@ -188,6 +201,14 @@ class WorkerBee():
         self.fileSize = self.fileSize + len(data)
 
         latest = float(self.fileSize) / float(self.job['file']['size'])*100
+
+        #notify the mothership of our status.
+        if (time.time() - localUpdate > 0.5):
+          self.job['progress'] = latest
+          msg = Message('job_update', self.job)
+          self.pipe.send(msg)
+
+        #notify the remote server of our job progress.
         if (time.time() - lastUpdate > 15):
           self.debug("download: %0.2f%%" % latest)
           lastUpdate = time.time()
@@ -198,6 +219,7 @@ class WorkerBee():
         self.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.job['file']['md5']))
         raise Exception()
       else:
+        self.job['status'] = 'taken'
         self.info("Download complete.")
     else:
       self.info("Using cached file %s" % self.jobFilePath)
@@ -256,46 +278,51 @@ class WorkerBee():
     currentPosition = 0
     lastUpdate = time.time()
 
-    #todo: add a try block to catch any print related exceptions (this is how we can catch errors during printing.)
-    self.driver.startPrint(self.jobFile, self.fileSize)
-    while self.driver.isRunning():
-      latest = self.driver.getPercentage()
+    try:
+      self.driver.startPrint(self.jobFile, self.fileSize)
+      while self.driver.isRunning():
+        latest = self.driver.getPercentage()
       
-      #notify the mothership of our status.
-      self.job['progress'] = latest
-      msg = Message('job_update', self.job)
-      self.pipe.send(msg)
+        #notify the mothership of our status.
+        self.job['progress'] = latest
+        msg = Message('job_update', self.job)
+        self.pipe.send(msg)
       
-      self.checkMessages()
+        #check for messages like shutdown.
+        self.checkMessages()
+        if not self.running:
+          raise Exception("Shutting down.")
 
-      #did we get a shutdown notice?
-      if not self.running:
-        break
+        #occasionally update home base.
+        if (time.time() - lastUpdate > 15):
+          lastUpdate = time.time()
+          self.info("print: %0.2f%%" % latest)
+          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
 
-      #occasionally update home base.
-      if (time.time() - lastUpdate > 15):
-        lastUpdate = time.time()
-        self.info("print: %0.2f%%" % latest)
-        self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+        if self.driver.hasError():
+          self.errorMode(self.driver.getErrorMessage())
+          raise Exception(self.driver.getErrorMessage())
+          
+        time.sleep(0.5)
 
-      time.sleep(0.5)
-
-    self.info("Print finished.")
+      self.info("Print finished.")
   
-    #finish the job online, and mark as completed.
-    result = self.api.completeJob(self.job['id'])
-    if result['status'] == 'success':
-      self.job = result['data']['job']
-      self.data = result['data']['bot']
+      #finish the job online, and mark as completed.
+      result = self.api.completeJob(self.job['id'])
+      if result['status'] == 'success':
+        self.job = result['data']['job']
+        self.data = result['data']['bot']
 
-      #notify the mothership.
-      data = hive.Object()
-      data.job = self.job
-      data.bot = self.data
-      message = Message('job_end', data)
-      self.pipe.send(message)
-    else:
-      raise Exception("Error completing job: %s" % result['error'])
+        #notify the mothership.
+        data = hive.Object()
+        data.job = self.job
+        data.bot = self.data
+        message = Message('job_end', data)
+        self.pipe.send(message)
+      else:
+        raise Exception("Error notifying mothership: %s" % result['error'])
+    except Exception as ex:
+      self.error("Problem during job processing: %s")
 
   def goOnline():
     self.data['status'] = 'idle'

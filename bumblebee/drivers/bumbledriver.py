@@ -10,6 +10,8 @@ class bumbledriver(object):
     self.connected = False
     self.jobfile = None
     self.filesize = 0
+    self.error = False
+    self.errorMessage = None
 
   def executeFile(self):
     pass
@@ -54,7 +56,13 @@ class bumbledriver(object):
 
   def getStatus(self):
     pass
+    
+  def hasError(self):
+    return self.error
 
+  def getErrorMessage(self):
+    return self.errorMessage
+    
   def isConnected(self):
     return self.connected
     
