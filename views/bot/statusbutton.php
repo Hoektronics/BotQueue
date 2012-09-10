@@ -4,12 +4,18 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu">
-    <? if ($bot->get('status') != 'working' && $bot->get('status') != 'offline'): ?>
+    <? if ($bot->get('status') == 'working'): ?>
+      <li><i class="icon-pause"></i>pause job</li>
+      <li><i class="icon-stop"></i>stop job</li>
+      <li><i class="icon-play"></i>resume job</li>
+    <? elseif ($bot->get('status') == 'waiting'): ?>
+      <li><a href="<?=$bot->getCurrentJob()->getUrl()?>/qa"><i class="icon-check"></i> verify output</a></li>
+    <? elseif ($bot->get('status') == 'idle'): ?>
 		  <li><a href="<?=$bot->getUrl()?>/setstatus/offline"><i class="icon-pause"></i> take offline</a></li>
-    <? elseif ($bot->get('status') == 'offline'): ?>
+    <? else: ?>
 		  <li><a href="<?=$bot->getUrl()?>/setstatus/idle"><i class="icon-play"></i> bring online</a></li>
 		<? endif ?>
-		<li><a href="<?=$bot->getUrl()?>/edit"><i class="icon-cog"></i> edit</a></li>
-		<li><a href="<?=$bot->getUrl()?>/delete"><i class="icon-remove"></i> delete</a></li>
+		<li><a href="<?=$bot->getUrl()?>/edit"><i class="icon-cog"></i> edit bot</a></li>
+		<li><a href="<?=$bot->getUrl()?>/delete"><i class="icon-remove"></i> delete bot</a></li>
   </ul>
 </div>

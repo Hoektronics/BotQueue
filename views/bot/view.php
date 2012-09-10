@@ -1,6 +1,9 @@
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
+  <? if ($bot->get('status') == 'error'): ?>
+  	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => "This bot is offline with the following error: " . $bot->get('error_text')))?>    
+  <? endif ?>
 	<div class="row">
 		<div class="span6">
 			<h3>Basic Info</h3>

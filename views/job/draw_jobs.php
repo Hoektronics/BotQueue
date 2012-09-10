@@ -38,8 +38,11 @@
 						<? if ($j->get('status') == 'available'): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
 						<? endif ?>
-						<? if ($j->get('status') != 'taken'): ?>
+						<? if ($j->get('status') != 'taken' && $j->get('status') != 'qa' && $j->get('status') != 'downloading'): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
+						<? endif ?>
+						<? if ($j->get('status') == 'qa'): ?>
+						  <a class="btn btn-mini" href="<?=$j->getUrl()?>/qa"><i class="icon-check"></i> verify</a>
 						<? endif ?>
 						<a class="btn btn-mini" href="/job/create/job:<?=$j->id?>"><i class="icon-repeat"></i> re-run</a>
 					</td>

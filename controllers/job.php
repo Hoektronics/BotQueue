@@ -245,14 +245,14 @@
       			$job->set('status', 'complete');
       			$job->save();
       			
-  					Activity::log("accepted the output of job <strong>" . $job->getName() . "</strong>.");
+  					Activity::log("accepted the output of job <strong>" . $job->getLink() . "</strong>.");
 				  }
 				  else
 				  {
 				    if ($this->args('bot_failed'))
 				    {
   				    $bot->set('job_id', 0);
-        			$bot->set('status', 'maintenance');
+        			$bot->set('status', 'error');
         			$bot->save();
 				    }
 				    else
@@ -271,10 +271,11 @@
 				    else
 				    {
 				      $job->set('status', 'available');
+				      $job->set('bot_id', 0);
 				      $job->save();
 				    }
 
-  					Activity::log("rejected the output of job <strong>" . $job->getName() . "</strong>.");
+  					Activity::log("rejected the output of job <strong>" . $job->getLink() . "</strong>.");
 				  }
 
 					$this->forwardToUrl($job->getUrl());

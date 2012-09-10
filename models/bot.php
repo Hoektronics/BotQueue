@@ -44,10 +44,13 @@
 			$r['model'] = $this->get('model');
 			$r['status'] = $this->get('status');
 			$r['last_seen'] = $this->get('last_seen');
+			$r['error_text'] = $this->get('error_text');
 			
 			$job = $this->getCurrentJob();
 			if ($job->isHydrated())
 				$r['job'] = $job->getAPIData();
+			else
+			  $r['job'] = array();
 
 			return $r;
 		}
@@ -60,10 +63,10 @@
 		public function getStatusHTMLClass()
 		{
 			$s2c = array(
+			  'idle' => 'success',
 				'working' => 'info',
-				'waiting' => 'success',
-				'error' => 'important',
-				'maintenance' => 'warning',
+				'waiting' => 'warning',
+				'error' => 'danger',
 				'offline' => 'inverse',
 			);
 			

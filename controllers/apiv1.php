@@ -58,7 +58,6 @@
 					'botinfo',            //ok
 					'registerbot',        //ok
 					'updatebot',          //ok
-					'updatebotstatus',    //ok
 				);
 				if (in_array($c, $calls))
 				{
@@ -409,7 +408,11 @@
 			
 			if (!$bot->isMine())
 				throw new Exception("This bot is not yours.");
-				
+			
+			//record our bot as having checked in.
+			$bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->save();
+			
 			return $bot->getAPIData();
 		}
 		
@@ -465,6 +468,9 @@
 		
 		public function api_updatebot()
 		{
+		  if (!$this->args('bot_id'))
+		    throw new Exception("You must provide the 'bot_id' parameter.");
+		    
 			$bot = new Bot($this->args('bot_id'));
 			if (!$bot->isHydrated())
 				throw new Exception("Bot does not exist.");
@@ -472,10 +478,6 @@
 			if (!$bot->isMine())
 				throw new Exception("This bot is not yours.");
 
-			if (!$this->args('name'))
-				throw new Exception('Bot name is a required parameter.');
-			if (!$this->args('identifier'))
-				throw new Exception('Bot identifier is a required parameter.');
 			//if (!$this->args('manufacturer'))
 			//	throw new Exception('Bot manufacturer is a required parameter.');
 			//if (!$this->args('model'))
