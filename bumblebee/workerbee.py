@@ -41,6 +41,9 @@ class WorkerBee():
 
   def startupCheckState(self):
     self.info("Bot startup")
+    #connect to our driver on startup if we're idle
+    if (self.data['status'] == 'idle'):
+      self.initializeDriver()
     #we shouldn't startup in a working state... that implies some sort of error.
     if (self.data['status'] == 'working'):
       self.errorMode("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
@@ -52,7 +55,7 @@ class WorkerBee():
     try:
       self.dropJob()
     except Exception as ex:
-      self.error(ex)
+      self.exception(ex)
            
     #take the bot offline.
     self.info("Setting bot status as error.")
@@ -61,13 +64,17 @@ class WorkerBee():
       self.data = result['data']
     else:
       self.error("Error talking to mothership: %s" % result['error'])
+      
+    #notify the queen bee of our status.
+    msg = Message('bot_update', self.data)
+    self.pipe.send(msg)
 
   def initializeDriver(self):
     try:
       if self.driver:
         self.driver.disconnect()
     except Exception as ex:
-      self.error("Disconnecting driver: %s" % ex)
+      self.exception("Disconnecting driver: %s" % ex)
       
     try:
       self.driver = self.driverFactory()
@@ -76,7 +83,6 @@ class WorkerBee():
     except Exception as ex:
       self.errorMode(ex)
       self.driver.disconnect()
-      raise ex
 
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
@@ -108,11 +114,10 @@ class WorkerBee():
         #idle mode means looking for a new job.
         if self.data['status'] == 'idle':
           try:
-            self.initializeDriver()
             self.getNewJob()
             time.sleep(10) #todo: make this sleep get longer with each successive try.
           except Exception as ex:
-            self.error(ex)
+            self.exception(ex)
         elif self.data['status'] == 'working':
           #okay, we're in work mode... handle our job.
           self.processJob()
@@ -121,18 +126,19 @@ class WorkerBee():
           self.getOurInfo()
           self.debug("Bot finished @ state %s" % self.data['status'])
         else: #we're either waiting, error, maintenance, or offline... wait until that changes
-          self.debug("Waiting in %s mode" % self.data['status'])
+          self.info("Waiting in %s mode" % self.data['status'])
           try:
             self.getOurInfo() #see if our job has changed.
           except Exception as e:
             #todo: better error handling here.
-            self.error(e)
+            self.exception(e)
           if self.data['status'] == 'idle':
             self.info("Going online.");
+            self.initializeDriver()
           else:
             time.sleep(10) # sleep for a bit to not hog resources
     except Exception as ex:
-      self.error(ex)
+      self.exception(ex)
       raise ex
 
     self.debug("Exiting.")
@@ -351,7 +357,7 @@ class WorkerBee():
     self.paused = False
 
   def stopJob(self):
-    if not self.driver.hasError():
+    if self.driver and not self.driver.hasError():
       if self.driver.isRunning() or self.driver.isPaused():
         self.driver.stop()      
     
@@ -409,6 +415,9 @@ class WorkerBee():
 
   def error(self, msg):
     self.log.error("%s: %s" % (self.config['name'], msg))
+    
+  def exception(self, msg):
+    self.log.exception("%s: %s" % (self.config['name'], msg))
     
 class Message():
   def __init__(self, name, data = None):

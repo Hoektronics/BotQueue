@@ -24,16 +24,6 @@ v1 Release - Goal: September 12, 2012
 * Bumblebee
   * test what happens when internet goes down at random times... must be failure tolerant!
     * handle no internet exception: httplib2.ServerNotFoundError: Unable to find the server at www.botqueue.com
-		* poll for errors in main printing loop (add hasError() and getErrorMessage() function to driver?)
-
-	* printcore
-		* make workerbee recognize when a driver does not connect. => error mode
-		* fix startup to wait for connection.
-		* test what happens if you unplug the usb cable during operation.
-		* test what happens if you unplug the bot power during operation.
-		* check if connected on new print, if not reconnect.
-
-	* Fix bot startup in working state => error mode
 
 v2 Release - unknown date
 

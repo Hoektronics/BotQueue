@@ -84,12 +84,19 @@ class BumbleBee():
       link.pipe.send(message)
 
     #wait for all our threads to stop
-    for idx, link in enumerate(self.workers):
-      self.screen.clear()
-      self.screen.addstr("%s\n\n" % time.asctime())
-      self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (idx+1, len(self.workers)))
-      self.screen.refresh()
-      link.process.join()    
+    threads = len(self.workers)
+    lastUpdate = 0
+    while threads > 0:
+      for idx, link in enumerate(self.workers):
+        threads = 0
+        if link.process.is_alive()
+          threads = threads + 1
+      if time.time() - lastUpdate > 1:
+        self.screen.clear()
+        self.screen.addstr("%s\n\n" % time.asctime())
+        self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (threads-len(self.workers), len(self.workers)))
+        self.screen.refresh()
+        lastUpdate = time.time()
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
