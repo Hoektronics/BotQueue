@@ -84,12 +84,19 @@ class BumbleBee():
       link.pipe.send(message)
 
     #wait for all our threads to stop
-    for idx, link in enumerate(self.workers):
-      self.screen.clear()
-      self.screen.addstr("%s\n\n" % time.asctime())
-      self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (idx+1, len(self.workers)))
-      self.screen.refresh()
-      link.process.join()    
+    threads = len(self.workers)
+    lastUpdate = 0
+    while threads > 0:
+      for idx, link in enumerate(self.workers):
+        threads = 0
+        if link.process.is_alive():
+          threads = threads + 1
+      if time.time() - lastUpdate > 1:
+        self.screen.clear()
+        self.screen.addstr("%s\n\n" % time.asctime())
+        self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (threads, len(self.workers)))
+        self.screen.refresh()
+        lastUpdate = time.time()
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
@@ -122,13 +129,15 @@ class BumbleBee():
   def drawMenu(self):
     self.screen.clear()
     self.screen.addstr("%s\n\n" % time.asctime())
-    self.screen.addstr("ID\tBOT NAME\tSTATUS\tPROGRESS\tJOB ID\tSTATUS\n")
+    self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
     for link in self.workers:
-      self.screen.addstr("%s\t%s\t%s" % (link.bot['id'], link.bot['name'], link.bot['status']))
+      self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
       if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting') and link.job:
-        self.screen.addstr("\t%0.2f%%\t%s\t%s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+        self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+      elif link.bot['status'] == 'error':
+        self.screen.addstr("%s" % link.bot['error_text'])
       else:
-        self.screen.addstr("\t-\t-\t-")
+        self.screen.addstr("   --       --           --")
       self.screen.addstr("\n")
     self.screen.addstr("\nq = quit program\n")
     self.screen.refresh()
