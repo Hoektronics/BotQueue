@@ -23,7 +23,8 @@ v1 Release - Goal: September 12, 2012
 
 * Bumblebee
   * test what happens when internet goes down at random times... must be failure tolerant!
-
+    * wrap our API call in a try:catch all block and raise our own exception on network problems.
+    
 v2 Release - unknown date
 
 * replace all appropriate form controls with new form helper class.

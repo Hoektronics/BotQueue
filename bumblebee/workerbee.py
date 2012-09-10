@@ -9,6 +9,7 @@ import botqueueapi
 import hashlib
 import logging
 import random
+import httplib2
 
 class WorkerBee():
   
@@ -116,6 +117,9 @@ class WorkerBee():
           try:
             self.getNewJob()
             time.sleep(10) #todo: make this sleep get longer with each successive try.
+          except httplib2.ServerNotFoundError as e:
+            self.warning("Internet down: %s" % e)
+            time.sleep(10)
           except Exception as ex:
             self.exception(ex)
         elif self.data['status'] == 'working':
@@ -125,10 +129,13 @@ class WorkerBee():
           #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
           self.getOurInfo()
           self.debug("Bot finished @ state %s" % self.data['status'])
-        else: #we're either waiting, error, maintenance, or offline... wait until that changes
+        else: #we're either waiting, error, or offline... wait until that changes
           self.info("Waiting in %s mode" % self.data['status'])
           try:
             self.getOurInfo() #see if our job has changed.
+          except httplib2.ServerNotFoundError as e:
+            self.warning("Internet down: %s" % e)
+            time.sleep(10)
           except Exception as e:
             #todo: better error handling here.
             self.exception(e)
@@ -314,11 +321,14 @@ class WorkerBee():
           raise Exception("Shutting down.")
 
         #occasionally update home base.
-        if (time.time() - lastUpdate > 15):
-          lastUpdate = time.time()
-          self.info("print: %0.2f%%" % latest)
-          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
-
+        try:
+          if (time.time() - lastUpdate > 15):
+            lastUpdate = time.time()
+            self.info("print: %0.2f%%" % latest)
+            self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
+        except httplib2.ServerNotFoundError as e:
+          self.warning("Internet down: %s" % e)
+            
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
           
@@ -327,18 +337,23 @@ class WorkerBee():
       self.info("Print finished.")
   
       #finish the job online, and mark as completed.
-      result = self.api.completeJob(self.data['job']['id'])
-      if result['status'] == 'success':
-        self.data = result['data']['bot']
-
-        #notify the mothership.
-        data = hive.Object()
-        data.job = self.data['job']
-        data.bot = self.data
-        message = Message('job_end', data)
-        self.pipe.send(message)
-      else:
-        raise Exception("Error notifying mothership: %s" % result['error'])
+      notified = False
+      while not notified:
+        try:
+          result = self.api.completeJob(self.data['job']['id'])
+          if result['status'] == 'success':
+            self.data = result['data']['bot']
+            notified = True
+            #notify the queen bee
+            data = hive.Object()
+            data.job = self.data['job']
+            data.bot = self.data
+            message = Message('job_end', data)
+            self.pipe.send(message)
+          else:
+            raise Exception("Error notifying mothership: %s" % result['error'])
+        except httplib2.ServerNotFoundError as e:
+          self.warning("Internet down: %s" % e)
     except Exception as ex:
       self.errorMode(ex)
 
