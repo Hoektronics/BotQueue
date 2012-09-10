@@ -31,20 +31,13 @@ class WorkerBee():
     #get various objects we'll need
     self.api = botqueueapi.BotQueueAPI()
     self.data = data
-    self.driver = self.driverFactory()
-
+    
+    self.driver = False
     self.cacheHit = False
     self.running = False
 
     #look at our current state to check for problems.
     self.startupCheckState()
-
-    #connect to our driver.
-    try:
-      self.debug("Connecting to driver.")
-      self.driver.connect()
-    except Exception as ex:
-      self.errorMode(ex)
 
   def startupCheckState(self):
     self.info("Bot startup")
@@ -53,18 +46,38 @@ class WorkerBee():
       self.errorMode("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
   
   def errorMode(self, message):
-    self.error("Going into error mode: %s" % message)
+    self.error("Error mode: %s" % message)
     
-    if (self.job['id']):
+    #drop 'em if you got em.
+    try:
       self.dropJob()
-              
+    except Exception as ex:
+      self.error(ex)
+           
     #take the bot offline.
-    result = self.api.updateBotInfo({'status' : 'error', 'error_text' : message})
+    self.info("Setting bot status as error.")
+    result = self.api.updateBotInfo({'bot_id' : self.data['id'], 'status' : 'error', 'error_text' : message})
     if result['status'] == 'success':
       self.data = result['data']
     else:
-      self.error("Error talking to mothership: %s" % result['error'])    
+      self.error("Error talking to mothership: %s" % result['error'])
+
+  def initializeDriver(self):
+    try:
+      if self.driver:
+        self.driver.disconnect()
+    except Exception as ex:
+      self.error("Disconnecting driver: %s" % ex)
       
+    try:
+      self.driver = self.driverFactory()
+      self.debug("Connecting to driver.")
+      self.driver.connect()
+    except Exception as ex:
+      self.errorMode(ex)
+      self.driver.disconnect()
+      raise ex
+
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
       import drivers.s3gdriver
@@ -95,6 +108,7 @@ class WorkerBee():
         #idle mode means looking for a new job.
         if self.data['status'] == 'idle':
           try:
+            self.initializeDriver()
             self.getNewJob()
             time.sleep(10) #todo: make this sleep get longer with each successive try.
           except Exception as ex:
@@ -117,10 +131,11 @@ class WorkerBee():
             self.info("Going online.");
           else:
             time.sleep(10) # sleep for a bit to not hog resources
-      self.debug("Exiting.")
     except Exception as ex:
       self.error(ex)
       raise ex
+
+    self.debug("Exiting.")
 
   #get bot info from the mothership
   def getOurInfo(self):
@@ -138,10 +153,10 @@ class WorkerBee():
 
   #get bot info from the mothership
   def getJobInfo(self):
-    self.debug("Looking up job #%s." % self.job['id'])
-    result = self.api.jobInfo(self.job['id'])
+    self.debug("Looking up job #%s." % self.data['job']['id'])
+    result = self.api.jobInfo(self.data['job']['id'])
     if (result['status'] == 'success'):
-      self.job = result['data']
+      self.data['job'] = result['data']
     else:
       self.error("Error looking up job info: %s" % result['error'])
       raise Exception("Error looking up job info: %s" % result['error'])
@@ -155,17 +170,16 @@ class WorkerBee():
         job = result['data']
         jresult = self.api.grabJob(self.data['id'], job['id'])
         if (jresult['status'] == 'success'):
-          self.job = jresult['data']['job']
           self.data = jresult['data']['bot']
 
           #notify the mothership.
           data = hive.Object()
-          data.job = self.job
+          data.job = self.data['job']
           data.bot = self.data
           message = Message('job_start', data)
           self.pipe.send(message)
 
-          self.info("grabbed job %s" % self.job['name'])
+          self.info("grabbed job %s" % self.data['job']['name'])
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
       else:
@@ -177,16 +191,16 @@ class WorkerBee():
   def downloadJob(self):
     #prepare our file for storage
     self.checkCacheDirectory()
-    self.openJobFile(self.job['file'])
+    self.openJobFile(self.data['job']['file'])
 
     #do we need to download it?
     if not self.cacheHit:
       #todo: do an actual API call.
-      self.job['status'] = 'downloading'
+      self.data['job']['status'] = 'downloading'
 
       #download our file.
-      self.info("downloading %s to %s." % (self.job['file']['url'], self.jobFilePath))
-      urlFile = self.openUrl(self.job['file']['url'])
+      self.info("downloading %s to %s." % (self.data['job']['file']['url'], self.jobFilePath))
+      urlFile = self.openUrl(self.data['job']['file']['url'])
       chunk = 4096
       md5 = hashlib.md5()
       lastUpdate = 0
@@ -200,26 +214,26 @@ class WorkerBee():
         self.jobFile.write(data)
         self.fileSize = self.fileSize + len(data)
 
-        latest = float(self.fileSize) / float(self.job['file']['size'])*100
+        latest = float(self.fileSize) / float(self.data['job']['file']['size'])*100
 
         #notify the mothership of our status.
         if (time.time() - localUpdate > 0.5):
-          self.job['progress'] = latest
-          msg = Message('job_update', self.job)
+          self.data['job']['progress'] = latest
+          msg = Message('job_update', self.data['job'])
           self.pipe.send(msg)
 
         #notify the remote server of our job progress.
         if (time.time() - lastUpdate > 15):
           self.debug("download: %0.2f%%" % latest)
           lastUpdate = time.time()
-          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
     
       #check our final md5 sum.
-      if md5.hexdigest() != self.job['file']['md5']:
-        self.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.job['file']['md5']))
+      if md5.hexdigest() != self.data['job']['file']['md5']:
+        self.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.data['job']['file']['md5']))
         raise Exception()
       else:
-        self.job['status'] = 'taken'
+        self.data['job']['status'] = 'taken'
         self.info("Download complete.")
     else:
       self.info("Using cached file %s" % self.jobFilePath)
@@ -284,8 +298,8 @@ class WorkerBee():
         latest = self.driver.getPercentage()
       
         #notify the mothership of our status.
-        self.job['progress'] = latest
-        msg = Message('job_update', self.job)
+        self.data['job']['progress'] = latest
+        msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
       
         #check for messages like shutdown.
@@ -297,10 +311,9 @@ class WorkerBee():
         if (time.time() - lastUpdate > 15):
           lastUpdate = time.time()
           self.info("print: %0.2f%%" % latest)
-          self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
+          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
 
         if self.driver.hasError():
-          self.errorMode(self.driver.getErrorMessage())
           raise Exception(self.driver.getErrorMessage())
           
         time.sleep(0.5)
@@ -308,21 +321,20 @@ class WorkerBee():
       self.info("Print finished.")
   
       #finish the job online, and mark as completed.
-      result = self.api.completeJob(self.job['id'])
+      result = self.api.completeJob(self.data['job']['id'])
       if result['status'] == 'success':
-        self.job = result['data']['job']
         self.data = result['data']['bot']
 
         #notify the mothership.
         data = hive.Object()
-        data.job = self.job
+        data.job = self.data['job']
         data.bot = self.data
         message = Message('job_end', data)
         self.pipe.send(message)
       else:
         raise Exception("Error notifying mothership: %s" % result['error'])
     except Exception as ex:
-      self.error("Problem during job processing: %s")
+      self.errorMode(ex)
 
   def goOnline():
     self.data['status'] = 'idle'
@@ -339,13 +351,14 @@ class WorkerBee():
     self.paused = False
 
   def stopJob(self):
-    if self.driver.isRunning() or self.driver.isPaused():
-      self.driver.stop()      
+    if not self.driver.hasError():
+      if self.driver.isRunning() or self.driver.isPaused():
+        self.driver.stop()      
     
   def dropJob(self):
     self.stopJob()
     
-    if(self.data['job']['id']):
+    if len(self.data['job']) and self.data['job']['id']:
       result = self.api.dropJob(self.data['job']['id'])
       self.info("Dropping existing job.")
       if (result['status'] == 'success'):
@@ -396,29 +409,6 @@ class WorkerBee():
 
   def error(self, msg):
     self.log.error("%s: %s" % (self.config['name'], msg))
-      
-    #todo: switch to threaded.
-    # while 1:
-    #   line = self.jobFile.readline()
-    #   if not line:
-    #       break
-    #   #print "%d: %s" % (linenum, line)
-    #   self.driver.execute(line)
-    #   currentPosition = currentPosition + len(line)
-    #   
-    #   # this will really need to happen outside our thread, so we don't interrupt printing.
-    #   # Update our print status every X lines/bytes/minutes
-    #   latest = float(currentPosition) / float(self.fileSize)*100
-    #   if (time.time() - lastUpdate > 15):
-    #     self.log("print: %0.2f%%" % latest)
-    #     lastUpdate = time.time()
-    #     self.api.updateJobProgress(self.job['id'], "%0.5f" % latest)
-    # except Exception as ex:
-    #   #todo: handle any errors from the driver, such as loss of comms or printer failure
-    #   self.log(ex)
-    #   raise ex
-    # finally:
-    #self.jobFile.close()
     
 class Message():
   def __init__(self, name, data = None):
