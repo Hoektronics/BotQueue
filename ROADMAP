@@ -23,7 +23,6 @@ v1 Release - Goal: September 12, 2012
 
 * Bumblebee
   * test what happens when internet goes down at random times... must be failure tolerant!
-    * handle no internet exception: httplib2.ServerNotFoundError: Unable to find the server at www.botqueue.com
 
 v2 Release - unknown date
 
