@@ -2,6 +2,11 @@ v1 Release - Goal: September 12, 2012
 
 * Website:
 
+  * create flowchart / data model for blog post.
+  * create non-logged in homepage
+  * update documentation on /apps
+  * start documentation on /apiv1
+  
   * add downloading state to job
     * add datetime field for every status mode
 
@@ -9,10 +14,6 @@ v1 Release - Goal: September 12, 2012
     * highlight QA required jobs better
     * test reject flow
     * form-ify and ajax-ify the QA page
-
-  * SSL certificate for botqueue.com
-		* self-signed for dev
-		* official / trusted (need to get emails setup!)
 
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
     * show bots / bot status on right side of page above statistics

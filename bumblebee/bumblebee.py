@@ -115,7 +115,7 @@ class BumbleBee():
     elif message.name == 'job_end':
       link.bot = message.data.bot
       link.job = message.data.job
-      webbrowser.open_new("http://www.botqueue.com/job:%s/qa" % link.job['id'])
+      webbrowser.open_new("https://www.botqueue.com/job:%s/qa" % link.job['id'])
       curses.beep()
       curses.flash()
     elif message.name == 'print_error':
