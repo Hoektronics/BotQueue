@@ -3,6 +3,12 @@ import oauth2 as oauth
 import json
 import hive
 import webbrowser
+import logging
+import httplib2
+import socket
+
+class NetworkError(Exception):
+  pass
 
 class BotQueueAPI():
   
@@ -12,7 +18,8 @@ class BotQueueAPI():
   #todo: 2 constructors, or a separate call to setToken()?
   def __init__(self):
     config = hive.config.get()
-
+    self.log = logging.getLogger('botqueue')
+    
     self.consumer = oauth.Consumer(config['app']['consumer_key'], config['app']['consumer_secret'])
     if config['app']['token_key']:
       self.setToken(config['app']['token_key'], config['app']['token_secret'])
@@ -39,21 +46,27 @@ class BotQueueAPI():
     #print body
     
     # make the call
-    resp, content = self.client.request(url, "POST", body)
     try:
-
+      resp, content = self.client.request(url, "POST", body)
+    
       #print "-------resp------"
       #print resp
       #print "-------content------"
       #print content
 
       if resp['status'] != '200':
-        raise Exception("Invalid response %s." % resp['status'])
+        raise NetworkError("Invalid response %s." % resp['status'])
 
       result = json.loads(content)
-  
-    except Exception as ex:
-      result = {'status' : 'error', 'error' : str(ex)}
+    except httplib2.ServerNotFoundError as ex:
+      raise NetworkError(str(ex))
+    except socket.gaierror as ex:
+      raise NetworkError(str(ex))
+    except socket.error as ex:
+      raise NetworkError(str(ex))
+    except Exception as e:
+      self.log.exception(ex)
+      raise NetworkError(str(ex))
     
     return result
 

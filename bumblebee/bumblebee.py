@@ -6,7 +6,6 @@ import hive
 import logging
 import curses
 import webbrowser
-import httplib2
 
 class BumbleBee():
   def __init__(self):
@@ -52,7 +51,7 @@ class BumbleBee():
         self.log.error("Bot list failure: %s" % bots['error'])
 
       curses.wrapper(self.mainMenu)
-    except httplib2.ServerNotFoundError as e:
+    except botqueueapi.NetworkError as e:
       self.log.error("Internet connection is down, quitting.")
     except KeyboardInterrupt as e:
       pass

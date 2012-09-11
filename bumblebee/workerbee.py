@@ -9,7 +9,6 @@ import botqueueapi
 import hashlib
 import logging
 import random
-import httplib2
 
 class WorkerBee():
   
@@ -117,7 +116,7 @@ class WorkerBee():
           try:
             self.getNewJob()
             time.sleep(10) #todo: make this sleep get longer with each successive try.
-          except httplib2.ServerNotFoundError as e:
+          except botqueueapi.NetworkError as e:
             self.warning("Internet down: %s" % e)
             time.sleep(10)
           except Exception as ex:
@@ -133,7 +132,7 @@ class WorkerBee():
           self.info("Waiting in %s mode" % self.data['status'])
           try:
             self.getOurInfo() #see if our job has changed.
-          except httplib2.ServerNotFoundError as e:
+          except botqueueapi.NetworkError as e:
             self.warning("Internet down: %s" % e)
             time.sleep(10)
           except Exception as e:
@@ -326,7 +325,7 @@ class WorkerBee():
             lastUpdate = time.time()
             self.info("print: %0.2f%%" % latest)
             self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
-        except httplib2.ServerNotFoundError as e:
+        except botqueueapi.NetworkError as e:
           self.warning("Internet down: %s" % e)
             
         if self.driver.hasError():
@@ -352,8 +351,9 @@ class WorkerBee():
             self.pipe.send(message)
           else:
             raise Exception("Error notifying mothership: %s" % result['error'])
-        except httplib2.ServerNotFoundError as e:
+        except botqueueapi.NetworkError as e:
           self.warning("Internet down: %s" % e)
+          time.sleep(10)
     except Exception as ex:
       self.errorMode(ex)
 

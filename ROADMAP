@@ -10,9 +10,6 @@ v1 Release - Goal: September 12, 2012
     * test reject flow
     * form-ify and ajax-ify the QA page
 
-	* Allow canceling of print jobs through website.
-	  * similar error flow to QA failure
-
   * SSL certificate for botqueue.com
 		* self-signed for dev
 		* official / trusted (need to get emails setup!)
@@ -22,14 +19,38 @@ v1 Release - Goal: September 12, 2012
     * ajaxify reloading of progress / page info.
 
 * Bumblebee
-  * test what happens when internet goes down at random times... must be failure tolerant!
-    * wrap our API call in a try:catch all block and raise our own exception on network problems.
-    
-v2 Release - unknown date
+  * download status updating (progress and state change)
 
+v2 Release - December 2012
+
+WEBSITE
+
+* Slicers + Profiles
 * replace all appropriate form controls with new form helper class.
+* Allow canceling of print jobs through website.
+  * similar error flow to QA failure
+* Pull in files from internet (Thingiverse, GrabCAD, etc)
+* bot current status / mini-dashboard with machine vitals such as temp.
+* full page statistics for bot / queue with graphs
+* simple script for installing botqueue onto a standalone ubuntu machine
+* 100% working Amazon bootup script.
+* job log history to see what bot did what to each job (especially errors / failures that result in a drop)
 
-* nice GUI app
+API
+
+* implement job creation via URL download
+* implement job creation via HTTP file POST
+	* use Poster to send HTTP files: http://atlee.ca/software/poster/
+* Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
+
+BUMBLEBEE
+
+* new machine discovery
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
+* Use s3g python library for MakerBot machines
+
+* GUI app?
 	High-level views:
 		Dashboard: all bots w/ current status and active jobs.
 		Add Bot: configure local bot settings (drivers, name, etc)
@@ -41,30 +62,10 @@ v2 Release - unknown date
 			* toggle bot status: online/offline/fixed/broken
 	* Use python+webkit for UI
 
-* Slicers + Profiles
-* Pull in files from internet (Thingiverse, GrabCAD, etc)
+Nice to haves:
+
 * Reduce Amazon requirements for non-amazon / non-public installs.
 * Private jobs?
 * Add public / private queues.  Default to private.
-* sqlite for local data storage
-* bot current status / mini-dashboard with machine vitals
 * grouping of jobs into batches or something?
-* simple script for installing botqueue onto a standalone ubuntu machine
-* full page statistics for bot / queue with graphs
-* user area - figure out public / private stuff.
-* new machine discovery
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
-* API
-	* implement job creation via URL download
-	* implement job creation via HTTP file POST
-		* use Poster to send HTTP files: http://atlee.ca/software/poster/
-  * 100% working Amazon bootup script.
-* job log history to see what bot did what to each job.
-* Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
-* convert bot set status to ajax - figure out the proper way to handle taking bots online/offline... pause/unpause/stop?
-* 2 new job statuses:
-	* downloading
-	* human required
-* Use s3g python library for MakerBot machines
-	
+* user area - figure out public / private stuff.	
