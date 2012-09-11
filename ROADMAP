@@ -42,6 +42,8 @@ API
 * implement job creation via HTTP file POST
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 * Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
+* Add callback url support for web-based apps
+* 
 
 BUMBLEBEE
 
@@ -62,10 +64,9 @@ BUMBLEBEE
 			* toggle bot status: online/offline/fixed/broken
 	* Use python+webkit for UI
 
-Nice to haves:
+Long Term Wants:
 
 * Reduce Amazon requirements for non-amazon / non-public installs.
-* Private jobs?
-* Add public / private queues.  Default to private.
+* Public queue support
 * grouping of jobs into batches or something?
-* user area - figure out public / private stuff.	
+* Webcam support

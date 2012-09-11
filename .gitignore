@@ -5,3 +5,5 @@ bumblebee/config.json
 bumblebee/cache*
 botqueue.tmproj
 info.log
+ssl-cert.pem
+ssl-cert.key
