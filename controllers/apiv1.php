@@ -18,7 +18,12 @@
 
 	class APIV1Controller extends Controller
 	{
-		public static $api_version = "1.0";
+		public static $api_version = "0.1";
+		
+		public function home()
+		{
+		  $this->setTitle("API Documentation");
+		}
 		
 		public function endpoint()
 		{

@@ -1,14 +1,13 @@
 <div class="row">
 	<div class="span6">
-		<h2>Bumblebee</h2>
+		<h2>Bumblebee - Official Client App</h2>
 		<p>
-			Bumblebee is the software that runs on your computer itself and turns it into a herder of bots.  This application will pull down jobs from BotQueue.com, and direct your 3D printer to create them.  To get nerdy, it is a cross-platform (w/m/l) python app designed to interface with BotQueue.  It is under heavy development and currently only has a commandline interface.
+			Bumblebee is the software that runs on your computer itself and turns it into a herder of bots.  This application will pull down jobs from BotQueue.com, and direct your 3D printer to create them.  To get nerdy, it is a cross-platform (w/m/l) python app designed to interface with BotQueue.  It is alpha software and currently only has a commandline interface.
 		</p>
 		<p>
 			It is can control the following types of machines:
 			<ul>
 				<li>Most RepRap Machines (w/ <a href="https://github.com/grbl/grbl/">grbl</a>, <a href="https://github.com/kliment/Sprinter">Sprinter</a>, <a href="https://github.com/ErikZalm/Marlin/">marlin</a>, etc)</li>
-				<li>MakerBot Replicator</li>
 			</ul>
 		</p>
 		<h3>Getting and Using Bumblebee</h3>
@@ -49,7 +48,7 @@
 			<? if (!empty($apps)): ?>
 				<h2>Developers - Your Registered Apps</h2>
 				<p>
-					If you are a developer, your app will need its own API key.  First you must <a href="/app/register">register one</a>, and then it will be listed below.  Next, you'll want to visit our <a href="/apiv1">API documentation page</a>.
+					If you are a developer, your app will need its own API key.  First you must <a href="/app/register">register one</a>, and then it will be listed below.  Next, you'll want to visit our <a href="/api/v1">API documentation page</a>.
 				</p>
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>

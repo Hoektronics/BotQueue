@@ -106,7 +106,7 @@ RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authori
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
 
 #api v1.
-RewriteRule ^api/v1$												    dispatcher.php?controller=app&view=home [NC,L]
+RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]
 RewriteRule ^api/v1/endpoint$										apiv1.php [NC,L,QSA]
 
 #username wildcard pages.  must be at the very end to avoid conflicting with other pages

@@ -4,8 +4,6 @@ v1 Release - Goal: September 12, 2012
 
   * create flowchart / data model for blog post.
   * create non-logged in homepage
-  * update documentation on /apps
-  * start documentation on /apiv1
   
   * add downloading state to job
     * add datetime field for every status mode
