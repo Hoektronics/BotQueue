@@ -64,7 +64,7 @@ class BotQueueAPI():
       raise NetworkError(str(ex))
     except socket.error as ex:
       raise NetworkError(str(ex))
-    except Exception as e:
+    except Exception as ex:
       self.log.exception(ex)
       raise NetworkError(str(ex))
     
