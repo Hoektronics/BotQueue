@@ -250,6 +250,9 @@ class WorkerBee():
     else:
       self.info("Using cached file %s" % self.jobFilePath)
 
+    #notify the mothership of download completion
+    self.api.downloadedJob(self.data['job']['id'])
+
     #reset to the beginning.
     self.jobFile.seek(0)
  

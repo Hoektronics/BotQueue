@@ -58,12 +58,10 @@ class BotQueueAPI():
         raise NetworkError("Invalid response %s." % resp['status'])
 
       result = json.loads(content)
-    except httplib2.ServerNotFoundError as ex:
+    #these are our known errors that typically mean the network is down.
+    except (httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, httplib2.BadStatusLine, socket.gaierror, socket.error) as ex:
       raise NetworkError(str(ex))
-    except socket.gaierror as ex:
-      raise NetworkError(str(ex))
-    except socket.error as ex:
-      raise NetworkError(str(ex))
+    #unknown exceptions... get a stacktrace for debugging.
     except Exception as ex:
       self.log.exception(ex)
       raise NetworkError(str(ex))
@@ -148,6 +146,9 @@ class BotQueueAPI():
 
   def failJob(self, job_id):
     return self.apiCall('failjob', {'job_id' : job_id})
+
+  def downloadedJob(self, job_id):
+    return self.apiCall('downloadedjob', {'job_id' : job_id})
     
   def completeJob(self, job_id):
     return self.apiCall('completejob', {'job_id' : job_id})
