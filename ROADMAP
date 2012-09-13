@@ -1,19 +1,16 @@
 v1 Release - Goal: September 12, 2012
 
-* Website:
+* show bots / bot status on right side of page above statistics
 
-  * create flowchart / data model for blog post.
-  * create non-logged in homepage
+* QA flow for jobs in the QA state
+  * highlight QA required jobs better
+  * test reject flow
+  * form-ify and ajax-ify the QA page
 
-  * QA flow for jobs in the QA state
-    * highlight QA required jobs better
-    * test reject flow
-    * form-ify and ajax-ify the QA page
+* create flowchart / data model for blog post.
+* create non-logged in homepage
 
-  * show bots / bot status on right side of page above statistics
-
-* Bumblebee
-  * download status updating (progress and state change)
+----------------------------------------------------------------------------------------
 
 v2 Release - December 2012
 

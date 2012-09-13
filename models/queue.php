@@ -84,6 +84,18 @@
 			return new Collection($sql, array('Job' => 'id'));			
 		}
 		
+		public function getBots()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM bots
+		    WHERE queue_id = '{$this->id}'
+		    ORDER BY last_seen DESC
+		  ";
+		  
+		  return new Collection($sql, array('Bot' => 'id'));
+		}
+		
 		public function addGCodeFile($file, $qty = 1)
 		{
 			$jobs = array();
