@@ -1,7 +1,3 @@
-<div class="alert">
-  <strong>Warning!</strong> This website and software are <strong>ALPHA</strong> and should be considered highly experimental.  You have been warned.
-</div>
-
 <div class="row">
 	<div class="span8">
 		<h2>How Do I Get Started?</h2>

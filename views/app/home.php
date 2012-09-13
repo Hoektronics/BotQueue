@@ -12,7 +12,7 @@
 		</p>
 		<h3>Getting and Using Bumblebee</h3>
 		<p>
-			Bumblebee is currently under development, and a release will be made soon.  In the meantime, you can get it from the <a href="git@github.com:Hoektronics/BotQueue.git">BotQueue github repository</a>.  You can find usage instructions on the <a href="/help">help</a> page.
+			Bumblebee is currently under development, and a release will be made soon.  In the meantime, you can get it from the <a href="https://github.com/Hoektronics/BotQueue">BotQueue github repository</a>.  You can find usage instructions on the <a href="/help">help</a> page.
 		</p>
 	</div>
 	<div class="span6">

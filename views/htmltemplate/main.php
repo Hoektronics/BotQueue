@@ -126,6 +126,10 @@
 	  </div>
 	<? endif ?>
 	
+	<div class="alert">
+    <strong>Warning!</strong> This project is <strong>ALPHA</strong> software and should be considered experimental.  It might work great, or it might nuke your bot.  Be careful. Love, Hoeken &lt;3
+  </div>
+	
   <!-- Headings & Paragraph Copy -->
 	<div class="row">
 	  <div class="span12">
