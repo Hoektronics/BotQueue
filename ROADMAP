@@ -1,7 +1,5 @@
 v1 Release - Goal: September 12, 2012
 
-* show bots / bot status on right side of page above statistics
-
 * QA flow for jobs in the QA state
   * highlight QA required jobs better
   * test reject flow
@@ -9,8 +7,6 @@ v1 Release - Goal: September 12, 2012
 
 * create flowchart / data model for blog post.
 * create non-logged in homepage
-
-----------------------------------------------------------------------------------------
 
 v2 Release - December 2012
 
