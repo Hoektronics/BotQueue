@@ -59,7 +59,7 @@ class BotQueueAPI():
 
       result = json.loads(content)
     #these are our known errors that typically mean the network is down.
-    except (httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, httplib2.BadStatusLine, socket.gaierror, socket.error) as ex:
+    except (httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
       raise NetworkError(str(ex))
     #unknown exceptions... get a stacktrace for debugging.
     except Exception as ex:

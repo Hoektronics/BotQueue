@@ -142,7 +142,7 @@
 		
 		public function canDrop($job)
 		{
-			if ($job->get('bot_id') == $this->id && ($job->get('status') == 'taken' || $job->get('status') == 'downloading'))
+			if ($job->get('bot_id') == $this->id && $this->get('job_id') == $job->id)
 				return true;
 			else
 				return false;

@@ -10,8 +10,6 @@ v1 Release - Goal: September 12, 2012
     * test reject flow
     * form-ify and ajax-ify the QA page
 
-  * show bots / bot status on right side of page above statistics
-
 * Bumblebee
   * download status updating (progress and state change)
 
