@@ -15,20 +15,36 @@
 					</tr>
 					<tr>
 						<th>Created:</th>
-						<td><?= Utility::formatDatetime($job->get('created'))?> (<?=Utility::relativeTime($job->get('created'))?>)</td>
+						<td><?= Utility::formatDatetime($job->get('created_time'))?> (<?=Utility::relativeTime($job->get('created_time'))?>)</td>
 					</tr>
 					<tr>
-						<th>Started:</th>
-						<? if (strtotime($job->get('start')) > 0): ?>
-							<td><?= Utility::formatDate($job->get('start'))?> (<?=Utility::relativeTime($job->get('start'))?>)</td>
+						<th>Grabbed:</th>
+						<? if (strtotime($job->get('taken_time')) > 0): ?>
+							<td><?= Utility::formatDatetime($job->get('taken_time'))?> (<?=Utility::relativeTime($job->get('taken_time'))?>)</td>
+						<? else: ?>
+							<td>n/a</td>
+						<? endif?>
+					</tr>
+					<tr>
+						<th>Downloaded:</th>
+						<? if (strtotime($job->get('downloaded_time')) > 0): ?>
+							<td><?= Utility::formatDatetime($job->get('downloaded_time'))?> (<?=Utility::relativeTime($job->get('downloaded_time'))?>)</td>
+						<? else: ?>
+							<td>n/a</td>
+						<? endif?>
+					</tr>
+					<tr>
+						<th>Print Complete:</th>
+						<? if (strtotime($job->get('finished_time')) > 0): ?>
+							<td><?= Utility::formatDatetime($job->get('finished_time'))?> (<?=Utility::relativeTime($job->get('finished_time'))?>)</td>
 						<? else: ?>
 							<td>n/a</td>
 						<? endif?>
 					</tr>
 					<tr>
 						<th>Finished:</th>
-						<? if (strtotime($job->get('end')) > 0): ?>
-							<td><?= Utility::formatDate($job->get('end'))?> (<?=Utility::relativeTime($job->get('end'))?>)</td>
+						<? if (strtotime($job->get('verified_time')) > 0): ?>
+							<td><?= Utility::formatDatetime($job->get('verified_time'))?> (<?=Utility::relativeTime($job->get('verified_time'))?>)</td>
 						<? else: ?>
 							<td>n/a</td>
 						<? endif?>
@@ -37,10 +53,12 @@
 						<th>Elapsed:</th>
 						<td><?=$job->getElapsedText()?></td>
 					</tr>
-					<tr>
-						<th>Remaining:</th>
-						<td><?=$job->getEstimatedText()?></td>
-					</tr>
+					<? if ($job->get('status') == 'taken'): ?>
+  					<tr>
+  						<th>Remaining:</th>
+  						<td><?=$job->getEstimatedText()?></td>
+  					</tr>
+  				<? endif ?>
 				</tbody>
 			</table>
 		</div>

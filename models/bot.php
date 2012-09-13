@@ -126,7 +126,7 @@
 		{
 			$job->set('status', 'taken');
 			$job->set('bot_id', $this->id);
-			$job->set('start', date('Y-m-d H:i:s'));
+			$job->set('taken_time', date('Y-m-d H:i:s'));
 			$job->save();
 
 			usleep(1000 + mt_rand(100,500));
@@ -142,7 +142,7 @@
 		
 		public function canDrop($job)
 		{
-			if ($job->get('bot_id') == $this->id && ($job->get('status') == 'taken' || $job->get('status') == 'failure'))
+			if ($job->get('bot_id') == $this->id && ($job->get('status') == 'taken' || $job->get('status') == 'downloading'))
 				return true;
 			else
 				return false;
@@ -153,6 +153,10 @@
 			$job->set('status', 'available');
 			$job->set('bot_id', 0);
 			$job->set('start', 0);
+			$job->set('taken_time', 0);
+			$job->set('downloaded_time', 0);
+			$job->set('finished_time', 0);
+			$job->set('verified_time', 0);
 			$job->save();
 			
 			$this->set('job_id', 0);
@@ -173,7 +177,7 @@
 		{
 			$job->set('status', 'qa');
 			$job->set('progress', 100);
-			$job->set('end', date('Y-m-d H:i:s'));
+			$job->set('finished_time', date('Y-m-d H:i:s'));
 			$job->save();
 			
 			$this->set('status', 'waiting');
@@ -213,7 +217,7 @@
 			
 			//pull in our time based stats.
 			$sql = "
-				SELECT sum(start - created) as wait, sum(end - start) as runtime, sum(end - created) as total
+				SELECT sum(verified_time - finished_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - taken_time) as total
 				FROM jobs
 				WHERE status = 'complete'
 					AND bot_id = {$this->id}

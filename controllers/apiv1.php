@@ -57,6 +57,7 @@
 					'dropjob',            //ok
 					'canceljob',          //ok
 					'completejob',        //ok
+					'downloadedjob',      //ok
 					'createjob',          //ok
 					'updatejobprogress',  //ok
 					'listbots',           //ok
@@ -355,6 +356,33 @@
 			$data['bot'] = $bot->getAPIData();
 			
 			return $data;
+		}
+		
+		public function api_downloadedjob()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			$bot = $job->getBot();
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+				
+			if (!$bot->isMine())
+				throw new Exception("This is not your bot.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+				
+			$job->set('status', 'taken');
+			$job->set('downloaded_time', date("Y-m-d H:i:s"));
+			$job->set('progress', 0); // clear our download progress meter.
+			$job->save();
+			
+			$bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->save();
+			
+			return $job->getAPIData();
 		}
 		
 		public function api_updatejobprogress()

@@ -4,18 +4,13 @@ v1 Release - Goal: September 12, 2012
 
   * create flowchart / data model for blog post.
   * create non-logged in homepage
-  
-  * add downloading state to job
-    * add datetime field for every status mode
 
   * QA flow for jobs in the QA state
     * highlight QA required jobs better
     * test reject flow
     * form-ify and ajax-ify the QA page
 
-  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
-    * show bots / bot status on right side of page above statistics
-    * ajaxify reloading of progress / page info.
+  * show bots / bot status on right side of page above statistics
 
 * Bumblebee
   * download status updating (progress and state change)
@@ -24,6 +19,9 @@ v2 Release - December 2012
 
 WEBSITE
 
+* combine queue page into single list of all open jobs w/ tabs to limit based on job status
+  * ajaxify reloading of progress / page info.
+* multi-job prints (eg: .zip file w/ manifest)
 * Slicers + Profiles
 * replace all appropriate form controls with new form helper class.
 * Allow canceling of print jobs through website.

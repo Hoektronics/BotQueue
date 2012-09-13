@@ -243,9 +243,10 @@
       			$bot->save();
       			
       			$job->set('status', 'complete');
+      			$job->set('verified_time', date("Y-m-d H:i:s"));
       			$job->save();
       			
-  					Activity::log("accepted the output of job <strong>" . $job->getLink() . "</strong>.");
+  					Activity::log("accepted the output of job " . $job->getLink() . ".");
 				  }
 				  else
 				  {
@@ -266,11 +267,16 @@
 				    if ($this->args('cancel_job'))
 				    {
 				      $job->set('status', 'failure');
+				      $job->set('verified_time', date("Y-m-d H:i:s"));
 				      $job->save();
 				    }
 				    else
 				    {
 				      $job->set('status', 'available');
+				      $job->set('taken_time', 0);
+				      $job->set('downloaded_time', 0);
+				      $job->set('finished_time', 0);
+				      $job->set('verified_time', 0);
 				      $job->set('bot_id', 0);
 				      $job->save();
 				    }

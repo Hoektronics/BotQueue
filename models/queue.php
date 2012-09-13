@@ -98,7 +98,7 @@
 				$job->set('file_id', $file->id);
 				$job->set('name', $file->get('path'));
 				$job->set('status', 'available');
-				$job->set('created', date("Y-m-d H:i:s"));
+				$job->set('created_time', date("Y-m-d H:i:s"));
 				$job->set('user_sort', $sort);
 				$job->save();
 
@@ -135,7 +135,7 @@
 			
 			//pull in our time based stats.
 			$sql = "
-				SELECT sum(start - created) as wait, sum(end - start) as runtime, sum(end - created) as total
+				SELECT sum(taken_time - created_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - created_time) as total
 				FROM jobs
 				WHERE status = 'complete'
 					AND queue_id = {$this->id}

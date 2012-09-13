@@ -78,8 +78,11 @@
 			$d['queue'] = $this->get('queue_id');
 			$d['file'] = $this->getFile()->getAPIData();
 			$d['status'] = $this->get('status');
-			$d['start'] = $this->get('start');
-			$d['end'] = $this->get('end');
+			$d['created_time'] = $this->get('created_time');
+			$d['taken_time'] = $this->get('taken_time');
+			$d['downloaded_time'] = $this->get('downloaded_time');
+			$d['finished_time'] = $this->get('finished_time');
+			$d['verified_time'] = $this->get('verified_time');
 			$d['progress'] = $this->get('progress');
 			
 			return $d;
@@ -105,18 +108,23 @@
 		{
 			if ($this->get('status') == 'available')
 			{
-				$start = strtotime($this->get('created'));
+				$start = strtotime($this->get('created_time'));
 				$end = time();
 			}
-			elseif ($this->get('status') == 'taken')
+			elseif ($this->get('status') == 'taken' || $this->get('status') == 'downloading')
 			{
-				$start = strtotime($this->get('start'));
+				$start = strtotime($this->get('taken_time'));
 				$end = time();
+			}
+			elseif ($this->get('status') == 'qa')
+			{
+				$start = strtotime($this->get('finished_time'));
+				$end = time();			  
 			}
 			else
 			{
-				$start = strtotime($this->get('start'));
-				$end = strtotime($this->get('end'));
+				$start = strtotime($this->get('created_time'));
+				$end = strtotime($this->get('verified_time'));
 			}
 			
 			return $end - $start;			
