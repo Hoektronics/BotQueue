@@ -1,12 +1,16 @@
 v1 Release - Goal: September 12, 2012
 
-* QA flow for jobs in the QA state
-  * highlight QA required jobs better
-  * test reject flow
-  * form-ify and ajax-ify the QA page
-
 * create flowchart / data model for blog post.
 * create non-logged in homepage
+
+* remove Home title from dashboard
+
+* add error log to jobs
+  * job id
+  * queue id
+  * bot id
+  * date
+  * reason
 
 v2 Release - December 2012
 

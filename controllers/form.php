@@ -32,7 +32,12 @@
 		{
 			$this->_field();
 		}
-
+		
+		public function checkboxfield()
+		{
+			$this->_field();
+		}
+		
 		public function selectfield()
 		{
 			$this->_field();

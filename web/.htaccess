@@ -84,6 +84,8 @@ RewriteRule ^job:([0-9]+)$												dispatcher.php?controller=job&view=view&id
 RewriteRule ^job:([0-9]+)/edit$												dispatcher.php?controller=job&view=edit&id=$1 [NC,L]
 RewriteRule ^job:([0-9]+)/delete$												dispatcher.php?controller=job&view=delete&id=$1 [NC,L]
 RewriteRule ^job:([0-9]+)/qa$												dispatcher.php?controller=job&view=qa&id=$1 [NC,L]
+RewriteRule ^job:([0-9]+)/qa/pass$												dispatcher.php?controller=job&view=qa_pass&id=$1 [NC,L]
+RewriteRule ^job:([0-9]+)/qa/fail$												dispatcher.php?controller=job&view=qa_fail&id=$1 [NC,L]
 RewriteRule ^job/create/file:([0-9]+)$												dispatcher.php?controller=job&view=create&file_id=$1 [NC,L]
 RewriteRule ^job/create/job:([0-9]+)$												dispatcher.php?controller=job&view=create&job_id=$1 [NC,L]
 

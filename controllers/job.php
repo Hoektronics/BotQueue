@@ -232,66 +232,194 @@
 				$this->set('job', $job);
 				$this->set('bot', $bot);
 				
-				$this->setTitle('Finish Job - ' . $job->getName());
-
-				if ($this->args('submit'))
-				{
-				  if ($this->args('accepted'))
-				  {
-				    $bot->set('job_id', 0);
-      			$bot->set('status', 'idle');
-      			$bot->save();
-      			
-      			$job->set('status', 'complete');
-      			$job->set('verified_time', date("Y-m-d H:i:s"));
-      			$job->save();
-      			
-  					Activity::log("accepted the output of job " . $job->getLink() . ".");
-				  }
-				  else
-				  {
-				    if ($this->args('bot_failed'))
-				    {
-  				    $bot->set('job_id', 0);
-        			$bot->set('status', 'error');
-        			$bot->save();
-				    }
-				    else
-				    {
-  				    $bot->set('job_id', 0);
-        			$bot->set('status', 'idle');
-        			$bot->save();
-				    }
-				    
-				    //TODO: make this better with an error log.
-				    if ($this->args('cancel_job'))
-				    {
-				      $job->set('status', 'failure');
-				      $job->set('verified_time', date("Y-m-d H:i:s"));
-				      $job->save();
-				    }
-				    else
-				    {
-				      $job->set('status', 'available');
-				      $job->set('taken_time', 0);
-				      $job->set('downloaded_time', 0);
-				      $job->set('finished_time', 0);
-				      $job->set('verified_time', 0);
-				      $job->set('bot_id', 0);
-				      $job->save();
-				    }
-
-  					Activity::log("rejected the output of job <strong>" . $job->getLink() . "</strong>.");
-				  }
-
-					$this->forwardToUrl($job->getUrl());
-				}				
+				$this->setTitle('Verify Job - ' . $job->getName());	
+				
+				$form = $this->_createQAFailForm($job);
+				$this->set('form', $form);
 			}
 			catch (Exception $e)
 			{
 				$this->setTitle('Delete Job - Error');
 				$this->set('megaerror', $e->getMessage());
 			}			
+		}
+
+		public function qa_pass()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if ($job->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this job.");
+				if ($job->get('status') != 'qa')
+					throw new Exception("You cannot do QA on this job.");
+
+		    $bot = $job->getBot();
+
+				$this->set('job', $job);
+				$this->set('bot', $bot);
+				
+				if ($this->args('submit'))
+				{
+			    $bot->set('job_id', 0);
+    			$bot->set('status', 'idle');
+    			$bot->save();
+    			
+    			$job->set('status', 'complete');
+    			$job->set('verified_time', date("Y-m-d H:i:s"));
+    			$job->save();
+    			
+					Activity::log("accepted the output of job " . $job->getLink() . ".");
+
+          $this->forwardToUrl("/");  
+			  }
+        else
+        {
+          $this->forwardToUrl($job->getUrl() . "/qa");  
+        }				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Accept Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
+
+		public function qa_fail()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if ($job->get('user_id') != User::$me->id)
+					throw new Exception("You do not own this job.");
+				if ($job->get('status') != 'qa')
+					throw new Exception("You cannot do QA on this job.");
+
+		    $bot = $job->getBot();
+
+				$this->set('job', $job);
+				$this->set('bot', $bot);
+				
+				$form = $this->_createQAFailForm($job);
+				$this->set('form', $form);
+				
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+			    if ($form->data('bot_error'))
+			    {
+				    $bot->set('job_id', 0);
+      			$bot->set('status', 'error');
+      			if ($form->data('failure_reason') == 'Other')
+      			  $error_text = $form->data('failure_reason_other');
+      			else
+      			  $error_text = $form->data('failure_reason');
+    			  $bot->set('error_text', $error_text);
+      			$bot->save();
+      			
+      			Activity::log("took the bot " . $bot->getLink() . "offline for repairs.");
+			    }
+			    else
+			    {
+				    $bot->set('job_id', 0);
+      			$bot->set('status', 'idle');
+      			$bot->save();
+			    }
+			    
+			    if ($form->data('job_error'))
+			    {
+			      $job->set('status', 'failure');
+			      $job->set('verified_time', date("Y-m-d H:i:s"));
+			      $job->save();
+			      
+			      Activity::log("dropped the job " . $job->getLink() . ".");
+			    }
+			    else
+			    {
+			      $job->set('status', 'available');
+			      $job->set('taken_time', 0);
+			      $job->set('downloaded_time', 0);
+			      $job->set('finished_time', 0);
+			      $job->set('verified_time', 0);
+			      $job->set('bot_id', 0);
+			      $job->save();
+			    }
+
+					Activity::log("rejected the output of job " . $job->getLink() . ".");
+
+          $this->forwardToUrl("/");  
+				}
+				else
+			  	$this->forwardToUrl($job->getUrl() . "/qa"); 				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Reject Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
+		
+		public function _createQAFailForm($job)
+		{
+		  $form = new Form();
+		  $form->action = $job->getUrl() . "/qa/fail";
+		  
+		  $options = array(
+		    "Unknown" => "Unknown Failure",
+		    "Extruder Jam" => "Extruder Jam (Stopped extrusion, filament stripped, etc.)",
+		    "XY Offset" => "XY Layers Offset (Motors skipping, etc.)",
+		    "Print Dislodged" => "Print dislodged from build platform",
+		    "Machine Frozen" => "Machine frozen and not responding (software crash, etc.)",
+		    "Out of Filament" => "Ran out of filament, print did not complete.",
+		    "Poor Quality" => "Poor print quality (blobbing, loose threads, etc.)",
+		    "Other" => "Other - Please enter reason in field below."
+		  );
+					
+			$form->add(new SelectField(array(
+				'name' => 'failure_reason',
+				'label' => 'Reason for failure',
+				'help' => 'Please enter a reason for rejecting this print.',
+				'required' => true,
+				'options' => $options
+			)));
+			
+			$form->add(new TextField(array(
+				'name' => 'failure_reason_other',
+				'label' => 'Other Reason',
+				'help' => 'If you selected "other" above, please enter the reason here.',
+				'required' => false,
+				'value' => ""
+			)));
+			
+			$form->add(new CheckboxField(array(
+			 'name' => 'bot_error',
+			 'label' => 'Put the bot in error/maintenance mode?',
+			 'help' => 'Check this box if the bot needs maintenance and should stop grabbing jobs.',
+			 'value' => 1
+			)));
+			
+			$form->add(new CheckboxField(array(
+			 'name' => 'job_error',
+			 'label' => 'Pull this job from the queue?',
+			 'help' => 'Check this box if the job itself has issues and should be pulled from the queue.'
+			)));
+			
+			return $form;
 		}
 		
 		public function file()
