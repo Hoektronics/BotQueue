@@ -321,14 +321,25 @@
 				
 				if ($form->checkSubmitAndValidate($this->args()))
 				{
+				  if ($form->data('failure_reason') == 'Other')
+    			  $error_text = $form->data('failure_reason_other');
+    			else
+    			  $error_text = $form->data('failure_reason');
+
+          //log that shit!
+			    $log = new ErrorLog();
+			    $log->set('user_id', User::$me->id);
+			    $log->set('job_id', $job->id);
+			    $log->set('queue_id', $job->get('queue_id'));
+			    $log->set('bot_id', $bot->id);
+			    $log->set('reason', $error_text);
+			    $log->set('error_date', date("Y-m-d H:i:s"));
+			    $log->save();
+    			  
 			    if ($form->data('bot_error'))
 			    {
 				    $bot->set('job_id', 0);
       			$bot->set('status', 'error');
-      			if ($form->data('failure_reason') == 'Other')
-      			  $error_text = $form->data('failure_reason_other');
-      			else
-      			  $error_text = $form->data('failure_reason');
     			  $bot->set('error_text', $error_text);
       			$bot->save();
       			

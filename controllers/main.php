@@ -20,8 +20,6 @@
 	{
 		public function home()
 		{
-      $this->setTitle('Home');
-			
 			if (User::isLoggedIn())
 			{
 				$queues = User::$me->getQueues();

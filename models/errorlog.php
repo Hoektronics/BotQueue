@@ -16,39 +16,11 @@
     along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-	class Activity extends Model
+	class ErrorLog extends Model
 	{
 		public function __construct($id = null)
 		{
-			parent::__construct($id, "activities");
-		}
-		
-		public static function getStream() {
-			$sql = "
-				SELECT id, user_id
-				FROM activities
-				WHERE user_id = '" . User::$me->id . "'
-				ORDER BY id DESC
-			";
-
-		  return new Collection($sql, array(
-		    'User'      => 'user_id',
-		    'Activity'  => 'id'
-		  ));
-		}
-		
-		public static function log($activity, $user = null)
-		{
-			if ($user === null)
-				$user = User::$me;
-				
-			$a = new Activity();
-			$a->set('user_id', $user->id);
-			$a->set('action_date', date("Y-m-d H:i:s"));
-			$a->set('activity', $activity);
-			$a->save();
-			
-			return $a;
+			parent::__construct($id, "error_log");
 		}
 	}
 ?>
