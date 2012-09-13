@@ -337,8 +337,8 @@
 					$token = Token::byToken($data['token']);
 					$token->setCookie();
 					
-					//to our profile.
-					$this->forwardToUrl(User::$me->getUrl());
+					//to our dashboard
+					$this->forwardToUrl("/");
 				}
 			}
 		}
@@ -457,11 +457,7 @@
 						Activity::log("logged in.");
 												
 						//send us!
-						//$this->forwardToUrl("/home");
-						if (Controller::isiPhone())
-							$this->forwardToUrl('/');
-						else
-							$this->forwardToUrl(User::$me->getUrl());
+						$this->forwardToUrl('/');
 					}
 					else
 					{
