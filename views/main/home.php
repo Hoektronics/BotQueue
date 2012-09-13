@@ -1,4 +1,9 @@
 <? if (User::isLoggedIn()): ?>
+  <? if (empty($bots)): ?>
+    <div class="alert alert-success">
+      <strong>It looks like you're new here!</strong>  Head over to the <a href="/help">help page</a> for information on getting up and running.  You're going to like it here.
+    </div>
+  <? endif ?>
 	<div class="row">
 		<div class="span6">
 			<h2>

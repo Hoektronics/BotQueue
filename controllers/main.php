@@ -76,5 +76,15 @@
 			
 			die($code->get('url'));
 		}
+		
+		public function tos()
+		{
+		  $this->setTitle("Terms of Service");
+		}
+		
+		public function privacy()
+		{
+		  $this->setTitle("Privacy Policy");
+		}
 	}
 ?>

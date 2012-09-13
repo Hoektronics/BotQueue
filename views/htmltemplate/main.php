@@ -85,7 +85,7 @@
             <li><a href="/bots">Bots</a></li>
             <li><a href="/queues">Queues</a></li>
             <li><a href="/jobs">Jobs</a></li>
-            <li><a href="/apps">Apps</a></li>
+            <li><a href="/apps">App</a></li>
             <li><a href="/help">Help</a></li>
           </ul>
           <ul class="nav pull-right">

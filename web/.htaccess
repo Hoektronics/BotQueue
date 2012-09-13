@@ -107,6 +107,11 @@ RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=de
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
 
+#ugh, legal stuff
+RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]
+RewriteRule ^privacy$										dispatcher.php?controller=main&view=privacy [NC,L]
+
+
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]
 RewriteRule ^api/v1/endpoint$										apiv1.php [NC,L,QSA]
