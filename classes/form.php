@@ -91,12 +91,25 @@
 			return $html;
 		}
 		
-		public function data($name)
+		public function data($name = null)
 		{
-			if (isset($this->fields[$name]) && $this->fields[$name] instanceOf FormField)
-				return $this->fields[$name]->getValue();
-			else
-				return null;
+		  if ($name === null)
+		  {
+        if (!empty($this->fields))
+        {
+          $data = array();
+          foreach ($this->fields as $key => $field)
+            $data[$key] = $field->getValue();
+          
+          return $data;
+        }
+		  }
+		  else
+		  {
+  			if (isset($this->fields[$name]) && $this->fields[$name] instanceOf FormField)
+  				return $this->fields[$name]->getValue();
+		  } 
+		  return null;
 		}
 	}
 	
@@ -174,7 +187,19 @@
 	class TextField extends FormField
 	{
 	}
-	
+
+	class CheckboxField extends FormField
+	{
+	  //checkboxes have only 2 states and are valid no matter what.
+	  public function validate($data)
+		{
+			$this->hasError = false;
+      $this->setValue((int)$data[$this->name]);
+			
+			return true;
+		}
+	}
+		
 	class SelectField extends FormField
 	{
 		public $options;

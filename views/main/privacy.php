@@ -1,0 +1,1 @@
+I'll do my best to keep your data safe and private.  I won't sell your email address to Nigerian spammers.  Double promise.

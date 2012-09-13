@@ -1,17 +1,7 @@
 v1 Release - Goal: September 12, 2012
 
-* Website:
-
-  * create flowchart / data model for blog post.
-  * create non-logged in homepage
-
-  * QA flow for jobs in the QA state
-    * highlight QA required jobs better
-    * test reject flow
-    * form-ify and ajax-ify the QA page
-
-* Bumblebee
-  * download status updating (progress and state change)
+* create flowchart / data model for blog post.
+* create non-logged in homepage
 
 v2 Release - December 2012
 

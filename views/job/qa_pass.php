@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
-	<?= $form->render() ?>
+  Hmm.  This shouldn't happen.
 <? endif ?>

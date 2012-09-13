@@ -16,46 +16,11 @@
     along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-	class FormController extends Controller
+	class ErrorLog extends Model
 	{
-		public function vertical_form()
+		public function __construct($id = null)
 		{
-			$this->_form();
-		}
-		
-		public function hiddenfield()
-		{
-			$this->_field();
-		}
-
-		public function textfield()
-		{
-			$this->_field();
-		}
-		
-		public function checkboxfield()
-		{
-			$this->_field();
-		}
-		
-		public function selectfield()
-		{
-			$this->_field();
-		}
-
-		public function displayfield()
-		{
-			$this->_field();
-		}
-
-		private function _form()
-		{
-			$this->setArg('form');
-		}
-
-		private function _field()
-		{
-			$this->setArg('field');
+			parent::__construct($id, "error_log");
 		}
 	}
 ?>

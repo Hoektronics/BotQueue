@@ -4,10 +4,10 @@
 	<div class="row">
 		<div class="span8">
 			<h3>
-				Available Jobs
-				:: 1-<?=min(10, $available_count)?> of <?=$available_count?> :: <a href="<?=$queue->getUrl()?>/jobs/available">see all</a>
+			  Jobs Pending QA
+			  :: 1-<?=min(10, $qa_count)?> of <?=$qa_count?> :: <a href="<?=$queue->getUrl()?>/jobs/qa">see all</a>
 			</h3>
-			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $available))?>
+			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $qa))?>
 			<br/><br/>
 
 			<h3>
@@ -17,6 +17,13 @@
 			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $taken))?>
 			<br/><br/>
 			
+			<h3>
+				Available Jobs
+				:: 1-<?=min(10, $available_count)?> of <?=$available_count?> :: <a href="<?=$queue->getUrl()?>/jobs/available">see all</a>
+			</h3>
+			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $available))?>
+			<br/><br/>
+
 			<h3>
 				Completed Jobs
 				:: 1-<?=min(10, $complete_count)?> of <?=$complete_count?> :: <a href="<?=$queue->getUrl()?>/jobs/complete">see all</a>
@@ -32,6 +39,30 @@
 
 		</div>
 		<div class="span4">
+		  <h3>Bots</h3>
+		  <table class="table table-striped table-bordered table-condensed">
+				<tbody>
+			    <tr>
+			      <th>Name</th>
+			      <th>Status</th>
+			      <th>Last Seen</th>
+			    </tr>
+			    <? if (!empty($bots)): ?>
+			      <? foreach ($bots AS $row): ?>
+			        <? $bot = $row['Bot'] ?>
+			        <tr>
+			          <td><?=$bot->getLink()?></td>
+			          <td><?=$bot->getStatusHTML()?></td>
+			          <td><?=Utility::relativeTime($bot->get('last_seen'))?></td>
+			        </tr>
+			      <? endforeach ?>
+			    <? else: ?>
+			      <tr>
+			        <td colspan="2"><strong>No bots found!</strong></td>
+			      </tr>
+			    <? endif ?>
+			  </tbody>
+			</table>
 			<h3>Statistics</h3>
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>

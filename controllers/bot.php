@@ -40,65 +40,32 @@
 			
 			$this->setTitle('Register a new Bot');
 			
-			//load up our queues.
-			$queues = User::$me->getQueues()->getAll();
-			foreach ($queues AS $row)
-			{
-				$q = $row['Queue'];
-				$data[$q->id] = $q->getName();
-			}
-			$this->set('queues', $data);
-
-			//pull in our data.
 			$bot = new Bot();
-			$bot->set('user_id', User::$me->id);
-			$bot->set('queue_id', $this->args('queue_id'));
-			$bot->set('name', $this->args('name'));
-			$bot->set('manufacturer', $this->args('manufacturer'));
-			$bot->set('model', $this->args('model'));
-			$bot->set('electronics', $this->args('electronics'));
-			$bot->set('firmware', $this->args('firmware'));
-			$bot->set('extruder', $this->args('extruder'));
-			$bot->set('status', 'idle');
-			$bot->set('last_seen', date('Y-m-d H:i:s'));
-			$this->set('bot', $bot);
+			
+			//load up our form.
+			$form = $this->_createBotForm($bot);
+			$form->action = "/bot/register";
 
-			//was it a form submit?
-			if ($this->args('submit'))
+			//handle our form
+			if ($form->checkSubmitAndValidate($this->args()))
 			{
-				//did we get a name?
-				if (!$this->args('name'))
-				{
-					$errors['name'] = "You need to provide a name.";
-					$errorfields['name'] = "error";
-				}
+			  $bot->set('user_id', User::$me->id);
+				$bot->set('queue_id', $form->data('queue_id'));
+				$bot->set('name', $form->data('name'));
+				$bot->set('manufacturer', $form->data('manufacturer'));
+				$bot->set('model', $form->data('model'));
+				$bot->set('electronics', $form->data('electronics'));
+				$bot->set('firmware', $form->data('firmware'));
+				$bot->set('extruder', $form->data('extruder'));
+				$bot->set('status', 'offline');
+				$bot->save();
 
-				//did we get a name?
-				if (!$this->args('queue_id'))
-				{
-					$errors['queue_id'] = "Your bot must have a designated queue.";
-					$errorfields['queue_id'] = "error";
-				}
-
-				//okay, we good?
-				if (empty($errors))
-				{
-					//woot!
-					$bot->save();
-					
-					//todo: send a confirmation email.
-					Activity::log("registered a new bot named " . $bot->getLink());
-
-					$this->forwardToUrl($bot->getUrl());
-				}
-				else
-				{
-					$this->set('errors', $errors);
-					$this->set('errorfields', $errorfields);
-					$this->setArg('name');
-					$this->setArg('model');
-				}
+				Activity::log("registered the bot " . $bot->getLink() . ".");
+			
+				$this->forwardToUrl($bot->getUrl());						
 			}
+			
+			$this->set('form', $form);
 		}
 		
 		public function view()
@@ -210,7 +177,6 @@
 					$bot->set('electronics', $form->data('electronics'));
 					$bot->set('firmware', $form->data('firmware'));
 					$bot->set('extruder', $form->data('extruder'));
-					$bot->set('status', 'idle');
 					$bot->save();
 
 					Activity::log("edited the bot " . $bot->getLink() . ".");
@@ -360,7 +326,15 @@
 				'required' => true,
 				'value' => $bot->get('firmware')
 			)));
-			
+
+  		$form->add(new TextField(array(
+  			'name' => 'extruder',
+  			'label' => 'Extruder',
+  			'help' => 'What extruder are you using to print with?',
+  			'required' => true,
+  			'value' => $bot->get('extruder')
+  		)));
+					
 			return $form;
 		}
 

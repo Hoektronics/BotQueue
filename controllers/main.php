@@ -20,8 +20,6 @@
 	{
 		public function home()
 		{
-      $this->setTitle('Home');
-			
 			if (User::isLoggedIn())
 			{
 				$queues = User::$me->getQueues();
@@ -77,6 +75,16 @@
 			$code = ShortCode::byCode($this->args('code'));
 			
 			die($code->get('url'));
+		}
+		
+		public function tos()
+		{
+		  $this->setTitle("Terms of Service");
+		}
+		
+		public function privacy()
+		{
+		  $this->setTitle("Privacy Policy");
 		}
 	}
 ?>

@@ -62,7 +62,7 @@ RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?$						dispatcher.php?contro
 RewriteRule ^queues(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=home&page=$2 [NC,L]
 RewriteRule ^queue/create$												dispatcher.php?controller=queue&view=create [NC,L]
 RewriteRule ^queue:([0-9]+)$												dispatcher.php?controller=queue&view=view&id=$1 [NC,L]
-RewriteRule ^queue:([0-9]+)/jobs/(available|taken|failure|complete)(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=listjobs&id=$1&status=$2&page=$4 [NC,L]
+RewriteRule ^queue:([0-9]+)/jobs/(available|taken|qa|failure|complete)(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=listjobs&id=$1&status=$2&page=$4 [NC,L]
 
 #uploader
 RewriteRule ^upload$												dispatcher.php?controller=upload&view=home [NC,L]
@@ -84,6 +84,8 @@ RewriteRule ^job:([0-9]+)$												dispatcher.php?controller=job&view=view&id
 RewriteRule ^job:([0-9]+)/edit$												dispatcher.php?controller=job&view=edit&id=$1 [NC,L]
 RewriteRule ^job:([0-9]+)/delete$												dispatcher.php?controller=job&view=delete&id=$1 [NC,L]
 RewriteRule ^job:([0-9]+)/qa$												dispatcher.php?controller=job&view=qa&id=$1 [NC,L]
+RewriteRule ^job:([0-9]+)/qa/pass$												dispatcher.php?controller=job&view=qa_pass&id=$1 [NC,L]
+RewriteRule ^job:([0-9]+)/qa/fail$												dispatcher.php?controller=job&view=qa_fail&id=$1 [NC,L]
 RewriteRule ^job/create/file:([0-9]+)$												dispatcher.php?controller=job&view=create&file_id=$1 [NC,L]
 RewriteRule ^job/create/job:([0-9]+)$												dispatcher.php?controller=job&view=create&job_id=$1 [NC,L]
 
@@ -104,6 +106,11 @@ RewriteRule ^app:([0-9]+)/edit$							    dispatcher.php?controller=app&view=edi
 RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=delete_app&app_id=$1 [NC,L]
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
+
+#ugh, legal stuff
+RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]
+RewriteRule ^privacy$										dispatcher.php?controller=main&view=privacy [NC,L]
+
 
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]

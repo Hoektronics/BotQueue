@@ -85,7 +85,7 @@
             <li><a href="/bots">Bots</a></li>
             <li><a href="/queues">Queues</a></li>
             <li><a href="/jobs">Jobs</a></li>
-            <li><a href="/apps">Apps</a></li>
+            <li><a href="/apps">App</a></li>
             <li><a href="/help">Help</a></li>
           </ul>
           <ul class="nav pull-right">
@@ -125,6 +125,10 @@
 	    <h1><?=$title?></h1>
 	  </div>
 	<? endif ?>
+	
+	<div class="alert">
+    <strong>Warning!</strong> This project is <strong>ALPHA</strong> software and should be considered experimental.  It might work great, or it might nuke your bot.  Be careful. Love, Hoeken &lt;3
+  </div>
 	
   <!-- Headings & Paragraph Copy -->
 	<div class="row">

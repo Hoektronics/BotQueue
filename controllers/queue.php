@@ -101,12 +101,20 @@
 				$complete = $q->getJobs('complete', 'user_sort', 'DESC');
 				$this->set('complete', $complete->getRange(0, 20));
 				$this->set('complete_count', $complete->count());
+
+				$qa = $q->getJobs('qa', 'finished_time', 'DESC');
+				$this->set('qa', $qa->getRange(0, 20));
+				$this->set('qa_count', $qa->count());
 			
 				$failure = $q->getJobs('failure', 'user_sort', 'DESC');
 				$this->set('failure', $failure->getRange(0, 20));
 				$this->set('failure_count', $failure->count());
 			
 				$this->set('stats', $q->getStats());
+				
+				$bots = $q->getBots();
+				$this->set('bots', $bots->getRange(0, 20));
+				$this->set('bot_count', $bots->count());
 			}
 			catch (Exception $e)
 			{

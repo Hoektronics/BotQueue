@@ -152,11 +152,11 @@
 		{
 			$job->set('status', 'available');
 			$job->set('bot_id', 0);
-			$job->set('start', 0);
 			$job->set('taken_time', 0);
 			$job->set('downloaded_time', 0);
 			$job->set('finished_time', 0);
 			$job->set('verified_time', 0);
+      $job->set('progress', 0);
 			$job->save();
 			
 			$this->set('job_id', 0);
