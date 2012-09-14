@@ -6,23 +6,34 @@ import webbrowser
 import logging
 import httplib2
 import socket
+import hashlib
+import time
 
 class NetworkError(Exception):
   pass
 
 class BotQueueAPI():
   
-  authorize_url = 'https://www.botqueue.com/app/authorize'
-  endpoint_url = 'https://www.botqueue.com/api/v1/endpoint'
+  version = '0.1'
+  name = 'Bumblebee'
   
-  #todo: 2 constructors, or a separate call to setToken()?
   def __init__(self):
-    config = hive.config.get()
+    self.config = hive.config.get()
     self.log = logging.getLogger('botqueue')
+
+    #create a unique hash that will identify this computers requests
+    if not self.config['uid']:
+      self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
+      hive.config.save(self.config)
+
+    #pull in our endpoint urls
+    self.authorize_url = self.config['api']['authorize_url']
+    self.endpoint_url = self.config['api']['endpoint_url']
     
-    self.consumer = oauth.Consumer(config['app']['consumer_key'], config['app']['consumer_secret'])
-    if config['app']['token_key']:
-      self.setToken(config['app']['token_key'], config['app']['token_secret'])
+    #pull in our user credentials, or trigger the auth process if they aren't found.
+    self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
+    if self.config['app']['token_key']:
+      self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:
       self.authorize()
 
@@ -35,29 +46,25 @@ class BotQueueAPI():
     if (url == False):
         url = self.endpoint_url
 
+    #add in our special variables
+    parameters['_client_version'] = self.version
+    parameters['_client_name'] = self.name
+    parameters['_uid'] = self.config['uid']
+
     #format our api call data.  todo: need to sanitize w/ html entities?
     body = "api_call=%s&api_output=json" % (call)
     for k, v in parameters.iteritems():
       body = body + "&%s=%s" % (k, v)
     
-    #print "-------url------"
-    #print url
-    #print "-------body------"
-    #print body
-    
     # make the call
     try:
       resp, content = self.client.request(url, "POST", body)
-    
-      #print "-------resp------"
-      #print resp
-      #print "-------content------"
-      #print content
 
       if resp['status'] != '200':
         raise NetworkError("Invalid response %s." % resp['status'])
 
       result = json.loads(content)
+   
     #these are our known errors that typically mean the network is down.
     except (httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
       raise NetworkError(str(ex))
@@ -71,6 +78,7 @@ class BotQueueAPI():
   def requestToken(self):
     self.client = oauth.Client(self.consumer)
 
+    #make our token request call or error
     result = self.apiCall('requesttoken')
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
@@ -85,6 +93,7 @@ class BotQueueAPI():
     self.token.set_verifier(verifier)
     self.client = oauth.Client(self.consumer, self.token)
 
+    #switch our temporary auth token for our 
     result = self.apiCall('accesstoken')
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
@@ -120,10 +129,10 @@ class BotQueueAPI():
       self.convertToken(oauth_verifier)
       #TODO: fix this to be a forever loop and handle errors.
     
-      config = hive.config.get()
-      config['app']['token_key'] = self.token.key
-      config['app']['token_secret'] = self.token.secret
-      hive.config.save(config)
+      #record the key in our config
+      self.config['app']['token_key'] = self.token.key
+      self.config['app']['token_secret'] = self.token.secret
+      hive.config.save(self.config)
 
     except Exception as ex:
       print "There was a problem authorizing the app: %s" % (ex)

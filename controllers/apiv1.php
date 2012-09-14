@@ -22,7 +22,7 @@
 		
 		public function home()
 		{
-		  $this->setTitle("API Documentation");
+		  $this->setTitle("API Documentation - v" . self::$api_version);
 		}
 		
 		public function endpoint()
@@ -72,7 +72,7 @@
 				}
 				else
 					throw new Exception("Specified api_call '{$c}' does not exist.");
-					
+				
 				$result = array('status' => 'success', 'data' => $data);
 			}
 			catch(Exception $e)
@@ -81,7 +81,7 @@
 			}
 
 			//add in our version.
-			$result['version'] = self::$api_version;
+			$result['_api_version'] = self::$api_version;
 			
 			echo JSON::encode($result);
 				

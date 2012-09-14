@@ -1,9 +1,8 @@
 v2 Release - October 2012
 
-* WEB - replace all appropriate form controls with new form helper class.
 * WEB - job log history to see what bot did what to each job (especially errors / failures that result in a drop)
+* WEB - replace all appropriate form controls with new form helper class.
 * WEB - protect sql calls from db injection attacks
-* WEB - better client installation documentation
 
 * WEB - Slicers + Profiles
   * support for multiple slice engines, and versions of slice engines
@@ -21,10 +20,10 @@ v2 Release - October 2012
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 * API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
 * API - Add callback url support for web-based apps
-* API - Add version information
 
-* BUMBLEBEE - Add version information
 * BUMBLEBEE - Better / faster shutdown
+
+* WEB - better client installation documentation
 
 ------------------------------------------------------------------------------------
 
