@@ -1,43 +1,69 @@
-v1 Release - Goal: September 12, 2012
+v2 Release - October 2012
 
-* create flowchart / data model for blog post.
-* create non-logged in homepage
+* WEB - replace all appropriate form controls with new form helper class.
+* WEB - job log history to see what bot did what to each job (especially errors / failures that result in a drop)
+* WEB - protect sql calls from db injection attacks
+* WEB - better client installation documentation
 
-v2 Release - December 2012
+* WEB - Slicers + Profiles
+  * support for multiple slice engines, and versions of slice engines
+  * support for multiple different configuration files
+    * can upload config files, or edit online
+  * initially only support slic3r
 
-WEBSITE
+* WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
+  * Prereq: slicer support
 
-* combine queue page into single list of all open jobs w/ tabs to limit based on job status
-  * ajaxify reloading of progress / page info.
-* multi-job prints (eg: .zip file w/ manifest)
-* Slicers + Profiles
-* replace all appropriate form controls with new form helper class.
-* Allow canceling of print jobs through website.
-  * similar error flow to QA failure
-* Pull in files from internet (Thingiverse, GrabCAD, etc)
-* bot current status / mini-dashboard with machine vitals such as temp.
-* full page statistics for bot / queue with graphs
-* simple script for installing botqueue onto a standalone ubuntu machine
-* 100% working Amazon bootup script.
-* job log history to see what bot did what to each job (especially errors / failures that result in a drop)
+* WEB - multi-job prints (eg: .zip file w/ manifest)
 
-API
-
-* implement job creation via URL download
-* implement job creation via HTTP file POST
+* API - implement job creation via URL download
+* API - implement job creation via HTTP file POST
 	* use Poster to send HTTP files: http://atlee.ca/software/poster/
-* Add computer name to app approval so we can show that on app page... remove access token for a certain computer.
-* Add callback url support for web-based apps
-* 
+* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
+* API - Add callback url support for web-based apps
+* API - Add version information
 
-BUMBLEBEE
+* BUMBLEBEE - Add version information
+* BUMBLEBEE - Better / faster shutdown
 
-* new machine discovery
+------------------------------------------------------------------------------------
+
+v3 Release - Nov 2012
+
+WEBSITE 
+
+* WEB - Single unified queue view w/ auto-update
+  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
+
+* WEB - Allow canceling of print jobs through website.
+  * similar error flow to QA failure
+  * Prereq: websockets server
+
+* WEB - Allow pausing / resuming through website
+
+* WEB - bot current status / mini-dashboard with machine vitals such as temp.
+
+* API - Websockets server
+  * define events to pass to clients
+  * subscribe to bots, jobs, or user?
+  * use autobahn or tornado for python side.
+  
+* CLIENT - support for websockets for realtime comms
+
+------------------------------------------------------------------------------------
+
+Long term wants:
+
+* WEB - Reduce Amazon requirements for non-amazon / non-public installs.
+* WEB - Public queue support
+* WEB - Webcam support
+* WEB - full page statistics for bot / queue with graphs
+
+* BUMBLEBEE - new machine discovery
 	* If new machines are found, it will prompt the user to register them.
 	* Allow user to manually add new machines & configure them (serial port, speed, etc)
-* Use s3g python library for MakerBot machines
-
-* GUI app?
+* BUMBLEBEE - s3g python library for MakerBot machines
+* BUMBLEBEE - GUI App?
 	High-level views:
 		Dashboard: all bots w/ current status and active jobs.
 		Add Bot: configure local bot settings (drivers, name, etc)
@@ -48,10 +74,5 @@ BUMBLEBEE
 			* cancel print
 			* toggle bot status: online/offline/fixed/broken
 	* Use python+webkit for UI
-
-Long Term Wants:
-
-* Reduce Amazon requirements for non-amazon / non-public installs.
-* Public queue support
-* grouping of jobs into batches or something?
-* Webcam support
+* WEB - simple script for installing botqueue onto a standalone ubuntu machine
+* WEB - 100% working Amazon bootup script.
