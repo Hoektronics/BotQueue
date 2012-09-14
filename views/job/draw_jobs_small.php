@@ -24,5 +24,7 @@
 		</tbody>
 	</table>
 <? else: ?>
-	<b>No pending jobs.</b>
+  <div class="alert">
+    <strong>No jobs found!</strong>  To get started, <a href="/upload">upload a job</a>.
+  </div>
 <? endif ?>

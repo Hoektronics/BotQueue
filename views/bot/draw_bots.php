@@ -29,5 +29,7 @@
 		</tbody>
 	</table>
 <? else: ?>
-	<b>No bots.</b>
+  <div class="alert">
+    <strong>No bots found!</strong>  To get started, <a href="/bot/register">register a bot</a>.
+  </div>
 <? endif ?>

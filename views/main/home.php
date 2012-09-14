@@ -37,5 +37,10 @@
 		</div>
 	</div>
 <? else: ?>
-	Intro text explaining botqueue to first time visitors.
-<? endif ?>
+<div class="hero-unit">
+  <h1>BotQueue has arrived!</h1>
+  <p>The open source, distributed fabrication software you've been dreaming about.</p>
+  <p>
+    <img src="/img/botqueue.png" align="center">
+  </p>
+</div><? endif ?>
