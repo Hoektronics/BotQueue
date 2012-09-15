@@ -6,4 +6,5 @@ bumblebee/cache*
 botqueue.tmproj
 info.log
 ssl-cert.pem
+ssl-cert.int
 ssl-cert.key
