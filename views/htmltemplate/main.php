@@ -50,8 +50,12 @@
 			<style>
 				body
 				{
-					background-image: url("/img/devsite.png");
+					background: #D3BECF;
 					background-repeat: repeat-all;
+				}
+				
+				div.container {
+				  background: #fff;
 				}
 			</style>
 		<? endif ?>
