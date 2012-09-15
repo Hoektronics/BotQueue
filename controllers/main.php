@@ -37,6 +37,8 @@
 				$activities = Activity::getStream();
       	$this->set('activities', $activities->getRange(0, 10));
 				$this->set('activity_count', $activities->count());
+				
+				$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
 			}
 		}
 		
@@ -57,6 +59,12 @@
 		public function draw_activities()
 		{
 			$this->setArg('activities');
+		}
+		
+		public function draw_error_log()
+		{
+		  $this->setArg('errors');
+		  $this->setArg('hide');
 		}
 		
 		public function sidebar()

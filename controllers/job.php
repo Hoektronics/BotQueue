@@ -103,6 +103,7 @@
 					$this->set('queue', $job->getQueue());
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());
+					$this->set('errors', $job->getErrorLog()->getAll());
 				}
 			}
 			catch (Exception $e)

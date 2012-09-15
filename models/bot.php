@@ -99,6 +99,18 @@
 			return new Collection($sql, array('Job' => 'id'));
 		}
 		
+		public function getErrorLog()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM error_log
+		    WHERE bot_id = '{$this->id}'
+		    ORDER BY error_date DESC
+		  ";
+		  
+		  return new Collection($sql, array('ErrorLog' => 'id'));
+		}
+		
 		public function isMine()
 		{
 			return (User::$me->id == $this->get('user_id'));

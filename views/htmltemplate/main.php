@@ -17,9 +17,9 @@
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/css/botqueue.css" rel="stylesheet">
+    <link href="/bootstrap/2.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap/2.1.1/css/botstrap-responsive.css" rel="stylesheet">
+    <link href="/bootstrap/2.1.1/css/botqueue.css" rel="stylesheet">
 
     <!-- Le jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -127,7 +127,7 @@
 	<? endif ?>
 	
 	<div class="alert">
-    <strong>Warning!</strong> This project is <strong>ALPHA</strong> software and should be considered experimental.  It might work great, or it might nuke your bot.  Be careful. Love, Hoeken &lt;3
+    <strong>Warning!</strong> This project is <strong>ALPHA</strong> software and should be considered experimental.  It might work great, or not.  Be careful. Love, Hoeken &lt;3
   </div>
 	
   <!-- Headings & Paragraph Copy -->
@@ -168,6 +168,6 @@
 	 <!-- Le javascript -->
 	 <!-- Placed at the end of the document so the pages load faster -->
 	 <script src="/js/botqueue.js"></script>
-	 <script src="/js/bootstrap.js"></script>
+	 <script src="/bootstrap/2.1.1/js/bootstrap.js"></script>
   </body>
 </html>

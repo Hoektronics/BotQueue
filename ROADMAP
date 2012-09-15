@@ -2,8 +2,6 @@ v2 Release - October 2012
 
 * WEB - DEV SITE!
 
-* WEB - job log history to see what bot did what to each job (especially errors / failures that result in a drop)
-
 * WEB - Slicers + Profiles
   * support for multiple slice engines, and versions of slice engines
   * support for multiple different configuration files

@@ -96,6 +96,7 @@
 				$this->set('job_count', $jobs->count());
 				$this->set('stats', $bot->getStats());
 				$this->set('owner', $bot->getUser());
+				$this->set('errors', $bot->getErrorLog()->getRange(0, 50));
 			}
 			catch (Exception $e)
 			{

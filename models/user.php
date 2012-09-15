@@ -340,5 +340,16 @@
 			return new Collection($sql, array('OAuthConsumer' => 'id'));
 		}
 
+		public function getErrorLog()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM error_log
+		    WHERE user_id = '{$this->id}'
+		    ORDER BY error_date DESC
+		  ";
+		  
+		  return new Collection($sql, array('ErrorLog' => 'id'));
+		}
 	}
 ?>

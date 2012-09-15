@@ -152,5 +152,17 @@
 		{
 			return Utility::getElapsed($this->getEstimatedTime());
 		}
+		
+		public function getErrorLog()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM error_log
+		    WHERE job_id = '{$this->id}'
+		    ORDER BY error_date DESC
+		  ";
+		  
+		  return new Collection($sql, array('ErrorLog' => 'id'));
+		}
 	}
 ?>

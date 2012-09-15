@@ -115,6 +115,8 @@
 				$bots = $q->getBots();
 				$this->set('bots', $bots->getRange(0, 20));
 				$this->set('bot_count', $bots->count());
+				
+				$this->set('errors', $q->getErrorLog()->getRange(0, 50));
 			}
 			catch (Exception $e)
 			{

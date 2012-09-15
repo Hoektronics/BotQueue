@@ -22,5 +22,25 @@
 		{
 			parent::__construct($id, "error_log");
 		}
+		
+		public function getUser()
+		{
+		  return new User($this->get('user_id'));
+		}
+		
+		public function getJob()
+		{
+		  return new Job($this->get('job_id'));
+		}
+		
+		public function getBot()
+		{
+		  return new Bot($this->get('bot_id'));
+		}
+		
+		public function getQueue()
+		{
+		  return new Queue($this->get('queue_id'));
+		}
 	}
 ?>
