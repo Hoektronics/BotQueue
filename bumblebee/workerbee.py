@@ -81,6 +81,7 @@ class WorkerBee():
       self.debug("Connecting to driver.")
       self.driver.connect()
     except Exception as ex:
+      self.exception(ex) #dump a stacktrace for debugging.
       self.errorMode(ex)
       self.driver.disconnect()
 
