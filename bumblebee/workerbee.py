@@ -48,12 +48,12 @@ class WorkerBee():
     if (self.data['status'] == 'working'):
       self.errorMode("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
   
-  def errorMode(self, message):
-    self.error("Error mode: %s" % message)
+  def errorMode(self, error):
+    self.error("Error mode: %s" % error)
     
     #drop 'em if you got em.
     try:
-      self.dropJob()
+      self.dropJob(error)
     except Exception as ex:
       self.exception(ex)
            
@@ -379,11 +379,11 @@ class WorkerBee():
       if self.driver.isRunning() or self.driver.isPaused():
         self.driver.stop()      
     
-  def dropJob(self):
+  def dropJob(self, error = False):
     self.stopJob()
     
     if len(self.data['job']) and self.data['job']['id']:
-      result = self.api.dropJob(self.data['job']['id'])
+      result = self.api.dropJob(self.data['job']['id'], error)
       self.info("Dropping existing job.")
       if (result['status'] == 'success'):
         self.getOurInfo()
@@ -393,7 +393,7 @@ class WorkerBee():
   def shutdown(self):
     self.info("Shutting down.")
     if(self.data['status'] == 'working' and self.data['job']['id']):
-      self.dropJob()
+      self.dropJob("Shutting down.")
     self.running = False
 
   #loop through our workers and check them all for messages

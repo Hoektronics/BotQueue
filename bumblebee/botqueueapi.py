@@ -147,8 +147,8 @@ class BotQueueAPI():
   def grabJob(self, bot_id, job_id):
     return self.apiCall('grabjob', {'bot_id' : bot_id, 'job_id' : job_id})
 
-  def dropJob(self, job_id):
-    return self.apiCall('dropjob', {'job_id' : job_id})
+  def dropJob(self, job_id, error = False):
+    return self.apiCall('dropjob', {'job_id' : job_id, 'error' : error})
 
   def cancelJob(self, job_id):
     return self.apiCall('canceljob', {'job_id' : job_id})

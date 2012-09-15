@@ -153,6 +153,20 @@
 			return Utility::getElapsed($this->getEstimatedTime());
 		}
 		
+		public function logError($error)
+		{
+	    $log = new ErrorLog();
+	    $log->set('user_id', User::$me->id);
+	    $log->set('job_id', $this->id);
+	    $log->set('queue_id', $this->get('queue_id'));
+	    $log->set('bot_id', $this->get('bot_id'));
+	    $log->set('reason', $error);
+	    $log->set('error_date', date("Y-m-d H:i:s"));
+	    $log->save();
+	    
+	    return $log;		  
+		}
+
 		public function getErrorLog()
 		{
 		  $sql = "

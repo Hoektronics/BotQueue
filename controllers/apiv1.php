@@ -299,7 +299,13 @@
 				
 			if (!$bot->canDrop($job))
 				throw new Exception("You cannot drop this job.");
-				
+			
+			//do we need to log this?
+			$error = $this->args('error');
+			if ($error)
+			  $job->logError($error);
+			
+			//okay, drop it now.
 			$bot->dropJob($job);
 
 			Activity::log($bot->getLink() . " bot dropped the " . $job->getLink() . " job via the API.");
