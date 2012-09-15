@@ -1,8 +1,8 @@
 v2 Release - October 2012
 
+* WEB - DEV SITE!
+
 * WEB - job log history to see what bot did what to each job (especially errors / failures that result in a drop)
-* WEB - replace all appropriate form controls with new form helper class.
-* WEB - protect sql calls from db injection attacks
 
 * WEB - Slicers + Profiles
   * support for multiple slice engines, and versions of slice engines
@@ -24,6 +24,8 @@ v2 Release - October 2012
 * BUMBLEBEE - Better / faster shutdown
 
 * WEB - better client installation documentation
+* WEB - replace all appropriate form controls with new form helper class.
+* WEB - protect sql calls from db injection attacks
 
 ------------------------------------------------------------------------------------
 
@@ -53,12 +55,29 @@ WEBSITE
 
 Long term wants:
 
+WEBCAM SUPPORT
+
+* use 'motion' to control multiple webcams to post files to the botqueue website.
+  * http://www.chriswpage.com/2009/05/setup-an-advanced-webcam-security-system-with-ubuntu-8-04-and-motion/
+  * http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
+  * automatically create a timelapse at the end of a successful print - watch your object grow
+    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
+    * also record the user removing the part - 5 seconds? -- this adds authenticity and a human touch.
+    * bonus: you can trigger on motion once print is complete!
+  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
+    * what interval?  1 minute?
+    * make sure each image is timestamped.
+    * and watermarked with the host url.
+
 * WEB - Reduce Amazon requirements for non-amazon / non-public installs.
 * WEB - Public queue support
 * WEB - Webcam support
 * WEB - full page statistics for bot / queue with graphs
 
 * BUMBLEBEE - new machine discovery
+  * python - how to list serial ports?
+    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
+      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
 	* If new machines are found, it will prompt the user to register them.
 	* Allow user to manually add new machines & configure them (serial port, speed, etc)
 * BUMBLEBEE - s3g python library for MakerBot machines
