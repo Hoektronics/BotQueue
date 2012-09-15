@@ -1,4 +1,4 @@
-import urlparse
+oimport urlparse
 import oauth2 as oauth
 import json
 import hive
@@ -8,6 +8,7 @@ import httplib2
 import socket
 import hashlib
 import time
+import certifi
 
 class NetworkError(Exception):
   pass
@@ -32,6 +33,7 @@ class BotQueueAPI():
     
     #pull in our user credentials, or trigger the auth process if they aren't found.
     self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
+    client.ca_certs = certifi.where() #python ships with a really dumbass certificates list.  this fixes that.
     if self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:

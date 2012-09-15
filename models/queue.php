@@ -158,9 +158,18 @@
 			$data['total_waittime'] = (int)$stats[0]['wait'];
 			$data['total_runtime'] = (int)$stats[0]['runtime'];
 			$data['total_time'] = (int)$stats[0]['total'];
-			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
-			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
-			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+			if ($data['total'] > 0)
+			{
+  			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
+  			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
+  			$data['avg_time'] = $stats[0]['total'] / $data['total'];			  
+			}
+			else
+			{
+			  $data['avg_waittime'] = 0;
+  			$data['avg_runtime'] = 0;
+  			$data['avg_time'] = 0;
+			}
 
 			return $data;
 		}

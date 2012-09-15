@@ -18,8 +18,8 @@
 
     <!-- Le styles -->
     <link href="/bootstrap/2.1.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/bootstrap/2.1.1/css/botstrap-responsive.css" rel="stylesheet">
-    <link href="/bootstrap/2.1.1/css/botqueue.css" rel="stylesheet">
+    <link href="/bootstrap/2.1.1/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/css/botqueue.css" rel="stylesheet">
 
     <!-- Le jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
