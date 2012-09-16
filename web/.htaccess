@@ -98,7 +98,7 @@ RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
 #shortcode parsing
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
 
-#help stuff.
+#apps stuff.
 RewriteRule ^apps$											        dispatcher.php?controller=app&view=home [NC,L]
 RewriteRule ^app/register$											dispatcher.php?controller=app&view=register_app [NC,L]
 RewriteRule ^app:([0-9]+)$										  dispatcher.php?controller=app&view=view_app&app_id=$1 [NC,L]
@@ -107,10 +107,16 @@ RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=de
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
 
+#apps stuff.
+RewriteRule ^slicers$											        dispatcher.php?controller=slicer&view=home [NC,L]
+RewriteRule ^slicers/create$											dispatcher.php?controller=slicer&view=create [NC,L]
+RewriteRule ^slicer:([0-9]+)$										  dispatcher.php?controller=slicer&view=view&id=$1 [NC,L]
+RewriteRule ^slicer:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=edit&id=$1 [NC,L]
+RewriteRule ^slicer:([0-9]+)/delete$						  dispatcher.php?controller=slicer&view=delete&id=$1 [NC,L]
+
 #ugh, legal stuff
 RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]
 RewriteRule ^privacy$										dispatcher.php?controller=main&view=privacy [NC,L]
-
 
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]

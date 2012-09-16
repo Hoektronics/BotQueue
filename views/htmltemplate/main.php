@@ -91,6 +91,14 @@
             <li><a href="/jobs">Jobs</a></li>
             <li><a href="/apps">App</a></li>
             <li><a href="/help">Help</a></li>
+            <? if (User::isAdmin()): ?>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/slicers">Slice Engines</a></li>
+                </ul>
+              </li>
+            <? endif ?>
           </ul>
           <ul class="nav pull-right">
             <li class="divider-vertical"></li>
@@ -99,9 +107,6 @@
 	              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello, <?=User::$me->getName()?> <b class="caret"></b></a>
 	              <ul class="dropdown-menu">
 	                <li><a href="/preferences">Preferences</a></li>
-									<? if (User::isAdmin()): ?>
-	                	<li><a href="/admin">Admin</a></li>
-	                <? endif ?>
 									<li class="divider"></li>
 	                <li><a href="/logout">Log Out</a></li>
 	              </ul>

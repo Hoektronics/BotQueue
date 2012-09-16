@@ -5,7 +5,6 @@ CREATE TABLE `slice_engines` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `engine_name` varchar(255) NOT NULL,
   `engine_path` varchar(255) NOT NULL,
-  `engine_version` varchar(255) NOT NULL,
   `engine_description` text NOT NULL,
   `is_featured` tinyint(1)  NOT NULL,
   `is_public` tinyint(1) NOT NULL,
