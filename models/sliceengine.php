@@ -54,5 +54,33 @@
 			
 			parent::delete();
 		}
+		
+		public function getDefaultConfig()
+		{
+		  return new SliceConfig($this->get('default_config_id'));
+		}
+		
+		public static function getAllEngines()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM slice_engines
+		    ORDER BY engine_name ASC
+		  ";
+		  
+		  return new Collection($sql, array('SliceEngine' => 'id'));
+		}
+
+		public static function getPublicEngines()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM slice_engines
+		    WHERE is_public = 1
+		    ORDER BY engine_name ASC
+		  ";
+		  
+		  return new Collection($sql, array('SliceEngine' => 'id'));
+		}
 	}
 ?>

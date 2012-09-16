@@ -32,6 +32,11 @@
 		{
 			$this->_field();
 		}
+
+		public function textareafield()
+		{
+			$this->_field();
+		}
 		
 		public function checkboxfield()
 		{

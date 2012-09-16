@@ -188,6 +188,25 @@
 	{
 	}
 
+	class TextareaField extends FormField
+	{
+	  public $width;
+	  public $rows;
+	  
+	  public function __construct($opts)
+		{
+			if (isset($opts['width']))
+				$this->width = $opts['width'];
+				
+			if (isset($opts['rows']))
+				$this->rows = $opts['rows'];
+			else
+			  $this->rows = 4;
+				
+			parent::__construct($opts);
+		}
+	}
+
 	class CheckboxField extends FormField
 	{
 	  //checkboxes have only 2 states and are valid no matter what.

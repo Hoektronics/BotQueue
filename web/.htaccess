@@ -109,7 +109,7 @@ RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=r
 
 #apps stuff.
 RewriteRule ^slicers$											        dispatcher.php?controller=slicer&view=home [NC,L]
-RewriteRule ^slicers/create$											dispatcher.php?controller=slicer&view=create [NC,L]
+RewriteRule ^slicer/create$									  		dispatcher.php?controller=slicer&view=create [NC,L]
 RewriteRule ^slicer:([0-9]+)$										  dispatcher.php?controller=slicer&view=view&id=$1 [NC,L]
 RewriteRule ^slicer:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=edit&id=$1 [NC,L]
 RewriteRule ^slicer:([0-9]+)/delete$						  dispatcher.php?controller=slicer&view=delete&id=$1 [NC,L]
