@@ -40,7 +40,7 @@
 	      //setup some objects
   	    $engine = new SliceEngine();
   	    $form = $this->_createSliceEngineForm($engine);
-  	    $form->action = "/slicers/create";
+  	    $form->action = "/slicer/create";
   			$this->set('form', $form);
 			
         //check our form
@@ -70,6 +70,52 @@
   			  $engine->save();
 			  
   			  //send us to view the new engine.
+  			  $this->forwardToUrl($engine->getUrl());
+  			}
+	    }
+	    catch (Exception $e)
+	    {
+	      $this->set('megaerror', $e->getMessage());
+	    }
+	  }
+
+	  public function edit()
+	  {
+	    $this->assertLoggedIn();
+	    
+	    try
+	    {
+	      if (!User::isAdmin())
+	        throw new Exception("You must be an admin to create slice engines.");
+	        
+	      //load the data and check for errors.
+        $engine = new SliceEngine($this->args('id'));
+        if (!$engine->isHydrated())
+          throw new Exception("That slice engine does not exist.");	
+
+	      //setup some objects
+  	    $form = $this->_createSliceEngineForm($engine);
+  	    $form->action = $engine->getUrl() . "/edit";
+  			$this->set('form', $form);
+			
+        //check our form
+  			if ($form->checkSubmitAndValidate($this->args()))
+  			{
+  			  //first create our engine object
+  			  $engine->set('engine_name', $form->data('engine_name'));
+  			  $engine->set('engine_path', $form->data('engine_path'));
+  			  $engine->set('engine_description', $form->data('engine_description'));
+  			  $engine->set('is_featured', $form->data('is_featured'));
+  			  $engine->set('is_public', $form->data('is_public'));
+  			  $engine->save();
+			  
+  			  //now we make it a default config object
+  			  $config = $engine->getDefaultConfig();
+  			  $config->set('config_data', $form->data('default_config'));
+  			  $config->set('edit_date', date("Y-m-d H:i:s"));
+  			  $config->save();
+			  
+  			  //send us to view the engine.
   			  $this->forwardToUrl($engine->getUrl());
   			}
 	    }
@@ -135,6 +181,68 @@
       )));
 	    
 	    return $form;
+	  }
+	  
+	  public function view()
+	  {
+	    try
+	    {
+	      //load the data and check for errors.
+        $engine = new SliceEngine($this->args('id'));
+        if (!$engine->isHydrated())
+          throw new Exception("That slice engine does not exist.");
+        if (!$engine->get('is_public') && !User::isAdmin())
+          throw new Exception("You do not have access to view this slice engine.");
+        
+        //save our engine
+        $this->set('engine', $engine);
+        
+        $this->setTitle("Slice Engine - " . $engine->getLink());
+
+        //pull in our configs
+  	    if (User::isAdmin())
+  	      $this->set('configs', $engine->getAllConfigs()->getAll());
+  	    else
+  	      $this->set('configs', $engine->getMyConfigs()->getAll());
+      }
+      catch (Exception $e)
+      {
+        $this->setTitle("Slice Engine - Error");
+        $this->set('megaerror', $e->getMessage());
+      }
+	  }
+	  
+	  public function delete()
+	  {
+	    try
+	    {
+	      //load the data and check for errors.
+        $engine = new SliceEngine($this->args('id'));
+        if (!$engine->isHydrated())
+          throw new Exception("That slice engine does not exist.");
+        if (!User::isAdmin())
+          throw new Exception("You do not have access to delete this slice engine.");
+        
+        //create our form
+  	    $form = new Form();
+        $form->action = $engine->getUrl() . "/delete";
+  			$form->add(new WarningField(array(
+  				'value' => "<strong>Warning</strong>: deleting the " . $engine->getLink() . " slice engine will delete all slice configs associated with it, and likely break a ton of stuff.  Are you really sure you want to do this?"
+  			)));
+  			
+  			$this->set('form', $form);
+
+        //check our form
+  			if ($form->checkSubmitAndValidate($this->args()))
+  			{
+  			  $engine->delete();
+  			  $this->forwardToUrl("/slicers");
+  			}
+      }
+      catch (Exception $e)
+      {
+        $this->set('megaerror', $e->getMessage());
+      }
 	  }
 	}
 ?>

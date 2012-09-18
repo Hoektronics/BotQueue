@@ -42,6 +42,11 @@
 
 			return $r;
 		}
+		
+		public function getUser()
+		{
+		  return new User($this->get('user_id'));
+		}
 
 		public function getUrl()
 		{

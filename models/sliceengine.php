@@ -82,5 +82,30 @@
 		  
 		  return new Collection($sql, array('SliceEngine' => 'id'));
 		}
+		
+		public function getAllConfigs()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM slice_configs
+		    WHERE engine_id = '{$this->id}'
+		    ORDER BY config_name
+		  ";
+		  
+		  return new Collection($sql, array('SliceConfig' => 'id'));
+		}
+		
+		public function getMyConfigs()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM slice_configs
+		    WHERE engine_id = '{$this->id}'
+		      AND user_id = '" . User::$me->id . "'
+		    ORDER BY config_name
+		  ";
+		  
+		  return new Collection($sql, array('SliceConfig' => 'id'));
+		}
 	}
 ?>
