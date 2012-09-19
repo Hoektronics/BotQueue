@@ -107,12 +107,18 @@ RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=de
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
 
-#apps stuff.
+#slicer stuff.
 RewriteRule ^slicers$											        dispatcher.php?controller=slicer&view=home [NC,L]
 RewriteRule ^slicer/create$									  		dispatcher.php?controller=slicer&view=create [NC,L]
 RewriteRule ^slicer:([0-9]+)$										  dispatcher.php?controller=slicer&view=view&id=$1 [NC,L]
 RewriteRule ^slicer:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=edit&id=$1 [NC,L]
 RewriteRule ^slicer:([0-9]+)/delete$						  dispatcher.php?controller=slicer&view=delete&id=$1 [NC,L]
+RewriteRule ^slicer:([0-9]+)/createconfig$	  		dispatcher.php?controller=slicer&view=config_create&id=$1 [NC,L]
+
+#slice config stuff
+RewriteRule ^sliceconfig:([0-9]+)$										  dispatcher.php?controller=slicer&view=config_view&id=$1 [NC,L]
+RewriteRule ^sliceconfig:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=config_edit&id=$1 [NC,L]
+RewriteRule ^sliceconfig:([0-9]+)/delete$						  dispatcher.php?controller=slicer&view=config_delete&id=$1 [NC,L]
 
 #ugh, legal stuff
 RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]

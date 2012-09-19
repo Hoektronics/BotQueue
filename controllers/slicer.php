@@ -18,6 +18,7 @@
 
 	class SlicerController extends Controller
 	{
+	
 	  public function home()
 	  {
 	    $this->setTitle("Slicer Engines");
@@ -27,7 +28,7 @@
 	    else
 	      $this->set('slicers', SliceEngine::getPublicEngines()->getAll());
 	  }
-	  
+ 
 	  public function create()
 	  {
 	    $this->assertLoggedIn();
@@ -128,7 +129,7 @@
 	      $this->set('megaerror', $e->getMessage());
 	    }
 	  }
-	  
+ 
 	  public function _createSliceEngineForm($engine)
 	  {
 	    $form = new Form();
@@ -197,7 +198,7 @@
       $form->add(new TextareaField(array(
         'name' => 'end_gcode',
         'label' => 'End GCode',
-        'help' => 'Text to be added to the beginning of the generated GCode file.',
+        'help' => 'Text to be added to the end of the generated GCode file.',
         'required' => false,
         'width' => '60%',
         'rows' => '8',
@@ -235,9 +236,11 @@
         $this->set('megaerror', $e->getMessage());
       }
 	  }
-	  
+	 
 	  public function delete()
 	  {
+	    $this->assertLoggedIn();
+	    
 	    try
 	    {
 	      //load the data and check for errors.
@@ -260,6 +263,197 @@
   			if ($form->checkSubmitAndValidate($this->args()))
   			{
   			  $engine->delete();
+  			  $this->forwardToUrl("/slicers");
+  			}
+      }
+      catch (Exception $e)
+      {
+        $this->set('megaerror', $e->getMessage());
+      }
+	  }
+
+	  public function config_create()
+	  {
+	    $this->assertLoggedIn();
+	    
+	    try
+	    {
+	      
+	      //load the data and check for errors.
+        $engine = new SliceEngine($this->args('id'));
+        if (!$engine->isHydrated())
+          throw new Exception("That slice engine does not exist.");
+        if (!$engine->get('is_public') && !User::isAdmin())
+          throw new Exception("You do not have access to view this slice engine.");
+	      
+	      //setup some objects
+	      $config = new SliceConfig();
+  	    $form = $this->_createSliceConfigForm($config);
+  	    $form->action = $engine->getUrl() . "/createconfig";
+  			$this->set('form', $form);
+			
+        //check our form
+  			if ($form->checkSubmitAndValidate($this->args()))
+  			{
+  			  //now we make it a config object
+  			  $config->set('config_name', $form->data('config_name'));
+  			  $config->set('config_data', $form->data('default_config'));
+  			  $config->set('start_gcode', $form->data('start_gcode'));
+  			  $config->set('end_gcode', $form->data('end_gcode'));
+  			  $config->set('engine_id', $engine->id);
+  			  $config->set('user_id', User::$me->id);
+  			  $config->set('add_date', date("Y-m-d H:i:s"));
+  			  $config->set('edit_date', date("Y-m-d H:i:s"));
+  			  $config->save();
+
+  			  //send us to view the new engine.
+  			  $this->forwardToUrl($config->getUrl());
+  			}
+	    }
+	    catch (Exception $e)
+	    {
+	      $this->set('megaerror', $e->getMessage());
+	    }
+	  }
+
+	  public function _createSliceConfigForm($config)
+	  {
+	    $form = new Form();
+
+			$form->add(new TextField(array(
+				'name' => 'config_name',
+				'label' => 'Config Name',
+				'help' => 'What is the name of this slicing configuration.',
+				'required' => true,
+				'value' => $config->get('config_name')
+			)));
+
+      $form->add(new TextareaField(array(
+        'name' => 'default_config',
+        'label' => 'Default Configuration',
+        'help' => 'Enter the default configuration text for this engine.',
+        'required' => false,
+        'width' => '60%',
+        'rows' => '8',
+        'value' => $config->get('config_data')
+      )));
+	    
+      $form->add(new TextareaField(array(
+        'name' => 'start_gcode',
+        'label' => 'Start GCode',
+        'help' => 'Text to be added to the beginning of the generated GCode file.',
+        'required' => false,
+        'width' => '60%',
+        'rows' => '8',
+        'value' => $config->get('start_gcode')
+      )));
+    
+      $form->add(new TextareaField(array(
+        'name' => 'end_gcode',
+        'label' => 'End GCode',
+        'help' => 'Text to be added to the end of the generated GCode file.',
+        'required' => false,
+        'width' => '60%',
+        'rows' => '8',
+        'value' => $config->get('end_gcode')
+      )));
+
+	    return $form;
+	  }
+	  
+	  public function config_edit()
+	  {
+	    $this->assertLoggedIn();
+	    
+	    try
+	    {
+	      //load the data and check for errors.
+        $config = new SliceConfig($this->args('id'));
+        if (!$config->isHydrated())
+          throw new Exception("That slice config does not exist.");	
+
+	      if (User::$me->id != $config->get('user_id') || !User::isAdmin())
+	        throw new Exception("You cannot edit this slice config.");
+
+	      //setup some objects
+  	    $form = $this->_createSliceConfigForm($config);
+  	    $form->action = $config->getUrl() . "/edit";
+  			$this->set('form', $form);
+			
+        //check our form
+  			if ($form->checkSubmitAndValidate($this->args()))
+  			{
+  			  //edit the config object
+  			  $config->set('config_name', $form->data('config_name'));
+  			  $config->set('config_data', $form->data('default_config'));
+  			  $config->set('start_gcode', $form->data('start_gcode'));
+  			  $config->set('end_gcode', $form->data('end_gcode'));
+  			  $config->set('edit_date', date("Y-m-d H:i:s"));
+  			  $config->save();
+			  
+  			  //send us to view the engine.
+  			  $this->forwardToUrl($config->getUrl());
+  			}
+	    }
+	    catch (Exception $e)
+	    {
+	      $this->set('megaerror', $e->getMessage());
+	    }
+	  }
+
+	  public function config_view()
+	  {
+	    $this->assertLoggedIn();
+	    
+	    try
+	    {
+	      //load the data and check for errors.
+        $config = new SliceConfig($this->args('id'));
+        if (!$config->isHydrated())
+          throw new Exception("That slice config does not exist.");
+        if ($config->get('user_id') != User::$me->id && !User::isAdmin())
+          throw new Exception("You do not have access to view this config.");
+        
+        //save our engine
+        $this->set('config', $config);
+        $this->set('engine', $config->getEngine());
+        $this->set('user', $config->getUser());
+        $this->setTitle("Slice Config - " . $config->getLink());
+
+      }
+      catch (Exception $e)
+      {
+        $this->setTitle("Slice Config - Error");
+        $this->set('megaerror', $e->getMessage());
+      }
+	  }
+	  
+	  public function config_delete()
+	  {
+	    $this->assertLoggedIn();
+	    
+	    try
+	    {
+	      //load the data and check for errors.
+        $config = new SliceConfig($this->args('id'));
+        if (!$config->isHydrated())
+          throw new Exception("That slice config does not exist.");
+        if ($config->get('user_id') != User::$me->id && !User::isAdmin())
+          throw new Exception("You do not have access to view this config.");
+        
+        //create our form
+  	    $form = new Form();
+        $form->action = $config->getUrl() . "/delete";
+  			$form->add(new WarningField(array(
+  				'value' => "<strong>Warning</strong>: deleting the " . $config->getLink() . " slice config is permanent.  Are you really sure you want to do this?"
+  			)));
+  			
+  			$this->set('form', $form);
+
+        //check our form
+  			if ($form->checkSubmitAndValidate($this->args()))
+  			{
+  			  $config->delete();
   			  $this->forwardToUrl("/slicers");
   			}
       }

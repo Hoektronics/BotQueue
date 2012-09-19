@@ -48,16 +48,38 @@
 		  return new User($this->get('user_id'));
 		}
 
+		public function getEngine()
+		{
+		  return new SliceEngine($this->get('engine_id'));
+		}
+		
 		public function getUrl()
 		{
 			return "/sliceconfig:" . $this->id;
 		}
 
-		public function delete()
-		{
-      //todo: support deleting a slice config.
-			
-			parent::delete();
-		}
+    public function getBots()
+    {
+      $sql = "
+        SELECT id
+        FROM bots
+        WHERE slice_config_id = '{$this->id}'
+        ORDER BY name
+      ";
+      
+      return new Collection($sql, array('Bot' => 'id'));
+    }
+    
+    public function getSliceJobs()
+    {
+      $sql = "
+        SELECT id
+        FROM slice_jobs
+        WHERE slice_config_id = '{$this->id}'
+        ORDER BY id DESC
+      ";
+      
+      return new Collection($sql, array('SliceJob' => 'id'));
+    }
 	}
 ?>

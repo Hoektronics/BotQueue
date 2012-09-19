@@ -48,7 +48,7 @@
 	  <h2>My Engine Configurations</h2>
 	<? endif ?>
 	<p>
-    <a class="btn btn-primary" href="<?=$engine->getUrl()?>/config/create">Create New Config</a>
+    <a class="btn btn-primary" href="<?=$engine->getUrl()?>/createconfig">Create New Config</a>
   </p>
 	<div class="row">
 		<div class="span12">
