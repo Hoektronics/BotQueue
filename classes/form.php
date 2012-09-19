@@ -241,4 +241,9 @@
 			return true;
 		}
 	}
+	
+	class WarningField extends DisplayField {}
+	class ErrorField extends DisplayField {}
+	class SuccessField extends DisplayField {}
+	class InformationField extends DisplayField {}
 ?>

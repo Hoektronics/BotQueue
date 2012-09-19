@@ -59,6 +59,8 @@
   			  $config = new SliceConfig();
   			  $config->set('config_name', 'Default');
   			  $config->set('config_data', $form->data('default_config'));
+  			  $config->set('start_gcode', $form->data('start_gcode'));
+  			  $config->set('end_gcode', $form->data('end_gcode'));
   			  $config->set('engine_id', $engine->id);
   			  $config->set('user_id', User::$me->id);
   			  $config->set('add_date', date("Y-m-d H:i:s"));
@@ -112,6 +114,8 @@
   			  //now we make it a default config object
   			  $config = $engine->getDefaultConfig();
   			  $config->set('config_data', $form->data('default_config'));
+  			  $config->set('start_gcode', $form->data('start_gcode'));
+  			  $config->set('end_gcode', $form->data('end_gcode'));
   			  $config->set('edit_date', date("Y-m-d H:i:s"));
   			  $config->save();
 			  
@@ -154,7 +158,7 @@
   		)));
 		
   		$form->add(new CheckboxField(array(
-  		 'name' => 'bot_error',
+  		 'name' => 'is_featured',
   		 'label' => 'Is this slice engine featured?',
   		 'help' => 'Featured slice engines will be more prominently featured, and will make it easier to use the latest and greatest slicing tech.',
   		 'value' => $engine->get('is_featured')
@@ -174,12 +178,32 @@
         'name' => 'default_config',
         'label' => 'Default Configuration',
         'help' => 'Enter the default configuration text for this engine.',
-        'required' => true,
+        'required' => false,
         'width' => '60%',
         'rows' => '8',
         'value' => $config->get('config_data')
       )));
 	    
+      $form->add(new TextareaField(array(
+        'name' => 'start_gcode',
+        'label' => 'Start GCode',
+        'help' => 'Text to be added to the beginning of the generated GCode file.',
+        'required' => false,
+        'width' => '60%',
+        'rows' => '8',
+        'value' => $config->get('start_gcode')
+      )));
+    
+      $form->add(new TextareaField(array(
+        'name' => 'end_gcode',
+        'label' => 'End GCode',
+        'help' => 'Text to be added to the beginning of the generated GCode file.',
+        'required' => false,
+        'width' => '60%',
+        'rows' => '8',
+        'value' => $config->get('end_gcode')
+      )));
+
 	    return $form;
 	  }
 	  

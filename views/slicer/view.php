@@ -5,6 +5,15 @@
 		<div class="span12">
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
+          <? if (User::isAdmin()): ?>
+            <tr>
+              <th>Manage:</th>
+      	      <td>
+    	        	<a class="btn btn-mini" href="<?=$engine->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
+  							<a class="btn btn-mini" href="<?=$engine->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
+      	      </td>
+      	    </tr>
+    	    <? endif ?>
 					<tr>
 						<th>Engine Name:</th>
 						<td><?=$engine->getLink() ?></td>
@@ -38,6 +47,9 @@
 	<? else: ?>
 	  <h2>My Engine Configurations</h2>
 	<? endif ?>
+	<p>
+    <a class="btn btn-primary" href="<?=$engine->getUrl()?>/config/create">Create New Config</a>
+  </p>
 	<div class="row">
 		<div class="span12">
 			<table class="table table-striped table-bordered table-condensed">
@@ -62,7 +74,10 @@
               <? endif ?>
               <td><?=Utility::formatDateTime($config->get('add_date'))?></td>
               <td><?=Utility::formatDateTime($config->get('edit_date'))?></td>
-              <td>edit delete</td>
+              <td>
+    	        	<a class="btn btn-mini" href="<?=$config->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
+  							<a class="btn btn-mini" href="<?=$config->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
+      	      </td>
 				    </tr>
 				  <? endforeach ?>
         </tbody>

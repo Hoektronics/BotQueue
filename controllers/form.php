@@ -53,6 +53,26 @@
 			$this->_field();
 		}
 
+		public function warningfield()
+		{
+			$this->_field();
+		}
+
+		public function errorfield()
+		{
+			$this->_field();
+		}
+
+		public function successfield()
+		{
+			$this->_field();
+		}
+
+		public function informationfield()
+		{
+			$this->_field();
+		}
+
 		private function _form()
 		{
 			$this->setArg('form');

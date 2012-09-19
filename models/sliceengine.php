@@ -47,13 +47,6 @@
 		{
 			return "/slicer:" . $this->id;
 		}
-
-		public function delete()
-		{
-      //todo: support deleting a slicer.
-			
-			parent::delete();
-		}
 		
 		public function getDefaultConfig()
 		{
@@ -106,6 +99,16 @@
 		  ";
 		  
 		  return new Collection($sql, array('SliceConfig' => 'id'));
+		}
+		
+		public function delete()
+		{
+		  $configs = $this->getAllConfigs()->getAll();
+		  if (!empty($configs))
+		    foreach ($configs AS $row)
+		      $row['SliceConfig']->delete();
+		      
+		  parent::delete();
 		}
 	}
 ?>

@@ -52,3 +52,6 @@ CREATE TABLE `slice_jobs` (
   KEY `job_id` (`job_id`),
   KEY `slice_config_id` (`slice_config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table slice_configs add start_gcode text not null after config_data;
+alter table slice_configs add end_gcode text not null after start_gcode;
