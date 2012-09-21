@@ -1,11 +1,10 @@
 v2 Release - October 2012
 
 * Slice Engines UI
-  * CRUD for website
-  * CRUD for configs
-  * Select engine (and config) on a per-bot basis
+  * add list of bots w/ config to view page
+  * add list of jobs w/ config to view page
   
-* Upload STL file -> create job
+* Upload STL file -> create slice job
   * modify jobs table to have source_file_id, gcode_file_id, and slice_job_id
   * modify jobs to have new status of 'slicing'
   * modify jobs to have new datetime of 'slice_complete_time'
@@ -15,12 +14,6 @@ v2 Release - October 2012
   * slices source file
   * uploads gcode to website
   * starts executing gcode
-
-* WEB - Slicers + Profiles
-  * support for multiple slice engines, and versions of slice engines
-  * support for multiple different configuration files
-    * can upload config files, or edit online
-  * initially only support slic3r
 
 * WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
   * Prereq: slicer support

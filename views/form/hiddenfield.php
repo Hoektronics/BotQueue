@@ -1,1 +1,1 @@
-<input type="hidden" id="<?=$field->id?>" name="<?=$field->name?>" value="<?=$field->getValue()?>"/>
+<input type="hidden" <?=$field->getAttributes()?> value="<?=htmlentities($field->getValue())?>"/>

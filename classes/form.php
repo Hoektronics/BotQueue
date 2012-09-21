@@ -124,28 +124,65 @@
 		public $required = false;
 		public $hasError = false;
 		public $errorText;
-				
+		
+		public $validAttributes = array(
+		  'id',
+		  'name',
+		  'onchange',
+		  'onclick',
+		  'ondblclick',
+		  'onmousedown',
+		  'onmousemove',
+		  'onmouseover',
+		  'onmouseout',
+		  'onmouseup',
+		  'onkeydown',
+		  'onkeypress',
+		  'onkeyup',
+		  'onblur',
+		  'onchange',
+		  'onfocus',
+		  'onreset',
+		  'onselect'
+		);
+		
+		public $attributes = array();
+		
 		public function __construct($opts)
 		{
+		  //pull in our name
 			if (isset($opts['name']))
 				$this->name = $opts['name'];
 				
-			if (isset($opts['id']))
-				$this->id = $opts['id'];
-			else
-				$this->id = "i{$this->name}";
+			//pull in our id
+			if (!isset($opts['id']))
+			  $opts['id'] = "i{$this->name}";
+			$this->id = $opts['id'];
 				
 			if (isset($opts['value']))
 				$this->setValue($opts['value']);
-				
 			if (isset($opts['label']))
 				$this->label = $opts['label'];
-				
 			if (isset($opts['help']))
 				$this->help = $opts['help'];				
-
 			if (isset($opts['required']))
 				$this->required = (boolean)$opts['required'];				
+
+      foreach ($this->validAttributes AS $attr)
+      {
+  			if (isset($opts[$attr]))
+  				$this->attributes[$attr] = $opts[$attr];
+      }
+		}
+		
+		public function getAttributes()
+		{
+		  $attribs = array();
+		  if (!empty($this->attributes))
+		    foreach ($this->attributes AS $key => $val)
+		      $attribs[] = "$key=\"$val\"";
+      
+      return implode(" ", $attribs);
 		}
 
 		public function getValue()
@@ -191,17 +228,15 @@
 	class TextareaField extends FormField
 	{
 	  public $width;
-	  public $rows;
 	  
 	  public function __construct($opts)
 		{
 			if (isset($opts['width']))
 				$this->width = $opts['width'];
-				
-			if (isset($opts['rows']))
-				$this->rows = $opts['rows'];
-			else
-			  $this->rows = 4;
+			if (!isset($opts['rows']))
+			  $opts['rows'] = 4;
+			  
+			$this->validAttributes[] = 'rows';
 				
 			parent::__construct($opts);
 		}

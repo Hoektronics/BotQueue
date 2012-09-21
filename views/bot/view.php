@@ -31,6 +31,14 @@
 						<th>Queue:</th>
 						<td><?=$queue->getLink()?></td>
 					</tr>
+					<tr>
+						<th>Slice Engine:</th>
+						<td><?=$engine->getLink()?></td>
+					</tr>
+					<tr>
+						<th>Engine Config:</th>
+						<td><?=$config->getLink()?></td>
+					</tr>					
 					<? if ($bot->get('manufacturer')): ?>
 						<tr>
 							<th>Maker:</th>

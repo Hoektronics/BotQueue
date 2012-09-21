@@ -3,7 +3,7 @@
   	<label class="control-label" for="<?=$field->id?>"><strong><?=$field->label?></strong></label>
   <? endif ?>
 	<div class="controls">
-	  <textarea id="<?=$field->id?>" name="<?=$field->name?>" rows="<?=$field->rows?>" style="width: <?=$field->width?>;"><?=$field->getValue()?></textarea>
+	  <textarea <?=$field->getAttributes()?> style="width: <?=$field->width?>;"><?=$field->getValue()?></textarea>
 		<? if ($field->hasError): ?>
 			<span class="help-inline"><?= $field->errorText ?></span>
 		<? endif ?>

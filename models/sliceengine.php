@@ -94,7 +94,7 @@
 		    SELECT id
 		    FROM slice_configs
 		    WHERE engine_id = '{$this->id}'
-		      AND user_id = '" . User::$me->id . "'
+		      AND (user_id = '" . User::$me->id . "' OR id = '" . $this->get('default_config_id') . "')
 		    ORDER BY config_name
 		  ";
 		  

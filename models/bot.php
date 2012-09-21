@@ -258,5 +258,15 @@
 			
 			parent::delete();
 		}
+		
+		public function getSliceEngine()
+		{
+		  return new SliceEngine($this->get('slice_engine_id'));
+		}
+		
+		public function getSliceConfig()
+		{
+		  return new SliceConfig($this->get('slice_config_id'));
+		}
 	}
 ?>
