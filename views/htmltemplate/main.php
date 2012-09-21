@@ -135,8 +135,8 @@
 	  </div>
 	<? endif ?>
 	
-	<div class="alert">
-    <strong>Warning!</strong> This project is <strong>ALPHA</strong> software and should be considered experimental.  It might work great, or not.  Be careful. Love, Hoeken &lt;3
+	<div class="alert alert-info">
+    <strong>Hey!</strong> If you run into any problems, please <a href="https://github.com/Hoektronics/BotQueue/issues/new">report a bug</a>.  Make sure to include the <strong>bumblebee/info.log</strong> file if it is client-related.
   </div>
 	
   <!-- Headings & Paragraph Copy -->

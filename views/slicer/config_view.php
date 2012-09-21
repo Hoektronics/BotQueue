@@ -53,10 +53,13 @@
 
 	<div class="row">
 		<div class="span6">
-      <h3>Jobs</h3>
+      <h3>Slice Jobs</h3>
+      <?=Controller::byName('slicer')->renderView('draw_jobs_small', array('jobs' => $jobs))?>
+      
 		</div>
 		<div class="span6">
       <h3>Bots</h3>
+      <?=Controller::byName('bot')->renderView('draw_bots_small', array('bots' => $bots))?>
 		</div>
 	</div>
 <? endif ?>

@@ -60,5 +60,21 @@
 			
 			parent::delete();
 		}
+
+		public function getStatusHTML()
+		{
+			return "<span class=\"label " . self::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
+		}
+		
+		public static function getStatusHTMLClass($status)
+		{
+			$s2c = array(
+				'slicing' => 'label-info',
+				'complete' => 'label-success',
+				'failure' => 'label-important'
+			);
+			
+			return $s2c[$status];
+		}
 	}
 ?>

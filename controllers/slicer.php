@@ -414,10 +414,13 @@
         if ($config->get('user_id') != User::$me->id && !User::isAdmin())
           throw new Exception("You do not have access to view this config.");
         
-        //save our engine
+        //pull in all our data.
         $this->set('config', $config);
         $this->set('engine', $config->getEngine());
         $this->set('user', $config->getUser());
+        $this->set('jobs', $config->getSliceJobs()->getAll());
+        $this->set('bots', $config->getBots()->getAll());
+        
         $this->setTitle("Slice Config - " . $config->getLink());
 
       }
@@ -461,6 +464,16 @@
       {
         $this->set('megaerror', $e->getMessage());
       }
+	  }
+	  
+	  public function draw_jobs()
+	  {
+	    $this->setArg('jobs');
+	  }
+	  
+	  public function draw_jobs_small()
+	  {
+	    $this->setArg('jobs');
 	  }
 	}
 ?>

@@ -147,6 +147,11 @@
 		{
 			$this->setArg('bots');
 		}
+
+    public function draw_bots_small()
+    {
+      $this->setArg('bots');
+    }
 		
 		public function edit()
 		{
