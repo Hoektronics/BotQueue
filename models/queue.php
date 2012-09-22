@@ -107,7 +107,32 @@
 				$job = new Job();
 				$job->set('user_id', User::$me->id);
 				$job->set('queue_id', $this->id);
+				$job->set('source_file_id', $file->id);
 				$job->set('file_id', $file->id);
+				$job->set('name', $file->get('path'));
+				$job->set('status', 'available');
+				$job->set('created_time', date("Y-m-d H:i:s"));
+				$job->set('user_sort', $sort);
+				$job->save();
+
+				$jobs[] = $job;
+			}
+			
+			return $jobs;
+		}
+
+		public function add3DModelFile($file, $qty = 1)
+		{
+			$jobs = array();
+			
+			for ($i=0; $i<$qty; $i++)
+			{
+				$sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+				
+				$job = new Job();
+				$job->set('user_id', User::$me->id);
+				$job->set('queue_id', $this->id);
+				$job->set('source_file_id', $file->id);
 				$job->set('name', $file->get('path'));
 				$job->set('status', 'available');
 				$job->set('created_time', date("Y-m-d H:i:s"));

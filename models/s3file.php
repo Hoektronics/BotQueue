@@ -254,5 +254,15 @@
 
 			return $d;
 		}
+		
+		public function isGCode()
+		{
+		  return preg_match("/(g|gcode)$/i", $this->get('path'));
+		}
+		
+		public function is3DModel()
+		{
+		  return preg_match("/(stl|obj|amf)$/i", $this->get('path'));
+		}
 	}
 ?>
