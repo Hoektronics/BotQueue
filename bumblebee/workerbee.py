@@ -116,8 +116,8 @@ class WorkerBee():
         #idle mode means looking for a new job.
         if self.data['status'] == 'idle':
           try:
-            self.getNewJob()
-            time.sleep(10) #todo: make this sleep get longer with each successive try.
+            if not self.getNewJob():
+              time.sleep(10)
           except botqueueapi.NetworkError as e:
             self.warning("Internet down: %s" % e)
             time.sleep(10)
@@ -199,12 +199,14 @@ class WorkerBee():
           self.pipe.send(message)
 
           self.info("grabbed job %s" % self.data['job']['name'])
+          return True
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
       else:
         self.getOurInfo() #see if our status has changed.
     else:
       raise Exception("Error finding new job: %s" % result['error'])
+    return False
 
   def sliceJob(self):
     #TODO: grab our slice job
@@ -213,49 +215,55 @@ class WorkerBee():
     sliceFile = self.downloadFile(self.data['job']['slicejob']['input_file'])
     
     #create and run our slicer
-    ginsu = new ginsu.Ginsu(sliceFile, self.data['job']['slicejob'])
-    ginsu.slice()
+    g = ginsu.Ginsu(sliceFile, self.data['job']['slicejob'])
+    g.slice()
     
     #watch the slicing progress
-    while !ginsu.isRunning():
+    localUpdate = 0
+    while g.isRunning():
       #notify the local mothership of our status.
       if (time.time() - localUpdate > 0.5):
-        self.data['job']['progress'] = ginsu.getProgress()
+        self.data['job']['progress'] = g.getProgress()
         msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
+        localUpdate = time.time()
       time.sleep(0.1)      
 
     #update our slice job progress, and load our new bot
-    self.data = self.api.updateSliceJob()
+    #self.data = self.api.updateSliceJob()
 
   def downloadFile(self, fileinfo):
-    myfile = new URLFile(self.fileinfo)
+    myfile = hive.URLFile(fileinfo)
 
     localUpdate = 0
     try:
-      self.jobFile.load()
+      myfile.load()
 
-      while self.jobFile.progress < 100):
+      while myfile.getProgress() < 100:
         #notify the local mothership of our status.
         if (time.time() - localUpdate > 0.5):
-          self.data['job']['progress'] = latest
+          self.data['job']['progress'] = myfile.getProgress()
           msg = Message('job_update', self.data['job'])
           self.pipe.send(msg)
+          localUpdate = time.time()
+          self.debug("Download: %0.2f%%" % (myfile.getProgress()))
         time.sleep(0.1)
-
-      #notify the mothership of download completion
-      self.api.downloadedJob(self.data['job']['id'])
+      #okay, we're done... send it back.
+      return myfile
     except Exception as ex:
       self.exception(ex)
             
   def processJob(self):
     #go get 'em, tiger!
-    self.jobFile = self.self.downloadFile(self.data['job']['file'])
+    self.jobFile = self.downloadFile(self.data['job']['file'])
+
+    #notify the mothership of download completion
+    self.api.downloadedJob(self.data['job']['id'])
 
     currentPosition = 0
     lastUpdate = time.time()
     try:
-      self.driver.startPrint(self.jobFile, self.fileSize)
+      self.driver.startPrint(self.jobFile)
       while self.driver.isRunning():
         latest = self.driver.getPercentage()
       

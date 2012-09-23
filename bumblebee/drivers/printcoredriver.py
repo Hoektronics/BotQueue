@@ -14,14 +14,14 @@ class printcoredriver(bumbledriver.bumbledriver):
     time.sleep(2)
     self.log = logging.getLogger('botqueue')
 
-  def startPrint(self, jobfile, filesize):
+  def startPrint(self, jobfile):
     try:
       self.printing=True
       self.connect()
       while not self.isConnected():
         time.sleep(1)
         self.log.debug("Waiting for driver to connect.")
-      self.p.startprint(jobfile)
+      self.p.startprint(jobfile.localFile)
       Thread(target=self.printThreadEntry).start()
     except Exception as ex:
       self.log.error("Error starting print: %s" % ex)

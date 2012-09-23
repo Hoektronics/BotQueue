@@ -2,6 +2,9 @@ import time
 import logging
 from threading import Thread
 import sys
+import tempfile
+import subprocess
+import os
 
 class Ginsu():
   
@@ -10,10 +13,10 @@ class Ginsu():
     self.sliceFile = sliceFile
     self.sliceJob = sliceJob
 
-    self.isRunning = False
+    self.running = False
 
   def isRunning(self):
-    return self.isRunning
+    return self.running
     
   def getProgress(self):
     return self.slicer.getProgress()
@@ -29,20 +32,22 @@ class Ginsu():
       raise Exception("Unknown slicer path specified: %s" % path)    
 
   def slice(self):
-    Thread(target=self.printThreadEntry).start()
+    self.log.debug("Starting slice.")
+    self.running = True
+    self.slicer = self.slicerFactory()
+
+    Thread(target=self.threadEntry).start()
     
   def threadEntry(self):
-    self.isRunning = True
-
-    self.slicer = self.slicerFactory()
     self.sliceResult = self.slicer.slice()
-    
-    self.isRunning = False
+    self.running = False
     
 class GenericSlicer(object):
-  def __init__(self, config, sliceFile):
+  def __init__(self, config, slicefile):
     self.config = config
-    self.sliceFile = sliceFile
+    self.log = logging.getLogger('botqueue')
+    
+    self.sliceFile = slicefile
     self.progress = 0
     
     self.prepareFiles()
@@ -58,43 +63,67 @@ class GenericSlicer(object):
       
 class Slic3r(GenericSlicer):
   def __init__(self, config, slicefile):
-    super(GenericSlicer, self).__init__(config)
+    super(Slic3r, self).__init__(config, slicefile)
   
   def prepareFiles(self):
-    self.startFile = tempfile.NamedTemporaryFile(delete=False)
-    self.startFile.write(self.config['slice_config']['start_gcode'])
-    
-    self.endFile = tempfile.NamedTemporaryFile(delete=False)
-    self.endFile.write(self.config['slice_config']['end_gcode'])
-
     self.configFile = tempfile.NamedTemporaryFile(delete=False)
-    self.configFile.write(self.config['slice_config']['config_data'])
+    self.configFile.write(self.config['config_data'])
+    self.configFile.flush()
+    self.log.debug("Config file: %s" % self.configFile.name)
+    
+    self.startFile = tempfile.NamedTemporaryFile(delete=False)
+    self.startFile.write(self.config['start_gcode'])
+    self.startFile.flush()
+    self.log.debug("Start GCode file: %s" % self.startFile.name)
+
+    self.endFile = tempfile.NamedTemporaryFile(delete=False)
+    self.endFile.write(self.config['end_gcode'])
+    self.endFile.flush()
+    self.log.debug("End Gcode file: %s" % self.endFile.name)
     
     self.outFile = tempfile.NamedTemporaryFile(delete=False)
+    self.log.debug("Output file: %s" % self.outFile.name)
 
   def getSlicerPath(self):
     #figure out where our path is.
     if sys.platform.startswith('darwin'):
-      osPath = "osx/Contents/MacOS/slic3r"
+      osPath = "osx.app/Contents/MacOS/slic3r"
     elif sys.platform.startswith('linux'):
       osPath = "linux/bin/slic3r"
-    else
-      raise new Exception("Slicing is not supported on your OS.")
+    else:
+      raise Exception("Slicing is not supported on your OS.")
+
+    realPath = os.path.dirname(os.path.realpath(__file__))
+    slicePath = "%s/slicers/%s/%s" % (realPath, self.config['engine']['path'], osPath)
+    self.log.debug("Slicer path: %s" % slicePath)
     
-    #okay, send it back.
-    return "%s/%s" % (self.config['slice_config']['engine']['path'], osPath)
+    return slicePath
 
   def slice(self):
     #create our command to do the slicing
-    command = "%s --load %s --output %s --start-gcode %s --end-gcode %s %s" % (
-      self.getSlicerPath,
-      self.configFile.name,
-      self.outFile.name,
-      self.startFile.name,
-      self.endFile.name,
-      self.sliceFile.localPath
-    )
-    self.log.info("Running: %s" % command)
+    try:
+      command = "%s --load %s --output %s --start-gcode %s --end-gcode %s %s" % (
+        self.getSlicerPath(),
+        self.configFile.name,
+        self.outFile.name,
+        self.startFile.name,
+        self.endFile.name,
+        self.sliceFile.localPath
+      )
+      self.log.debug("Slice Command: %s" % command)
+
+      outputFile = tempfile.NamedTemporaryFile()
+      errorFile = tempfile.NamedTemporaryFile()
+      result = subprocess.call(command, stdout=outputFile, stderr=errorFile, shell=True)
+      outputFile.flush()
+      outputFile.seek(0)
+      errorFile.flush()
+      errorFile.seek(0)
+      self.log.debug("Output: %s" % outputFile.read())
+      self.log.debug("Errors: %s" % errorFile.read())
+      self.log.debug("Result: %s" % result)
+    except Exception as ex:
+      self.log.exception(ex)
     
     #actually run our command
     
@@ -104,6 +133,6 @@ class Slic3r(GenericSlicer):
     result = hive.Object
     result.status = "success"
     result.output_file = self.outFile.name
-    result.output_log = output_log
+    #result.output_log = output_log
     
     return result
