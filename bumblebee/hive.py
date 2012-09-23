@@ -7,6 +7,7 @@ import tempfile
 import urllib2
 import sys
 import hashlib
+from threading import Thread
 
 class BeeConfig():
   
@@ -56,14 +57,18 @@ class URLFile():
     
   def load(self):
     self.prepareLocalFile()
-    self.downloadFile()
+    Thread(target=self.downloadFile).start()
+
+  def getProgress(self):
+    return self.progress
 
   #see if we have some sort of caching dir setup.
   def checkCacheDirectory(self):
     if 'cache_directory' in self.global_config:
       self.cacheDir = self.global_config['cache_directory']
     else:
-      self.cacheDir = "./cache/"
+      realPath = os.path.dirname(os.path.realpath(__file__))
+      self.cacheDir = "%s/cache/" % (realPath)
       
     #make it if it doesn't exist.
     if not os.path.isdir(self.cacheDir):
@@ -96,7 +101,7 @@ class URLFile():
     if not self.cacheHit:
       #download our file.
       self.log.info("Downloading %s to %s" % (self.remotefile['url'], self.localPath))
-      urlFile = self.openUrl(remotefile['url'])
+      urlFile = self.openUrl(self.remotefile['url'])
       chunk = 4096
       md5 = hashlib.md5()
       self.localSize = 0
