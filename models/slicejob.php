@@ -48,6 +48,21 @@
 
 			return $r;
 		}
+		
+		public function getInputFile()
+		{
+		  return new S3File($this->get('input_file_id'));
+		}
+
+		public function getOutputFile()
+		{
+		  return new S3File($this->get('output_file_id'));
+		}
+		
+		public function getSliceConfig()
+		{
+		  return new SliceConfig($this->get('slice_config_id'));
+		}
 
 		public function getUrl()
 		{

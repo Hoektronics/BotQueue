@@ -269,12 +269,12 @@
 			
 			if (!$bot->canGrab($job))
 				throw new Exception("You cannot grab this job.");
-				
+			
+			//attempt to grab our job.  will throw exceptions on failure.
 			$bot->grabJob($job);
 			
-			$data = array();
-			$data['job'] = $job->getAPIData();
-			$data['bot'] = $bot->getAPIData();
+			//return the bot data w/ all our info.
+			$data = $bot->getAPIData();
 
 			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " job via the API.");
 			

@@ -48,11 +48,11 @@
 				<b>No authorized apps found.</b>
 			<? endif ?>
 
+			<h2>Developers - Your Registered Apps</h2>
+			<p>
+				If you are a developer, your app will need its own API key.  First you must <a href="/app/register">register one</a>, and then it will be listed below.  Next, you'll want to visit our <a href="/api/v1">API documentation page</a>.
+			</p>
 			<? if (!empty($apps)): ?>
-				<h2>Developers - Your Registered Apps</h2>
-				<p>
-					If you are a developer, your app will need its own API key.  First you must <a href="/app/register">register one</a>, and then it will be listed below.  Next, you'll want to visit our <a href="/api/v1">API documentation page</a>.
-				</p>
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>
 						<tr>
@@ -69,7 +69,9 @@
 						<? endforeach ?>
 					</tbody>
 				</table>
-			<? endif ?>
+			<? else: ?>
+			  <b>No registered apps found.</b>
+		  <? endif ?>
 		<? else: ?>
 			<h2>App Management</h2>
 			<p>

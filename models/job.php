@@ -59,6 +59,11 @@
     {
 			return new S3File($this->get('source_file_id'));
     }
+    
+    public function getSliceJob()
+    {
+      return new SliceJob($this->get('slice_job_id'));
+    }
 		
 		public function getFile()
 		{
@@ -79,10 +84,12 @@
 		{
 			$d = array();
 			$d['id'] = $this->id;
+			$d['bot_id'] = $this->get('bot_id');
 			$d['name'] = $this->getName();
 			$d['queue'] = $this->get('queue_id');
 			$d['source_file'] = $this->getSourceFile()->getAPIData();
 			$d['file'] = $this->getFile()->getAPIData();
+			$d['slicejob'] = $this->getSliceJob()->getAPIData();
 			$d['status'] = $this->get('status');
 			$d['created_time'] = $this->get('created_time');
 			$d['taken_time'] = $this->get('taken_time');

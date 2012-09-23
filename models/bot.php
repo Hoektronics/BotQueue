@@ -145,6 +145,36 @@
 			$job = new Job($job->id);
 			if ($job->get('bot_id') != $this->id)
 				throw new Exception("Unable to lock job #{$job->id}");
+
+      //do we need to slice this job?
+      if (!$job->getFile()->isHydrated())
+      {
+        //pull in our config and make sure its legit.
+        $config = $bot->getSliceConfig();
+        if (!$config->isHydrated())
+        {
+          $job->set('status', 'available');
+          $job->set('bot_id', 0);
+    			$job->set('taken_time', 0);
+          $job->save();
+
+  				throw new Exception("This bot does not have a slice engine + configuration set.");
+        }
+
+        //create our slice job for processing.
+        $sj = new SliceJob();
+        $sj->set('user_id', User::$me->id);
+        $sj->set('job_id', $job->id);
+        $sj->set('input_id', $job->get('source_file_id'));
+        $sj->set('slice_config_id', $config->id);
+        $sj->set('slice_config_snapshot', $config->getSnapshot());
+        $sj->set('status', 'available');
+        $sj->set('add_date', date("Y-m-d H:i:s"));
+        $sj->save();
+
+        //update our job status.
+        $job->set('status', 'slicing');
+      }
 			
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');

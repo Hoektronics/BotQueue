@@ -1,5 +1,8 @@
 v2 Release - October 2012
 
+* Add $deep flag to sliceconfig getAPIData call
+* Add engine data call to sliceconfig getAPI call
+
 * Slice Engines UI
   * on edit of slice profile, show option to delete previously sliced jobs w/ this profile.
 
