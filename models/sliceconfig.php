@@ -28,14 +28,15 @@
 			return $this->get('config_name');
 		}
 
-		public function getAPIData()
+		public function getAPIData($deep = true)
 		{
 			$r = array();
 			$r['id'] = $this->id;
 			$r['name'] = $this->getName();
 			$r['user_id'] = $this->get('user_id');
 			$r['fork_id'] = $this->get('fork_id');
-			$r['engine_id'] = $this->get('engine_id');
+			if ($deep)
+			  $r['engine'] = $this->getSliceEngine()->getAPIData(false);
 			$r['config_data'] = $this->get('config_data');
 			$r['add_date'] = $this->get('add_date');
 			$r['edit_date'] = $this->get('edit_date');
