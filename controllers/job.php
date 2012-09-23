@@ -518,9 +518,17 @@
 						throw new Exception("You do not have permission to add to that queue.");
 					
 					//okay, we good?
-					$queue->addGCodeFile($file, $quantity);
+					if ($file->isGCode())
+					  $queue->addGCodeFile($file, $quantity);
+					else if ($file->is3DModel())
+					  $queue->add3DModelFile($file, $quantity);
+          else
+            throw new Exception("Oops, I don't know what type of file this is!");
+
+          //let them know.
 					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
 						
+					//send us ot the queue!
 					$this->forwardToUrl($queue->getUrl());
 				}
 				

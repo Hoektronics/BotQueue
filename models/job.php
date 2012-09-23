@@ -54,6 +54,11 @@
 			
 			return $s2c[$status];
 		}
+
+    public function getSourceFile()
+    {
+			return new S3File($this->get('source_file_id'));
+    }
 		
 		public function getFile()
 		{
@@ -76,6 +81,7 @@
 			$d['id'] = $this->id;
 			$d['name'] = $this->getName();
 			$d['queue'] = $this->get('queue_id');
+			$d['source_file'] = $this->getSourceFile()->getAPIData();
 			$d['file'] = $this->getFile()->getAPIData();
 			$d['status'] = $this->get('status');
 			$d['created_time'] = $this->get('created_time');
