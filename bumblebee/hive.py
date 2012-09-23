@@ -3,6 +3,10 @@ import pprint
 import os
 import shutil
 import logging
+import tempfile
+import urllib2
+import sys
+import hashlib
 
 class BeeConfig():
   
@@ -34,6 +38,108 @@ class BeeConfig():
     f.close()    
     self.data = data
 
+class URLFile():
+  
+  def __init__(self, filedata):
+    self.global_config = config.get()
+    self.log = logging.getLogger('botqueue')
+
+    #init our local variables.
+    self.remotefile = filedata
+    self.cacheHit = False
+    self.localPath = False
+    self.localFile = False
+    self.localSize = 0
+    self.progress = 0
+    self.cacheDir = False
+    self.checkCacheDirectory()
+    
+  def load(self):
+    self.prepareLocalFile()
+    self.downloadFile()
+
+  #see if we have some sort of caching dir setup.
+  def checkCacheDirectory(self):
+    if 'cache_directory' in self.global_config:
+      self.cacheDir = self.global_config['cache_directory']
+    else:
+      self.cacheDir = "./cache/"
+      
+    #make it if it doesn't exist.
+    if not os.path.isdir(self.cacheDir):
+      os.mkdir(self.cacheDir)
+
+  #open our local file for writing.
+  def prepareLocalFile(self):
+    self.cacheHit = False
+    try:
+      self.localPath = self.cacheDir + self.remotefile['md5'] + "-" + os.path.basename(self.remotefile['name'])
+      if os.path.exists(self.localPath):
+        myhash = self.md5sumfile(self.localPath)
+        if myhash != self.remotefile['md5']:
+          self.log.warning("Existing file found: hashes did not match! %s != %s" % (myhash, self.remotefile['md5']))
+          raise Exception
+        else:
+          self.cacheHit = True
+          self.localSize = os.path.getsize(self.localPath)
+          self.localFile = open(self.localPath, "r")
+          self.progress = 100
+      else:
+        self.localFile = open(self.localPath, "w+")
+    except Exception as ex:
+      self.localFile = tempfile.NamedTemporaryFile()
+      self.localPath = self.localFile.name
+
+  #download our job and make sure its cool
+  def downloadFile(self):
+    #do we need to download it?
+    if not self.cacheHit:
+      #download our file.
+      self.log.info("Downloading %s to %s" % (self.remotefile['url'], self.localPath))
+      urlFile = self.openUrl(remotefile['url'])
+      chunk = 4096
+      md5 = hashlib.md5()
+      self.localSize = 0
+      while 1:
+        data = urlFile.read(chunk)
+        if not data:
+          break
+        md5.update(data)
+        self.localFile.write(data)
+        self.localSize = self.localSize + len(data)
+        self.progress = float(self.localSize) / float(self.remotefile['size'])*100
+
+      #check our final md5 sum.
+      if md5.hexdigest() != self.remotefile['md5']:
+        self.log.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.remotefile['md5']))
+        raise Exception()
+      else:
+        self.progress = 100
+        self.log.info("Download complete: %s" % self.remotefile['url'])
+    else:
+      self.log.info("Using cached file %s" % self.localPath)
+
+    #reset to the beginning.
+    self.localFile.seek(0)  
+
+  def openUrl(self, url):
+    request = urllib2.Request(url)
+    #request.add_header('User-agent', 'Chrome XXX')
+    urlfile = urllib2.urlopen(request)
+
+    return urlfile
+
+  def md5sumfile(self, filename, block_size=2**18):
+    md5 = hashlib.md5()
+    f = open(filename, "r")
+    while True:
+      data = f.read(block_size)
+      if not data:
+        break
+      md5.update(data)
+    f.close()
+    return md5.hexdigest()
+  
 class Object(object):
   pass
   

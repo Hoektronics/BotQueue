@@ -36,6 +36,8 @@
 			$r['user_id'] = $this->get('user_id');
 			$r['fork_id'] = $this->get('fork_id');
 			$r['engine_id'] = $this->get('engine_id');
+			$r['start_gcode'] = $this->get('start_gcode');
+			$r['end_gcode'] = $this->get('end_gcode');
 			$r['config_data'] = $this->get('config_data');
 			$r['add_date'] = $this->get('add_date');
 			$r['edit_date'] = $this->get('edit_date');
