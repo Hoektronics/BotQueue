@@ -150,7 +150,7 @@
       if (!$job->getFile()->isHydrated())
       {
         //pull in our config and make sure its legit.
-        $config = $bot->getSliceConfig();
+        $config = $this->getSliceConfig();
         if (!$config->isHydrated())
         {
           $job->set('status', 'available');
@@ -167,13 +167,15 @@
         $sj->set('job_id', $job->id);
         $sj->set('input_id', $job->get('source_file_id'));
         $sj->set('slice_config_id', $config->id);
-        $sj->set('slice_config_snapshot', $config->getSnapshot());
+        $sj->set('slice_config_snapshot', json::encode($config->getSnapshot()));
         $sj->set('status', 'available');
         $sj->set('add_date', date("Y-m-d H:i:s"));
         $sj->save();
 
         //update our job status.
         $job->set('status', 'slicing');
+        $job->set('slice_job_id', $sj->id);
+        $job->save();
       }
 			
 			$this->set('job_id', $job->id);
@@ -270,9 +272,19 @@
 			$data['total_waittime'] = (int)$stats[0]['wait'];
 			$data['total_runtime'] = (int)$stats[0]['runtime'];
 			$data['total_time'] = (int)$stats[0]['total'];
-			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
-			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
-			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+			
+			if ($data['total'])
+			{
+  			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
+  			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
+  			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+			}
+			else
+			{
+  			$data['avg_waittime'] = 0;
+  			$data['avg_runtime'] = 0;
+  			$data['avg_time'] = 0;
+			}
 
 			return $data;
 		}

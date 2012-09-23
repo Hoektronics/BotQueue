@@ -36,12 +36,24 @@
 			$r['user_id'] = $this->get('user_id');
 			$r['fork_id'] = $this->get('fork_id');
 			if ($deep)
-			  $r['engine'] = $this->getSliceEngine()->getAPIData(false);
+			  $r['engine'] = $this->getEngine()->getAPIData(false);
+			$r['start_gcode'] = $this->get('start_gcode');
+			$r['end_gcode'] = $this->get('end_gcode');
 			$r['config_data'] = $this->get('config_data');
 			$r['add_date'] = $this->get('add_date');
 			$r['edit_date'] = $this->get('edit_date');
 
 			return $r;
+		}
+
+		public function getSnapshot()
+		{
+		  $r = array();
+			$r['start_gcode'] = $this->get('start_gcode');
+			$r['end_gcode'] = $this->get('end_gcode');
+			$r['config_data'] = $this->get('config_data');
+			
+			return $r;		  
 		}
 		
 		public function getUser()

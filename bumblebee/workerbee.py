@@ -5,6 +5,7 @@ import urllib2
 import os
 import sys
 import hive
+import ginsu
 import botqueueapi
 import hashlib
 import logging
@@ -122,9 +123,14 @@ class WorkerBee():
             time.sleep(10)
           except Exception as ex:
             self.exception(ex)
+        #working means we need to process a job.
         elif self.data['status'] == 'working':
-          #okay, we're in work mode... handle our job.
-          self.processJob()
+          #do we need to process it into machine-specific?
+          if self.data['job']['status'] == 'slicing':
+            self.sliceJob()
+          #okay, are we ready to execute the job?
+          if self.data['job']['status'] == 'taken':
+            self.processJob()
 
           #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
           self.getOurInfo()
@@ -183,7 +189,7 @@ class WorkerBee():
         job = result['data']
         jresult = self.api.grabJob(self.data['id'], job['id'])
         if (jresult['status'] == 'success'):
-          self.data = jresult['data']['bot']
+          self.data = jresult['data']
 
           #notify the mothership.
           data = hive.Object()
@@ -200,114 +206,54 @@ class WorkerBee():
     else:
       raise Exception("Error finding new job: %s" % result['error'])
 
-  #download our job and make sure its cool
-  def downloadJob(self):
-    #prepare our file for storage
-    self.checkCacheDirectory()
-    self.openJobFile(self.data['job']['file'])
+  def sliceJob(self):
+    #TODO: grab our slice job
 
-    #do we need to download it?
-    if not self.cacheHit:
-      #todo: do an actual API call.
-      self.data['job']['status'] = 'downloading'
+    #download our slice file
+    sliceFile = self.downloadFile(self.data['job']['slicejob']['input_file'])
+    
+    #create and run our slicer
+    ginsu = new ginsu.Ginsu(sliceFile, self.data['job']['slicejob'])
+    ginsu.slice()
+    
+    #watch the slicing progress
+    while !ginsu.isRunning():
+      #notify the local mothership of our status.
+      if (time.time() - localUpdate > 0.5):
+        self.data['job']['progress'] = ginsu.getProgress()
+        msg = Message('job_update', self.data['job'])
+        self.pipe.send(msg)
+      time.sleep(0.1)      
 
-      #download our file.
-      self.info("downloading %s to %s." % (self.data['job']['file']['url'], self.jobFilePath))
-      urlFile = self.openUrl(self.data['job']['file']['url'])
-      chunk = 4096
-      md5 = hashlib.md5()
-      lastUpdate = 0
-      localUpdate = 0
-      self.fileSize = 0
-      while 1:
-        data = urlFile.read(chunk)
-        if not data:
-          break
-        md5.update(data)
-        self.jobFile.write(data)
-        self.fileSize = self.fileSize + len(data)
+    #update our slice job progress, and load our new bot
+    self.data = self.api.updateSliceJob()
 
-        latest = float(self.fileSize) / float(self.data['job']['file']['size'])*100
+  def downloadFile(self, fileinfo):
+    myfile = new URLFile(self.fileinfo)
 
-        #notify the mothership of our status.
+    localUpdate = 0
+    try:
+      self.jobFile.load()
+
+      while self.jobFile.progress < 100):
+        #notify the local mothership of our status.
         if (time.time() - localUpdate > 0.5):
           self.data['job']['progress'] = latest
           msg = Message('job_update', self.data['job'])
           self.pipe.send(msg)
+        time.sleep(0.1)
 
-        #notify the remote server of our job progress.
-        if (time.time() - lastUpdate > 15):
-          self.debug("download: %0.2f%%" % latest)
-          lastUpdate = time.time()
-          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
-    
-      #check our final md5 sum.
-      if md5.hexdigest() != self.data['job']['file']['md5']:
-        self.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.data['job']['file']['md5']))
-        raise Exception()
-      else:
-        self.data['job']['status'] = 'taken'
-        self.info("Download complete.")
-    else:
-      self.info("Using cached file %s" % self.jobFilePath)
-
-    #notify the mothership of download completion
-    self.api.downloadedJob(self.data['job']['id'])
-
-    #reset to the beginning.
-    self.jobFile.seek(0)
- 
-  def checkCacheDirectory(self):
-    if 'cache_directory' in self.global_config:
-      self.dirname = self.global_config['cache_directory']
-    else:
-      self.dirname = "./cache/"
-
-    if not os.path.isdir(self.dirname):
-      os.mkdir(self.dirname)      
-
-  def openUrl(self, url):
-    request = urllib2.Request(url)
-    #request.add_header('User-agent', 'Chrome XXX')
-    urlfile = urllib2.urlopen(request)
-
-    return urlfile
- 
-  def openJobFile(self, fileinfo):
-    self.cacheHit = False
-    try:
-      self.jobFilePath = self.dirname + os.path.basename(fileinfo['name'])
-      if os.path.exists(self.jobFilePath):
-        myhash = self.md5sumfile(self.jobFilePath)
-        if myhash != fileinfo['md5']:
-          self.warning("Existing file found: hashes did not match! %s != %s" % (myhash, fileinfo['md5']))
-          raise Exception
-        else:
-          self.cacheHit = True
-          self.fileSize = os.path.getsize(self.jobFilePath)
-          self.jobFile = open(self.jobFilePath, "r")
-      else:
-        self.jobFile = open(self.jobFilePath, "w+")
+      #notify the mothership of download completion
+      self.api.downloadedJob(self.data['job']['id'])
     except Exception as ex:
-      self.jobFile = tempfile.NamedTemporaryFile()
-      self.jobFilePath = self.jobFile.name
-
-  def md5sumfile(self, filename, block_size=2**18):
-    md5 = hashlib.md5()
-    f = open(filename, "r")
-    while True:
-      data = f.read(block_size)
-      if not data:
-        break
-      md5.update(data)
-    f.close()
-    return md5.hexdigest()
-      
+      self.exception(ex)
+            
   def processJob(self):
-    self.downloadJob()
+    #go get 'em, tiger!
+    self.jobFile = self.self.downloadFile(self.data['job']['file'])
+
     currentPosition = 0
     lastUpdate = time.time()
-
     try:
       self.driver.startPrint(self.jobFile, self.fileSize)
       while self.driver.isRunning():

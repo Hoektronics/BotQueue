@@ -51,12 +51,12 @@
 		
 		public function getInputFile()
 		{
-		  return new S3File($this->get('input_file_id'));
+		  return new S3File($this->get('input_id'));
 		}
 
 		public function getOutputFile()
 		{
-		  return new S3File($this->get('output_file_id'));
+		  return new S3File($this->get('output_id'));
 		}
 		
 		public function getSliceConfig()

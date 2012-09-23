@@ -28,7 +28,7 @@
 			return $this->get('engine_name');
 		}
 
-		public function getAPIData()
+		public function getAPIData($deep = true)
 		{
 			$r = array();
 			$r['id'] = $this->id;
@@ -38,7 +38,8 @@
       $r['is_featured'] = $this->get('is_featured');
       $r['is_public'] = $this->get('is_public');
       $r['add_date'] = $this->get('add_date');
-      $r['default_config'] = $this->getDefaultConfig()->getAPIData();
+      if ($deep)
+        $r['default_config'] = $this->getDefaultConfig()->getAPIData(false);
 
 			return $r;
 		}
