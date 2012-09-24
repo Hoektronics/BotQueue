@@ -1,25 +1,27 @@
 v2 Release - October 2012
 
-* Add $deep flag to sliceconfig getAPIData call
-* Add engine data call to sliceconfig getAPI call
+* BUG: fix errors when dropping job or going errorMode -> an exception is escaping somewhere.
+
+* Worker bot grabs job w/ stl
+  * parse errors and status log
+  * figure out what to do about slice jobs with errors???
+    * set status to pending, upload file and logs
+    * web UI to approve/reject slice job output
+  * upload result gcode to website
+  * copy gcode to cache directory
+  * set status to working, and loop again to start executing gcode
+  * add filament_volume field to slicejob
 
 * Slice Engines UI
-  * on edit of slice profile, show option to delete previously sliced jobs w/ this profile.
+  * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
+    * add expired status to slice jobs so they don't get grabbed.
+  * when creating new slice job, check to see if there is an existing one w/ same engine, config, and input file.
 
 * Miscellaneous stuff
   * update time statistics to include slicing
   * update status html to include slicing
   * fix up the file view page to make it prettier.
-
-* fix grab job api to create slice job if needed
   
-* Worker bot grabs job w/ stl
-  * create ginsu.py class to handle various slice engines and job execution
-  * downloads source file + config information
-  * slices source file
-  * uploads gcode to website
-  * starts executing gcode
-
 * WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
   * Prereq: slicer support
 

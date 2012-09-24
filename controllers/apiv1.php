@@ -53,10 +53,12 @@
 					'listjobs',           //ok
 					'jobinfo',            //ok
 					'grabjob',            //ok
+					'grabslicejob',       //ok
 					'findnewjob',         //ok
 					'dropjob',            //ok
 					'canceljob',          //ok
 					'completejob',        //ok
+					'completeslicejob',   //ok
 					'downloadedjob',      //ok
 					'createjob',          //ok
 					'updatejobprogress',  //ok
@@ -271,12 +273,39 @@
 				throw new Exception("You cannot grab this job.");
 			
 			//attempt to grab our job.  will throw exceptions on failure.
-			$bot->grabJob($job);
+			$job = $bot->grabJob($job, (bool)$this->args('can_slice'));
+
+			//okay, do we slice it?
+			if ($job->get('status') == 'slicing' && $this->args('can_slice'))
+			  $job->getSliceJob()->grab($this->args('_uid'));
 			
 			//return the bot data w/ all our info.
 			$data = $bot->getAPIData();
 
 			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " job via the API.");
+			
+			return $data;
+		}
+
+		public function api_grabslicejob()
+		{
+			$sj = new SliceJob($this->args('job_id'));
+			if (!$sj->isHydrated())
+				throw new Exception("Slice job does not exist.");
+
+			if ($sj->get('user_id') != User::$me->id && User::$me->isAdmin())
+				throw new Exception("This slice job is not yours to grab.");
+				
+			if (!$sj->get('status') != 'available')
+				throw new Exception("You cannot grab this job.");
+			
+			//attempt to grab our job.  will throw exceptions on failure.
+			$sj->grab($this->args('_uid'));
+			
+			//return the bot data w/ all our info.
+			$data = $sj->getAPIData();
+
+			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " slice job via the API.");
 			
 			return $data;
 		}
@@ -361,6 +390,26 @@
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
 			
+			return $data;
+		}
+
+
+		public function api_completeslicejob()
+		{
+			$sj = new SliceJob($this->args('slice_job_id'));
+			if (!$sj->isHydrated())
+				throw new Exception("Slice job does not exist.");
+			
+			if ($sj->get('worker_token') != $this->args("_uid"))
+				throw new Exception("You cannot complete this slice job.");
+				
+			//okay, complete the job.
+			$sj->complete();
+
+			Activity::log($sj->getLink() . " slice job completed via the API.");
+			
+			$data = $sj->getAPIData();
+
 			return $data;
 		}
 		

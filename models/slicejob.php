@@ -49,6 +49,11 @@
 			return $r;
 		}
 		
+		public function getJob()
+		{
+		  return new Job($this->get('job_id'));
+		}
+		
 		public function getInputFile()
 		{
 		  return new S3File($this->get('input_id'));
@@ -90,6 +95,22 @@
 			);
 			
 			return $s2c[$status];
+		}
+		
+		public function grab($uid)
+		{
+		  if ($this->get('status') == 'available')
+		  {
+        $this->set('status', 'slicing');
+        $this->set('taken_date', date('Y-m-d H:i:s'));
+        $this->set('uid', $uid);
+        $this->save();
+        
+  			usleep(1000 + mt_rand(100,500));
+  			$sj = new SliceJob($this->id);
+  			if ($sj->get('uid') != $this->uid)
+  				throw new Exception("Unable to lock slice job #{$this->id}");        
+		  }
 		}
 	}
 ?>

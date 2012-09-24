@@ -144,8 +144,8 @@ class BotQueueAPI():
   def listJobs(self, queue_id):
     return self.apiCall('listjobs', {'queue_id' : queue_id});
     
-  def grabJob(self, bot_id, job_id):
-    return self.apiCall('grabjob', {'bot_id' : bot_id, 'job_id' : job_id})
+  def grabJob(self, bot_id, job_id, can_slice):
+    return self.apiCall('grabjob', {'bot_id' : bot_id, 'job_id' : job_id, 'can_slice' : can_slice})
 
   def dropJob(self, job_id, error = False):
     return self.apiCall('dropjob', {'job_id' : job_id, 'error' : error})

@@ -112,27 +112,40 @@ class Slic3r(GenericSlicer):
       )
       self.log.debug("Slice Command: %s" % command)
 
+      #okay, run our command now.
       outputFile = tempfile.NamedTemporaryFile()
       errorFile = tempfile.NamedTemporaryFile()
       result = subprocess.call(command, stdout=outputFile, stderr=errorFile, shell=True)
+      self.log.debug("Slice Result: %s" % result)
+
+      #get our output information
       outputFile.flush()
       outputFile.seek(0)
+      outputLog = outputFile.read()
+      self.log.debug("Slice Output: %s" % outputLog)
+      
+      #get our error data
       errorFile.flush()
       errorFile.seek(0)
-      self.log.debug("Output: %s" % outputFile.read())
-      self.log.debug("Errors: %s" % errorFile.read())
-      self.log.debug("Result: %s" % result)
+      errorLog = errorFile.read()
+      if errorLog:
+        self.log.debug("Slice Errors: %s" % errorLog)
+      
+      #0 = success, 1 = failure.  unix is weird.
+      if not result:
+        #parse the results to get filament required
+      
+        #upload our file and mark slice job as complete
+      
+        #save all our results to an object
+        result = hive.Object
+        result.status = "success"
+        result.output_file = self.outFile.name
+        result.output_log = outputLog
+        result.error_log = errorLog
+        return result
+
     except Exception as ex:
       self.log.exception(ex)
     
-    #actually run our command
-    
-    #parse the results to get progress, and filament required
-    
-    #save all our results to an object
-    result = hive.Object
-    result.status = "success"
-    result.output_file = self.outFile.name
-    #result.output_log = output_log
-    
-    return result
+    return False

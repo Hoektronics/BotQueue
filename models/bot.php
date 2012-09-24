@@ -134,7 +134,7 @@
 			return true;
 		}
 		
-		public function grabJob($job)
+		public function grabJob($job, $can_slice = true)
 		{
 			$job->set('status', 'taken');
 			$job->set('bot_id', $this->id);
@@ -168,8 +168,8 @@
         $sj->set('input_id', $job->get('source_file_id'));
         $sj->set('slice_config_id', $config->id);
         $sj->set('slice_config_snapshot', json::encode($config->getSnapshot()));
-        $sj->set('status', 'available');
         $sj->set('add_date', date("Y-m-d H:i:s"));
+        $sj->set('status', 'available');
         $sj->save();
 
         //update our job status.
@@ -182,6 +182,8 @@
 			$this->set('status', 'working');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
+			
+			return $job;
 		}
 		
 		public function canDrop($job)
