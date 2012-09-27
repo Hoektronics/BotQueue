@@ -10,6 +10,7 @@ import botqueueapi
 import hashlib
 import logging
 import random
+import shutil
 
 class WorkerBee():
   
@@ -60,7 +61,7 @@ class WorkerBee():
            
     #take the bot offline.
     self.info("Setting bot status as error.")
-    result = self.api.updateBotInfo({'bot_id' : self.data['id'], 'status' : 'error', 'error_text' : message})
+    result = self.api.updateBotInfo({'bot_id' : self.data['id'], 'status' : 'error', 'error_text' : error})
     if result['status'] == 'success':
       self.data = result['data']
     else:
@@ -231,11 +232,24 @@ class WorkerBee():
         msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
         localUpdate = time.time()
-      time.sleep(0.1)      
+      time.sleep(0.1)
+      
+    #how did it go?
+    sushi = g.sliceResult
+    
+    #move the file to the cache directory
+    cacheDir = hive.getCacheDirectory()
+    baseFilename = os.path.splitext(os.path.basename(self.data['job']['slicejob']['input_file']['name']))[0]
+    md5sum = hive.md5sumfile(sushi.output_file)
+    uploadFile = "%s%s-%s.gcode" % (cacheDir, md5sum, baseFilename)
+    self.debug("Moved slice output to %s" % uploadFile)
+    shutil.copy(sushi.output_file, uploadFile)
 
-    #update our slice job progress, and load our new bot
-    #self.data = self.api.updateSliceJob()
-
+    #update our slice job progress and pull in our update info.
+    self.info("Finished slicing, uploading results to main site.")
+    result = self.api.updateSliceJob(job_id=self.data['job']['slicejob']['id'], status=sushi.status, output=sushi.output_log, errors=sushi.error_log, filename=uploadFile)
+    self.data = result['data']
+ 
   def downloadFile(self, fileinfo):
     myfile = hive.URLFile(fileinfo)
 
@@ -317,6 +331,7 @@ class WorkerBee():
           self.warning("Internet down: %s" % e)
           time.sleep(10)
     except Exception as ex:
+      self.exception(ex)
       self.errorMode(ex)
 
   def goOnline():

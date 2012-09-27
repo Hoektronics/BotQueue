@@ -23,6 +23,8 @@ class BumbleBee():
       worker.run();
     except KeyboardInterrupt as e:
       self.log.debug("Bot %s exiting from keyboard interrupt." % data['name'])
+    except Exception as ex:
+      self.log.exception(ex)
 
   def main(self):
     #load up our bots and start processing them.

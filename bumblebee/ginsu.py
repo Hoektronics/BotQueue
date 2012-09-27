@@ -5,6 +5,7 @@ import sys
 import tempfile
 import subprocess
 import os
+import hive
 
 class Ginsu():
   
@@ -130,22 +131,22 @@ class Slic3r(GenericSlicer):
       errorLog = errorFile.read()
       if errorLog:
         self.log.debug("Slice Errors: %s" % errorLog)
+ 
+ 
+      #save all our results to an object
+      sushi = hive.Object
+      sushi.output_file = self.outFile.name
+      sushi.output_log = outputLog
+      sushi.error_log = errorLog
       
       #0 = success, 1 = failure.  unix is weird.
+      self.log.debug("Program result: %s" % result)
       if not result:
         #parse the results to get filament required
       
-        #upload our file and mark slice job as complete
-      
-        #save all our results to an object
-        result = hive.Object
-        result.status = "success"
-        result.output_file = self.outFile.name
-        result.output_log = outputLog
-        result.error_log = errorLog
-        return result
+        sushi.status = "complete"
 
     except Exception as ex:
       self.log.exception(ex)
     
-    return False
+    return sushi
