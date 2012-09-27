@@ -99,7 +99,8 @@
 					$this->setTitle('View Job - ' . $job->getName());
 
 					$this->set('job', $job);
-					$this->set('file', $job->getFile());
+					$this->set('gcode_file', $job->getFile());
+					$this->set('source_file', $job->getSourceFile());
 					$this->set('queue', $job->getQueue());
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());

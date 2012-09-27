@@ -66,6 +66,7 @@
 					'botinfo',            //ok
 					'registerbot',        //ok
 					'updatebot',          //ok
+					'updateslicejob',     //ok
 				);
 				if (in_array($c, $calls))
 				{
@@ -594,6 +595,42 @@
 			Activity::log("updated the bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
+		}
+		
+		public function api_updateslicejob()
+		{
+		  if (!$this->args('job_id'))
+		    throw new Exception("You must provide the 'bot_id' parameter.");
+		    
+			$sj = new SliceJob($this->args('job_id'));
+			if (!$sj->isHydrated())
+				throw new Exception("Slice job does not exist.");
+			
+			if ($sj->get('user_id') != User::$me->id)
+				throw new Exception("This slice job is not yours.");
+
+      //upload our file to S3
+      $s3 = new S3File();
+      $s3->set('user_id', User::$me->id);
+      $s3->uploadFile($_FILES['file']['tmp_name'], S3File::getNiceDir($_FILES['file']['name']));
+
+      //update our status.
+      $sj->set('status', $this->args('status'));
+      $sj->set('output_log', $this->args('output'));
+      $sj->set('error_log', $this->args('errors'));
+      $sj->set('output_id', $s3->id);
+      $sj->save();
+      
+      //update our job
+      $job = $sj->getJob();
+      $job->set('status', 'taken');
+      $job->set('slice_complete_time', date("Y-m-d H:i:s"));
+      $job->set('file_id', $s3->id);
+      $job->save();
+      
+			Activity::log("sliced the " . $job->getLink() . " job via the API.");
+			
+			return $job->getBot()->getAPIData();
 		}
 	}
 ?>
