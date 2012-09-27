@@ -160,22 +160,34 @@
 
   				throw new Exception("This bot does not have a slice engine + configuration set.");
         }
+        
+        //is there an existing slice job w/ this exact file and config?
+        $sj = SliceJob::byConfigAndSource($config->id, $job->get('source_file_id'));
+        if ($sj->isHydrated())
+        {
+          //update our job status.
+          $job->set('slice_job_id', $sj->id);
+          $job->set('slice_complete_time', $job->get('taken_time'));
+          $job->set('file_id', $sj->get('output_id'));
+          $job->save();
+        }
+        else
+        {
+          //nope, create our slice job for processing.
+          $sj->set('user_id', User::$me->id);
+          $sj->set('job_id', $job->id);
+          $sj->set('input_id', $job->get('source_file_id'));
+          $sj->set('slice_config_id', $config->id);
+          $sj->set('slice_config_snapshot', json::encode($config->getSnapshot()));
+          $sj->set('add_date', date("Y-m-d H:i:s"));
+          $sj->set('status', 'available');
+          $sj->save();
 
-        //create our slice job for processing.
-        $sj = new SliceJob();
-        $sj->set('user_id', User::$me->id);
-        $sj->set('job_id', $job->id);
-        $sj->set('input_id', $job->get('source_file_id'));
-        $sj->set('slice_config_id', $config->id);
-        $sj->set('slice_config_snapshot', json::encode($config->getSnapshot()));
-        $sj->set('add_date', date("Y-m-d H:i:s"));
-        $sj->set('status', 'available');
-        $sj->save();
-
-        //update our job status.
-        $job->set('status', 'slicing');
-        $job->set('slice_job_id', $sj->id);
-        $job->save();
+          //update our job status.
+          $job->set('status', 'slicing');
+          $job->set('slice_job_id', $sj->id);
+          $job->save();         
+        }
       }
 			
 			$this->set('job_id', $job->id);
