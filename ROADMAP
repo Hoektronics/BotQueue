@@ -6,18 +6,17 @@ v2 Release - October 2012
     * set status to pending, upload file and logs
     * web UI to approve/reject slice job output
     * update API call to handle jobs that have errors
-  * add filament_volume field to slicejob or job
 
 * Slice Engines UI
   * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
-    * add expired status to slice jobs so they don't get grabbed.
   * when creating new slice job, check to see if there is an existing one w/ same engine, config, and input file.
 
 * Miscellaneous stuff
-  * fix bumblebee to pull QA url from config
   * update time statistics to include slicing
   * update status html to include slicing
   * fix up the file view page to make it prettier.
+  * when downloading file to slice, status should be "downloading"
+  * when slicing a file, status should be "slicing"
   
 * WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
 
@@ -73,6 +72,8 @@ WEBCAM SUPPORT
     * what interval?  1 minute?
     * make sure each image is timestamped.
     * and watermarked with the host url.
+
+* add filament_volume field to slicejob or job
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)
 

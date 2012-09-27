@@ -264,7 +264,6 @@ class WorkerBee():
           msg = Message('job_update', self.data['job'])
           self.pipe.send(msg)
           localUpdate = time.time()
-          self.debug("Download: %0.2f%%" % (myfile.getProgress()))
         time.sleep(0.1)
       #okay, we're done... send it back.
       return myfile

@@ -118,6 +118,7 @@ class BotQueueAPI():
     # make the call
     try:
       respdata = urllib2.urlopen(request).read()
+      self.log.debug(respdata)
       result = json.loads(respdata)
     except urllib2.HTTPError, ex:
       self.log.warning('Received error code: %s' % ex.code)
