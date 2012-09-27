@@ -60,3 +60,4 @@ alter table jobs modify status enum('available','taken','slicing','downloading',
 alter table jobs add source_file_id int(11) unsigned not null default 0 after queue_id;
 alter table jobs add slice_job_id int(11) unsigned not null default 0 after file_id;
 alter table jobs add slice_complete_time datetime not null after taken_time;
+alter table slice_jobs add error_log text after output_log;

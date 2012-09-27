@@ -80,10 +80,18 @@
 							<a class="btn btn-mini" href="/job/create/job:<?=$job->id?>"><i class="icon-repeat"></i> re-run</a>
 						</td>
 					</tr>
-					<tr>
-						<th>File:</th>
-						<td><?=$file->getLink()?></td>
-					</tr>
+					<? if ($source_file->isHydrated()): ?>			
+  					<tr>
+  						<th>Source File:</th>
+  						<td><?=$source_file->getLink()?></td>
+  					</tr>
+  				<? endif ?>
+					<? if ($gcode_file->isHydrated()): ?>
+  					<tr>
+  						<th>GCode File:</th>
+  						<td><?=$gcode_file->getLink()?></td>
+  					</tr>
+					<? endif ?>
 					<tr>
 						<th>Queue:</th>
 						<td><?=$queue->getLink()?></td>
