@@ -1,9 +1,9 @@
 v2 Release - October 2012
 
-* BUG: fix errors when dropping job or going errorMode -> an exception is escaping somewhere.
+* Get OAUTH + form multi-encoding working for file upload
 
 * Worker bot grabs job w/ stl
-  * parse errors and status log
+  * read status/errors realtime with Popen
   * figure out what to do about slice jobs with errors???
     * set status to pending, upload file and logs
     * web UI to approve/reject slice job output

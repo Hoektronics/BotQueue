@@ -53,7 +53,7 @@ class URLFile():
     self.localSize = 0
     self.progress = 0
     self.cacheDir = False
-    self.checkCacheDirectory()
+    self.cacheDir = getCacheDirectory()
     
   def load(self):
     self.prepareLocalFile()
@@ -63,16 +63,7 @@ class URLFile():
     return self.progress
 
   #see if we have some sort of caching dir setup.
-  def checkCacheDirectory(self):
-    if 'cache_directory' in self.global_config:
-      self.cacheDir = self.global_config['cache_directory']
-    else:
-      realPath = os.path.dirname(os.path.realpath(__file__))
-      self.cacheDir = "%s/cache/" % (realPath)
-      
-    #make it if it doesn't exist.
-    if not os.path.isdir(self.cacheDir):
-      os.mkdir(self.cacheDir)
+
 
   #open our local file for writing.
   def prepareLocalFile(self):
@@ -80,7 +71,7 @@ class URLFile():
     try:
       self.localPath = self.cacheDir + self.remotefile['md5'] + "-" + os.path.basename(self.remotefile['name'])
       if os.path.exists(self.localPath):
-        myhash = self.md5sumfile(self.localPath)
+        myhash = md5sumfile(self.localPath)
         if myhash != self.remotefile['md5']:
           self.log.warning("Existing file found: hashes did not match! %s != %s" % (myhash, self.remotefile['md5']))
           raise Exception
@@ -133,20 +124,34 @@ class URLFile():
     urlfile = urllib2.urlopen(request)
 
     return urlfile
-
-  def md5sumfile(self, filename, block_size=2**18):
-    md5 = hashlib.md5()
-    f = open(filename, "r")
-    while True:
-      data = f.read(block_size)
-      if not data:
-        break
-      md5.update(data)
-    f.close()
-    return md5.hexdigest()
-  
+ 
 class Object(object):
   pass
+
+def md5sumfile(filename, block_size=2**18):
+  md5 = hashlib.md5()
+  f = open(filename, "r")
+  while True:
+    data = f.read(block_size)
+    if not data:
+      break
+    md5.update(data)
+  f.close()
+  return md5.hexdigest()
+
+def getCacheDirectory():
+  global_config = config.get()
+  if 'cache_directory' in global_config:
+    cacheDir = global_config['cache_directory']
+  else:
+    realPath = os.path.dirname(os.path.realpath(__file__))
+    cacheDir = "%s/cache/" % (realPath)
+    
+  #make it if it doesn't exist.
+  if not os.path.isdir(cacheDir):
+    os.mkdir(cacheDir)
+    
+  return cacheDir
   
 def loadLogger():
   # create logger with 'spam_application'
