@@ -112,5 +112,24 @@
   				throw new Exception("Unable to lock slice job #{$this->id}");        
 		  }
 		}
+		
+		public static function byConfigAndSource($config_id, $source_id)
+		{
+		  $config_id = (int)$config_id;
+		  $source_id = (int)$source_id;
+		  
+		  $sql = "
+		    SELECT id
+		    FROM slice_jobs
+		    WHERE slice_config_id = $config_id 
+		      AND input_id = $source_id
+		      AND user_id = " . User::$me->id . "
+		      AND status = 'complete'
+		  ";
+		  
+		  $id = db()->getValue($sql);
+		  
+		  return new SliceJob($id);
+		}
 	}
 ?>

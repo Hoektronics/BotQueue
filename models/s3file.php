@@ -68,7 +68,7 @@
 					return true;
 			}
 			else
-				echo "No file at $path or $file\n";
+				throw new Exception("S3 Upload: no file found at: '$file'\n");
 			
 			//fail!
 			return false;

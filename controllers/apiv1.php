@@ -599,7 +599,7 @@
 		
 		public function api_updateslicejob()
 		{
-		  if (!$this->args('job_id'))
+	    if (!$this->args('job_id'))
 		    throw new Exception("You must provide the 'bot_id' parameter.");
 		    
 			$sj = new SliceJob($this->args('job_id'));
@@ -610,9 +610,31 @@
 				throw new Exception("This slice job is not yours.");
 
       //upload our file to S3
+      $file = $_FILES['file'];
+      if ($file['error'] != 0)
+      {
+        if($file['size'] == 0 && $file['error'] == 0)
+          $file['error'] = 5; 
+
+        $upload_errors = array( 
+          UPLOAD_ERR_OK        => "No errors.", 
+          UPLOAD_ERR_INI_SIZE    => "Larger than upload_max_filesize.", 
+          UPLOAD_ERR_FORM_SIZE    => "Larger than form MAX_FILE_SIZE.", 
+          UPLOAD_ERR_PARTIAL    => "Partial upload.", 
+          UPLOAD_ERR_NO_FILE        => "No file.", 
+          UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+          UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+          UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+          UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+        );
+      
+        throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
+      }
+      
+      //okay, we're good.. do it.
       $s3 = new S3File();
       $s3->set('user_id', User::$me->id);
-      $s3->uploadFile($_FILES['file']['tmp_name'], S3File::getNiceDir($_FILES['file']['name']));
+      $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
 
       //update our status.
       $sj->set('status', $this->args('status'));
