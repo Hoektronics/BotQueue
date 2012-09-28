@@ -6,6 +6,7 @@ import tempfile
 import subprocess
 import os
 import hive
+import string
 
 class Ginsu():
   
@@ -113,40 +114,49 @@ class Slic3r(GenericSlicer):
       )
       self.log.debug("Slice Command: %s" % command)
 
-      #okay, run our command now.
-      outputFile = tempfile.NamedTemporaryFile()
-      errorFile = tempfile.NamedTemporaryFile()
-      result = subprocess.call(command, stdout=outputFile, stderr=errorFile, shell=True)
-      self.log.debug("Slice Result: %s" % result)
-
-      #get our output information
-      outputFile.flush()
-      outputFile.seek(0)
-      outputLog = outputFile.read()
-      self.log.debug("Slice Output: %s" % outputLog)
+      outputLog = ""
+      errorLog = ""
       
-      #get our error data
-      errorFile.flush()
-      errorFile.seek(0)
-      errorLog = errorFile.read()
-      if errorLog:
-        self.log.debug("Slice Errors: %s" % errorLog)
- 
- 
+      # this starts our thread to slice the model into gcode
+      p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      self.log.debug("Slic3r started.")
+      while p.poll() is None:
+        output = p.stdout.readline()
+        if output:
+          self.log.debug("Slic3r: %s" % output.strip())
+          outputLog = outputLog + output
+        time.sleep(1)
+
+        # this code does not work for some reason and ends up blocking the loop until program exits if there is no errors
+        # this is a bummer, because we can't get realtime error logging.  :(
+        # err = p.stderr.readline().strip()
+        #         if err:
+        #           self.log.error("Slic3r: %s" % error)
+        #           errorLog = errorLog + err         
+
+      #get our errors (if any)
+      error = p.stderr.readline()
+      while error:
+        self.log.error("Slic3r: %s" % error.strip())
+        errorLog = errorLog + error
+        error = p.stderr.readline()
+
       #save all our results to an object
       sushi = hive.Object
       sushi.output_file = self.outFile.name
       sushi.output_log = outputLog
       sushi.error_log = errorLog
-      
-      #0 = success, 1 = failure.  unix is weird.
-      self.log.debug("Program result: %s" % result)
-      if not result:
-        #parse the results to get filament required
-      
-        sushi.status = "complete"
 
+      #did we get errors?
+      if errorLog:
+        sushi.status = "pending"
+      #unknown return code... failure
+      elif p.returncode > 0:
+        sushi.status = "failure"
+        self.log.error("Program returned code %s" % p.returncode)
+      else:
+        sushi.status = "complete"
+      
+      return sushi
     except Exception as ex:
       self.log.exception(ex)
-    
-    return sushi

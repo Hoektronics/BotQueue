@@ -1,43 +1,32 @@
 v2 Release - October 2012
 
-* Get OAUTH + form multi-encoding working for file upload
+* Slicing process
+  * fix wait flow so that bumblebee can recover from a restart when slicing
+  * update slice progress % based on what lines come in.
 
-* Worker bot grabs job w/ stl
-  * read status/errors realtime with Popen
-  * figure out what to do about slice jobs with errors???
-    * set status to pending, upload file and logs
-    * web UI to approve/reject slice job output
-  * upload result gcode to website
-  * copy gcode to cache directory
-  * set status to working, and loop again to start executing gcode
-  * add filament_volume field to slicejob
+* Fix this bug when approving an errored slice:
+  [2012-09-28 23:47:09,065] ERROR: TestBot: 'bool' object has no attribute 'startPrint'
+  Traceback (most recent call last):
+    File "/Users/hoeken/github/DevQueue/bumblebee/workerbee.py", line 281, in processJob
+      self.driver.startPrint(self.jobFile)
+  AttributeError: 'bool' object has no attribute 'startPrint'
 
 * Slice Engines UI
+  * replace start/end/config with file upload and inline editing (single text area)
   * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
-    * add expired status to slice jobs so they don't get grabbed.
   * when creating new slice job, check to see if there is an existing one w/ same engine, config, and input file.
 
 * Miscellaneous stuff
   * update time statistics to include slicing
   * update status html to include slicing
   * fix up the file view page to make it prettier.
+  * when downloading file to slice, status should be "downloading"
+  * when slicing a file, status should be "slicing"
   
 * WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
-  * Prereq: slicer support
-
-* WEB - multi-job prints (eg: .zip file w/ manifest)
-
-* WEB - print grouping using slic3r
-  * modify jobs to add allow_grouping file
-  * look at job grabbing to allow multiple jobs to be grabbed
-  * look at bumblebee to allow multiple jobs to be grabbed
-  * add option to allow job to be grouped into a single print
-  * modify code to use slic3r --merge to create build plate.
-  * create high-level job group to hold currently running jobs?
 
 * API - implement job creation via URL download
 * API - implement job creation via HTTP file POST
-	* use Poster to send HTTP files: http://atlee.ca/software/poster/
 * API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
 * API - Add callback url support for web-based apps
 
@@ -88,6 +77,18 @@ WEBCAM SUPPORT
     * what interval?  1 minute?
     * make sure each image is timestamped.
     * and watermarked with the host url.
+
+* add filament_volume field to slicejob or job
+
+* WEB - multi-job prints (eg: .zip file w/ manifest)
+
+* WEB - print grouping using slic3r
+  * modify jobs to add allow_grouping file
+  * look at job grabbing to allow multiple jobs to be grabbed
+  * look at bumblebee to allow multiple jobs to be grabbed
+  * add option to allow job to be grouped into a single print
+  * modify code to use slic3r --merge to create build plate.
+  * create high-level job group to hold currently running jobs?
 
 * WEB - Reduce Amazon requirements for non-amazon / non-public installs.
 * WEB - Public queue support

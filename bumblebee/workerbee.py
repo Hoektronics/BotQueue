@@ -124,24 +124,18 @@ class WorkerBee():
             time.sleep(10)
           except Exception as ex:
             self.exception(ex)
+        #slicing means we need to slice our job.
+        elif self.data['status'] == 'slicing':
+          if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
+              self.sliceJob()
+          else:
+            self.getOurInfo()
+            time.sleep(10)
         #working means we need to process a job.
         elif self.data['status'] == 'working':
-          #do we need to process it into machine-specific?
-          if self.data['job']['status'] == 'slicing':
-            if self.global_config['can_slice']:
-              self.sliceJob()
-            #okay, no slicing on this client... wait for status update.
-            else:
-              self.getOurInfo()
-              time.sleep(10)
-          #okay, are we ready to execute the job?
-          if self.data['job']['status'] == 'taken':
             self.processJob()
-
-            #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
-            self.getOurInfo()
+            self.getOurInfo() #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
             self.debug("Bot finished @ state %s" % self.data['status'])
-
         else: #we're either waiting, error, or offline... wait until that changes
           self.info("Waiting in %s mode" % self.data['status'])
           try:
@@ -249,6 +243,10 @@ class WorkerBee():
     self.info("Finished slicing, uploading results to main site.")
     result = self.api.updateSliceJob(job_id=self.data['job']['slicejob']['id'], status=sushi.status, output=sushi.output_log, errors=sushi.error_log, filename=uploadFile)
     self.data = result['data']
+    
+    #notify the bumblebee of our status.
+    msg = Message('slice_update', self.data)
+    self.pipe.send(msg)
  
   def downloadFile(self, fileinfo):
     myfile = hive.URLFile(fileinfo)
@@ -264,7 +262,6 @@ class WorkerBee():
           msg = Message('job_update', self.data['job'])
           self.pipe.send(msg)
           localUpdate = time.time()
-          self.debug("Download: %0.2f%%" % (myfile.getProgress()))
         time.sleep(0.1)
       #okay, we're done... send it back.
       return myfile
