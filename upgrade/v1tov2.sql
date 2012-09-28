@@ -1,6 +1,3 @@
-ALTER TABLE bots add `slice_config_id` int(11) unsigned NOT NULL;
-ALTER TABLE bots add key `slice_config_id` (`slice_config_id`);
-
 CREATE TABLE `slice_engines` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `engine_name` varchar(255) NOT NULL,
@@ -53,6 +50,10 @@ CREATE TABLE `slice_jobs` (
   KEY `slice_config_id` (`slice_config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE bots add `slice_config_id` int(11) unsigned NOT NULL;
+ALTER TABLE bots add key `slice_config_id` (`slice_config_id`);
+alter table bots modify status enum('idle','slicing','working','waiting','error','maintenance','offline') default 'idle';
+
 alter table slice_configs add start_gcode text not null after config_data;
 alter table slice_configs add end_gcode text not null after start_gcode;
 
@@ -60,4 +61,8 @@ alter table jobs modify status enum('available','taken','slicing','downloading',
 alter table jobs add source_file_id int(11) unsigned not null default 0 after queue_id;
 alter table jobs add slice_job_id int(11) unsigned not null default 0 after file_id;
 alter table jobs add slice_complete_time datetime not null after taken_time;
+
 alter table slice_jobs add error_log text after output_log;
+alter table slice_jobs drop worker_token;
+alter table slice_jobs drop worker_name;
+alter table slice_jobs add `uid` char(40) NOT NULL;

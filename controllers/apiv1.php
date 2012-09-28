@@ -281,6 +281,7 @@
 			  $job->getSliceJob()->grab($this->args('_uid'));
 			
 			//return the bot data w/ all our info.
+			$bot = new Bot($bot->id);
 			$data = $bot->getAPIData();
 
 			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " job via the API.");
@@ -609,6 +610,10 @@
 			if ($sj->get('user_id') != User::$me->id)
 				throw new Exception("This slice job is not yours.");
 
+      //load up our objects
+      $job = $sj->getJob();
+      $bot = $job->getBot();
+
       //upload our file to S3
       $file = $_FILES['file'];
       if ($file['error'] != 0)
@@ -637,20 +642,29 @@
       $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
 
       //update our status.
-      $sj->set('status', $this->args('status'));
       $sj->set('output_log', $this->args('output'));
       $sj->set('error_log', $this->args('errors'));
       $sj->set('output_id', $s3->id);
       $sj->save();
       
       //update our job
-      $job = $sj->getJob();
-      $job->set('status', 'taken');
       $job->set('slice_complete_time', date("Y-m-d H:i:s"));
       $job->set('file_id', $s3->id);
       $job->save();
       
-			Activity::log("sliced the " . $job->getLink() . " job via the API.");
+      //what do do with it now?
+      if ($this->args('status') == 'complete')
+        $sj->pass();
+      else if ($this->args('status') == 'failure')
+        $sj->fail();
+      else if ($this->args('status') == 'pending')
+      {
+        $sj->set('status', 'pending');
+        $sj->set('finish_date', date("Y-m-d H:i:s"));
+        $sj->save();
+      }
+      
+			Activity::log($bot->getLink() . " sliced the " . $job->getLink() . " job via the API.");
 			
 			return $job->getBot()->getAPIData();
 		}
