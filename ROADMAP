@@ -1,10 +1,10 @@
 v2 Release - October 2012
 
 * Worker bot grabs job w/ stl
-  * figure out what to do about slice jobs with errors???
-    * set status to pending, upload file and logs
+  * slicing error flow
     * web UI to approve/reject slice job output
     * update API call to handle jobs that have errors
+  * update slice progress based on what lines come in.
 
 * Slice Engines UI
   * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.

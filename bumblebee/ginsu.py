@@ -154,10 +154,9 @@ class Slic3r(GenericSlicer):
       elif p.returncode > 0:
         sushi.status = "failure"
         self.log.error("Program returned code %s" % p.returncode)
-      else
+      else:
         sushi.status = "complete"
-
+      
+      return sushi
     except Exception as ex:
       self.log.exception(ex)
-    
-    return sushi
