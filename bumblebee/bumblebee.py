@@ -120,6 +120,12 @@ class BumbleBee():
       webbrowser.open_new("%s/job:%s/qa" % (self.config['app_url'], link.job['id']))
       curses.beep()
       curses.flash()
+    elif message.name == 'slice_update':
+      link.bot = message.data
+      if link.bot['job']['slicejob']['status'] == 'pending':
+        webbrowser.open_new("%s/slicejob:%s" % (self.config['app_url'], link.bot['job']['slicejob']['id']))
+        curses.beep()
+        curses.flash()
     elif message.name == 'print_error':
       pass
     elif message.name == 'human_required':

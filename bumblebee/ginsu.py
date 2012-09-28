@@ -121,9 +121,9 @@ class Slic3r(GenericSlicer):
       p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
       self.log.debug("Slic3r started.")
       while p.poll() is None:
-        output = p.stdout.readline().strip()
+        output = p.stdout.readline()
         if output:
-          self.log.debug("Slic3r: %s" % output)
+          self.log.debug("Slic3r: %s" % output.strip())
           outputLog = outputLog + output
         time.sleep(1)
 
@@ -135,11 +135,11 @@ class Slic3r(GenericSlicer):
         #           errorLog = errorLog + err         
 
       #get our errors (if any)
-      error = p.stderr.readline().strip()
+      error = p.stderr.readline()
       while error:
-        self.log.error("Slic3r: %s" % error)
+        self.log.error("Slic3r: %s" % error.strip())
         errorLog = errorLog + error
-        error = p.stderr.readline().strip()
+        error = p.stderr.readline()
 
       #save all our results to an object
       sushi = hive.Object
