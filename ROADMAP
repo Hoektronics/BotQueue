@@ -1,7 +1,6 @@
 v2 Release - October 2012
 
 * Worker bot grabs job w/ stl
-  * read status/errors realtime with Popen
   * figure out what to do about slice jobs with errors???
     * set status to pending, upload file and logs
     * web UI to approve/reject slice job output
