@@ -483,7 +483,8 @@
 					if ($job->get('user_id') != User::$me->id)
 						throw new Exception("You do not own this job.");
 					
-					$file = $job->getFile();
+					$file = $job->getSourceFile();
+					  
 					$queue_id = $job->get('queue_id');
 				}
 				else

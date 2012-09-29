@@ -25,7 +25,12 @@
 		
 		public function getName()
 		{
-			return "#" . $this->get('id');
+			return "#" . $this->id;
+		}
+		
+		public function getUrl()
+		{
+		  return "/slicejob:" . $this->id;
 		}
 
 		public function getAPIData()
@@ -49,9 +54,19 @@
 			return $r;
 		}
 		
+		public function getUser()
+		{
+		  return new User($this->get('user_id'));
+		}
+		
 		public function getJob()
 		{
 		  return new Job($this->get('job_id'));
+		}
+		
+		public function getBot()
+		{
+		  return $this->getJob()->getBot();
 		}
 		
 		public function getInputFile()
@@ -69,15 +84,10 @@
 		  return new SliceConfig($this->get('slice_config_id'));
 		}
 
-		public function getUrl()
-		{
-			return "/slicejob:" . $this->id;
-		}
-
 		public function delete()
 		{
-      //todo: support deleting a slicer.
-			
+		  //todo: delete our files?
+		  			
 			parent::delete();
 		}
 
@@ -89,9 +99,12 @@
 		public static function getStatusHTMLClass($status)
 		{
 			$s2c = array(
+				'available' => '',
 				'slicing' => 'label-info',
+				'pending' => 'label-warning',
 				'complete' => 'label-success',
-				'failure' => 'label-important'
+				'failure' => 'label-important',
+				'expired' => 'label-inverse'
 			);
 			
 			return $s2c[$status];
@@ -107,10 +120,53 @@
         $this->save();
         
   			usleep(1000 + mt_rand(100,500));
+
   			$sj = new SliceJob($this->id);
-  			if ($sj->get('uid') != $this->uid)
+  			if ($sj->get('uid') != $uid)
   				throw new Exception("Unable to lock slice job #{$this->id}");        
+
+        $bot = $this->getBot();
+        $bot->set('status', 'slicing');
+        $bot->save();
 		  }
+		}
+		
+		public function fail()
+		{
+		  $this->set('status', 'failure');
+		  $this->save();
+		  
+      $job = $this->getJob();
+		  $job->set('status', 'failure');
+		  $job->save();
+
+      $bot = $this->getBot();
+			$bot->set('job_id', 0);
+			$bot->set('status', 'idle');
+			$bot->save();
+			
+			$log = new ErrorLog();
+			$log->set('user_id', User::$me->id);
+			$log->set('job_id', $job->id);
+			$log->set('bot_id', $bot->id);
+			$log->set('queue_id', $job->get('queue_id'));
+			$log->set('reason', "Model slicing failed.");
+			$log->set('error_date', date("Y-m-d H:i:s"));
+			$log->save();
+		}
+		
+		public function pass()
+		{
+		  $this->set('status', 'complete');
+		  $this->save();
+		  
+		  $job = $this->getJob();
+      $job->set('status', 'taken');
+      $job->save();
+
+      $bot = $this->getBot();
+			$bot->set('status', 'working');
+			$bot->save();
 		}
 		
 		public static function byConfigAndSource($config_id, $source_id)
