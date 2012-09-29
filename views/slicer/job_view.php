@@ -5,6 +5,7 @@
   <h2>Oh no!  Something went wrong with the slicing process.</h3>
 
   <div class="alert alert-error">
+    <p>You should download the <a href="<?=$outputfile->getRealUrl()?>">output file</a> and verify that it is correct or not with a <a href="http://gcode.joewalnes.com/">gcode visualization tool</a>.</p>
     <p>Here is the error that the slice engine reported:</p>
     <blockquote><?= nl2br(Utility::sanitize($job->get('error_log')))?></blockquote>
   </div>
