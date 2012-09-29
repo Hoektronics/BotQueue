@@ -43,9 +43,10 @@ class WorkerBee():
 
   def startupCheckState(self):
     self.info("Bot startup")
-    #connect to our driver on startup if we're idle
-    if (self.data['status'] == 'idle'):
-      self.initializeDriver()
+
+    #always connect to driver.
+    self.initializeDriver()
+
     #we shouldn't startup in a working state... that implies some sort of error.
     if (self.data['status'] == 'working'):
       self.errorMode("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))

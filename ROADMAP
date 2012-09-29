@@ -1,27 +1,19 @@
 v2 Release - October 2012
 
 * Slicing process
-  * fix wait flow so that bumblebee can recover from a restart when slicing
   * update slice progress % based on what lines come in.
-
-* Fix this bug when approving an errored slice:
-  [2012-09-28 23:47:09,065] ERROR: TestBot: 'bool' object has no attribute 'startPrint'
-  Traceback (most recent call last):
-    File "/Users/hoeken/github/DevQueue/bumblebee/workerbee.py", line 281, in processJob
-      self.driver.startPrint(self.jobFile)
-  AttributeError: 'bool' object has no attribute 'startPrint'
 
 * Slice Engines UI
   * replace start/end/config with file upload and inline editing (single text area)
   * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
   * when creating new slice job, check to see if there is an existing one w/ same engine, config, and input file.
+  * integrate gcode viewer with site: http://gcode.joewalnes.com/
 
 * Miscellaneous stuff
   * update time statistics to include slicing
   * update status html to include slicing
   * fix up the file view page to make it prettier.
   * when downloading file to slice, status should be "downloading"
-  * when slicing a file, status should be "slicing"
   
 * WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
 
