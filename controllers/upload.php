@@ -63,6 +63,33 @@
 			$this->set('signature', $signature);
 		}
 		
+		public function url()
+		{
+		  $this->assertLoggedIn();
+		  
+		  try
+		  {
+  		  $url = $this->args('url');
+  		  if (!$url)
+  		    throw new Exception("You must pass in the URL parameter!");
+
+        $data = Utility::downloadUrl($url);
+
+        $s3 = new S3File();
+        $s3->set('user_id', User::$me->id);
+        $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+        
+  			Activity::log("uploaded a new file called " . $s3->getLink() . ".");
+
+  			//send us to step 2.
+ 			  $this->forwardToUrl("/job/create/file:{$s3->id}");
+		  }
+		  catch (Exception $e)
+		  {
+		    $this->set('megaerror', $e->getMessage());
+		  }
+		}
+		
 		public function success()
 		{
 			$this->assertLoggedIn();

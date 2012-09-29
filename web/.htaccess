@@ -67,6 +67,7 @@ RewriteRule ^queue:([0-9]+)/jobs/(available|taken|qa|failure|complete)(/page:([0
 
 #uploader
 RewriteRule ^upload$												dispatcher.php?controller=upload&view=home [NC,L]
+RewriteRule ^upload/url$												dispatcher.php?controller=upload&view=url [NC,L,QSA]
 RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&view=success&payload=$1 [NC,L,QSA]
 
 #bot stuff.

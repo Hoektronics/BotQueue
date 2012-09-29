@@ -15,10 +15,16 @@
 		</ul>
 	</div>
 	<div class="span6">
-	  <h2>Choose the file to print:</h2>
+	  <h2>Option 1: Upload a File</h2>
 		<?= Controller::byName('upload')->renderView('uploader', array(
 			'payload' => array(
 			'type' => 'new_job'
 		))); ?>
+
+	  <h2>Option 2: Use a URL</h2>
+	  <form class="form-inline" action="/upload/url" method="post">
+      <input type="text" class="input-xlarge" name="url" placeholder="URL to load">
+      <button type="submit" class="btn btn-primary">Go!</button>
+    </form>
 	</div>
 </div>
