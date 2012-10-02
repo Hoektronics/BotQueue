@@ -134,6 +134,13 @@ class Slic3r(GenericSlicer):
         #           self.log.error("Slic3r: %s" % error)
         #           errorLog = errorLog + err         
 
+      #get any last lines of output
+      output = p.stdout.readline()
+      while output:
+        self.log.debug("Slic3r: %s" % output.strip())
+        outputLog = outputLog + output
+        output = p.stdout.readline()
+
       #get our errors (if any)
       error = p.stderr.readline()
       while error:

@@ -3,18 +3,23 @@ v2 Release - October 2012
 * Slicing process
   * update slice progress % based on what lines come in.
 
-* Slice Engines UI
+* Slice Engines Web UI
+  * fully integrate slice jobs w/ rest of site
   * replace start/end/config with file upload and inline editing (single text area)
   * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
-  * when creating new slice job, check to see if there is an existing one w/ same engine, config, and input file.
-  * integrate gcode viewer with site: http://gcode.joewalnes.com/
-
-* Miscellaneous stuff
   * update time statistics to include slicing
   * update status html to include slicing
   * fix up the file view page to make it prettier.
   * when downloading file to slice, status should be "downloading"
+  * add main page notification of things that need action (slice jobs, jobs)
   
+* preview awesomeness:
+  * integrate gcode viewer with site: http://gcode.joewalnes.com/
+  * integrate stl/obj viewer with site (figure out which engine)
+    * http://code.google.com/p/jsc3d/
+    * http://lazarsoft.info/objstl/
+    * https://github.com/tbuser/thingiview.js
+
 * WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
 
 * API - implement job creation via URL download
