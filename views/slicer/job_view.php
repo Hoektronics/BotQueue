@@ -28,7 +28,7 @@
   </div>
   <? endif ?>
 	<div class="row">
-		<div class="span12">
+		<div class="span6">
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 					<tr>
@@ -46,19 +46,7 @@
 					<tr>
 						<th>Slice Config:</th>
 						<td><?=$config->getLink() ?></td>
-					</tr>
-					<tr>
-						<th>Input File:</th>
-						<td><?=$inputfile->getLink() ?></td>
-					</tr>
-					<tr>
-						<th>Output File:</th>
-						<? if ($outputfile->isHydrated()): ?>
-						  <td><?=$outputfile->getLink() ?></td>
-					  <? else: ?>
-					    <td>n/a</td>
-					  <? endif ?>
-					</tr>					
+					</tr>				
 					<tr>
 						<th>Add Date:</th>
 						<td><?=Utility::formatDateTime($job->get('add_date'))?></td>
@@ -96,6 +84,15 @@
 					</tr>
 				</tbody>
 			</table>
+		</div>
+		<div class="span6">
+		  <h3>Input File: <?=$inputfile->getLink()?></h3>
+		  
+		  <? if ($outputfile->isHydrated()): ?>
+		    <br/><br/>
+  		  <h3>Output File: <?=$outputfile->getLink() ?></h3>
+  		  <?= Controller::byName('job')->renderView('render_gcode', array('file' => $outputfile))?>
+      <? endif ?>
 		</div>
 	</div>
 <? endif ?>

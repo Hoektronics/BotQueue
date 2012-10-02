@@ -174,9 +174,18 @@
 
 </div><!-- /container -->
 
-	 <!-- Le javascript -->
-	 <!-- Placed at the end of the document so the pages load faster -->
-	 <script src="/js/botqueue.js"></script>
-	 <script src="/bootstrap/2.1.1/js/bootstrap.js"></script>
+  <!-- Le javascript -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="/js/botqueue.js"></script>
+  <script src="/bootstrap/2.1.1/js/bootstrap.js"></script>
+  <script src="/gcode-viewer/lib/bootstrap-modal.js"></script>
+  <script src="/gcode-viewer/lib/modernizr.custom.93389.js"></script>
+  <script src="/gcode-viewer/lib/sugar-1.2.4.min.js"></script>
+  <script src="/gcode-viewer/lib/Three.js"></script>
+  <script src="/gcode-viewer/gcode-parser.js"></script>
+  <script src="/gcode-viewer/gcode-model.js"></script>
+  <script src="/gcode-viewer/renderer.js"></script>
+  <script src="/gcode-viewer/ui.js"></script>
+	
   </body>
 </html>

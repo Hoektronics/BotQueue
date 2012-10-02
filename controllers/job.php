@@ -101,6 +101,7 @@
 					$this->set('job', $job);
 					$this->set('gcode_file', $job->getFile());
 					$this->set('source_file', $job->getSourceFile());
+					$this->set('slicejob', $job->getSliceJob());
 					$this->set('queue', $job->getQueue());
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());
@@ -578,6 +579,16 @@
 			)));
 		
 			return $form;
+		}
+		
+		function render_model()
+		{
+		  $this->setArg('file');
+		}
+		
+		function render_gcode()
+		{
+		  $this->setArg('file');
 		}
 	}
 ?>

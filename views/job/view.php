@@ -92,6 +92,12 @@
   						<td><?=$gcode_file->getLink()?></td>
   					</tr>
 					<? endif ?>
+					<? if ($slicejob->isHydrated()): ?>
+  					<tr>
+  						<th>Slice Job:</th>
+  						<td><?=$slicejob->getLink()?></td>
+  					</tr>
+          <? endif ?>
 					<tr>
 						<th>Queue:</th>
 						<td><?=$queue->getLink()?></td>
