@@ -3,6 +3,7 @@
 <? else: ?>
 	<div class="row">
 		<div class="span6">
+  	  <h3>File Details</h3>
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 					<tr>
@@ -35,9 +36,11 @@
 					</tr>
 				</tbody>
 			</table>
+			<h3>File Jobs</h3>
+			TODO: add file jobs here.
 		</div>
 		<div class="span6">
-			TODO: add file jobs here.
+		  <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$file->getUrl()?>/render"></iframe>
 		</div>
 	</div>
 <? endif ?>

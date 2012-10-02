@@ -1,4 +1,5 @@
-<div id="renderArea" style="width: <?=$width?>; height: <?=$height?>;"></div>
+<button id="displayButton" class="btn btn-primary centered"  onclick="loadRenderer()">Load GCode Viewer<br/>(<?= Utility::filesizeFormat($file->get('size'))?>)</button>
+<div id="renderArea" style="width: <?=$width?>; height: <?=$height?>; display: none;"></div>
 
 <script src="/gcode-viewer/lib/Three.js"></script>
 <script src="/gcode-viewer/lib/bootstrap-modal.js"></script>
@@ -10,9 +11,13 @@
 <script src="/gcode-viewer/ui.js"></script>
 
 <script>
-  $(function() {
+  function loadRenderer()
+  {
+    $('#displayButton').hide();
+    $('#renderArea').show();
+    
     initializeGCodeViewer("/passthru:<?=$file->id?>");
-  });
+  }
 </script>
 
 <!-- 'About' dialog'-->
