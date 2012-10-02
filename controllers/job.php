@@ -101,6 +101,7 @@
 					$this->set('job', $job);
 					$this->set('gcode_file', $job->getFile());
 					$this->set('source_file', $job->getSourceFile());
+					$this->set('slicejob', $job->getSliceJob());
 					$this->set('queue', $job->getQueue());
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());
@@ -453,6 +454,43 @@
 				$this->set('megaerror', $e->getMessage());
 			}
 		}
+
+		
+		public function passthru()
+		{
+		  $this->assertLoggedIn();
+		  
+		  try
+		  {
+  		  $file = new S3File($this->args('id'));
+  		  if (!$file->isHydrated())
+  		    throw new Exception("This file does not exist.");
+  		    
+  		  if ($file->get('user_id') != User::$me->id)
+  		    throw new Exception("This is not your file.");
+  		    
+  		  //get our headers ready.
+        header('Content-Description: File Transfer');
+        if ($file->get('type'))
+          header('Content-Type: ' . $file->get('type'));
+        else
+          header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename='.basename($file->getRealUrl()));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . $file->get('size'));
+
+        //kay, send it
+        readfile($file->getRealUrl());
+        exit;
+		  }
+		  catch (Exception $e)
+		  {
+		    $this->set('megaerror', $e->getMessage());
+		  }
+		}
 			
 		public function draw_jobs()
 		{
@@ -578,6 +616,51 @@
 			)));
 		
 			return $form;
+		}
+
+		public function render_frame()
+		{
+		  $this->assertLoggedIn();
+		  
+		  try
+		  {
+  		  $file = new S3File($this->args('id'));
+  		  if (!$file->isHydrated())
+  		    throw new Exception("This file does not exist.");
+  		    
+  		  if ($file->get('user_id') != User::$me->id)
+  		    throw new Exception("This is not your file.");
+  		    
+  		  $this->set('file', $file);
+  		    
+        if ($this->args('width'))
+          $this->setArg('width');
+        else
+          $this->set('width', '100%');
+
+        if ($this->args('height'))
+          $this->setArg('height');
+        else
+          $this->set('height', '100%');
+		  }
+		  catch (Exception $e)
+		  {
+		    $this->set('megaerror', $e->getMessage());
+		  }
+		}
+		
+		function render_model()
+		{
+		  $this->setArg('file');
+		  $this->setArg('width');
+		  $this->setArg('height');
+		}
+		
+		function render_gcode()
+		{
+		  $this->setArg('file');
+		  $this->setArg('width');
+		  $this->setArg('height');
 		}
 	}
 ?>

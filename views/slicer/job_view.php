@@ -27,8 +27,25 @@
     </div>
   </div>
   <? endif ?>
+  
+  <div class="row">
+		<div class="span6">
+		  <h3>Input File: <?=$inputfile->getLink()?></h3>
+		  <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$inputfile->getUrl()?>/render"></iframe>
+  	</div>
+		<div class="span6">
+		  <h3>Output File: <?=$outputfile->getLink() ?></h3>
+		  <? if ($outputfile->isHydrated()): ?>
+  		  <iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$outputfile->getUrl()?>/render"></iframe>
+      <? else: ?>
+        Output file does not exist yet.
+      <? endif ?>
+		</div>
+	</div>
+	  
 	<div class="row">
 		<div class="span12">
+  	  <h3>Detailed Information</h3>
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 					<tr>
@@ -46,19 +63,7 @@
 					<tr>
 						<th>Slice Config:</th>
 						<td><?=$config->getLink() ?></td>
-					</tr>
-					<tr>
-						<th>Input File:</th>
-						<td><?=$inputfile->getLink() ?></td>
-					</tr>
-					<tr>
-						<th>Output File:</th>
-						<? if ($outputfile->isHydrated()): ?>
-						  <td><?=$outputfile->getLink() ?></td>
-					  <? else: ?>
-					    <td>n/a</td>
-					  <? endif ?>
-					</tr>					
+					</tr>				
 					<tr>
 						<th>Add Date:</th>
 						<td><?=Utility::formatDateTime($job->get('add_date'))?></td>

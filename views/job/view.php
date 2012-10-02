@@ -92,6 +92,12 @@
   						<td><?=$gcode_file->getLink()?></td>
   					</tr>
 					<? endif ?>
+					<? if ($slicejob->isHydrated()): ?>
+  					<tr>
+  						<th>Slice Job:</th>
+  						<td><?=$slicejob->getLink()?></td>
+  					</tr>
+          <? endif ?>
 					<tr>
 						<th>Queue:</th>
 						<td><?=$queue->getLink()?></td>
@@ -110,6 +116,26 @@
 			</table>
 		</div>
 	</div>
+	
+  <div class="row">
+		<div class="span6">
+		  <h3>Source File: <?=$source_file->getLink()?></h3>
+		  <? if ($gcode_file->isHydrated()): ?>
+		    <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$source_file->getUrl()?>/render"></iframe>
+		  <? else: ?>
+        Source file does not exist.
+      <? endif ?>
+  	</div>
+		<div class="span6">
+		  <h3>GCode File: <?=$gcode_file->getLink() ?></h3>
+		  <? if ($gcode_file->isHydrated()): ?>
+  		  <iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$gcode_file->getUrl()?>/render"></iframe>
+      <? else: ?>
+        GCode file does not exist yet.
+      <? endif ?>
+		</div>
+	</div>
+		
 	<? if (!empty($errors)): ?>
   	<div class="row">
   	  <div class="span12">
