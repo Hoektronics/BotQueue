@@ -1,4 +1,14 @@
-<div id="renderArea"></div>
+<div id="renderArea" style="width: <?=$width?>; height: <?=$height?>;"></div>
+
+<script src="/gcode-viewer/lib/Three.js"></script>
+<script src="/gcode-viewer/lib/bootstrap-modal.js"></script>
+<script src="/gcode-viewer/lib/modernizr.custom.93389.js"></script>
+<script src="/gcode-viewer/lib/sugar-1.2.4.min.js"></script>
+<script src="/gcode-viewer/gcode-parser.js"></script>
+<script src="/gcode-viewer/gcode-model.js"></script>
+<script src="/gcode-viewer/renderer.js"></script>
+<script src="/gcode-viewer/ui.js"></script>
+
 <script>
   $(function() {
     initializeGCodeViewer("/passthru:<?=$file->id?>");

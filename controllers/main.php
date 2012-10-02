@@ -42,42 +42,6 @@
 			}
 		}
 		
-		public function passthru()
-		{
-		  $this->assertLoggedIn();
-		  
-		  try
-		  {
-  		  $file = new S3File($this->args('id'));
-  		  if (!$file->isHydrated())
-  		    throw new Exception("This file does not exist.");
-  		    
-  		  if ($file->get('user_id') != User::$me->id)
-  		    throw new Exception("This is not your file.");
-  		    
-  		  //get our headers ready.
-        header('Content-Description: File Transfer');
-        if ($file->get('type'))
-          header('Content-Type: ' . $file->get('type'));
-        else
-          header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename='.basename($file->getRealUrl()));
-        header('Content-Transfer-Encoding: binary');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . $file->get('size'));
-
-        //kay, send it
-        readfile($file->getRealUrl());
-        exit;
-		  }
-		  catch (Exception $e)
-		  {
-		    $this->set('megaerror', $e->getMessage());
-		  }
-		}
-		
 		public function activity()
 		{
 			$this->setTitle('Activity Log');

@@ -27,8 +27,25 @@
     </div>
   </div>
   <? endif ?>
-	<div class="row">
+  
+  <div class="row">
 		<div class="span6">
+		  <h3>Input File: <?=$inputfile->getLink()?></h3>
+		  <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$inputfile->getUrl()?>/render"></iframe>
+  	</div>
+		<div class="span6">
+		  <h3>Output File: <?=$outputfile->getLink() ?></h3>
+		  <? if ($outputfile->isHydrated()): ?>
+  		  <iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$outputfile->getUrl()?>/render"></iframe>
+      <? else: ?>
+        Output file does not exist yet.
+      <? endif ?>
+		</div>
+	</div>
+	  
+	<div class="row">
+		<div class="span12">
+  	  <h3>Detailed Information</h3>
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 					<tr>
@@ -84,15 +101,6 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
-		<div class="span6">
-		  <h3>Input File: <?=$inputfile->getLink()?></h3>
-		  
-		  <? if ($outputfile->isHydrated()): ?>
-		    <br/><br/>
-  		  <h3>Output File: <?=$outputfile->getLink() ?></h3>
-  		  <?= Controller::byName('job')->renderView('render_gcode', array('file' => $outputfile))?>
-      <? endif ?>
 		</div>
 	</div>
 <? endif ?>
