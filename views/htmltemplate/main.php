@@ -135,19 +135,19 @@
 	  </div>
 	<? endif ?>
 	
-	<div class="alert alert-info">
-    <strong>Hey!</strong> If you run into any problems, please <a href="https://github.com/Hoektronics/BotQueue/issues/new">report a bug</a>.  Make sure to include the <strong>bumblebee/info.log</strong> file if it is client-related.
-  </div>
-	
   <!-- Headings & Paragraph Copy -->
 	<div class="row">
 	  <div class="span12">
 			<?=$content?>
 		</div>
 	</div> <!-- end content -->
-</section>
 
-<br><br><br><br>
+  <br/><br/>
+	<div class="alert alert-info">
+    <strong>Hey!</strong> If you run into any problems, please <a href="https://github.com/Hoektronics/BotQueue/issues/new">report a bug</a>.  Make sure to include the <strong>bumblebee/info.log</strong> file if it is client-related.
+  </div>
+
+</section>
 
 <!-- Footer -->
 <hr>

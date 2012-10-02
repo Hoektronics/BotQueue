@@ -42,7 +42,7 @@
 			}
 		}
 		
-		public function file()
+		public function passthru()
 		{
 		  $this->assertLoggedIn();
 		  

@@ -1,7 +1,7 @@
 <div id="renderArea"></div>
 <script>
   $(function() {
-    initializeGCodeViewer("/file:<?=$file->id?>");
+    initializeGCodeViewer("/passthru:<?=$file->id?>");
   });
 </script>
 

@@ -31,8 +31,6 @@ RewriteRule ^(.*)$	$1 [NC,L]
 #ajax rule!
 RewriteRule ^ajax/([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$		dispatcher.php?mode=ajax&controller=$1&view=$2 [NC,L]
 
-#viewing files from amazon/storage
-RewriteRule ^file:([0-9]+)$												dispatcher.php?controller=main&view=file&id=$1 [NC,L]
 
 #random stuff
 RewriteRule ^$					dispatcher.php?controller=main&view=home [NC,L]
@@ -96,6 +94,7 @@ RewriteRule ^job/create/job:([0-9]+)$												dispatcher.php?controller=job&v
 
 #file stuff
 RewriteRule ^file:([0-9]+)$												dispatcher.php?controller=job&view=file&id=$1 [NC,L]
+RewriteRule ^passthru:([0-9]+)$												dispatcher.php?controller=main&view=passthru&id=$1 [NC,L]
 
 #help stuff.
 RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
