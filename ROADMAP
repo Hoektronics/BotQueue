@@ -12,15 +12,23 @@ v2 Release - October 2012
   * fix up the file view page to make it prettier.
   * when downloading file to slice, status should be "downloading"
   * add main page notification of things that need action (slice jobs, jobs)
-  
-* preview awesomeness:
-  * integrate gcode viewer with site: http://gcode.joewalnes.com/
-  * integrate stl/obj viewer with site (figure out which engine)
-    * http://code.google.com/p/jsc3d/
-    * http://lazarsoft.info/objstl/
-    * https://github.com/tbuser/thingiview.js
 
-* WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
+* GCode Preview
+  * standardize with thingiview for zoom/rotate controls
+  * add z=0 grid to match thingiview
+  * standardize camera to match thingiview
+  * add status div hooks
+  * add error div hooks
+  * standardize background color
+  
+* Thingiview Preview
+  * add status div hooks
+  * add error div hooks
+  * standardize background color
+
+* WEB - Pull in files from internet
+  * pull in all files from thingiverse.com/thing:####
+  * add source_url field to files table to keep track of where things came from.
 
 * API - implement job creation via URL download
 * API - implement job creation via HTTP file POST

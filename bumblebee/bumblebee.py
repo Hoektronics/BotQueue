@@ -141,7 +141,7 @@ class BumbleBee():
     self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
     for link in self.workers:
       self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
-      if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting') and link.job:
+      if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
         self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
       elif link.bot['status'] == 'error':
         self.screen.addstr("%s" % link.bot['error_text'])

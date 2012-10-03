@@ -7,6 +7,7 @@ import subprocess
 import os
 import hive
 import string
+import re
 
 class Ginsu():
   
@@ -66,6 +67,19 @@ class GenericSlicer(object):
 class Slic3r(GenericSlicer):
   def __init__(self, config, slicefile):
     super(Slic3r, self).__init__(config, slicefile)
+    
+    #our regexes
+    self.reg05 = re.compile('Processing input file')
+    self.reg10 = re.compile('Processing triangulated mesh')
+    self.reg20 = re.compile('Generating perimeters')
+    self.reg30 = re.compile('Detecting solid surfaces')
+    self.reg40 = re.compile('Preparing infill surfaces')
+    self.reg50 = re.compile('Detect bridges')
+    self.reg60 = re.compile('Generating horizontal shells')
+    self.reg70 = re.compile('Combining infill')
+    self.reg80 = re.compile('Infilling layers')
+    self.reg90 = re.compile('Generating skirt')
+    self.reg100 = re.compile('Exporting G-code to')
   
   def prepareFiles(self):
     self.configFile = tempfile.NamedTemporaryFile(delete=False)
@@ -101,6 +115,30 @@ class Slic3r(GenericSlicer):
     
     return slicePath
 
+  def checkProgress(self, line):
+    if self.reg05.search(line):
+      self.progress = 5
+    elif self.reg10.search(line):
+      self.progress = 10
+    elif self.reg20.search(line):
+      self.progress = 20
+    elif self.reg30.search(line):
+      self.progress = 30
+    elif self.reg40.search(line):
+      self.progress = 40
+    elif self.reg50.search(line):
+      self.progress = 50
+    elif self.reg60.search(line):
+      self.progress = 60
+    elif self.reg70.search(line):
+      self.progress = 70
+    elif self.reg80.search(line):
+      self.progress = 80
+    elif self.reg90.search(line):
+      self.progress = 90
+    elif self.reg100.search(line):
+      self.progress = 100
+            
   def slice(self):
     #create our command to do the slicing
     try:
@@ -125,6 +163,8 @@ class Slic3r(GenericSlicer):
         if output:
           self.log.debug("Slic3r: %s" % output.strip())
           outputLog = outputLog + output
+          self.checkProgress(output)
+                        
         time.sleep(1)
 
         # this code does not work for some reason and ends up blocking the loop until program exits if there is no errors
@@ -139,6 +179,7 @@ class Slic3r(GenericSlicer):
       while output:
         self.log.debug("Slic3r: %s" % output.strip())
         outputLog = outputLog + output
+        self.checkProgress(output)
         output = p.stdout.readline()
 
       #get our errors (if any)
@@ -147,6 +188,9 @@ class Slic3r(GenericSlicer):
         self.log.error("Slic3r: %s" % error.strip())
         errorLog = errorLog + error
         error = p.stderr.readline()
+
+      #give us 1 second for the main loop to pull in our finished status.
+      time.sleep(1)
 
       #save all our results to an object
       sushi = hive.Object
