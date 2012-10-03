@@ -1,5 +1,24 @@
+<style>
+  div#GCodeStatusDiv, div#GCodeErrorDiv {
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    top: 50%;
+    left: 50%;
+    margin-left: -100px;
+    margin-top: -25px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    padding: 0px;
+    text-align: center;
+  }
+</style>
+
 <button id="displayButton" class="btn btn-primary centered"  onclick="loadRenderer()">Load GCode Viewer<br/>(<?= Utility::filesizeFormat($file->get('size'))?>)</button>
 <div id="renderArea" style="width: <?=$width?>; height: <?=$height?>; display: none;"></div>
+<div id="GCodeErrorDiv" class="alert alert-error" style="display: none"></div>
+<div id="GCodeStatusDiv" class="alert alert-success" style="display: none"></div>
 
 <script src="/gcode-viewer/lib/Three.js"></script>
 <script src="/gcode-viewer/lib/bootstrap-modal.js"></script>

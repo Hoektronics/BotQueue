@@ -120,7 +120,7 @@
   <div class="row">
 		<div class="span6">
 		  <h3>Source File: <?=$source_file->getLink()?></h3>
-		  <? if ($gcode_file->isHydrated()): ?>
+		  <? if ($source_file->isHydrated()): ?>
 		    <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$source_file->getUrl()?>/render"></iframe>
 		  <? else: ?>
         Source file does not exist.

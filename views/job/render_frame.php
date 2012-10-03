@@ -6,7 +6,7 @@
       body {
         margin: 0px;
         padding: 0px;
-        background: #ccc;
+        background: #ddd;
       }
       
       button.centered {

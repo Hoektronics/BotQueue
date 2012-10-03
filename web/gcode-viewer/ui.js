@@ -1,5 +1,14 @@
 function error(msg) {
-  alert(msg);
+  $('#renderArea').hide();
+  $('#GCodeErrorDiv').html(msg);
+  $('#GCodeErrorDiv').show();
+}
+
+function GCodeStatus(msg)
+{
+  $('#renderArea').hide();
+  $('#GCodeStatusDiv').html(msg);
+  $('#GCodeStatusDiv').show();
 }
 
 function loadFile(path, callback /* function(contents) */) {
@@ -28,6 +37,9 @@ function openGCodeFromPath(path) {
     scene.add(object);
     localStorage.setItem('last-loaded', path);
     localStorage.removeItem('last-imported');
+    
+    $('#GCodeStatusDiv').hide();
+    $('#renderArea').show();
   });
 }
 
@@ -55,11 +67,15 @@ function initializeGCodeViewer(url) {
     return;
   }
 
+  GCodeStatus("Loading GCode...");
+
   // Show 'About' dialog for first time visits.
+  /*
   if (!localStorage.getItem("not-first-visit")) {
     localStorage.setItem("not-first-visit", true);
     setTimeout(about, 500);
   }
+  */
 
   // Drop files from desktop onto main page to import them.
   $('body').on('dragover', function(event) {
