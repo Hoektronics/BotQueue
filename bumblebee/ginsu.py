@@ -87,16 +87,6 @@ class Slic3r(GenericSlicer):
     self.configFile.flush()
     self.log.debug("Config file: %s" % self.configFile.name)
     
-    self.startFile = tempfile.NamedTemporaryFile(delete=False)
-    self.startFile.write(self.config['start_gcode'])
-    self.startFile.flush()
-    self.log.debug("Start GCode file: %s" % self.startFile.name)
-
-    self.endFile = tempfile.NamedTemporaryFile(delete=False)
-    self.endFile.write(self.config['end_gcode'])
-    self.endFile.flush()
-    self.log.debug("End Gcode file: %s" % self.endFile.name)
-    
     self.outFile = tempfile.NamedTemporaryFile(delete=False)
     self.log.debug("Output file: %s" % self.outFile.name)
 
@@ -142,12 +132,10 @@ class Slic3r(GenericSlicer):
   def slice(self):
     #create our command to do the slicing
     try:
-      command = "%s --load %s --output %s --start-gcode %s --end-gcode %s %s" % (
+      command = "%s --load %s --output %s %s" % (
         self.getSlicerPath(),
         self.configFile.name,
         self.outFile.name,
-        self.startFile.name,
-        self.endFile.name,
         self.sliceFile.localPath
       )
       self.log.debug("Slice Command: %s" % command)
