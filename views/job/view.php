@@ -26,6 +26,14 @@
 						<? endif?>
 					</tr>
 					<tr>
+						<th>Sliced:</th>
+						<? if (strtotime($job->get('slice_complete_time')) > 0): ?>
+							<td><?= Utility::formatDatetime($job->get('slice_complete_time'))?> (<?=Utility::relativeTime($job->get('slice_complete_time'))?>)</td>
+						<? else: ?>
+							<td>n/a</td>
+						<? endif?>
+					</tr>
+					<tr>
 						<th>Downloaded:</th>
 						<? if (strtotime($job->get('downloaded_time')) > 0): ?>
 							<td><?= Utility::formatDatetime($job->get('downloaded_time'))?> (<?=Utility::relativeTime($job->get('downloaded_time'))?>)</td>
@@ -80,24 +88,46 @@
 							<a class="btn btn-mini" href="/job/create/job:<?=$job->id?>"><i class="icon-repeat"></i> re-run</a>
 						</td>
 					</tr>
-					<? if ($source_file->isHydrated()): ?>			
-  					<tr>
-  						<th>Source File:</th>
-  						<td><?=$source_file->getLink()?></td>
-  					</tr>
-  				<? endif ?>
-					<? if ($gcode_file->isHydrated()): ?>
-  					<tr>
-  						<th>GCode File:</th>
+					<tr>
+						<th>Source File:</th>
+  					<? if ($source_file->isHydrated()): ?>			
+						  <td><?=$source_file->getLink()?></td>
+						<? else: ?>
+						  <td>n/a</td>
+    				<? endif ?>
+					</tr>
+					<tr>
+						<th>GCode File:</th>
+  					<? if ($gcode_file->isHydrated()): ?>
   						<td><?=$gcode_file->getLink()?></td>
-  					</tr>
-					<? endif ?>
-					<? if ($slicejob->isHydrated()): ?>
-  					<tr>
-  						<th>Slice Job:</th>
+						<? else: ?>
+						  <td>n/a</td>
+    				<? endif ?>
+					</tr>
+					<tr>
+						<th>Slice Job:</th>
+  					<? if ($slicejob->isHydrated()): ?>
   						<td><?=$slicejob->getLink()?></td>
-  					</tr>
-          <? endif ?>
+						<? else: ?>
+						  <td>n/a</td>
+            <? endif ?>
+					</tr>
+					<tr>
+						<th>Slice Engine:</th>
+  					<? if ($sliceengine->isHydrated()): ?>
+  						<td><?=$sliceengine->getLink()?></td>
+						<? else: ?>
+						  <td>n/a</td>
+            <? endif ?>
+					</tr>
+					<tr>
+						<th>Slice Config:</th>
+  					<? if ($sliceconfig->isHydrated()): ?>
+  						<td><?=$sliceconfig->getLink()?></td>
+						<? else: ?>
+						  <td>n/a</td>
+            <? endif ?>
+					</tr>
 					<tr>
 						<th>Queue:</th>
 						<td><?=$queue->getLink()?></td>

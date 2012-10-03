@@ -25,7 +25,7 @@
 		
 		public function getName()
 		{
-			return "#" . $this->id;
+			return "#" . str_pad($this->id, 6, "0", STR_PAD_LEFT);
 		}
 		
 		public function getUrl()
@@ -84,6 +84,11 @@
 		  return new SliceConfig($this->get('slice_config_id'));
 		}
 
+		public function getSliceEngine()
+		{
+		  return $this->getSliceConfig()->getEngine();
+		}
+
 		public function delete()
 		{
 		  //todo: delete our files?
@@ -137,6 +142,9 @@
 		  $this->save();
 		  
       $job = $this->getJob();
+      $job->set('downloaded_time', date("Y-m-d H:i:s"));
+      $job->set('finished_time', date("Y-m-d H:i:s"));
+      $job->set('verified_time', date("Y-m-d H:i:s"));
 		  $job->set('status', 'failure');
 		  $job->save();
 

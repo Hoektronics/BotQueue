@@ -2,18 +2,14 @@ v2 Release - October 2012
 
 * Slice Engines Web UI
   * fully integrate slice jobs w/ rest of site
-  * update time statistics to include slicing
-  * update status html to include slicing
+    * show slice jobs on file view page
   * fix up the file view page to make it prettier.
-  * when downloading file to slice, status should be "downloading"
   * add main page notification of things that need action (slice jobs, jobs)
 
 * GCode Preview
   * standardize with thingiview for zoom/rotate controls
   * add z=0 grid to match thingiview
   * standardize camera to match thingiview
-  * add status div hooks
-  * add error div hooks
   * standardize background color
   
 * Thingiview Preview
@@ -22,7 +18,6 @@ v2 Release - October 2012
   * standardize background color
 
 * WEB - Pull in files from internet
-  * pull in all files from thingiverse.com/thing:####
   * add source_url field to files table to keep track of where things came from.
 
 * API - implement job creation via URL download
@@ -60,6 +55,8 @@ WEBSITE
   
 * CLIENT - support for websockets for realtime comms
 
+* when downloading file to slice, status should be "downloading"
+
 ------------------------------------------------------------------------------------
 
 Long term wants:
@@ -81,6 +78,7 @@ WEBCAM SUPPORT
 * add filament_volume field to slicejob or job
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)
+  * pull in all files from thingiverse.com/thing:####
 
 * WEB - print grouping using slic3r
   * modify jobs to add allow_grouping file

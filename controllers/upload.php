@@ -22,7 +22,7 @@
 		{
 			$this->assertLoggedIn();
 			
-			$this->setTitle("Step 1 of 2: Upload File");
+			$this->setTitle("Step 1 of 2: Choose File to Print");
 		}
 		
 		public function uploader()
@@ -67,14 +67,21 @@
 		{
 		  $this->assertLoggedIn();
 		  
+		  $this->setTitle("Create Job from URL");
+		  
 		  try
 		  {
+		    //did we get a url?
   		  $url = $this->args('url');
   		  if (!$url)
   		    throw new Exception("You must pass in the URL parameter!");
 
         $data = Utility::downloadUrl($url);
 
+        //does it match?
+        if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $data['realname']))
+          throw new Exception("The file <a href=\"$url\">{$data[realname]}</a> is not valid for printing.");
+          
         $s3 = new S3File();
         $s3->set('user_id', User::$me->id);
         $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));

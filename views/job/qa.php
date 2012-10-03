@@ -37,4 +37,23 @@
     <h3>Please enter some details on the print failure, and determine what should be done with the bot and job.</h3>
   	<?= $form->render() ?>
   </div>
+  
+  <div class="row">
+		<div class="span6">
+		  <h3>Source File: <?=$source_file->getLink()?></h3>
+		  <? if ($source_file->isHydrated()): ?>
+		    <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$source_file->getUrl()?>/render"></iframe>
+		  <? else: ?>
+        Source file does not exist.
+      <? endif ?>
+  	</div>
+		<div class="span6">
+		  <h3>GCode File: <?=$gcode_file->getLink() ?></h3>
+		  <? if ($gcode_file->isHydrated()): ?>
+  		  <iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$gcode_file->getUrl()?>/render"></iframe>
+      <? else: ?>
+        GCode file does not exist yet.
+      <? endif ?>
+		</div>
+	</div>
 <? endif ?>

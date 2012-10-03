@@ -48,6 +48,7 @@
 			$s2c = array(
 				'taken' => 'label-info',
 				'qa' => 'label-warning',
+				'slicing' => 'label-slicing',
 				'complete' => 'label-success',
 				'failure' => 'label-important'
 			);
@@ -124,7 +125,7 @@
 				$start = strtotime($this->get('created_time'));
 				$end = time();
 			}
-			elseif ($this->get('status') == 'taken' || $this->get('status') == 'downloading')
+			elseif ($this->get('status') == 'taken' || $this->get('status') == 'downloading' || $this->get('status') == 'slicing')
 			{
 				$start = strtotime($this->get('taken_time'));
 				$end = time();

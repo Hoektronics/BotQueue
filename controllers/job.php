@@ -102,6 +102,8 @@
 					$this->set('gcode_file', $job->getFile());
 					$this->set('source_file', $job->getSourceFile());
 					$this->set('slicejob', $job->getSliceJob());
+					$this->set('sliceengine', $this->get('slicejob')->getSliceEngine());
+					$this->set('sliceconfig', $this->get('slicejob')->getSliceConfig());
 					$this->set('queue', $job->getQueue());
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());
@@ -234,6 +236,8 @@
 
 				$this->set('job', $job);
 				$this->set('bot', $bot);
+				$this->set('gcode_file', $job->getFile());
+				$this->set('source_file', $job->getSourceFile());
 				
 				$this->setTitle('Verify Job - ' . $job->getName());	
 				

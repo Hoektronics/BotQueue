@@ -65,6 +65,7 @@
 			$s2c = array(
 			  'idle' => 'success',
 				'working' => 'info',
+				'slicing' => 'info',
 				'waiting' => 'warning',
 				'error' => 'danger',
 				'offline' => 'inverse',

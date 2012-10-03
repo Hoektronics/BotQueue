@@ -81,9 +81,9 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="/queue/create">Create Queue</a></li>
+                <li><a href="/upload">Create Job</a></li>
                 <li><a href="/bot/register">Register Bot</a></li>
-                <li><a href="/upload">Upload Job</a></li>
+                <li><a href="/queue/create">Create Queue</a></li>
               </ul>
             </li>
             <li><a href="/bots">Bots</a></li>

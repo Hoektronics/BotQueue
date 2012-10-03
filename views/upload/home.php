@@ -20,11 +20,14 @@
 			'payload' => array(
 			'type' => 'new_job'
 		))); ?>
-
+    <br/>
 	  <h2>Option 2: Use a URL</h2>
 	  <form class="form-inline" action="/upload/url" method="post">
       <input type="text" class="input-xlarge" name="url" placeholder="URL to load">
       <button type="submit" class="btn btn-primary">Go!</button>
     </form>
+		<ul>
+		  <li>The URL should point to a valid .stl, .obj, or .gcode file.</li>
+		</ul>
 	</div>
 </div>

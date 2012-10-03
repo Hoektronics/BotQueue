@@ -36,7 +36,10 @@
 					</tr>
 					<tr>
 						<th>Config Data:</th>
-						<td><?=nl2br(Utility::sanitize($config->get('config_data'))) ?></td>
+						<td>
+						  <button class="btn" onclick="$(this).hide(); $('#config_data').show()">Click to show config data</button>
+						  <span id="config_data" style="display: none"><?=nl2br(Utility::sanitize($config->get('config_data'))) ?></span>
+						  </td>
 					</tr>
 				</tbody>
 			</table>
