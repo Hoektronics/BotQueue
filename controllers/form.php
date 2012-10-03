@@ -48,6 +48,11 @@
 			$this->_field();
 		}
 
+		public function uploadfield()
+		{
+			$this->_field();
+		}
+
 		public function displayfield()
 		{
 			$this->_field();

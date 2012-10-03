@@ -36,15 +36,7 @@
 					</tr>
 					<tr>
 						<th>Config Data:</th>
-						<td><?=$config->get('config_data') ?></td>
-					</tr>
-					<tr>
-						<th>Start GCode:</th>
-						<td><?=$config->get('start_gcode') ?></td>
-					</tr>
-					<tr>
-						<th>End GCode:</th>
-						<td><?=$config->get('end_gcode') ?></td>
+						<td><?=nl2br(Utility::sanitize($config->get('config_data'))) ?></td>
 					</tr>
 				</tbody>
 			</table>

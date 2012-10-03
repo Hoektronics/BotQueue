@@ -33,6 +33,8 @@
 	  {
 	    $this->assertLoggedIn();
 	    
+	    $this->setTitle('Create Slice Engine');
+	    
 	    try
 	    {
 	      if (!User::isAdmin())
@@ -59,9 +61,8 @@
   			  //now we make it a default config object
   			  $config = new SliceConfig();
   			  $config->set('config_name', 'Default');
-  			  $config->set('config_data', $form->data('default_config'));
-  			  $config->set('start_gcode', $form->data('start_gcode'));
-  			  $config->set('end_gcode', $form->data('end_gcode'));
+  			  $file = $form->data('config_file');
+  			  $config->set('config_data', file_get_contents($file['tmp_name']));
   			  $config->set('engine_id', $engine->id);
   			  $config->set('user_id', User::$me->id);
   			  $config->set('add_date', date("Y-m-d H:i:s"));
@@ -100,6 +101,8 @@
   	    $form = $this->_createSliceEngineForm($engine);
   	    $form->action = $engine->getUrl() . "/edit";
   			$this->set('form', $form);
+
+        $this->setTitle("Edit Slice Engine - " . $engine->getName());
 			
         //check our form
   			if ($form->checkSubmitAndValidate($this->args()))
@@ -113,12 +116,14 @@
   			  $engine->save();
 			  
   			  //now we make it a default config object
-  			  $config = $engine->getDefaultConfig();
-  			  $config->set('config_data', $form->data('default_config'));
-  			  $config->set('start_gcode', $form->data('start_gcode'));
-  			  $config->set('end_gcode', $form->data('end_gcode'));
-  			  $config->set('edit_date', date("Y-m-d H:i:s"));
-  			  $config->save();
+  			  $file = $form->data('config_file');
+  			  if (!empty($file))
+  			  {
+    			  $config = $engine->getDefaultConfig();
+    			  $config->set('config_data', file_get_contents($file['tmp_name']));
+    			  $config->set('edit_date', date("Y-m-d H:i:s"));
+    			  $config->save();  			    
+  			  }
 			  
   			  //send us to view the engine.
   			  $this->forwardToUrl($engine->getUrl());
@@ -126,6 +131,7 @@
 	    }
 	    catch (Exception $e)
 	    {
+	      $this->setTitle("Edit Slice Engine - Error");
 	      $this->set('megaerror', $e->getMessage());
 	    }
 	  }
@@ -175,34 +181,11 @@
         'value' => $engine->get('engine_description')
       )));
 
-      $form->add(new TextareaField(array(
-        'name' => 'default_config',
+      $form->add(new UploadField(array(
+        'name' => 'config_file',
         'label' => 'Default Configuration',
-        'help' => 'Enter the default configuration text for this engine.',
-        'required' => false,
-        'width' => '60%',
-        'rows' => '8',
-        'value' => $config->get('config_data')
-      )));
-	    
-      $form->add(new TextareaField(array(
-        'name' => 'start_gcode',
-        'label' => 'Start GCode',
-        'help' => 'Text to be added to the beginning of the generated GCode file.',
-        'required' => false,
-        'width' => '60%',
-        'rows' => '8',
-        'value' => $config->get('start_gcode')
-      )));
-    
-      $form->add(new TextareaField(array(
-        'name' => 'end_gcode',
-        'label' => 'End GCode',
-        'help' => 'Text to be added to the end of the generated GCode file.',
-        'required' => false,
-        'width' => '60%',
-        'rows' => '8',
-        'value' => $config->get('end_gcode')
+        'help' => 'Upload the default configuration text for this engine (.ini for Slic3r)',
+        'required' => !(bool)$engine->id
       )));
 
 	    return $form;
@@ -250,6 +233,8 @@
         if (!User::isAdmin())
           throw new Exception("You do not have access to delete this slice engine.");
         
+        $this->setTitle("Delete Slice Engine - " . $engine->getName());
+        
         //create our form
   	    $form = new Form();
         $form->action = $engine->getUrl() . "/delete";
@@ -268,6 +253,7 @@
       }
       catch (Exception $e)
       {
+        $this->setTitle("Delete Slice Engine - Error");
         $this->set('megaerror', $e->getMessage());
       }
 	  }
@@ -278,17 +264,18 @@
 	    
 	    try
 	    {
-	      
 	      //load the data and check for errors.
         $engine = new SliceEngine($this->args('id'));
         if (!$engine->isHydrated())
           throw new Exception("That slice engine does not exist.");
         if (!$engine->get('is_public') && !User::isAdmin())
           throw new Exception("You do not have access to view this slice engine.");
+
+	      $this->setTitle("Create Slice Config - " . $engine->getName());
 	      
 	      //setup some objects
 	      $config = new SliceConfig();
-  	    $form = $this->_createSliceConfigForm($config);
+  	    $form = $this->_createSliceConfigUploadForm($config);
   	    $form->action = $engine->getUrl() . "/createconfig";
   			$this->set('form', $form);
 			
@@ -297,9 +284,8 @@
   			{
   			  //now we make it a config object
   			  $config->set('config_name', $form->data('config_name'));
-  			  $config->set('config_data', $form->data('default_config'));
-  			  $config->set('start_gcode', $form->data('start_gcode'));
-  			  $config->set('end_gcode', $form->data('end_gcode'));
+  			  $file = $form->data('config_file');
+  			  $config->set('config_data', file_get_contents($file['tmp_name']));
   			  $config->set('engine_id', $engine->id);
   			  $config->set('user_id', User::$me->id);
   			  $config->set('add_date', date("Y-m-d H:i:s"));
@@ -312,13 +298,14 @@
 	    }
 	    catch (Exception $e)
 	    {
+	      $this->setTitle("Create Slice Config - Error");
 	      $this->set('megaerror', $e->getMessage());
 	    }
 	  }
 
-	  public function _createSliceConfigForm($config)
+	  public function _createSliceConfigRawForm($config)
 	  {
-	    $form = new Form();
+	    $form = new Form('raw');
 
 			$form->add(new TextField(array(
 				'name' => 'config_name',
@@ -327,35 +314,53 @@
 				'required' => true,
 				'value' => $config->get('config_name')
 			)));
+			
+			if ($config->isHydrated())
+  			$form->add(new CheckBoxField(array(
+  				'name' => 'expire_slicejobs',
+  				'label' => 'Expire Old Slice Jobs',
+  				'help' => 'If checked, old slice jobs will be expired and never re-used.',
+  				'value' => 1
+  			)));
 
       $form->add(new TextareaField(array(
         'name' => 'default_config',
-        'label' => 'Default Configuration',
-        'help' => 'Enter the default configuration text for this engine.',
-        'required' => false,
+        'label' => 'Raw Configuration Text',
+        'help' => 'Edit the raw configuration text for this engine.',
+        'required' => true,
         'width' => '60%',
-        'rows' => '8',
+        'rows' => '20',
         'value' => $config->get('config_data')
       )));
-	    
-      $form->add(new TextareaField(array(
-        'name' => 'start_gcode',
-        'label' => 'Start GCode',
-        'help' => 'Text to be added to the beginning of the generated GCode file.',
-        'required' => false,
-        'width' => '60%',
-        'rows' => '8',
-        'value' => $config->get('start_gcode')
-      )));
-    
-      $form->add(new TextareaField(array(
-        'name' => 'end_gcode',
-        'label' => 'End GCode',
-        'help' => 'Text to be added to the end of the generated GCode file.',
-        'required' => false,
-        'width' => '60%',
-        'rows' => '8',
-        'value' => $config->get('end_gcode')
+
+	    return $form;
+	  }
+	  
+	  public function _createSliceConfigUploadForm($config)
+	  {
+	    $form = new Form('upload');
+
+			$form->add(new TextField(array(
+				'name' => 'config_name',
+				'label' => 'Config Name',
+				'help' => 'What is the name of this slicing configuration.',
+				'required' => true,
+				'value' => $config->get('config_name')
+			)));
+			
+			if ($config->isHydrated())
+  			$form->add(new CheckBoxField(array(
+  				'name' => 'expire_slicejobs',
+  				'label' => 'Expire Old Slice Jobs',
+  				'help' => 'If checked, old slice jobs will be expired and never re-used.',
+  				'value' => 1
+  			)));
+
+      $form->add(new UploadField(array(
+        'name' => 'config_file',
+        'label' => 'Configuration File',
+        'help' => 'The configuration file to use (.ini for Slic3r)',
+        'required' => true,
       )));
 
 	    return $form;
@@ -375,28 +380,55 @@
 	      if (User::$me->id != $config->get('user_id') || !User::isAdmin())
 	        throw new Exception("You cannot edit this slice config.");
 
+	      $this->setTitle("Edit Slice Config - " . $config->getName());
+
 	      //setup some objects
-  	    $form = $this->_createSliceConfigForm($config);
-  	    $form->action = $config->getUrl() . "/edit";
-  			$this->set('form', $form);
-			
+  	    $rawform = $this->_createSliceConfigRawForm($config);
+  	    $rawform->action = $config->getUrl() . "/edit";
+  			$this->set('rawform', $rawform);
+
+	      //setup some objects
+  	    $uploadform = $this->_createSliceConfigUploadForm($config);
+  	    $uploadform->action = $config->getUrl() . "/edit";
+  			$this->set('uploadform', $uploadform);
+  						
         //check our form
-  			if ($form->checkSubmitAndValidate($this->args()))
+  			if ($rawform->checkSubmitAndValidate($this->args()))
   			{
   			  //edit the config object
-  			  $config->set('config_name', $form->data('config_name'));
-  			  $config->set('config_data', $form->data('default_config'));
-  			  $config->set('start_gcode', $form->data('start_gcode'));
-  			  $config->set('end_gcode', $form->data('end_gcode'));
+  			  $config->set('config_name', $rawform->data('config_name'));
+  			  $config->set('config_data', $rawform->data('default_config'));
   			  $config->set('edit_date', date("Y-m-d H:i:s"));
   			  $config->save();
+			  
+			    //are we expiring the old slice jobs?
+			    if ($rawform->data('expire_slicejobs'))
+			      $config->expireSliceJobs();
 			  
   			  //send us to view the engine.
   			  $this->forwardToUrl($config->getUrl());
   			}
+  			else if ($uploadform->checkSubmitAndValidate($this->args()))
+  			{
+  			  //edit the config object
+  			  $config->set('config_name', $uploadform->data('config_name'));
+  			  
+  			  $file = $uploadform->data('config_file');
+  			  $config->set('config_data', file_get_contents($file['tmp_name']));
+  			  $config->set('edit_date', date("Y-m-d H:i:s"));
+  			  $config->save();
+			  
+			    //are we expiring the old slice jobs?
+			    if ($uploadform->data('expire_slicejobs'))
+			      $config->expireSliceJobs();
+			      
+  			  //send us to view the engine.
+  			  $this->forwardToUrl($config->getUrl());  			  
+  			}
 	    }
 	    catch (Exception $e)
 	    {
+	      $this->setTitle("Edit Slice Config - Error");
 	      $this->set('megaerror', $e->getMessage());
 	    }
 	  }
@@ -413,7 +445,7 @@
           throw new Exception("That slice config does not exist.");
         if ($config->get('user_id') != User::$me->id && !User::isAdmin())
           throw new Exception("You do not have access to view this config.");
-        
+
         //pull in all our data.
         $this->set('config', $config);
         $this->set('engine', $config->getEngine());
@@ -443,6 +475,8 @@
           throw new Exception("That slice config does not exist.");
         if ($config->get('user_id') != User::$me->id && !User::isAdmin())
           throw new Exception("You do not have access to view this config.");
+
+	      $this->setTitle("Delete Slice Config - " . $config->getName());
         
         //create our form
   	    $form = new Form();
@@ -462,6 +496,7 @@
       }
       catch (Exception $e)
       {
+        $this->setTitle("Delete Slice Config - Error");
         $this->set('megaerror', $e->getMessage());
       }
 	  }

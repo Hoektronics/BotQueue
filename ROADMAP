@@ -1,13 +1,7 @@
 v2 Release - October 2012
 
-* Slice Engines UI
-  * replace start/end/config with file upload and inline editing (single text area)
-  * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
-
 * Slice Engines Web UI
   * fully integrate slice jobs w/ rest of site
-  * replace start/end/config with file upload and inline editing (single text area)
-  * on edit of slice profile, show option to expire previously sliced jobs w/ this profile.
   * update time statistics to include slicing
   * update status html to include slicing
   * fix up the file view page to make it prettier.

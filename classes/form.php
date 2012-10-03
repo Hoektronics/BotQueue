@@ -277,6 +277,48 @@
 		}
 	}
 	
+	class UploadField extends FormField
+	{		
+		public function validate($data)
+		{
+      //upload our file to S3
+      $file = $_FILES[$this->name];
+
+      //default to no error.
+      $this->hasError = false;        
+
+      //double check for errors.
+      if($file['size'] == 0 && $file['error'] == 0)
+        $file['error'] = 5; 
+
+      //set our value for future reference.
+      $this->setValue($file);
+
+      //these our are english translations of errors.
+      $upload_errors = array( 
+        UPLOAD_ERR_OK        => "No errors.", 
+        UPLOAD_ERR_INI_SIZE    => "File uploaded larger than allowed.", 
+        UPLOAD_ERR_FORM_SIZE    => "File uploaded larger than allowed..", 
+        UPLOAD_ERR_PARTIAL    => "File upload failed during transfer.", 
+        UPLOAD_ERR_NO_FILE        => "No file uploaded.", 
+        UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+        UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+        UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+        UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+      );
+
+      //what did we get?
+      if ($file['error'] && $this->required)
+      {
+        $this->hasError = true;
+        $this->errorText = $upload_errors[$file['error']];          
+      }
+        
+      //how'd we do?
+      return !$this->hasError;
+		}
+	}
+	
 	class WarningField extends DisplayField {}
 	class ErrorField extends DisplayField {}
 	class SuccessField extends DisplayField {}

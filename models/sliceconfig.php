@@ -37,8 +37,6 @@
 			$r['fork_id'] = $this->get('fork_id');
 			if ($deep)
 			  $r['engine'] = $this->getEngine()->getAPIData(false);
-			$r['start_gcode'] = $this->get('start_gcode');
-			$r['end_gcode'] = $this->get('end_gcode');
 			$r['config_data'] = $this->get('config_data');
 			$r['add_date'] = $this->get('add_date');
 			$r['edit_date'] = $this->get('edit_date');
@@ -48,12 +46,7 @@
 
 		public function getSnapshot()
 		{
-		  $r = array();
-			$r['start_gcode'] = $this->get('start_gcode');
-			$r['end_gcode'] = $this->get('end_gcode');
-			$r['config_data'] = $this->get('config_data');
-			
-			return $r;		  
+		  return $this->get('config_data');
 		}
 		
 		public function getUser()
@@ -93,6 +86,18 @@
       ";
       
       return new Collection($sql, array('SliceJob' => 'id'));
+    }
+    
+    public function expireSliceJobs()
+    {
+      $sql = "
+        UPDATE slice_jobs
+        SET status = 'expired'
+        WHERE status = 'complete'
+          AND slice_config_id = '{$this->id}'
+      ";
+      
+      db()->execute($sql);
     }
 	}
 ?>

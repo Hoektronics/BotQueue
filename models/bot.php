@@ -178,7 +178,7 @@
           $sj->set('job_id', $job->id);
           $sj->set('input_id', $job->get('source_file_id'));
           $sj->set('slice_config_id', $config->id);
-          $sj->set('slice_config_snapshot', json::encode($config->getSnapshot()));
+          $sj->set('slice_config_snapshot', $config->getSnapshot());
           $sj->set('add_date', date("Y-m-d H:i:s"));
           $sj->set('status', 'available');
           $sj->save();
