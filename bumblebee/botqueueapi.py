@@ -212,6 +212,15 @@ class BotQueueAPI():
   def failJob(self, job_id):
     return self.apiCall('failjob', {'job_id' : job_id})
 
+  def createJobFromJob(self, job_id, quantity = 1, queue_id = 0):
+    return self.apiCall('createjob', {'job_id' : job_id, 'queue_id' : queue_id, 'quantity': quantity})
+
+  def createJobFromURL(self, url, quantity = 1, queue_id = 0):
+    return self.apiCall('createjob', {'job_url' : url, 'queue_id' : queue_id, 'quantity': quantity})
+
+  def createJobFromFile(self, filename, quantity = 1, queue_id = 0):
+    return self.apiUploadCall('createjob', {'quantity': quantity, 'queue_id' : queue_id}, filepath=filename)
+      
   def downloadedJob(self, job_id):
     return self.apiCall('downloadedjob', {'job_id' : job_id})
     
