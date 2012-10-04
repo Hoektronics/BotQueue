@@ -1,7 +1,5 @@
 v2 Release - October 2012
 
-* API - implement job creation via URL download
-* API - implement job creation via HTTP file POST
 * API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
 * API - Add callback url support for web-based apps
 

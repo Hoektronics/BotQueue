@@ -96,6 +96,14 @@
 		  return new Collection($sql, array('Bot' => 'id'));
 		}
 		
+		public function addFile($file, $qty = 1)
+		{
+		  if ($file->isGcode())
+		    return $this->addGCodeFile($file, $qty);
+		  elseif ($file->is3DModel())
+		    return $this->add3DModelFile($file, $qty);
+		}
+		
 		public function addGCodeFile($file, $qty = 1)
 		{
 			$jobs = array();

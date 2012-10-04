@@ -284,7 +284,18 @@
 				WHERE name = 'Default'
 					AND user_id = {$this->id}
 			";
-			return new Queue(db()->getValue($sql));
+			$q = new Queue(db()->getValue($sql));
+		
+		  if (!$q->isHydrated())
+		  {
+  			$sql = "
+  				SELECT id FROM queues
+  				ORDER BY id LIMIT 1
+  			";
+  			$q = new Queue(db()->getValue($sql));
+		  }
+		  
+		  return $q;
 		}
 
 		public function getBots()
