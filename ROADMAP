@@ -1,9 +1,6 @@
 v2 Release - October 2012
 
 * Slice Engines Web UI
-  * fully integrate slice jobs w/ rest of site
-    * show slice jobs on file view page
-  * fix up the file view page to make it prettier.
   * add main page notification of things that need action (slice jobs, jobs)
 
 * GCode Preview

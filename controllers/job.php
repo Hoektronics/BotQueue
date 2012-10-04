@@ -447,10 +447,14 @@
 				if ($file->get('user_id') != User::$me->id)
 					throw new Exception("You do not own that file.");
 			
-				$this->setTitle('View File - ' . $file->getName());
+				$this->setTitle($file->getName());
 
 				$this->set('file', $file);
 				$this->set('creator', $file->getUser());
+				
+				$jobs = $file->getJobs();
+				$this->set('jobs', $jobs->getRange(0, 10));
+				$this->set('job_count', $jobs->count());
 			}
 			catch (Exception $e)
 			{
@@ -665,6 +669,40 @@
 		  $this->setArg('file');
 		  $this->setArg('width');
 		  $this->setArg('height');
+		}
+		
+		public function file_jobs()
+		{
+			$this->assertLoggedIn();
+			
+			try
+			{
+				//did we get a queue?
+				$file = new S3File($this->args('id'));
+				if (!$file->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if ($file->get('user_id') != User::$me->id)
+					throw new Exception("You do not have permission to view this file.");
+				
+				$this->set('file', $file);
+
+				//what sort of jobs to view?
+				$this->setTitle($file->getLink() . " Jobs");
+				$collection = $file->getJobs();
+				
+	      $per_page = 20;
+	      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+	      $this->set('per_page', $per_page);
+	      $this->set('total', $collection->count());
+	      $this->set('page', $page);
+	      $this->set('jobs', $collection->getPage($page, $per_page));	
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('File Jobs - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 	}
 ?>

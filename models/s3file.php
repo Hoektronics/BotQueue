@@ -264,5 +264,18 @@
 		{
 		  return preg_match("/(stl|obj|amf)$/i", $this->get('path'));
 		}
+		
+		public function getJobs()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM jobs
+		    WHERE source_file_id = '{$this->id}'
+		      OR file_id = '{$this->id}'
+		    ORDER BY id DESC
+		  ";
+		  
+		  return new Collection($sql, array('Job' => 'id'));
+		}
 	}
 ?>

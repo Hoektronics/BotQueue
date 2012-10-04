@@ -93,6 +93,7 @@ RewriteRule ^job/create/job:([0-9]+)$												dispatcher.php?controller=job&v
 
 #file stuff
 RewriteRule ^file:([0-9]+)$												dispatcher.php?controller=job&view=file&id=$1 [NC,L]
+RewriteRule ^file:([0-9]+)/jobs(/page:([0-9]+))?$												dispatcher.php?controller=job&view=file_jobs&id=$1&page=$3 [NC,L]
 RewriteRule ^file:([0-9]+)/render$												dispatcher.php?mode=ajax&controller=job&view=render_frame&id=$1 [NC,L,QSA]
 RewriteRule ^passthru:([0-9]+)$												dispatcher.php?controller=job&view=passthru&id=$1 [NC,L]
 

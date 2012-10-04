@@ -28,16 +28,19 @@
 					</tr>
 					<tr>
 						<th>Add Date:</th>
-						<td><?=Utility::formatDateTime($file->get('add_date'))?>`</td>
+						<td><?=Utility::formatDateTime($file->get('add_date'))?></td>
 					</tr>
 					<tr>
 						<th>Manage:</th>
-						<td><a href="/job/create/file:<?=$file->id?>">re-run</a></td>
+						<td><a class="btn btn-mini" href="/job/create/file:<?=$file->id?>"><i class="icon-repeat"></i> re-run</a></td>
 					</tr>
 				</tbody>
 			</table>
-			<h3>File Jobs</h3>
-			TODO: add file jobs here.
+			<h3>
+				Jobs With This File
+				:: 1-<?=min(10, $job_count)?> of <?=$job_count?> :: <a href="<?=$file->getUrl()?>/jobs">see all</a>
+			</h3>
+			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $jobs)); ?>
 		</div>
 		<div class="span6">
 		  <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$file->getUrl()?>/render"></iframe>
