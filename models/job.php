@@ -192,5 +192,17 @@
 		  
 		  return new Collection($sql, array('ErrorLog' => 'id'));
 		}
+		
+		public static function getJobsRequiringAction()
+		{
+		  $sql = "
+		    SELECT id, queue_id, bot_id
+		    FROM jobs
+		    WHERE status = 'qa'
+		    ORDER BY finished_time ASC
+		  ";
+		  
+		  return new Collection($sql, array('Job' => 'id', 'Queue' => 'queue_id', 'Bot' => 'bot_id'));
+		}
 	}
 ?>

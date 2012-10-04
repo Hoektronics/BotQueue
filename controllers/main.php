@@ -39,6 +39,9 @@
 				$this->set('activity_count', $activities->count());
 				
 				$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
+				
+				$this->set('action_jobs', Job::getJobsRequiringAction()->getRange(0, 50));
+				$this->set('action_slicejobs', SliceJob::getJobsRequiringAction()->getRange(0, 50));
 			}
 		}
 		

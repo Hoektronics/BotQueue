@@ -195,5 +195,17 @@
 		  
 		  return new SliceJob($id);
 		}
+		
+		public static function getJobsRequiringAction()
+		{
+		  $sql = "
+		    SELECT id, input_id, job_id
+		    FROM slice_jobs
+		    WHERE status = 'pending'
+		    ORDER BY finish_date ASC
+		  ";
+		  
+		  return new Collection($sql, array('SliceJob' => 'id', 'S3File' => 'input_id', 'Job' => 'job_id'));
+		}
 	}
 ?>

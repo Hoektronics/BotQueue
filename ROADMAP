@@ -1,8 +1,5 @@
 v2 Release - October 2012
 
-* Slice Engines Web UI
-  * add main page notification of things that need action (slice jobs, jobs)
-
 * GCode Preview
   * standardize with thingiview for zoom/rotate controls
   * add z=0 grid to match thingiview

@@ -15,46 +15,46 @@
 					</tr>
 					<tr>
 						<th>Created:</th>
-						<td><?= Utility::formatDatetime($job->get('created_time'))?> (<?=Utility::relativeTime($job->get('created_time'))?>)</td>
+						<td><?= Utility::formatDatetime($job->get('created_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('created_time'))?>)</span></td>
 					</tr>
 					<tr>
 						<th>Grabbed:</th>
 						<? if (strtotime($job->get('taken_time')) > 0): ?>
-							<td><?= Utility::formatDatetime($job->get('taken_time'))?> (<?=Utility::relativeTime($job->get('taken_time'))?>)</td>
+							<td><?= Utility::formatDatetime($job->get('taken_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('taken_time'))?>)</span></td>
 						<? else: ?>
-							<td>n/a</td>
+							<td><span class="muted">n/a</span></td>
 						<? endif?>
 					</tr>
 					<tr>
 						<th>Sliced:</th>
 						<? if (strtotime($job->get('slice_complete_time')) > 0): ?>
-							<td><?= Utility::formatDatetime($job->get('slice_complete_time'))?> (<?=Utility::relativeTime($job->get('slice_complete_time'))?>)</td>
+							<td><?= Utility::formatDatetime($job->get('slice_complete_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('slice_complete_time'))?>)</span></td>
 						<? else: ?>
-							<td>n/a</td>
+							<td><span class="muted">n/a</span></td>
 						<? endif?>
 					</tr>
 					<tr>
 						<th>Downloaded:</th>
 						<? if (strtotime($job->get('downloaded_time')) > 0): ?>
-							<td><?= Utility::formatDatetime($job->get('downloaded_time'))?> (<?=Utility::relativeTime($job->get('downloaded_time'))?>)</td>
+							<td><?= Utility::formatDatetime($job->get('downloaded_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('downloaded_time'))?>)</span></td>
 						<? else: ?>
-							<td>n/a</td>
+							<td><span class="muted">n/a</span></td>
 						<? endif?>
 					</tr>
 					<tr>
 						<th>Print Complete:</th>
 						<? if (strtotime($job->get('finished_time')) > 0): ?>
-							<td><?= Utility::formatDatetime($job->get('finished_time'))?> (<?=Utility::relativeTime($job->get('finished_time'))?>)</td>
+							<td><?= Utility::formatDatetime($job->get('finished_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('finished_time'))?>)</span></td>
 						<? else: ?>
-							<td>n/a</td>
+							<td><span class="muted">n/a</span></td>
 						<? endif?>
 					</tr>
 					<tr>
 						<th>Finished:</th>
 						<? if (strtotime($job->get('verified_time')) > 0): ?>
-							<td><?= Utility::formatDatetime($job->get('verified_time'))?> (<?=Utility::relativeTime($job->get('verified_time'))?>)</td>
+							<td><?= Utility::formatDatetime($job->get('verified_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('verified_time'))?>)</span></td>
 						<? else: ?>
-							<td>n/a</td>
+							<td><span class="muted">n/a</span></td>
 						<? endif?>
 					</tr>
 					<tr>
@@ -93,7 +93,7 @@
   					<? if ($source_file->isHydrated()): ?>			
 						  <td><?=$source_file->getLink()?></td>
 						<? else: ?>
-						  <td>n/a</td>
+						  <td class="muted">n/a</td>
     				<? endif ?>
 					</tr>
 					<tr>
@@ -101,7 +101,7 @@
   					<? if ($gcode_file->isHydrated()): ?>
   						<td><?=$gcode_file->getLink()?></td>
 						<? else: ?>
-						  <td>n/a</td>
+						  <td class="muted">n/a</td>
     				<? endif ?>
 					</tr>
 					<tr>
@@ -109,7 +109,7 @@
   					<? if ($slicejob->isHydrated()): ?>
   						<td><?=$slicejob->getLink()?></td>
 						<? else: ?>
-						  <td>n/a</td>
+						  <td class="muted">n/a</td>
             <? endif ?>
 					</tr>
 					<tr>
@@ -117,7 +117,7 @@
   					<? if ($sliceengine->isHydrated()): ?>
   						<td><?=$sliceengine->getLink()?></td>
 						<? else: ?>
-						  <td>n/a</td>
+						  <td class="muted">n/a</td>
             <? endif ?>
 					</tr>
 					<tr>
@@ -125,7 +125,7 @@
   					<? if ($sliceconfig->isHydrated()): ?>
   						<td><?=$sliceconfig->getLink()?></td>
 						<? else: ?>
-						  <td>n/a</td>
+						  <td class="muted">n/a</td>
             <? endif ?>
 					</tr>
 					<tr>

@@ -12,7 +12,7 @@
 				<tr>
 					<td><?= $user->getLink() ?></td>
 					<td><?= $activity->get('activity') ?></td>
-					<td><?= Utility::getTimeAgo($activity->get('action_date')) ?></td>
+					<td><span class="muted"><?= Utility::getTimeAgo($activity->get('action_date')) ?></span></td>
 				</tr>
 			<? endforeach ?>
 		</tbody>
