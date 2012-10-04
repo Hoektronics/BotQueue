@@ -1,25 +1,22 @@
 v2 Release - October 2012
 
+* API - implement job creation via URL download
+* API - implement job creation via HTTP file POST
+* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
+* API - Add callback url support for web-based apps
+
 * GCode Preview
+  * fork gcode viewer
   * standardize with thingiview for zoom/rotate controls
   * add z=0 grid to match thingiview
   * standardize camera to match thingiview
   * standardize background color
   
 * Thingiview Preview
+  * fork thingiview
   * add status div hooks
   * add error div hooks
   * standardize background color
-
-* WEB - Pull in files from internet
-  * add source_url field to files table to keep track of where things came from.
-
-* API - implement job creation via URL download
-* API - implement job creation via HTTP file POST
-* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
-* API - Add callback url support for web-based apps
-
-* BUMBLEBEE - Better / faster shutdown
 
 * WEB - better client installation documentation
 * WEB - replace all appropriate form controls with new form helper class.
@@ -70,6 +67,8 @@ WEBCAM SUPPORT
     * and watermarked with the host url.
 
 * add filament_volume field to slicejob or job
+
+* BUMBLEBEE - Better / faster shutdown
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####

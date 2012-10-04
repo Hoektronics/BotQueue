@@ -84,6 +84,7 @@
           
         $s3 = new S3File();
         $s3->set('user_id', User::$me->id);
+        $s3->set('source_url', $url);
         $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
         
   			Activity::log("uploaded a new file called " . $s3->getLink() . ".");
