@@ -1,28 +1,33 @@
 v2 Release - October 2012
 
-* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
-* API - Add callback url support for web-based apps
-
 * GCode Preview
   * fork gcode viewer
   * standardize with thingiview for zoom/rotate controls
   * add z=0 grid to match thingiview
   * standardize camera to match thingiview
   * standardize background color
+  * standardize object color
   
 * Thingiview Preview
   * fork thingiview
   * add status div hooks
   * add error div hooks
   * standardize background color
+  * standardize object color
 
 * WEB - better client installation documentation
-* WEB - replace all appropriate form controls with new form helper class.
-* WEB - protect sql calls from db injection attacks
+* WEB - Upgrade v1 to v2 guide.
+* BLOG - detail all the new features!
+* VIDEO - take you through the botqueue flow.  file->upload->object. 2 people, 1 print.
 
 ------------------------------------------------------------------------------------
 
 v3 Release - Nov 2012
+
+MAJOR ARCHITECTURE
+
+* WEB - replace all appropriate form controls with new form helper class.
+* WEB - protect sql calls from db injection attacks
 
 WEBSITE 
 
@@ -68,6 +73,9 @@ WEBCAM SUPPORT
 
 * BUMBLEBEE - Better / faster shutdown
 
+* API - Add computer name / id to app approval so we can show that on app page
+* WEB - Remove access token for a certain computer.
+
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
 
@@ -104,3 +112,5 @@ WEBCAM SUPPORT
 	* Use python+webkit for UI
 * WEB - simple script for installing botqueue onto a standalone ubuntu machine
 * WEB - 100% working Amazon bootup script.
+
+* API - Add callback url support for web-based apps
