@@ -73,8 +73,7 @@
 <div class="row">
 	<div class="span12">
 		<h3>
-			My Bots
-			 :: 1-<?=min(10, $bot_count)?> of <?=$bot_count?> :: <a href="/bots">see all</a>
+			Your Bot Activity Dashboard <small><span class="muted">(Auto Refreshes every 10s)</span></small>
 		</h3>
 		<? if (!empty($bots)): ?>
     	<table class="table table-striped table-bordered table-condensed">

@@ -12,7 +12,8 @@
 
     thingiurlbase = "/thingiview";
     thingiview = new Thingiview("renderArea");
-    thingiview.setObjectColor('#C0D8F0');
+    thingiview.setBackgroundColor('#EEEEEE');
+    thingiview.setObjectColor('#00CC00');
     thingiview.initScene();
     thingiview.loadSTL("/passthru:<?=$file->id?>");
   }

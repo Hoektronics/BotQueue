@@ -1,22 +1,19 @@
 v2 Release - October 2012
 
 * GCode Preview
-  * fork gcode viewer
+  * standardize background color
+  * standardize object color
   * standardize with thingiview for zoom/rotate controls
   * add z=0 grid to match thingiview
   * standardize camera to match thingiview
-  * standardize background color
-  * standardize object color
   
 * Thingiview Preview
-  * fork thingiview
+  * standardize object color
   * add status div hooks
   * add error div hooks
-  * standardize background color
-  * standardize object color
 
 * WEB - better client installation documentation
-* WEB - Upgrade v1 to v2 guide.
+* BLOG - Upgrade v1 to v2 guide.
 * BLOG - detail all the new features!
 * VIDEO - take you through the botqueue flow.  file->upload->object. 2 people, 1 print.
 
