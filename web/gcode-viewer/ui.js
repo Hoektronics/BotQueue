@@ -35,6 +35,7 @@ function openGCodeFromPath(path) {
   loadFile(path, function(gcode) {
     object = createObjectFromGCode(gcode);
     scene.add(object);
+    
     localStorage.setItem('last-loaded', path);
     localStorage.removeItem('last-imported');
     

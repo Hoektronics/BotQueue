@@ -18,9 +18,27 @@
         margin-left: -100px;
         margin-top: -40px;
       }
+      
+      div#GCodeStatusDiv, div#GCodeErrorDiv {
+        position: absolute;
+        width: 200px;
+        height: 50px;
+        line-height: 50px;
+        top: 50%;
+        left: 50%;
+        margin-left: -100px;
+        margin-top: -25px;
+        margin-bottom: 0px;
+        margin-right: 0px;
+        padding: 0px;
+        text-align: center;
+        z-index: 1000;
+      }
     </style>
   </head>
   <body>
+    <div id="GCodeErrorDiv" class="alert alert-error" style="display: none"></div>
+    <div id="GCodeStatusDiv" class="alert alert-success" style="display: none"></div>
     <? if (!$megaerror): ?>
       <? if ($file->isGCode()): ?>
         <?= Controller::byName('job')->renderView('render_gcode', array('file' => $file, 'width' => $width, 'height' => $height))?>

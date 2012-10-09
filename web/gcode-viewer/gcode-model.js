@@ -30,15 +30,13 @@ function createObjectFromGCode(gcode) {
       };
 
       newLine.extruding = (newLine.e - lastLine.e) > 0;
-      var color = new THREE.Color(newLine.extruding ? 0xFFFFFF : 0x0000FF);
+      var color = new THREE.Color(newLine.extruding ? 0x00CC00 : 0x0000FF);
 
       if (newLine.extruding) {
-        geometry.vertices.push(new THREE.Vertex(
-            new THREE.Vector3(lastLine.x, lastLine.y, lastLine.z)));
-        geometry.vertices.push(new THREE.Vertex(
-            new THREE.Vector3(newLine.x, newLine.y, newLine.z)));
-        geometry.colors.push(color);
-        geometry.colors.push(color);
+        geometry.vertices.push(new THREE.Vector3(lastLine.x, lastLine.y, lastLine.z));
+        geometry.vertices.push(new THREE.Vector3(newLine.x, newLine.y, newLine.z));
+        //geometry.colors.push(color);
+        //geometry.colors.push(color);
       }
 
       lastLine = newLine;
@@ -107,9 +105,11 @@ function createObjectFromGCode(gcode) {
   parser.parse(gcode);
 
   var lineMaterial = new THREE.LineBasicMaterial({
-      opacity:0.4,
+      opacity:0.3,
       linewidth: 1,
-      vertexColors: THREE.FaceColors});
+      vertexColors: false,
+      color: 0x00CC00
+  });
   object.add(new THREE.Line(geometry, lineMaterial, THREE.LinePieces));
 
   // Center
@@ -117,7 +117,9 @@ function createObjectFromGCode(gcode) {
   var center = new THREE.Vector3()
       .add(geometry.boundingBox.min, geometry.boundingBox.max)
       .divideScalar(2);
-  var scale = 3; // TODO: Auto size
+  center.z = geometry.boundingBox.min.z;
+
+  var scale = 1; // TODO: Auto size
   object.position = center.multiplyScalar(-scale);
   object.scale.multiplyScalar(scale);
 

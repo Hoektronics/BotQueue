@@ -1,17 +1,9 @@
 v2 Release - October 2012
 
 * GCode Preview
-  * standardize background color
-  * standardize object color
   * standardize with thingiview for zoom/rotate controls
-  * add z=0 grid to match thingiview
   * standardize camera to match thingiview
   
-* Thingiview Preview
-  * standardize object color
-  * add status div hooks
-  * add error div hooks
-
 * WEB - better client installation documentation
 * BLOG - Upgrade v1 to v2 guide.
 * BLOG - detail all the new features!

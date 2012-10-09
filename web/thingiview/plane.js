@@ -3,7 +3,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-var Plane = function ( width, height, size, material) {
+var Grid = function ( width, height, size, material) {
 
 	THREE.Object3D.call( this );
   
@@ -33,5 +33,5 @@ var Plane = function ( width, height, size, material) {
 	}
 };
 
-Plane.prototype = new THREE.Object3D();
-Plane.prototype.constructor = Plane;
+Grid.prototype = new THREE.Object3D();
+Grid.prototype.constructor = Grid;
