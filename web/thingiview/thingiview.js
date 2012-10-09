@@ -75,16 +75,16 @@ Thingiview = function(containerId) {
 
   	scene  = new THREE.Scene();
 
-    ambientLight = new THREE.AmbientLight(0x606060);
-    scene.add(ambientLight);
-    
+    //ambientLight = new THREE.AmbientLight(0xffffff);
+    //scene.add(ambientLight);
+
     directionalLight = new THREE.DirectionalLight(0xffffff, 0.65);
     directionalLight.position.x = 1;
     directionalLight.position.y = 1;
     directionalLight.position.z = 2;
     directionalLight.position.normalize();
     scene.add(directionalLight);
-    
+
     pointLight = new THREE.PointLight(0xffffff, 0.6);
     pointLight.position.x = 0;
     pointLight.position.y = 15;
@@ -578,39 +578,66 @@ Thingiview = function(containerId) {
   this.loadJSON = function(url) {
     scope.newWorker('loadJSON', url);
   }
+  
+  this.centerModel = function() {
+    if (geometry){
+      scope.updateMetadata();
+      
+      var m = new THREE.Matrix4();
+      m.makeTranslation(-geometry.center.x, -geometry.center.y, -geometry.boundingBox.min.z);
+      geometry.applyMatrix(m);
+
+      scope.updateMetadata();
+    }
+  }
+  
+  this.updateMetadata = function() {
+    geometry.computeBoundingBox();
+    geometry.computeBoundingSphere();
+
+    //console.log(geometry.boundingBox.min);
+    //console.log(geometry.boundingBox.max);
+
+    geometry.bounds = new THREE.Vector3(
+      geometry.boundingBox.max.x - geometry.boundingBox.min.x,
+      geometry.boundingBox.max.y - geometry.boundingBox.min.y,
+      geometry.boundingBox.max.z - geometry.boundingBox.min.z
+    );
+    //console.log(geometry.bounds);
+    
+    geometry.center = new THREE.Vector3(
+      (geometry.boundingBox.max.x + geometry.boundingBox.min.x)/2,
+      (geometry.boundingBox.max.y + geometry.boundingBox.min.y)/2,
+      (geometry.boundingBox.max.z + geometry.boundingBox.min.z)/2
+    );
+    //console.log(geometry.center);    
+  }
 
   this.centerCamera = function() {
-    if (geometry) {
+    if (geometry) { 
+      scope.updateMetadata();
+      
       // Using method from http://msdn.microsoft.com/en-us/library/bb197900(v=xnagamestudio.10).aspx
       // log("bounding sphere radius = " + geometry.boundingSphere.radius);
 
-      // look at the center of the object
-//      console.log(camera, geometry.center_y);
-//      camera.up.x = geometry.center_x;
-//      camera.up.y = geometry.center_y;
-//      camera.up.z = geometry.center_z;
-
-      // set camera position to center of sphere
-      camera.position.x = geometry.center_x;
-      camera.position.y = geometry.center_y;
-      camera.position.z = geometry.center_z;
+      // set camera position inside our object
+      camera.position.x = geometry.center.x;
+      camera.position.y = geometry.center.y;
+      camera.position.z = geometry.center.z;
 
       // find distance to center
       distance = geometry.boundingSphere.radius / Math.sin((camera.fov/2) * (Math.PI / 180));
-
-      // zoom backwards about half that distance, I don't think I'm doing the math or backwards vector calculation correctly?
-      // scope.setCameraZoom(-distance/1.8);
-
-      // scope.setCameraZoom(-distance/1.5);
       scope.setCameraZoom(-distance/0.9);
 
-      directionalLight.x = geometry.min_y * 2;
-      directionalLight.y = geometry.min_y * 2;
-      directionalLight.z = geometry.max_z * 2;
+      //our directional light is out in space
+      directionalLight.x = geometry.boundingBox.min.x * 2;
+      directionalLight.y = geometry.boundingBox.min.y * 2;
+      directionalLight.z = geometry.boundingBox.max.z * 2;
 
-      pointLight.x = geometry.center_y;
-      pointLight.y = geometry.center_y;
-      pointLight.z = geometry.max_z * 2;
+      //our point light is straight above.
+      pointLight.x = geometry.center.x;
+      pointLight.y = geometry.center.y;
+      pointLight.z = geometry.boundingBox.max.z * 2;
     } else {
       // set to any valid position so it doesn't fail before geometry is available
       camera.position.y = -70;
@@ -623,6 +650,7 @@ Thingiview = function(containerId) {
     log("loading array...");
     geometry = new STLGeometry(array);
     loadObjectGeometry();
+    
     scope.setRotation(rotate);
     scope.centerCamera();
     log("finished loading " + geometry.faces.length + " faces.");
@@ -673,7 +701,8 @@ Thingiview = function(containerId) {
         particles = new THREE.ParticleSystem( geometry, material );
         particles.sortParticles = true;
         particles.updateMatrix();
-        scene.addObject( particles );
+
+        scene.add( particles );
                                 
         camera.updateMatrix();
         renderer.render(scene, camera);
@@ -720,8 +749,8 @@ Thingiview = function(containerId) {
 
   function loadPlaneGeometry() {
     // TODO: switch to lines instead of the Plane object so we can get rid of the horizontal lines in canvas renderer...
-    plane = new THREE.Mesh(new Plane(100, 100, 16, 16), new THREE.LineBasicMaterial({color:0xe0e0e0,linewidth:2.5}));
-    scene.addObject(plane);
+    plane = new Plane(200, 200, 10, new THREE.LineBasicMaterial({color:0x111111,linewidth:1}));
+    scene.add(plane);
   }
 
   function loadObjectGeometry() {
@@ -752,6 +781,9 @@ Thingiview = function(containerId) {
         // object.geometry = geometry;
         // object.materials = [material];
       }
+      
+      scope.centerModel();
+      scope.centerCamera();
 
       object = new THREE.Mesh(geometry, material);
   		scene.add(object);
@@ -807,28 +839,6 @@ var STLGeometry = function(stlArray) {
 	this.computeFaceNormals();
 //	this.sortFacesByMaterial();
   // log("finished building geometry");
-
-  scope.min_x = 0;
-  scope.min_y = 0;
-  scope.min_z = 0;
-  
-  scope.max_x = 0;
-  scope.max_y = 0;
-  scope.max_z = 0;
-  
-  for (var v = 0, vl = scope.vertices.length; v < vl; v ++) {
-		scope.max_x = Math.max(scope.max_x, scope.vertices[v].x);
-		scope.max_y = Math.max(scope.max_y, scope.vertices[v].y);
-		scope.max_z = Math.max(scope.max_z, scope.vertices[v].z);
-		                                    
-		scope.min_x = Math.min(scope.min_x, scope.vertices[v].x);
-		scope.min_y = Math.min(scope.min_y, scope.vertices[v].y);
-		scope.min_z = Math.min(scope.min_z, scope.vertices[v].z);
-  }
-
-  scope.center_x = (scope.max_x + scope.min_x)/2;
-  scope.center_y = (scope.max_y + scope.min_y)/2;
-  scope.center_z = (scope.max_z + scope.min_z)/2;
 }
 
 STLGeometry.prototype = new THREE.Geometry();
