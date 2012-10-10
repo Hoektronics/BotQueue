@@ -1,3 +1,7 @@
+var directionalLight = null;
+var pointLight = null;
+var camera = null;
+
 function createScene(element) {
 
   // Renderer
@@ -25,9 +29,6 @@ function createScene(element) {
 
   //our directional light is out in space
   directionalLight = new THREE.DirectionalLight(0xffffff, 0.65);
-//  directionalLight.x = geometry.boundingBox.min.x * 2;
-//  directionalLight.y = geometry.boundingBox.min.y * 2;
-//  directionalLight.z = geometry.boundingBox.max.z * 2;
   directionalLight.x = -150;
   directionalLight.y = -150;
   directionalLight.z = 300;
@@ -46,10 +47,12 @@ function createScene(element) {
       near   = 1,
       far    = 100000,
       camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  //camera.rotationAutoUpdate = true;
-  //camera.position.x = 0;
-  //camera.position.y = 500;
+
+  //set our initial position.
+  camera.position.x = 0;
+  camera.position.y = -150;
   camera.position.z = 150;
+
   //camera.lookAt(scene.position);
   scene.add(camera);
  
@@ -80,6 +83,29 @@ function createScene(element) {
   });
 
   return scene;
+}
+
+function updateCameraView(geometry)
+{
+  // set camera position outside and above our object.
+  distance = geometry.boundingSphere.radius / Math.sin((camera.fov/2) * (Math.PI / 180));
+  camera.position.x = 0;
+  camera.position.y = -distance;
+  camera.position.z = distance;
+
+  //todo: how to control where it looks at!
+  //camera.lookAt(new THREE.Vector3(0, 0, geometry.center.z));
+  //camera.updateProjectionMatrix()
+
+  //our directional light is out in space
+  directionalLight.x = geometry.boundingBox.min.x * 2;
+  directionalLight.y = geometry.boundingBox.min.y * 2;
+  directionalLight.z = geometry.boundingBox.max.z * 2;
+
+  //our point light is straight above.
+  pointLight.x = geometry.center.x;
+  pointLight.y = geometry.center.y;
+  pointLight.z = geometry.boundingBox.max.z * 2; 
 }
 
 /**

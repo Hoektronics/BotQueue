@@ -98,30 +98,50 @@ function createObjectFromGCode(gcode) {
     },
 
     'default': function(args, info) {
-      console.error('Unknown command:', args.cmd, args, info);
+      //console.error('Unknown command:', args.cmd, args, info);
     },
   });
 
   parser.parse(gcode);
 
   var lineMaterial = new THREE.LineBasicMaterial({
-      opacity:0.3,
+      opacity:0.4,
       linewidth: 1,
       vertexColors: false,
-      color: 0x00CC00
+      color: 0x00BB00
   });
-  object.add(new THREE.Line(geometry, lineMaterial, THREE.LinePieces));
+  var line = new THREE.Line(geometry, lineMaterial, THREE.LinePieces);
+  line.castShadow = true;
+  line.receiveShadow = true;
+  object.add(line);
 
-  // Center
+  // find our center.
   geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+
+  geometry.bounds = new THREE.Vector3(
+    geometry.boundingBox.max.x - geometry.boundingBox.min.x,
+    geometry.boundingBox.max.y - geometry.boundingBox.min.y,
+    geometry.boundingBox.max.z - geometry.boundingBox.min.z
+  );
+  //console.log(geometry.bounds);
+  
+  geometry.center = new THREE.Vector3(
+    (geometry.boundingBox.max.x + geometry.boundingBox.min.x)/2,
+    (geometry.boundingBox.max.y + geometry.boundingBox.min.y)/2,
+    (geometry.boundingBox.max.z + geometry.boundingBox.min.z)/2
+  );  
+  
   var center = new THREE.Vector3()
       .add(geometry.boundingBox.min, geometry.boundingBox.max)
       .divideScalar(2);
   center.z = geometry.boundingBox.min.z;
 
-  var scale = 1; // TODO: Auto size
-  object.position = center.multiplyScalar(-scale);
-  object.scale.multiplyScalar(scale);
+  //move it to the center.
+  object.position = center.multiplyScalar(-1);
+  //object.scale.multiplyScalar(1);
+
+  
 
   return object;
 }
