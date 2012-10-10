@@ -52,8 +52,9 @@ function createScene(element) {
   camera.position.z = 150;
   //camera.lookAt(scene.position);
   scene.add(camera);
-  controls = new THREE.TrackballControls(camera);
-  controls.noPan = true;
+ 
+  //these are our controls.
+  controls = new THREE.ModelControls(camera);
   controls.zoomSpeed = 0.05;
   controls.dynamicDampingFactor = 0.40;
 

@@ -10,6 +10,7 @@ Thingiview = function(containerId) {
   var renderer = null;
   var object   = null;
   var plane    = null;
+  var controls = null;
   
   var ambientLight     = null;
   var frontLight       = null;
@@ -92,7 +93,6 @@ Thingiview = function(containerId) {
     scene.add(pointLight);
 
     progressBar = $('#GCodeStatusDiv');
-    console.log(progressBar);
     
     // document.createElement('div');
     //     progressBar.style.position = 'absolute';
@@ -154,6 +154,16 @@ Thingiview = function(containerId) {
     // stats.domElement.style.top       = '0px';
     // container.appendChild(stats.domElement);
 
+    //these are our controls.
+    controls = new THREE.ModelControls(camera, renderer.domElement);
+    controls.zoomSpeed = 0.05;
+    controls.dynamicDampingFactor = 0.40;
+
+    //start our renderer.
+    sceneLoop();
+
+    /*
+    //Replaced with ModelControl class
     // renderer.domElement.addEventListener('mousemove',      onRendererMouseMove,     false);    
   	window.addEventListener('mousemove',      onRendererMouseMove,     false);    
     renderer.domElement.addEventListener('mouseover',      onRendererMouseOver,     false);
@@ -169,8 +179,11 @@ Thingiview = function(containerId) {
     renderer.domElement.addEventListener('DOMMouseScroll', onRendererScroll,        false);
   	renderer.domElement.addEventListener('mousewheel',     onRendererScroll,        false);
   	renderer.domElement.addEventListener('gesturechange',  onRendererGestureChange, false);
+  	*/
   }
 
+  /*
+    //replaced with ModelControl class...
   onRendererScroll = function(event) {
     event.preventDefault();
 
@@ -324,8 +337,9 @@ Thingiview = function(containerId) {
   		targetYRotation = targetYRotationOnMouseDown + (mouseY - mouseYOnMouseDown) * 0.05;
   	}
   }
-
-  sceneLoop = function() {
+  */
+  
+  function sceneLoop() {
     if (object) {
       // if (view == 'bottom') {
       //   if (showPlane) {
@@ -351,22 +365,26 @@ Thingiview = function(containerId) {
 
       // log(object.rotation.x);
 
-      camera.updateMatrix();
+      //camera.updateMatrix();
       object.updateMatrix();
       
       if (showPlane) {
         plane.updateMatrix();
       }
 
+      controls.update();
     	renderer.render(scene, camera);
       // stats.update();
+
     }
+
+    requestAnimationFrame(sceneLoop); // And repeat...
   }
 
-  rotateLoop = function() {
+  this.rotateLoop = function() {
     // targetRotation += 0.01;
     targetXRotation += 0.05;
-    sceneLoop();
+    //sceneLoop();
   }
 
   this.getShowPlane = function(){
@@ -390,7 +408,7 @@ Thingiview = function(containerId) {
       }
     }
     
-    sceneLoop();
+    //sceneLoop();
   }
 
   this.getRotation = function() {
@@ -501,9 +519,8 @@ Thingiview = function(containerId) {
     mouseY            = targetYRotation;
     mouseYOnMouseDown = targetYRotation;
     
-    scope.centerCamera();
-    
-    sceneLoop();
+    scope.centerModel();
+    //sceneLoop();
   }
 
   this.setCameraZoom = function(factor) {
@@ -530,8 +547,8 @@ Thingiview = function(containerId) {
 //      camera.position.y += factor;
       camera.position.z -= factor;
     }
-
-    sceneLoop();
+    
+    //sceneLoop();
   }
 
   this.getObjectMaterial = function() {
@@ -710,7 +727,7 @@ Thingiview = function(containerId) {
 
         scene.add( particles );
                                 
-        camera.updateMatrix();
+        controls.update();
         renderer.render(scene, camera);
         
         //progressBar.html();
@@ -806,7 +823,7 @@ Thingiview = function(containerId) {
       targetXRotation = 0;
       targetYRotation = 0;
 
-      sceneLoop();
+      //sceneLoop();
     }
   }
 

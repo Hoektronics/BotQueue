@@ -11,6 +11,7 @@
 <script src="/gcode-viewer/gcode-model.js"></script>
 <script src="/gcode-viewer/renderer.js"></script>
 <script src="/gcode-viewer/ui.js"></script>
+<script src="/gcode-viewer/model-controls.js"></script>
 
 <script>
   function loadRenderer()

@@ -1,5 +1,6 @@
 <script src="/thingiview/Three.js"></script>
 <script src="/thingiview/plane.js"></script>
+<script src="/thingiview/model-controls.js"></script>
 <script src="/thingiview/thingiview.js"></script>
 <script>
   function loadRenderer()
