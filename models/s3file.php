@@ -102,6 +102,19 @@
 			return $path;
 		}
 		
+		public function exists($bucket = null, $file = null)
+		{
+		  if ($bucket === null)
+		    $bucket = $this->get('bucket');
+		  if ($file === null)
+		    $file = $this->get('path');
+		    
+	    $s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$result = $s3->getObjectInfo($bucket, $file, false);
+			
+			return $result;
+		}
+		
 		public static function createHashDirectory()
 		{
 			$hash = sha1(mt_rand() . mt_rand() . mt_rand() . mt_rand());
