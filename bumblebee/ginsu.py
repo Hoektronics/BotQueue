@@ -29,7 +29,7 @@ class Ginsu():
 
   def slicerFactory(self):
     path = self.sliceJob['slice_config']['engine']['path']
-    if (path == 'slic3r-0.9.2'):
+    if (path == 'slic3r-0.9.2' or path == 'slic3r-0.9.3'):
       return Slic3r(self.sliceJob['slice_config'], self.sliceFile)
     else:
       raise Exception("Unknown slicer path specified: %s" % path)    
