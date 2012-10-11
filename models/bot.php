@@ -325,5 +325,35 @@
 		{
 		  return new SliceConfig($this->get('slice_config_id'));
 		}
+		
+		public function getLastSeenHTML()
+		{
+		  $now = time();
+		  $last = strtotime($this->get('last_seen'));
+		  
+		  $elapsed = $now - $last;
+		  
+		  $days = floor($elapsed / (60*60*24));
+		  $elapsed = $elapsed - $days * 60 * 60 * 24;
+		  
+		  $hours = floor($elapsed / (60*60));
+		  $elapsed = $elapsed - $hours * 60 * 60;
+		  
+		  $minutes = floor($elapsed / (60));
+		  $elapsed = $elapsed - $days * 60;
+		  
+		  $s = "";
+		  
+		  if ($days)
+		    $s .= "{$days}d";
+		  if ($hours)
+		    $s .= "{$hours}h";
+		  if ($minutes)
+		    $s .= "{$minutes}m";
+		  
+		  $s .= "{$elapsed}s ago";
+		  
+		  return $s;
+		}
 	}
 ?>

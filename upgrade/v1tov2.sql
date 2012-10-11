@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `slice_engines`;
 CREATE TABLE `slice_engines` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `engine_name` varchar(255) NOT NULL,
@@ -13,6 +14,7 @@ CREATE TABLE `slice_engines` (
   KEY `is_public` (`is_public`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `slice_configs`;
 CREATE TABLE `slice_configs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fork_id` int(11) unsigned NOT NULL,
@@ -28,6 +30,7 @@ CREATE TABLE `slice_configs` (
   KEY `engine_id` (`engine_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `slice_jobs`;
 CREATE TABLE `slice_jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,

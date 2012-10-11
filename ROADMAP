@@ -1,28 +1,34 @@
 v2 Release - October 2012
 
-* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
-* API - Add callback url support for web-based apps
-
-* GCode Preview
-  * fork gcode viewer
-  * standardize with thingiview for zoom/rotate controls
-  * add z=0 grid to match thingiview
-  * standardize camera to match thingiview
-  * standardize background color
-  
-* Thingiview Preview
-  * fork thingiview
-  * add status div hooks
-  * add error div hooks
-  * standardize background color
-
 * WEB - better client installation documentation
-* WEB - replace all appropriate form controls with new form helper class.
-* WEB - protect sql calls from db injection attacks
+* BLOG - Upgrade v1 to v2 guide.
+* BLOG - detail all the new features!
+* VIDEO - take you through the botqueue flow.  file->upload->object. 2 people, 1 print.
 
 ------------------------------------------------------------------------------------
 
 v3 Release - Nov 2012
+
+WEBCAM SUPPORT
+
+* use 'motion' to control multiple webcams to post files to the botqueue website.
+  * http://www.chriswpage.com/2009/05/setup-an-advanced-webcam-security-system-with-ubuntu-8-04-and-motion/
+  * http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
+  * automatically create a timelapse at the end of a successful print - watch your object grow
+    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
+    * also record the user removing the part - 5 seconds? -- this adds authenticity and a human touch.
+    * bonus: you can trigger on motion once print is complete!
+  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
+    * what interval?  1 minute?
+    * make sure each image is timestamped.
+    * and watermarked with the host url.
+
+v4 Release - ???
+
+MAJOR ARCHITECTURE
+
+* WEB - replace all appropriate form controls with new form helper class.
+* WEB - protect sql calls from db injection attacks
 
 WEBSITE 
 
@@ -50,23 +56,15 @@ WEBSITE
 
 Long term wants:
 
-WEBCAM SUPPORT
 
-* use 'motion' to control multiple webcams to post files to the botqueue website.
-  * http://www.chriswpage.com/2009/05/setup-an-advanced-webcam-security-system-with-ubuntu-8-04-and-motion/
-  * http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
-  * automatically create a timelapse at the end of a successful print - watch your object grow
-    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
-    * also record the user removing the part - 5 seconds? -- this adds authenticity and a human touch.
-    * bonus: you can trigger on motion once print is complete!
-  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
-    * what interval?  1 minute?
-    * make sure each image is timestamped.
-    * and watermarked with the host url.
 
 * add filament_volume field to slicejob or job
 
 * BUMBLEBEE - Better / faster shutdown
+
+* API - Add computer name / id to app approval so we can show that on app page
+* WEB - Remove access token for a certain computer.
+* API - Add callback url support for web-based apps
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
@@ -81,7 +79,6 @@ WEBCAM SUPPORT
 
 * WEB - Reduce Amazon requirements for non-amazon / non-public installs.
 * WEB - Public queue support
-* WEB - Webcam support
 * WEB - full page statistics for bot / queue with graphs
 
 * BUMBLEBEE - new machine discovery
@@ -104,3 +101,4 @@ WEBCAM SUPPORT
 	* Use python+webkit for UI
 * WEB - simple script for installing botqueue onto a standalone ubuntu machine
 * WEB - 100% working Amazon bootup script.
+

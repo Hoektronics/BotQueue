@@ -3,60 +3,35 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-var Plane = function ( width, height, segments_width, segments_height ) {
+var Grid = function ( width, height, size, material) {
 
-	THREE.Geometry.call( this );
+	THREE.Object3D.call( this );
+  
+  var xSegments = (width / size) + 1;
+  var ySegments = (height / size) + 1;
+  var xCenter = width / 2;
+  var yCenter = height / 2
+  
+  var iy, ix;
 
-	var ix, iy,
-	width_half = width / 2,
-	height_half = height / 2,
-	gridX = segments_width || 1,
-	gridY = segments_height || 1,
-	gridX1 = gridX + 1,
-	gridY1 = gridY + 1,
-	segment_width = width / gridX,
-	segment_height = height / gridY;
-
-
-	for( iy = 0; iy < gridY1; iy++ ) {
-
-		for( ix = 0; ix < gridX1; ix++ ) {
-
-			var x = ix * segment_width - width_half;
-			var y = iy * segment_height - height_half;
-
-			this.vertices.push( new THREE.Vertex( new THREE.Vector3( x, - y, 0 ) ) );
-
-		}
-
+	for( ix = 0; ix < xSegments; ix++ ) {
+		var x = ix * size - xCenter;
+		var g = new THREE.Geometry();
+		g.vertices.push(new THREE.Vector3(x, -yCenter, 0))
+		g.vertices.push(new THREE.Vector3(x, yCenter, 0));
+		var line = new THREE.Line(g, material);
+		this.add(line);
 	}
-
-	for( iy = 0; iy < gridY; iy++ ) {
-
-		for( ix = 0; ix < gridX; ix++ ) {
-
-			var a = ix + gridX1 * iy;
-			var b = ix + gridX1 * ( iy + 1 );
-			var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
-			var d = ( ix + 1 ) + gridX1 * iy;
-
-			this.faces.push( new THREE.Face4( a, b, c, d ) );
-			this.uvs.push( [
-						new THREE.UV( ix / gridX, iy / gridY ),
-						new THREE.UV( ix / gridX, ( iy + 1 ) / gridY ),
-						new THREE.UV( ( ix + 1 ) / gridX, ( iy + 1 ) / gridY ),
-						new THREE.UV( ( ix + 1 ) / gridX, iy / gridY )
-					] );
-
-		}
-
+	
+	for( iy = 0; iy < ySegments; iy++ ) {
+		var y = iy * size - yCenter;
+		var g = new THREE.Geometry();
+		g.vertices.push(new THREE.Vector3(-xCenter, y, 0))
+		g.vertices.push(new THREE.Vector3(xCenter, y, 0));
+		var line = new THREE.Line(g, material);
+		this.add(line);
 	}
-
-	this.computeCentroids();
-	this.computeFaceNormals();
-	this.sortFacesByMaterial();
-
 };
 
-Plane.prototype = new THREE.Geometry();
-Plane.prototype.constructor = Plane;
+Grid.prototype = new THREE.Object3D();
+Grid.prototype.constructor = Grid;

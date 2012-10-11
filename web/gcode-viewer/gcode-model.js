@@ -30,15 +30,13 @@ function createObjectFromGCode(gcode) {
       };
 
       newLine.extruding = (newLine.e - lastLine.e) > 0;
-      var color = new THREE.Color(newLine.extruding ? 0xFFFFFF : 0x0000FF);
+      var color = new THREE.Color(newLine.extruding ? 0x00CC00 : 0x0000FF);
 
       if (newLine.extruding) {
-        geometry.vertices.push(new THREE.Vertex(
-            new THREE.Vector3(lastLine.x, lastLine.y, lastLine.z)));
-        geometry.vertices.push(new THREE.Vertex(
-            new THREE.Vector3(newLine.x, newLine.y, newLine.z)));
-        geometry.colors.push(color);
-        geometry.colors.push(color);
+        geometry.vertices.push(new THREE.Vector3(lastLine.x, lastLine.y, lastLine.z));
+        geometry.vertices.push(new THREE.Vector3(newLine.x, newLine.y, newLine.z));
+        //geometry.colors.push(color);
+        //geometry.colors.push(color);
       }
 
       lastLine = newLine;
@@ -100,7 +98,7 @@ function createObjectFromGCode(gcode) {
     },
 
     'default': function(args, info) {
-      console.error('Unknown command:', args.cmd, args, info);
+      //console.error('Unknown command:', args.cmd, args, info);
     },
   });
 
@@ -109,17 +107,41 @@ function createObjectFromGCode(gcode) {
   var lineMaterial = new THREE.LineBasicMaterial({
       opacity:0.4,
       linewidth: 1,
-      vertexColors: THREE.FaceColors});
-  object.add(new THREE.Line(geometry, lineMaterial, THREE.LinePieces));
+      vertexColors: false,
+      color: 0x00BB00
+  });
+  var line = new THREE.Line(geometry, lineMaterial, THREE.LinePieces);
+  line.castShadow = true;
+  line.receiveShadow = true;
+  object.add(line);
 
-  // Center
+  // find our center.
   geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+
+  geometry.bounds = new THREE.Vector3(
+    geometry.boundingBox.max.x - geometry.boundingBox.min.x,
+    geometry.boundingBox.max.y - geometry.boundingBox.min.y,
+    geometry.boundingBox.max.z - geometry.boundingBox.min.z
+  );
+  //console.log(geometry.bounds);
+  
+  geometry.center = new THREE.Vector3(
+    (geometry.boundingBox.max.x + geometry.boundingBox.min.x)/2,
+    (geometry.boundingBox.max.y + geometry.boundingBox.min.y)/2,
+    (geometry.boundingBox.max.z + geometry.boundingBox.min.z)/2
+  );  
+  
   var center = new THREE.Vector3()
       .add(geometry.boundingBox.min, geometry.boundingBox.max)
       .divideScalar(2);
-  var scale = 3; // TODO: Auto size
-  object.position = center.multiplyScalar(-scale);
-  object.scale.multiplyScalar(scale);
+  center.z = geometry.boundingBox.min.z;
+
+  //move it to the center.
+  object.position = center.multiplyScalar(-1);
+  //object.scale.multiplyScalar(1);
+
+  
 
   return object;
 }

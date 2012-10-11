@@ -71,7 +71,12 @@ Thingiloader = function(event) {
 
   this.loadSTLBinary = function(STLBinary) {
     workerFacadeMessage({'status':'message', 'content':'Parsing STL Binary...'});
-    workerFacadeMessage({'status':'complete', 'content':this.ParseSTLBinary(STLBinary)});
+
+    if (STLBinary instanceof BinaryReader){
+      workerFacadeMessage({'status':'complete', 'content':this.ParseSTLBinary(STLBinary)});
+    } else {
+      workerFacadeMessage({'status':'complete', 'content':this.ParseSTLBinary(new BinaryReader(STLBinary))});
+    }
   };
 
   this.loadOBJString = function(OBJString) {
