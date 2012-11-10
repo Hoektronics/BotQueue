@@ -54,6 +54,9 @@ class s3gdriver(bumbledriver.bumbledriver):
 
     self.currentPosition = 0
 
+    #turn our leds on white
+    self.s3g.set_RGB_LED(255, 255, 255, 0);
+
     # our start gcode
     for line in self.start_gcode:
       self.parser.execute_line(line)
