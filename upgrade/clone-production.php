@@ -20,7 +20,6 @@
   //clean up our login crap
   echo "Cleaning up login stuff.\n";
   db()->execute("DELETE FROM oauth_consumer_nonce");
-  db()->execute("DELETE FROM oauth_token");
   db()->execute("DELETE FROM tokens");
   
   //copy all our files to the new bucket.
@@ -46,6 +45,9 @@
   echo "Upgrading v1 to v2.\n";
   $cmd = "/usr/bin/mysql -u root devqueue < v1tov2.sql";
   passthru($cmd);
+  
+  //temporary hack to make debug easier
+  db()->execute("UPDATE bots SET slice_config_id = 1, slice_engine_id = 1");
   
   //finished!!!!
   echo "\nProduction clone complete in " . round((microtime(true) - $start_time), 2) . " seconds.\n";

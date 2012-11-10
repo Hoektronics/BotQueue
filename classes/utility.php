@@ -1101,7 +1101,7 @@ class Utility
     //clean up.
     curl_close($ch);
     fclose($headerFile);
-    fclose($tempFile);
+    fclose($fileTarget);
 
     return $return;
 	}
