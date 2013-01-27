@@ -111,7 +111,7 @@ class BumbleBee():
         if link.process.is_alive():
           threads = threads + 1
       if time.time() - lastUpdate > 1:
-        self.screen.clear()
+        self.screen.erase()
         self.screen.addstr("%s\n\n" % time.asctime())
         self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (threads, len(self.workers)))
         self.screen.refresh()
@@ -153,7 +153,7 @@ class BumbleBee():
       link.bot = message.data
     
   def drawMenu(self):
-    self.screen.clear()
+    self.screen.erase()
     self.screen.addstr("%s\n\n" % time.asctime())
     self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
     for link in self.workers:
