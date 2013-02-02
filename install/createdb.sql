@@ -36,11 +36,15 @@ CREATE TABLE IF NOT EXISTS `bots` (
   `name` varchar(255) NOT NULL DEFAULT '',
   `identifier` varchar(255) NOT NULL DEFAULT '',
   `model` varchar(255) NOT NULL,
-  `status` enum('idle', 'working', 'finished', 'error', 'maintenance', 'offline') NOT NULL default 'offline',
+  `status` enum('idle', 'slicing', 'working', 'waiting', 'error', 'maintenance', 'offline') NOT NULL default 'idle',
   `last_seen` datetime NOT NULL,
+  `slice_config_id` int(11) unsigned NOT NULL,
+  `slice_engine_id` int(11) unsigned NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `user_id` (`user_id`),
-  KEY `identifier` (`identifier`)
+  KEY `identifier` (`identifier`),
+  KEY `slice_config_id` (`slice_config_id`),
+  KEY `slice_engine_id` (`slice_engine_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `comments` (
@@ -71,9 +75,13 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `id` int(11) unsigned NOT NULL auto_increment,
   `user_id` int(11) unsigned NOT NULL default '0',
   `queue_id` int(11) unsigned NOT NULL default '0',
+  `source_file_id` int(11) unsigned  NOT NULL default '0',
   `file_id` int(11) unsigned NOT NULL default '0',
+  `slice_job_id` int(11) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL,
-  `status` enum('available', 'taken', 'complete', 'failure', 'cancelled') NOT NULL default 'available',
+  `status` enum('available', 'taken', 'slicing', 'downloading', 'qa', 'complete', 'failure') NOT NULL default 'available',
+  `taken_time` datetime NOT NULL,
+  `slice_complete_time` datetime NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
   `user_sort` int(11) unsigned NOT NULL default '0',
@@ -131,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `s3_files` (
   `bucket` varchar(255) NOT NULL,
   `path` varchar(255) NOT NULL,
   `add_date` datetime NOT NULL,
+  `source_url` text,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -212,40 +221,20 @@ CREATE TABLE `slice_jobs` (
   `input_id` int(11) unsigned NOT NULL,
   `output_id` int(11) unsigned NOT NULL,
   `output_log` text NOT NULL,
+  `error_log` text,
   `slice_config_id` int(11) unsigned NOT NULL,
   `slice_config_snapshot` text NOT NULL,
-  `worker_token` char(40) NOT NULL,
-  `worker_name` varchar(255) NOT NULL,
-  `status` enum('available', 'slicing', 'complete', 'failure'),
+  `status` enum('available', 'slicing', 'pending', 'complete', 'failure', 'expired') default 'available',
   `progress` float NOT NULL DEFAULT '0',
   `add_date` datetime NOT NULL,
   `taken_date` datetime NOT NULL,
   `finish_date` datetime NOT NULL,
+  `uid` char(40) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `job_id` (`job_id`),
   KEY `slice_config_id` (`slice_config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE bots add `slice_config_id` int(11) unsigned NOT NULL;
-ALTER TABLE bots add key `slice_config_id` (`slice_config_id`);
-ALTER TABLE bots add `slice_engine_id` int(11) unsigned NOT NULL;
-ALTER TABLE bots add key `slice_engine_id` (`slice_engine_id`);
-alter table bots modify status enum('idle','slicing','working','waiting','error','maintenance','offline') default 'idle';
-
-alter table jobs modify status enum('available','taken','slicing','downloading','qa','complete','failure') default 'available';
-alter table jobs add taken_time datetime not null after status;
-alter table jobs add source_file_id int(11) unsigned not null default 0 after queue_id;
-alter table jobs add slice_job_id int(11) unsigned not null default 0 after file_id;
-alter table jobs add slice_complete_time datetime not null after taken_time;
-
-alter table slice_jobs drop worker_token;
-alter table slice_jobs drop worker_name;
-alter table slice_jobs add `uid` char(40) NOT NULL;
-alter table slice_jobs add error_log text after output_log;
-alter table slice_jobs modify status enum('available','slicing','pending','complete','failure','expired') default 'available';
-
-alter table s3_files add source_url text;
 
 INSERT INTO `slice_engines` (`id`, `engine_name`, `engine_path`, `engine_description`, `is_featured`, `is_public`, `add_date`, `default_config_id`)
 VALUES
