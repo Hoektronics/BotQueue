@@ -21,8 +21,8 @@ class BotQueueAPI():
   name = 'Bumblebee'
   
   def __init__(self):
-    self.config = hive.config.get()
     self.log = logging.getLogger('botqueue')
+    self.config = hive.config.get()
 
     # Register the poster module's streaming http handlers with urllib2
     register_openers()
@@ -45,7 +45,7 @@ class BotQueueAPI():
 
   def setToken(self, token_key, token_secret):
     self.token = oauth.Token(token_key, token_secret)
-    self.client = oauth.Client(self.consumer, self.token)
+    self.client = oauth.Client(self.consumer, self.token, timeout=10)
 
   def apiCall(self, call, parameters = {}, url = False, method = "POST"):
     #what url to use?
@@ -63,12 +63,17 @@ class BotQueueAPI():
       body = body + "&%s=%s" % (k, v)
     
     # make the call
+    resp = ""
+    content = ""
     try:
+      self.log.debug("Calling %s" % url)
+
       resp, content = self.client.request(url, "POST", body)
 
       if resp['status'] != '200':
         raise NetworkError("Invalid response %s." % resp['status'])
 
+      self.log.debug("loading json")
       result = json.loads(content)
    
     #these are our known errors that typically mean the network is down.
@@ -76,6 +81,8 @@ class BotQueueAPI():
       raise NetworkError(str(ex))
     #unknown exceptions... get a stacktrace for debugging.
     except Exception as ex:
+      self.log.error("response: %s" % resp)
+      self.log.error("content: %s" % content)
       self.log.exception(ex)
       raise NetworkError(str(ex))
     

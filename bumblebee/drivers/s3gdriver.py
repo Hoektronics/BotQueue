@@ -2,7 +2,7 @@ import os, sys
 import bumbledriver
 import logging
 import time
-from threading import Thread
+from threading import Thread, Lock
 
 #goddamn ugly makerbot code.
 lib_path = os.path.abspath('./drivers')
@@ -17,22 +17,8 @@ class s3gdriver(bumbledriver.bumbledriver):
     super(s3gdriver, self).__init__(config)
 
     self.log = logging.getLogger('botqueue')
-    
-    #load our config and connect.
-    factory = makerbot_driver.MachineFactory()
-    obj = factory.build_from_port(self.config['port'])
-    self.s3g = obj.s3g
-    
-    #create our start and end sequences.
-    self.assembler = makerbot_driver.GcodeAssembler(getattr(obj, 'profile'))
-    start, end, variables = self.assembler.assemble_recipe()
-    self.start_gcode = self.assembler.assemble_start_sequence(start)
-    self.end_gcode = self.assembler.assemble_end_sequence(end)
-
-    #extra crap for parsing gcode.
-    self.sp = makerbot_driver.GcodeProcessors.SlicerProcessor()
-    self.parser = getattr(obj, 'gcodeparser')
-    self.parser.environment.update(variables)
+    self.progressLock = Lock()
+    self.s3g = False
     
   def startPrint(self, jobfile):
     try:
@@ -52,7 +38,8 @@ class s3gdriver(bumbledriver.bumbledriver):
   #this doesn't do much, just a thread to watch our thread indirectly.
   def executeFile(self):
 
-    self.currentPosition = 0
+    with self.progressLock:
+      self.currentPosition = 0
 
     #turn our leds on white
     self.s3g.set_RGB_LED(255, 255, 255, 0);
@@ -73,23 +60,50 @@ class s3gdriver(bumbledriver.bumbledriver):
     lines = self.sp.process_gcode(lines)
     for line in lines:
       self.parser.execute_line(line)
-      self.currentPosition = self.currentPosition + len(line)
+      
+      with self.progressLock:
+        self.currentPosition = self.currentPosition + len(line)
 
     #our end gcode
     for line in self.end_gcode:
       self.parser.execute_line(line)
       
   def getPercentage(self):
-    return float(self.currentPosition) / float(self.jobfile.localSize)*100
+    with self.progressLock:
+      return float(self.currentPosition) / float(self.jobfile.localSize)*100
 
   def connect(self):
     if not self.isConnected():
-      self.s3g.open()
-      super(s3gdriver, self).connect()
+      #load our config and connect.
+      factory = makerbot_driver.MachineFactory()
+
+      try:
+        obj = factory.build_from_port(self.config['port'])
+        self.s3g = obj.s3g
+
+        #create our start and end sequences.
+        self.assembler = makerbot_driver.GcodeAssembler(getattr(obj, 'profile'))
+        start, end, variables = self.assembler.assemble_recipe()
+        self.start_gcode = self.assembler.assemble_start_sequence(start)
+        self.end_gcode = self.assembler.assemble_end_sequence(end)
+
+        #extra crap for parsing gcode.
+        self.sp = makerbot_driver.GcodeProcessors.SlicerProcessor()
+        self.parser = getattr(obj, 'gcodeparser')
+        self.parser.environment.update(variables)
+        super(s3gdriver, self).connect()
+
+      except serial.SerialException as ex:
+        self.s3g = False
+        raise Exception(ex.message)
 
   def isConnected(self):
-    return self.s3g.is_open()
-                    
+    if self.s3g:
+      return self.s3g.is_open()
+    else:
+      return False
+      
   def disconnect(self):
-    self.s3g.close()
-    super(s3gdriver, self).disconnect()
+    if self.isConnected():
+      self.s3g.close()
+      super(s3gdriver, self).disconnect()
