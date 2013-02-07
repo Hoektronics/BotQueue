@@ -17,7 +17,7 @@ class NetworkError(Exception):
 
 class BotQueueAPI():
   
-  version = '0.1'
+  version = '2.0'
   name = 'Bumblebee'
   
   def __init__(self):
@@ -26,11 +26,6 @@ class BotQueueAPI():
 
     # Register the poster module's streaming http handlers with urllib2
     register_openers()
-
-    #create a unique hash that will identify this computers requests
-    if not self.config['uid']:
-      self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
-      hive.config.save(self.config)
 
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']

@@ -6,6 +6,7 @@ import hive
 import logging
 import curses
 import webbrowser
+import hashlib
 
 class BumbleBee():
   def __init__(self):
@@ -15,6 +16,21 @@ class BumbleBee():
     self.workers = []
     self.bots = []
     self.config = hive.config.get()
+    
+    #check for default info.
+    if not 'can_slice' in self.config:
+      self.config['can_slice'] = True
+      hive.config.save(self.config)
+
+    #check for default info.
+    if not 'app_url' in self.config:
+      self.config['app_url'] = "https://www.botqueue.com"
+      hive.config.save(self.config)
+
+    #create a unique hash that will identify this computers requests
+    if not self.config['uid']:
+      self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
+      hive.config.save(self.config)    
 
   def loadbot(self, pipe, data):
     try:

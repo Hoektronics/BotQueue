@@ -107,23 +107,23 @@ class printcore():
                     print "Can't read from printer (disconnected?)."
                     print e
                     self.error = True
-                    self.errorMessage = "Unable to talk with printer."
+                    self.errorMessage = "Unable to talk with printer (bad file)."
                     break
                 else:
                     self.error = True
-                    self.errorMessage = "Unable to talk with printer."
+                    self.errorMessage = "Unable to talk with printer (err1)."
                     raise
             except SerialException, e:
                 print "Can't read from printer (disconnected?)."
                 print e
                 self.error = True
-                self.errorMessage = "Unable to talk with printer."
+                self.errorMessage = "Unable to talk with printer (serial exception)."
                 break
             except OSError, e:
                 print "Can't read from printer (disconnected?)."
                 print e
                 self.error = True
-                self.errorMessage = "Unable to talk with printer."
+                self.errorMessage = "Unable to talk with printer (oserror)."
                 break
 
             if(len(line)>1):
@@ -186,7 +186,7 @@ class printcore():
         if(self.printing or not self.online or not self.printer):
             print "bailing... because of %s %s %s" % (self.printing, self.online, self.printer)
             self.error = True
-            self.errorMessage = "Unable to talk with printer."
+            self.errorMessage = "Unable to talk with printer (not connected)."
             return False
 
         self.printing=True
@@ -349,7 +349,7 @@ class printcore():
                 self.printer.write(str(command+"\n"))
             except SerialException, e:
                 self.error = True
-                self.errorMessage = "Unable to talk with printer."
+                self.errorMessage = "Unable to talk with printer (send error)."
                 print "Can't write to printer (disconnected?)."
 
 if __name__ == '__main__':

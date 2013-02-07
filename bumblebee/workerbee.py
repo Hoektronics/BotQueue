@@ -23,7 +23,7 @@ class WorkerBee():
     for row in self.global_config['workers']:
       if row['name'] == data['name']:
         self.config = row
-        
+    
     #communications with our mother bee!
     self.pipe = pipe
 

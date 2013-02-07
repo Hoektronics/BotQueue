@@ -1,16 +1,21 @@
 v2 Release - October 2012
 
-* BUMBLEBEE - test using config from v1 site straight-up.
-* BUMBLEBEE - bot w/ no config cannot grab STL based jobs.
-
+* WEB - bot w/ no slice engine / slice config cannot grab STL based jobs.
 * WEB - better client installation documentation
+* WEB - fix mysql injection issues (aka switch to mysqli)
 * BLOG - Upgrade v1 to v2 guide.
 * BLOG - detail all the new features!
-* VIDEO - take you through the botqueue flow.  file->upload->object. 2 people, 1 print.
+* BUMBLEBEE - remove old slice engines
 
 ------------------------------------------------------------------------------------
 
-v3 Release - Nov 2012
+v2.X Release - ???
+
+* Make adding bots in bumblebee easier. (No manual configuration editing)
+* Make registering a client a lot easier. (No opening a web browser on the client. I'll probably achieve this close to the same way. The only difference being that the client gives a number, and the user types that in on the server to link it. Please tell me if there are any problems with that or security flaws)
+
+
+v3 Release - ???
 
 WEBCAM SUPPORT
 

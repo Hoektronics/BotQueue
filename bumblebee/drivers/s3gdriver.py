@@ -3,6 +3,7 @@ import bumbledriver
 import logging
 import time
 from threading import Thread, Lock
+import re
 
 #goddamn ugly makerbot code.
 lib_path = os.path.abspath('./drivers')
@@ -45,8 +46,9 @@ class s3gdriver(bumbledriver.bumbledriver):
     self.s3g.set_RGB_LED(255, 255, 255, 0);
 
     # our start gcode
-    for line in self.start_gcode:
-      self.parser.execute_line(line)
+    # if self.start_gcode:
+    #   for line in self.start_gcode:
+    #     self.parser.execute_line(line)
 
     #load our file into memory.
     lines = []
@@ -56,17 +58,29 @@ class s3gdriver(bumbledriver.bumbledriver):
         break
       lines.append(line)
 
+    comment = re.compile('(;.*)')
+    comment2 = re.compile('(\(.*\))')
+
     #create new lines
     lines = self.sp.process_gcode(lines)
     for line in lines:
-      self.parser.execute_line(line)
+      line = comment.sub('', line)
+      line = comment2.sub('', line)
+      line = line.rstrip()
+      if line:
+        self.log.debug(line)
+        try:
+          self.parser.execute_line(line)
+        except Exception as ex:
+          self.log.debug(ex)
       
-      with self.progressLock:
-        self.currentPosition = self.currentPosition + len(line)
+      #with self.progressLock:
+      self.currentPosition = self.currentPosition + len(line)
 
     #our end gcode
-    for line in self.end_gcode:
-      self.parser.execute_line(line)
+    # if self.end_gcode:
+    #   for line in self.end_gcode:
+    #     self.parser.execute_line(line)
       
   def getPercentage(self):
     with self.progressLock:
@@ -84,9 +98,11 @@ class s3gdriver(bumbledriver.bumbledriver):
         #create our start and end sequences.
         self.assembler = makerbot_driver.GcodeAssembler(getattr(obj, 'profile'))
         start, end, variables = self.assembler.assemble_recipe()
-        self.start_gcode = self.assembler.assemble_start_sequence(start)
-        self.end_gcode = self.assembler.assemble_end_sequence(end)
-
+        #self.start_gcode = self.assembler.assemble_start_sequence(start)
+        #self.end_gcode = self.assembler.assemble_end_sequence(end)
+        self.log.debug(self.assembler.assemble_start_sequence(start))
+        self.assembler.assemble_end_sequence(end)
+        
         #extra crap for parsing gcode.
         self.sp = makerbot_driver.GcodeProcessors.SlicerProcessor()
         self.parser = getattr(obj, 'gcodeparser')

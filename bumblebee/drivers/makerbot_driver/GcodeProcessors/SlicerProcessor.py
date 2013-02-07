@@ -17,13 +17,11 @@ class SlicerProcessor(BundleProcessor):
 
     def __init__(self):
         super(SlicerProcessor, self).__init__()
-        self.version = '0.9.3'
+        self.version = '0.9.8'
         self.processors = [
             RpmProcessor(),
             CoordinateRemovalProcessor(),
             AbpProcessor(),
-            TemperatureProcessor(),
-            SlicerVersionChecker(self.version)
         ]
 
 

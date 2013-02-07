@@ -356,8 +356,9 @@ class GcodeParser(object):
         """Loads the home positions for the XYZ axes from the eeprom
         """
         axes = makerbot_driver.Gcode.parse_out_axes(flags)
-        self.state.lose_position(axes)
+        #self.state.lose_position(axes)
         self.s3g.recall_home_positions(axes)
+        #self.state.store_position(self.s3g.get_extended_position())
 
     def change_tool(self, codes, flags, comments):
         """Sends a chagne tool command to the machine.
