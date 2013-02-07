@@ -16,6 +16,9 @@
     along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
+/*
+ * @return DatabaseSocket
+ */
 function db($key = null)
 {
 	return Database::getSocket($key);
@@ -26,7 +29,10 @@ class Database
 	private static $sockets = array();
 
 	private function __construct() {}
-	
+
+  /*
+   * @return DatabaseSocket
+   */
 	public static function getSocket($key = null)
 	{
 		if ($key === null)
@@ -63,8 +69,8 @@ class DatabaseSocket
 		//Call the function to connect to the MySQL server
 		$this->reconnect();
 		
-		if (mysql_error() || $this->link === false)
-			trigger_error(mysql_error());
+		if ($this->link->error())
+			trigger_error(error());
 	}
 	
 	//This method actually calls the mysql_connect function to connect to the server and select the database
@@ -72,56 +78,62 @@ class DatabaseSocket
 
 	public function reconnect()
 	{
-		$this->link = mysql_connect($this->host . ":" . $this->port, $this->user, $this->pass, true);
-		if (!$this->link) {
-		  die("Failed to connect: " . mysql_error());
+		$this->link = new mysqli($this->host . ":" . $this->port, $this->user, $this->pass, RR_DB_NAME);
+		if ($this->link->connect_errno) {
+		  die("Failed to connect: " . $this->link->connect_error);
 		}
-		$this->selectDb(RR_DB_NAME);
 	}
-	
-	public function safe($text)
-	{
-		return mysql_real_escape_string($text, $this->link);
-	}
-	
+
 	public function error()
 	{
-		return mysql_error($this->link);
+		return $this->link->error();
 	}
 	
-	//This method actually calls the myqsl_query function
-	//Accepts as input an sql string and a database identfier
-	public function query($sql)
+	//This method prepares a statement to be executed
+	//Accepts as input an sql string and arguments
+  //Returns a statement to be executed
+	public function prepare($sql)
 	{
-		if (TRACK_SQL_QUERIES)
-			self::$queries[] = $sql;
-		
-		return mysql_query($sql, $this->link);
+    //TODO figure out how to track queries
+//		if (TRACK_SQL_QUERIES)
+//			self::$queries[] = $sql;
+
+    $statement = $this->link->prepare($sql);
+    return $statement;
 	}
+
+  public function execute($statement)
+  {
+    if (!$statement->execute()) {
+      echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+    }
+    return $statement;
+  }
 	
-	public function insert($sql)
-	{
-		if (TRACK_SQL_QUERIES)
-			self::$inserts[] = $sql;
-			
-		mysql_query($sql, $this->link);
-		
-		return mysql_insert_id($this->link);
-	}
+//	public function insert($sql)
+//	{
+//		if (TRACK_SQL_QUERIES)
+//			self::$inserts[] = $sql;
+//
+//		mysql_query($sql, $this->link);
+//
+//		return mysql_insert_id($this->link);
+//	}
 	
-	public function execute($sql)
-	{
-		if (TRACK_SQL_QUERIES)
-			self::$executes[] = $sql;
-			
-		mysql_query($sql, $this->link);
-		
-		return mysql_affected_rows($this->link);
-	}
+//	public function execute($sql)
+//	{
+//		if (TRACK_SQL_QUERIES)
+//			self::$executes[] = $sql;
+//
+//		mysql_query($sql, $this->link);
+//
+//		return mysql_affected_rows($this->link);
+//	}
 	
 	public function ping()
 	{
-    mysql_ping($this->link);
+    if(!$this->link->ping())
+      $this->reconnect();
 	}
 	
 	public function getArray($sql, $key = null, $life = null)
@@ -150,6 +162,7 @@ class DatabaseSocket
 		//  $data[1] = array('id' => '2', 'user_id' => '6', ...)
 		//  ...
 
+    //TODO figure out why $rs is a boolean
 		while ($row = mysql_fetch_assoc($rs))
 			$data[] = $row;
 			
@@ -204,11 +217,6 @@ class DatabaseSocket
 	public function getLink()
 	{
 		return $this->link;
-	}
-	
-	public function selectDb($database)
-	{
-		mysql_select_db($database, $this->link);
 	}
 	
 	public static function drawDbStats()

@@ -394,7 +394,7 @@ class Model
 		if (count($fields))
 		{
 			//now make our array
-			$sqlFields = implode(",\n", $fields) . "\n";
+			$sqlFields = mysql_real_escape_string(implode(",\n", $fields)) . "\n";
 			
 			//update it?
 			if ($this->id)

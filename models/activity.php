@@ -27,7 +27,7 @@
 			$sql = "
 				SELECT id, user_id
 				FROM activities
-				WHERE user_id = '" . User::$me->id . "'
+				WHERE user_id = '" . mysql_real_escape_string(User::$me->id) . "'
 				ORDER BY id DESC
 			";
 

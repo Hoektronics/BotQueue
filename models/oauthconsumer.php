@@ -11,7 +11,7 @@
 			$sql = "
 				SELECT id
 				FROM oauth_consumer
-				WHERE consumer_key = '{$key}'
+				WHERE consumer_key = '". mysql_real_escape_string($key) ."'
 			";
 			$id = db()->getValue($sql);
 
@@ -48,7 +48,7 @@
 				FROM oauth_consumer_nonce
 				WHERE timestamp = '{$timestamp}'
 					AND nonce = '{$nonce}'
-					AND consumer_id = {$this->id}
+					AND consumer_id = ". mysql_real_escape_string($this->id) ."
 			");
 
 			return ($check==1);
@@ -93,12 +93,12 @@
 		{
 			//delete all our tokens
 			db()->execute("
-				DELETE FROM oauth_token WHERE consumer_id = {$this->id}
+				DELETE FROM oauth_token WHERE consumer_id = ". mysql_real_escape_string($this->id) ."
 			");
 
 			//delete all our nonces
 			db()->execute("
-				DELETE FROM oauth_token_nonce WHERE consumer_id = {$this->id}
+				DELETE FROM oauth_token_nonce WHERE consumer_id = ". mysql_real_escape_string($this->id) ."
 			");
 			
 			parent::delete();

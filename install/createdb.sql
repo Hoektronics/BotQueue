@@ -80,7 +80,10 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `slice_job_id` int(11) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL,
   `status` enum('available', 'taken', 'slicing', 'downloading', 'qa', 'complete', 'failure') NOT NULL default 'available',
+  `created_time` datetime NOT NULL,
   `taken_time` datetime NOT NULL,
+  `finished_time` datetime NOT NULL,
+  `verified_time` datetime NOT NULL,
   `slice_complete_time` datetime NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
@@ -235,6 +238,20 @@ CREATE TABLE `slice_jobs` (
   KEY `job_id` (`job_id`),
   KEY `slice_config_id` (`slice_config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table `error_log` (
+  id` int(11) unsigned NOT NULL auto_increment,
+  `user_id` int(11) unsigned NOT NULL default '0',
+  `job_id` int(11) unsigned NOT NULL default '0',
+  `bot_id` int(11) unsigned NOT NULL default '0',
+  `queue_id` int(11) unsigned NOT NULL default '0',
+  `error_date` datetime NOT NULL,
+  PIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `job_id` (`job_id`),
+  KEY `bot_id` (`bot_id`),
+  KEY `queue_id` (`queue_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `slice_engines` (`id`, `engine_name`, `engine_path`, `engine_description`, `is_featured`, `is_public`, `add_date`, `default_config_id`)
 VALUES
