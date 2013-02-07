@@ -3,9 +3,8 @@ v2 Release - October 2012
 * WEB - bot w/ no slice engine / slice config cannot grab STL based jobs.
 * WEB - better client installation documentation
 * WEB - fix mysql injection issues (aka switch to mysqli)
-* BLOG - Upgrade v1 to v2 guide.
-* BLOG - detail all the new features!
 * BUMBLEBEE - remove old slice engines
+* RELEASE - test upgrade flow.
 
 ------------------------------------------------------------------------------------
 
