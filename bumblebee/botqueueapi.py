@@ -238,8 +238,8 @@ class BotQueueAPI():
   def listBots(self):
     return self.apiCall('listbots')
     
-  def findNewJob(self, bot_id):
-    return self.apiCall('findnewjob', {'bot_id' : bot_id})
+  def findNewJob(self, bot_id, can_slice):
+    return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})
     
   def getBotInfo(self, bot_id):
     return self.apiCall('botinfo', {'bot_id' : bot_id})
