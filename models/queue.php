@@ -72,6 +72,24 @@
 			return new Collection($sql, array('Job' => 'id'));
 		}
 		
+		public function findNewJob($bot, $can_slice = true)
+		{
+			if (!$can_slice)
+				$sliceSql = " AND file_id >= 0 ";
+				
+			$sql = "
+				SELECT id
+				FROM jobs
+				WHERE queue_id = '{$this->id}'
+					AND status = 'available'
+					$sliceSql
+				ORDER BY user_sort ASC
+			";
+			$job_id = db()->getValue($sql);
+
+			return new Job($job_id);
+		}
+		
 		public function getActiveJobs($sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			$sql = "

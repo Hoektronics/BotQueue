@@ -90,7 +90,7 @@
 				$this->setTitle("View Queue - " . $q->getName());
 				$this->set('queue', $q);
 
-				$available = $q->getJobs('available', 'user_sort', 'DESC');
+				$available = $q->getJobs('available', 'user_sort', 'ASC');
 				$this->set('available', $available->getRange(0, 20));
 				$this->set('available_count', $available->count());
 			

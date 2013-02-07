@@ -1,7 +1,6 @@
 v2 Release - October 2012
 
 * BUMBLEBEE - test using config from v1 site straight-up.
-* BUMBLEBEE - bot w/ no config cannot grab STL based jobs.
 
 * WEB - better client installation documentation
 * BLOG - Upgrade v1 to v2 guide.

@@ -488,7 +488,7 @@
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
-        header('Content-Length: ' . $file->get('size'));
+        header('Content-Length: ' . (int)$file->get('size'));
 
         //kay, send it
         readfile($file->getRealUrl());
