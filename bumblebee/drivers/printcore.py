@@ -103,28 +103,25 @@ class printcore():
             try:
                 line=self.printer.readline()
             except SelectError, e:
+                self.error = True
                 if 'Bad file descriptor' in e.args[1]:
-                    print "Can't read from printer (disconnected?)."
-                    print e
-                    self.error = True
                     self.errorMessage = "Unable to talk with printer (bad file)."
-                    break
+                    #raise
                 else:
-                    self.error = True
                     self.errorMessage = "Unable to talk with printer (err1)."
-                    raise
+                    #raise
             except SerialException, e:
-                print "Can't read from printer (disconnected?)."
-                print e
                 self.error = True
                 self.errorMessage = "Unable to talk with printer (serial exception)."
-                break
+                #raise
             except OSError, e:
-                print "Can't read from printer (disconnected?)."
-                print e
                 self.error = True
                 self.errorMessage = "Unable to talk with printer (oserror)."
-                break
+                #raise
+            except Exception, e:
+                self.error = True
+                self.errorMessage = "Unable to talk with printer (unknown)."
+                #raise
 
             if(len(line)>1):
                 self.log+=[line]
@@ -350,7 +347,8 @@ class printcore():
             except SerialException, e:
                 self.error = True
                 self.errorMessage = "Unable to talk with printer (send error)."
-                print "Can't write to printer (disconnected?)."
+                #print "Can't write to printer (disconnected?)."
+                #raise e
 
 if __name__ == '__main__':
     baud = 115200

@@ -39,8 +39,11 @@ class WorkerBee():
     self.running = False
 
     #look at our current state to check for problems.
-    self.startupCheckState()
-
+    try:
+      self.startupCheckState()
+    except Exception as ex:
+      self.exception(ex)
+      
   def startupCheckState(self):
     self.info("Bot startup")
 
@@ -407,7 +410,7 @@ class WorkerBee():
     self.log.error("%s: %s" % (self.config['name'], msg))
     
   def exception(self, msg):
-    self.log.exception("%s: %s" % (self.config['name'], msg))
+    self.log.exception("F%s: %s" % (self.config['name'], msg))
     
 class Message():
   def __init__(self, name, data = None):

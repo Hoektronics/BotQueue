@@ -31,8 +31,12 @@ class printcoredriver(bumbledriver.bumbledriver):
   def executeFile(self):
     while(self.p.printing):
       self.printing = self.p.printing
+
       self.error = self.p.error
       self.errorMessage = self.p.errorMessage
+      if self.error:
+        raise Exception(self.errorMessage)
+
       time.sleep(0.1)
 
   def getPercentage(self):
