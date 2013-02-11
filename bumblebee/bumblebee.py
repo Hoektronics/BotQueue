@@ -6,6 +6,7 @@ import hive
 import logging
 import curses
 import webbrowser
+import hashlib
 
 class BumbleBee():
   def __init__(self):
@@ -15,6 +16,21 @@ class BumbleBee():
     self.workers = []
     self.bots = []
     self.config = hive.config.get()
+    
+    #check for default info.
+    if not 'can_slice' in self.config:
+      self.config['can_slice'] = True
+      hive.config.save(self.config)
+
+    #check for default info.
+    if not 'app_url' in self.config:
+      self.config['app_url'] = "https://www.botqueue.com"
+      hive.config.save(self.config)
+
+    #create a unique hash that will identify this computers requests
+    if not self.config['uid']:
+      self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
+      hive.config.save(self.config)    
 
   def loadbot(self, pipe, data):
     try:
@@ -62,6 +78,11 @@ class BumbleBee():
     self.screen = screen
     self.screen.nodelay(1) #non-blocking, so we can refresh the screen
 
+    #Try/except for the terminals that don't support hiding the cursor
+    try: 
+        curses.curs_set(0)
+    except:
+        pass
     lastUpdate = 0
     self.quit = False
     while not self.quit:
@@ -95,7 +116,7 @@ class BumbleBee():
         if link.process.is_alive():
           threads = threads + 1
       if time.time() - lastUpdate > 1:
-        self.screen.clear()
+        self.screen.erase()
         self.screen.addstr("%s\n\n" % time.asctime())
         self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (threads, len(self.workers)))
         self.screen.refresh()
@@ -110,7 +131,7 @@ class BumbleBee():
 
   #these are the messages we know about.
   def handleMessage(self, link, message):
-    #self.log.debug("Got message %s" % message.name)
+    self.log.debug("Got message %s" % message.name)
     if message.name == 'job_start':
       link.bot = message.data.bot
       link.job = message.data.job
@@ -137,7 +158,7 @@ class BumbleBee():
       link.bot = message.data
     
   def drawMenu(self):
-    self.screen.clear()
+    self.screen.erase()
     self.screen.addstr("%s\n\n" % time.asctime())
     self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
     for link in self.workers:

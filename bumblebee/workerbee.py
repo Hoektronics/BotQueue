@@ -23,7 +23,7 @@ class WorkerBee():
     for row in self.global_config['workers']:
       if row['name'] == data['name']:
         self.config = row
-        
+    
     #communications with our mother bee!
     self.pipe = pipe
 
@@ -39,8 +39,11 @@ class WorkerBee():
     self.running = False
 
     #look at our current state to check for problems.
-    self.startupCheckState()
-
+    try:
+      self.startupCheckState()
+    except Exception as ex:
+      self.exception(ex)
+      
   def startupCheckState(self):
     self.info("Bot startup")
 
@@ -185,7 +188,7 @@ class WorkerBee():
   #get a new job to process from the mothership  
   def getNewJob(self):
     self.info("Looking for new job.")
-    result = self.api.findNewJob(self.data['id'])
+    result = self.api.findNewJob(self.data['id'], self.global_config['can_slice'])
     if (result['status'] == 'success'):
       if (len(result['data'])):
         job = result['data']
@@ -407,7 +410,7 @@ class WorkerBee():
     self.log.error("%s: %s" % (self.config['name'], msg))
     
   def exception(self, msg):
-    self.log.exception("%s: %s" % (self.config['name'], msg))
+    self.log.exception("F%s: %s" % (self.config['name'], msg))
     
 class Message():
   def __init__(self, name, data = None):

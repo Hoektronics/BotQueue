@@ -75,7 +75,7 @@
 		public function findNewJob($bot, $can_slice = true)
 		{
 			if (!$can_slice)
-				$sliceSql = " AND file_id >= 0 ";
+				$sliceSql = " AND file_id > 0 ";
 				
 			$sql = "
 				SELECT id

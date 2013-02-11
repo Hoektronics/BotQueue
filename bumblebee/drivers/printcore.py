@@ -103,28 +103,25 @@ class printcore():
             try:
                 line=self.printer.readline()
             except SelectError, e:
+                self.error = True
                 if 'Bad file descriptor' in e.args[1]:
-                    print "Can't read from printer (disconnected?)."
-                    print e
-                    self.error = True
-                    self.errorMessage = "Unable to talk with printer."
-                    break
+                    self.errorMessage = "Unable to talk with printer (bad file)."
+                    #raise
                 else:
-                    self.error = True
-                    self.errorMessage = "Unable to talk with printer."
-                    raise
+                    self.errorMessage = "Unable to talk with printer (err1)."
+                    #raise
             except SerialException, e:
-                print "Can't read from printer (disconnected?)."
-                print e
                 self.error = True
-                self.errorMessage = "Unable to talk with printer."
-                break
+                self.errorMessage = "Unable to talk with printer (serial exception)."
+                #raise
             except OSError, e:
-                print "Can't read from printer (disconnected?)."
-                print e
                 self.error = True
-                self.errorMessage = "Unable to talk with printer."
-                break
+                self.errorMessage = "Unable to talk with printer (oserror)."
+                #raise
+            except Exception, e:
+                self.error = True
+                self.errorMessage = "Unable to talk with printer (unknown)."
+                #raise
 
             if(len(line)>1):
                 self.log+=[line]
@@ -186,7 +183,7 @@ class printcore():
         if(self.printing or not self.online or not self.printer):
             print "bailing... because of %s %s %s" % (self.printing, self.online, self.printer)
             self.error = True
-            self.errorMessage = "Unable to talk with printer."
+            self.errorMessage = "Unable to talk with printer (not connected)."
             return False
 
         self.printing=True
@@ -349,8 +346,9 @@ class printcore():
                 self.printer.write(str(command+"\n"))
             except SerialException, e:
                 self.error = True
-                self.errorMessage = "Unable to talk with printer."
-                print "Can't write to printer (disconnected?)."
+                self.errorMessage = "Unable to talk with printer (send error)."
+                #print "Can't write to printer (disconnected?)."
+                #raise e
 
 if __name__ == '__main__':
     baud = 115200

@@ -17,20 +17,15 @@ class NetworkError(Exception):
 
 class BotQueueAPI():
   
-  version = '0.1'
+  version = '2.0'
   name = 'Bumblebee'
   
   def __init__(self):
-    self.config = hive.config.get()
     self.log = logging.getLogger('botqueue')
+    self.config = hive.config.get()
 
     # Register the poster module's streaming http handlers with urllib2
     register_openers()
-
-    #create a unique hash that will identify this computers requests
-    if not self.config['uid']:
-      self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
-      hive.config.save(self.config)
 
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']
@@ -45,7 +40,7 @@ class BotQueueAPI():
 
   def setToken(self, token_key, token_secret):
     self.token = oauth.Token(token_key, token_secret)
-    self.client = oauth.Client(self.consumer, self.token)
+    self.client = oauth.Client(self.consumer, self.token, timeout=10)
 
   def apiCall(self, call, parameters = {}, url = False, method = "POST"):
     #what url to use?
@@ -63,12 +58,17 @@ class BotQueueAPI():
       body = body + "&%s=%s" % (k, v)
     
     # make the call
+    resp = ""
+    content = ""
     try:
+      self.log.debug("Calling %s" % url)
+
       resp, content = self.client.request(url, "POST", body)
 
       if resp['status'] != '200':
         raise NetworkError("Invalid response %s." % resp['status'])
 
+      self.log.debug("loading json")
       result = json.loads(content)
    
     #these are our known errors that typically mean the network is down.
@@ -76,6 +76,8 @@ class BotQueueAPI():
       raise NetworkError(str(ex))
     #unknown exceptions... get a stacktrace for debugging.
     except Exception as ex:
+      self.log.error("response: %s" % resp)
+      self.log.error("content: %s" % content)
       self.log.exception(ex)
       raise NetworkError(str(ex))
     
@@ -236,8 +238,8 @@ class BotQueueAPI():
   def listBots(self):
     return self.apiCall('listbots')
     
-  def findNewJob(self, bot_id):
-    return self.apiCall('findnewjob', {'bot_id' : bot_id})
+  def findNewJob(self, bot_id, can_slice):
+    return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})
     
   def getBotInfo(self, bot_id):
     return self.apiCall('botinfo', {'bot_id' : bot_id})
