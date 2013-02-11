@@ -104,7 +104,7 @@
 
 			//get our payload.
 			$payload = unserialize(base64_decode($this->args('payload')));
-
+			
 			//handle our upload
 			try
 			{
@@ -134,6 +134,7 @@
 			//look up our real info.
 			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
 			$info = $s3->getObjectInfo($this->args('bucket'), $this->args('key'), true);
+			
 			if ($info['size'] == 0)
 			{
 				//capture for debug
@@ -181,7 +182,7 @@
 			//format the name and stuff
 			$filename = basename($this->args('key'));
 			$filename = str_replace(" ", "_", $filename);
-			$filename = preg_replace("/[^-_.+[0-9a-zA-Z]/", "", $filename);
+			$filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
 			$path = "assets/" . S3File::getNiceDir($filename);
 
 			//check our info out.

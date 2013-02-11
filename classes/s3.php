@@ -486,7 +486,7 @@ class S3 {
 	public static function copyObject($srcBucket, $srcUri, $bucket, $uri, $acl = self::ACL_PRIVATE) {
 		$rest = new S3Request('PUT', $bucket, $uri);
 		$rest->setAmzHeader('x-amz-acl', $acl);
-		$rest->setAmzHeader('x-amz-copy-source', sprintf('/%s/%s', $srcBucket, $srcUri));
+		$rest->setAmzHeader('x-amz-copy-source', sprintf('/%s/%s', $srcBucket, urlencode($srcUri)));
 		$rest = $rest->getResponse();
 		if ($rest->error === false && $rest->code !== 200)
 			$rest->error = array('code' => $rest->code, 'message' => 'Unexpected HTTP status');
