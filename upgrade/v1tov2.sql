@@ -59,10 +59,14 @@ ALTER TABLE bots add `slice_engine_id` int(11) unsigned NOT NULL;
 ALTER TABLE bots add key `slice_engine_id` (`slice_engine_id`);
 alter table bots modify status enum('idle','slicing','working','waiting','error','maintenance','offline') default 'idle';
 
-alter table jobs modify status enum('available','taken','slicing','downloading','qa','complete','failure') default 'available';
+alter table jobs modify status enum('available','taken','slicing','downloading','qa','complete','failure') not null default 'available';
+alter table jobs add created_time datetime not null after status;
+alter table jobs add taken_time datetime not null after created_time;
+alter table jobs add finished_time datetime not null after taken_time;
+alter table jobs add verified_time datetime not null after finished_time
+alter table jobs add slice_complete_time datetime not null after finished_time;
 alter table jobs add source_file_id int(11) unsigned not null default 0 after queue_id;
 alter table jobs add slice_job_id int(11) unsigned not null default 0 after file_id;
-alter table jobs add slice_complete_time datetime not null after taken_time;
 
 alter table slice_jobs drop worker_token;
 alter table slice_jobs drop worker_name;

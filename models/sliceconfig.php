@@ -69,7 +69,7 @@
       $sql = "
         SELECT id
         FROM bots
-        WHERE slice_config_id = '{$this->id}'
+        WHERE slice_config_id = '". mysql_real_escape_string($this->id) ."'
         ORDER BY name
       ";
       
@@ -81,7 +81,7 @@
       $sql = "
         SELECT id
         FROM slice_jobs
-        WHERE slice_config_id = '{$this->id}'
+        WHERE slice_config_id = '". mysql_real_escape_string($this->id) ."'
         ORDER BY id DESC
       ";
       
@@ -94,7 +94,7 @@
         UPDATE slice_jobs
         SET status = 'expired'
         WHERE status = 'complete'
-          AND slice_config_id = '{$this->id}'
+          AND slice_config_id = '". mysql_real_escape_string($this->id) ."'
       ";
       
       db()->execute($sql);

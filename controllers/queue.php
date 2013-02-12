@@ -124,7 +124,8 @@
 				$this->set('megaerror', $e->getMessage());
 			}
 		}
-		
+
+    //TODO refactor this function
 		//ajax function
 		public function update_sort()
 		{
@@ -149,7 +150,7 @@
 			}
 			
 			//find our our current max
-			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" . implode($jids, ",") . ")";
+			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" . mysql_real_escape_string(implode($jids, ",")) . ")";
 			$min = (int)db()->getValue($sql);
 			
 			//now actually update.

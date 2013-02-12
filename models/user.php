@@ -244,7 +244,7 @@
 			$sql = "
 				SELECT id, user_id
 				FROM activities
-				WHERE user_id = '{$this->id}'
+				WHERE user_id = '". mysql_real_escape_string($this->id) ."'
 				ORDER BY id DESC
 			";
 			
@@ -270,7 +270,7 @@
 			$sql = "
 				SELECT id
 				FROM queues
-				WHERE user_id = {$this->id}
+				WHERE user_id = ". mysql_real_escape_string($this->id) ."
 				ORDER BY name
 			";
 
@@ -282,7 +282,7 @@
 			$sql = "
 				SELECT id FROM queues
 				WHERE name = 'Default'
-					AND user_id = {$this->id}
+					AND user_id = ". mysql_real_escape_string($this->id) ."
 			";
 			$q = new Queue(db()->getValue($sql));
 		
@@ -303,7 +303,7 @@
 			$sql = "
 				SELECT id, queue_id, job_id
 				FROM bots
-				WHERE user_id = {$this->id}
+				WHERE user_id = ". mysql_real_escape_string($this->id) ."
 				ORDER BY name
 			";
 
@@ -318,7 +318,7 @@
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE user_id = {$this->id}
+				WHERE user_id = ". mysql_real_escape_string($this->id) ."
 					{$statusSQL}
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -331,7 +331,7 @@
 			$sql = "
 				SELECT id, consumer_id
 				FROM oauth_token
-				WHERE user_id = {$this->id}
+				WHERE user_id = ". mysql_real_escape_string($this->id) ."
 					AND type = 2
 				ORDER BY id
 			";
@@ -344,7 +344,7 @@
 			$sql = "
 				SELECT id
 				FROM oauth_consumer
-				WHERE user_id = {$this->id}
+				WHERE user_id = ". mysql_real_escape_string($this->id) ."
 				ORDER BY name
 			";
 
@@ -356,7 +356,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE user_id = '{$this->id}'
+		    WHERE user_id = '". mysql_real_escape_string($this->id) ."'
 		    ORDER BY error_date DESC
 		  ";
 		  

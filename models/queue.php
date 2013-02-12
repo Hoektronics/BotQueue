@@ -60,12 +60,12 @@
 		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
-				$statusSql = " AND status = '{$status}'";
+				$statusSql = " AND status = '".mysql_real_escape_string($status)."'";
 				
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE queue_id = '{$this->id}'
+				WHERE queue_id = '".mysql_real_escape_string($this->id)."'
 					{$statusSql}
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -95,7 +95,7 @@
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE queue_id = '{$this->id}'
+				WHERE queue_id = '".mysql_real_escape_string($this->id)."'
 					AND status IN ('available', 'taken')
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -107,7 +107,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM bots
-		    WHERE queue_id = '{$this->id}'
+		    WHERE queue_id = '".mysql_real_escape_string($this->id)."'
 		    ORDER BY last_seen DESC
 		  ";
 		  
@@ -176,7 +176,7 @@
 			$sql = "
 				SELECT status, count(status) as cnt
 				FROM jobs
-				WHERE queue_id = {$this->id}
+				WHERE queue_id = ". mysql_real_escape_string($this->id)."
 				GROUP BY status
 			";
 
@@ -201,7 +201,7 @@
 				SELECT sum(taken_time - created_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - created_time) as total
 				FROM jobs
 				WHERE status = 'complete'
-					AND queue_id = {$this->id}
+					AND queue_id = ". mysql_real_escape_string($this->id) ."
 			";
 
 			$stats = db()->getArray($sql);
@@ -230,7 +230,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE queue_id = '{$this->id}'
+		    WHERE queue_id = '". mysql_real_escape_string($this->id) ."'
 		    ORDER BY error_date DESC
 		  ";
 		  
