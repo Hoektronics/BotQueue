@@ -381,12 +381,12 @@ class Model
 				$val = $this->data[$key];
 
 				//slashes replacement..
-				$val = str_replace("\\\\", "\\", $val);
-				$val = str_replace("\'", "'", $val);
-				$val = str_replace("\\\"", "\"", $val);
+				//$val = str_replace("\\\\", "\\", $val);
+				//$val = str_replace("\'", "'", $val);
+				//$val = str_replace("\\\"", "\"", $val);
 
 				//add it if we have it...
-				$fields[] = "`$key` = '" . addslashes($val) . "'";
+				$fields[] = "`$key` = '" . mysql_real_escape_string($val) . "'";
 			}
 		}
 		
@@ -394,7 +394,7 @@ class Model
 		if (count($fields))
 		{
 			//now make our array
-			$sqlFields = mysql_real_escape_string(implode(",\n", $fields)) . "\n";
+			$sqlFields = implode(",\n", $fields);
 			
 			//update it?
 			if ($this->id)

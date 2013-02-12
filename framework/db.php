@@ -68,9 +68,6 @@ class DatabaseSocket
 
 		//Call the function to connect to the MySQL server
 		$this->reconnect();
-		
-		if ($this->link->error())
-			trigger_error(error());
 	}
 	
 	//This method actually calls the mysql_connect function to connect to the server and select the database
@@ -78,7 +75,7 @@ class DatabaseSocket
 
 	public function reconnect()
 	{
-		$this->link = new mysqli($this->host . ":" . $this->port, $this->user, $this->pass, RR_DB_NAME);
+		$this->link = new mysqli($this->host, $this->user, $this->pass, RR_DB_NAME, $this->port);
 		if ($this->link->connect_errno) {
 		  die("Failed to connect: " . $this->link->connect_error);
 		}
@@ -86,54 +83,92 @@ class DatabaseSocket
 
 	public function error()
 	{
-		return $this->link->error();
+		return $this->link->error;
 	}
 	
-	//This method prepares a statement to be executed
-	//Accepts as input an sql string and arguments
-  //Returns a statement to be executed
-	public function prepare($sql)
+	public function insert($sql, $data = array())
 	{
-    //TODO figure out how to track queries
-//		if (TRACK_SQL_QUERIES)
-//			self::$queries[] = $sql;
+    if (TRACK_SQL_QUERIES)
+      self::$inserts[] = array($sql, $data);
 
-    $statement = $this->link->prepare($sql);
-    return $statement;
-	}
+    //todo: prepared statements suck!!!
+    //run our query.
+    //$stmt = $this->prepareStatement($sql, $data);
+    //$stmt->execute();
+    //$stmt->close();
 
-  public function execute($statement)
-  {
-    if (!$statement->execute()) {
-      echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
-    }
-    return $statement;
+    $this->link->query($sql);
+
+    return $this->link->insert_id;
   }
-	
-//	public function insert($sql)
-//	{
-//		if (TRACK_SQL_QUERIES)
-//			self::$inserts[] = $sql;
-//
-//		mysql_query($sql, $this->link);
-//
-//		return mysql_insert_id($this->link);
-//	}
-	
-//	public function execute($sql)
-//	{
-//		if (TRACK_SQL_QUERIES)
-//			self::$executes[] = $sql;
-//
-//		mysql_query($sql, $this->link);
-//
-//		return mysql_affected_rows($this->link);
-//	}
+  
+  public function execute($sql, $data = array())
+  {
+    if (TRACK_SQL_QUERIES)
+      self::$executes[] = array($sql, $data);
+
+    //todo: prepared statements suck!!!
+    //run our query.
+    //$stmt = $this->prepareStatement($sql, $data);
+    //$stmt->execute();
+    //$stmt->close();
+
+    $this->link->query($sql);
+    
+    return $this->link->affected_rows;
+  }
+
+  public function prepareStatement($sql, $data)
+  {
+    $stmt = $this->link->prepare($sql);
+    
+    //did we even get data passed in?
+    if (!empty($data))
+    {
+      //okay, what types are these guys?
+      $types = "";
+      foreach ($data AS $key => $val)
+      {
+        if (is_string($val))
+          $types .= 's';
+        else if (is_int($val))
+          $types .= 'i';
+        else if (is_double($val))
+          $types .= 'd';
+        else
+          $types .= 'b';
+      }
+
+      //bind result needs parameters that are references
+      $refs = array($types);
+      foreach ($data AS $key => $val)
+        $refs[$key] = &$data[$key];
+
+      //magic to call bind 
+      call_user_func_array(array($stmt, 'bind_param'), $refs);
+    }
+    
+    return $stmt;
+  }
 	
 	public function ping()
 	{
     if(!$this->link->ping())
       $this->reconnect();
+	}
+	
+	public function query($sql)
+	{
+    if (TRACK_SQL_QUERIES)
+      self::$queries[] = $sql;
+
+    $link = $this->link->query($sql);
+    
+    //error?
+		if ($this->link->errno)
+			trigger_error("MYSQL ERROR ({$this->link->errno}): {$this->link->error} ($sql)");
+		
+		return $link;
 	}
 	
 	public function getArray($sql, $key = null, $life = null)
@@ -150,10 +185,6 @@ class DatabaseSocket
 		//$rs now contains a resource that can be used to extract the results of the query
 		$rs = $this->query($sql);
 
-		//error?
-		if (mysql_error())
-			trigger_error(mysql_error() . ": $sql");
-
 		//snag it - populate the $data array with the results of the mysql output
 		//$data is a numerically indexed array where each row corresponds to one row of MySQL output
 		//Each value (row) in data contains an associative array for a given row of MySQL output, for example: array('id' => '1', 'user_id' => '5', ...)
@@ -161,9 +192,7 @@ class DatabaseSocket
 		//  $data[0] = array('id' => '1', 'user_id' => '5', ...)
 		//  $data[1] = array('id' => '2', 'user_id' => '6', ...)
 		//  ...
-
-    //TODO figure out why $rs is a boolean
-		while ($row = mysql_fetch_assoc($rs))
+		while ($row = $rs->fetch_assoc())
 			$data[] = $row;
 			
 		//save it to cache?
@@ -187,7 +216,8 @@ class DatabaseSocket
 		$this->ping();
 		
 		//okay, load it from db.
-		$data = mysql_fetch_assoc($this->query($sql));
+		$rs = $this->query($sql);
+		$data = $rs->fetch_assoc();
 
 		//error?
 		if (mysql_error())
@@ -204,10 +234,6 @@ class DatabaseSocket
 	{
 		$row = $this->getRow($sql, $key, $life);
 
-		//error?
-		if (mysql_error())
-			trigger_error(mysql_error() . ": $sql");
-		
 		if (is_array($row) && count($row))
 			return array_shift($row);
 		
@@ -254,5 +280,4 @@ class DatabaseSocket
 		echo "\n";
 	}
 }
-
 ?>
