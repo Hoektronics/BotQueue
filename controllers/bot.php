@@ -202,6 +202,98 @@
 				$this->setTitle("Bot Edit - Error");
 			}			
 		}
+		
+		public function dropjob()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+        if (!($bot->get('status') == 'slicing' || $bot->get('status') == 'working'))
+          throw new Exception("Bot must be slicing or working to drop a job.");
+        $job = $bot->getCurrentJob();
+        if (!$job->isHydrated())
+          throw new Exception("Job must be a real job.");
+        if (!$bot->canDrop($job))
+          throw new Exception("Job cannot be dropped.");
+
+				$this->setTitle('Drop Job - ' . $bot->getName() . " - " . $job->getName());
+
+				//load up our form.
+				$form = $this->_createJobDropForm($bot, $job);
+				$form->action = $bot->getUrl() . "/dropjob";
+
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+          $bot->dropJob($job);
+
+          //do we want to delete the job?
+          if ($form->data('delete_job'))
+            $job->delete();
+          
+          //do we want to go offline?
+          if ($form->data('take_offline'))
+          {
+            $bot->set('status', 'offline');
+            $bot->save();
+          }
+          
+					Activity::log("dropped the job " . $job->getLink() . ".");
+				
+					$this->forwardToUrl($bot->getUrl());						
+				}
+				
+				$this->set('form', $form);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("Bot Drop Job - Error");
+			}			
+		}
+		
+		public function _createJobDropForm($bot, $job)
+		{
+			$form = new Form();
+
+			$form->add(new DisplayField(array(
+				'name' => 'bot',
+				'label' => 'Bot Name',
+				'value' => $bot->getLink()
+			)));
+
+  		$form->add(new DisplayField(array(
+  			'name' => 'job',
+  			'label' => 'Job Name',
+  			'value' => $job->getLink()
+  		)));
+
+  		$form->add(new CheckBoxField(array(
+  			'name' => 'take_offline',
+  			'label' => 'Take Offline',
+  			'help' => 'Should the bot be taken offline afterwards?',
+  			'value' => true
+  		)));
+  		
+			$form->add(new CheckBoxField(array(
+				'name' => 'delete_job',
+				'label' => 'Delete Job',
+				'help' => 'Do you want to delete this job?',
+				'value' => false
+			)));
+			
+			return $form;
+		}
 
 		public function delete()
 		{

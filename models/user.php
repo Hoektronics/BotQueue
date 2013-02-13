@@ -153,6 +153,8 @@
 		
 		public static function byUsername($username)
 		{
+		  $username = mysql_real_escape_string($username);
+		  
 			//look up the token
 			$sql = "
 				SELECT id
@@ -167,6 +169,7 @@
 
 		public static function byUsernameAndPassword($username, $password)
 		{
+		  $username = mysql_real_escape_string($username);
 			$pass_hash = sha1($password);
 
 			//look up the combo.
@@ -184,6 +187,8 @@
 		
 		public static function byEmail($email)
 		{
+		  $email = mysql_real_escape_string($email);
+		  
 			//look up the token
 			$sql = "
 				SELECT id
