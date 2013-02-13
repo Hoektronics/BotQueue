@@ -85,7 +85,7 @@
     				<th>Job</th>
     				<th>Status</th>
     				<th>Elapsed</th>
-    				<th></th>
+    				<th>Progress</th>
     			</tr>
     		</thead>
     		<tbody>
@@ -97,7 +97,7 @@
     				<tr>
     					<td><?=$b->getLink()?></td>
     					<td><?=$b->getStatusHTML()?></td>
-    					<td class="muted"><?=$b->getLastSeenHTML  ()?></td>
+    					<td class="muted"><?=$b->getLastSeenHTML()?></td>
     					<? if ($j->isHydrated()): ?>
     						<td><?=$j->getLink()?></td>
     					  <td><?=$j->getStatusHTML()?></td>

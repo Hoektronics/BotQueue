@@ -332,6 +332,12 @@
 		  
 		  $elapsed = $now - $last;
 		  
+		  if ($last < 0)
+		   return "never";
+
+		  $months = floor($elapsed / (60*60*24*30));
+		  $elapsed = $elapsed - $months * 60 * 60 * 30;
+		  
 		  $days = floor($elapsed / (60*60*24));
 		  $elapsed = $elapsed - $days * 60 * 60 * 24;
 		  
@@ -339,20 +345,22 @@
 		  $elapsed = $elapsed - $hours * 60 * 60;
 		  
 		  $minutes = floor($elapsed / (60));
-		  $elapsed = $elapsed - $days * 60;
-		  
-		  $s = "";
-		  
-		  if ($days)
-		    $s .= "{$days}d";
-		  if ($hours)
-		    $s .= "{$hours}h";
-		  if ($minutes)
-		    $s .= "{$minutes}m";
-		  
-		  $s .= "{$elapsed}s ago";
-		  
-		  return $s;
+      if ($minutes > 1)
+		    $elapsed = $elapsed - $minutes * 60;
+		  		  		  
+		  if ($months)
+		    return "{$months} months";
+		  if ($days > 1)
+		    return "{$days} days ago";
+      if ($days)
+        return "{$days} day ago";
+		  if ($hours > 1)
+		    return "{$hours} hours ago";
+      if ($hours)
+        return "{$hours}:{$minutes}:{$elapsed} ago";
+		  if ($minutes > 1)
+        return "{$minutes} mins ago";
+		  return "{$elapsed}s ago";
 		}
 	}
 ?>
