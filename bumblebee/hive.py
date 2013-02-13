@@ -62,9 +62,6 @@ class URLFile():
   def getProgress(self):
     return self.progress
 
-  #see if we have some sort of caching dir setup.
-
-
   #open our local file for writing.
   def prepareLocalFile(self):
     self.cacheHit = False
@@ -108,6 +105,7 @@ class URLFile():
       #check our final md5 sum.
       if md5.hexdigest() != self.remotefile['md5']:
         self.log.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.remotefile['md5']))
+        os.unlink(self.localPath)
         raise Exception()
       else:
         self.progress = 100
