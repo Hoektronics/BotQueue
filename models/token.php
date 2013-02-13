@@ -41,9 +41,8 @@
 		{
 			$encoded = $this->getEncodedString();
 
-			//setcookie('token', $encoded, time() + (60*60*24*365*5), "/", SITE_HOSTNAME);
-			//do it for the lulz.
-			setcookie('token', $encoded, strtotime("21 Dec 2012 23:23:23 GMT"), "/", SITE_HOSTNAME);
+      //one year is just long enough to forget your password.
+			setcookie('token', $encoded, time() + 60*60*24*365, "/", SITE_HOSTNAME);
 		}
 		
 		public function getEncodedString()
