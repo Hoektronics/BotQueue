@@ -294,7 +294,7 @@ class WorkerBee():
         #check for messages like shutdown.
         self.checkMessages()
         if not self.running:
-          raise Exception("Shutting down.")
+          break;
 
         #occasionally update home base.
         try:
@@ -310,27 +310,29 @@ class WorkerBee():
           
         time.sleep(0.5)
 
-      self.info("Print finished.")
+      #did our print finish while running?
+      if self.running:
+        self.info("Print finished.")
   
-      #finish the job online, and mark as completed.
-      notified = False
-      while not notified:
-        try:
-          result = self.api.completeJob(self.data['job']['id'])
-          if result['status'] == 'success':
-            self.data = result['data']['bot']
-            notified = True
-            #notify the queen bee
-            data = hive.Object()
-            data.job = self.data['job']
-            data.bot = self.data
-            message = Message('job_end', data)
-            self.pipe.send(message)
-          else:
-            raise Exception("Error notifying mothership: %s" % result['error'])
-        except botqueueapi.NetworkError as e:
-          self.warning("Internet down: %s" % e)
-          time.sleep(10)
+        #finish the job online, and mark as completed.
+        notified = False
+        while not notified:
+          try:
+            result = self.api.completeJob(self.data['job']['id'])
+            if result['status'] == 'success':
+              self.data = result['data']['bot']
+              notified = True
+              #notify the queen bee
+              data = hive.Object()
+              data.job = self.data['job']
+              data.bot = self.data
+              message = Message('job_end', data)
+              self.pipe.send(message)
+            else:
+              raise Exception("Error notifying mothership: %s" % result['error'])
+          except botqueueapi.NetworkError as e:
+            self.warning("Internet down: %s" % e)
+            time.sleep(10)
     except Exception as ex:
       self.exception(ex)
       self.errorMode(ex)
@@ -381,9 +383,9 @@ class WorkerBee():
   def handleMessage(self, message):
     self.log.debug("Got message %s" % message.name)
     if message.name == 'go_online':
-      self.data['status'] = 'idle'
-    elif message.name == 'go_offline':
       self.goOnline()
+    elif message.name == 'go_offline':
+      self.goOffline()
     elif message.name == 'pause_job':
       self.pauseJob()
     elif message.name == 'resume_job':

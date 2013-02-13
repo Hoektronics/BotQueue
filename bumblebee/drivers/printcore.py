@@ -21,6 +21,19 @@ from select import error as SelectError
 import time, getopt, sys
 import logging
 
+# create logger with 'spam_application'
+log = logging.getLogger('printcore')
+log.setLevel(logging.DEBUG)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s')
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('printcore.log')
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+log.addHandler(fh)
+
 class printcore():
     def __init__(self,port=None,baud=None):
         """Initializes a printcore instance. Pass the port and baud rate to connect immediately
@@ -41,7 +54,6 @@ class printcore():
         self.resendfrom=-1
         self.paused=False
         self.sentlines={}
-        self.log=[]
         self.sent=[]
         self.tempcb=None#impl (wholeline)
         self.recvcb=None#impl (wholeline)
@@ -55,18 +67,7 @@ class printcore():
         self.error = False
         self.errorMessage = None
         
-        # create logger with 'spam_application'
         self.log = logging.getLogger('printcore')
-        self.log.setLevel(logging.DEBUG)
-
-        # create formatter and add it to the handlers
-        formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s')
-
-        # create file handler which logs even debug messages
-        fh = logging.FileHandler('printcore.log')
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(formatter)
-        self.log.addHandler(fh)
         
         # this is dumb, don't automatically connect!!!
         #if port is not None and baud is not None:
@@ -141,7 +142,6 @@ class printcore():
                 self.log.exception(e)
 
             if(len(line)>1):
-                #self.log+=[line]
                 if self.recvcb is not None:
                     try:
                         self.recvcb(line)
@@ -181,7 +181,7 @@ class printcore():
                 #callback for errors
                 pass
             if line.lower().startswith("resend") or line.startswith("rs"):
-                self.log.error("RESEND: %s") % line
+                self.log.error("RESEND: %s" % line)
                 try:
                     toresend=int(line.replace("N:"," ").replace("N"," ").replace(":"," ").split()[-1])
                 except:
@@ -275,7 +275,6 @@ class printcore():
             #print "in printcore thread"
             #time.sleep(1)
             self._sendnext()
-        self.log=[]
         self.sent=[]
         if self.endcb is not None:
             try:
