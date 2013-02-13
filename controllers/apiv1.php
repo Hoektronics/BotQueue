@@ -563,12 +563,15 @@
 			
 			if (!$bot->isMine())
 				throw new Exception("This bot is not yours.");
+				
+			//can we slice?
+			$can_slice = ($this->args('can_slice') && $bot->get('slice_engine_id') && $bot->get('slice_config_id'));
 
 			//load up our data.
 			$data = array();	
-			$jobs = $bot->getQueue()->getJobs('available')->getRange(0, 1);
-			if (!empty($jobs))
-				$data = $jobs[0]['Job']->getAPIData();
+			$job = $bot->getQueue()->findNewJob($bot, $can_slice);
+			if ($job->isHydrated())
+				$data = $job->getAPIData();
 			
 			//record our bot as having checked in.
 			$bot->set('last_seen', date("Y-m-d H:i:s"));

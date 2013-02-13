@@ -82,7 +82,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM slice_configs
-		    WHERE engine_id = '{$this->id}'
+		    WHERE engine_id = '". mysql_real_escape_string($this->id) ."'
 		    ORDER BY config_name
 		  ";
 		  
@@ -94,7 +94,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM slice_configs
-		    WHERE engine_id = '{$this->id}'
+		    WHERE engine_id = '". mysql_real_escape_string($this->id) ."'
 		      AND (user_id = '" . User::$me->id . "' OR id = '" . $this->get('default_config_id') . "')
 		    ORDER BY config_name
 		  ";

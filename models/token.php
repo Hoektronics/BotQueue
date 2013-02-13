@@ -29,7 +29,7 @@
 			$sql = "
 				SELECT id
 				FROM tokens
-				WHERE hash = '$token'
+				WHERE hash = '".mysql_real_escape_string($token)."'
 			";
 			$id = db()->getValue($sql);
 			

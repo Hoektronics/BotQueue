@@ -137,7 +137,7 @@
 			}
 			else
 			{
-				$start = strtotime($this->get('created_time'));
+				$start = strtotime($this->get('taken_time'));
 				$end = strtotime($this->get('verified_time'));
 			}
 			
@@ -186,7 +186,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE job_id = '{$this->id}'
+		    WHERE job_id = '".mysql_real_escape_string($this->id)."'
 		    ORDER BY error_date DESC
 		  ";
 		  

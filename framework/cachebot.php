@@ -505,14 +505,15 @@ class EasyDBCache extends EasyCache
 					$rval[$id] = false;	
 			
 				//do our query
-				$rs = db()->query("
-					SELECT ec.*, ec.expire_date <= NOW() AS expired
+        $sql = "SELECT ec.*, ec.expire_date <= NOW() AS expired
 					FROM $this->table ec
-					WHERE ec.id IN ('" . implode("', '", $key) . "')
-				");
+					WHERE ec.id IN ('?')";
+        $statement = db()->prepare($sql);
+        $statement->bind_param("s", implode("', '", $key));
+				db()->execute($statement);
 
 				//get them all
-				while ($ar = mysql_fetch_assoc($rs))
+				while ($ar = $statement->get_result()->fetch_assoc())
 				{
 					//what one?
 					$id = $ar['id'];

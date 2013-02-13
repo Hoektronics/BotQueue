@@ -371,7 +371,6 @@ class XML_RPC2_Server_Method
             'array' => 'array',
             'float' => 'double',
             'double' => 'double',
-            'array' => 'array',
             'struct' => 'array',
             'assoc' => 'array',
             'structure' => 'array',
