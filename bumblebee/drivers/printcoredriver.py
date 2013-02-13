@@ -11,7 +11,6 @@ class printcoredriver(bumbledriver.bumbledriver):
     
     self.p = printcore.printcore()
     self.p.loud = False
-    time.sleep(2)
     self.log = logging.getLogger('botqueue')
 
   def startPrint(self, jobfile):
@@ -25,6 +24,7 @@ class printcoredriver(bumbledriver.bumbledriver):
       Thread(target=self.printThreadEntry).start()
     except Exception as ex:
       self.log.error("Error starting print: %s" % ex)
+      self.disconnect()
       raise ex
 
   #this doesn't do much, just a thread to watch our thread indirectly.
@@ -35,9 +35,12 @@ class printcoredriver(bumbledriver.bumbledriver):
       self.error = self.p.error
       self.errorMessage = self.p.errorMessage
       if self.error:
+        self.disconnect()
         raise Exception(self.errorMessage)
 
       time.sleep(0.1)
+    time.sleep(1)
+    self.disconnect()
 
   def getPercentage(self):
     return self.p.get_percentage()
@@ -55,7 +58,7 @@ class printcoredriver(bumbledriver.bumbledriver):
     super(printcoredriver, self).reset()
 
   def isConnected(self):
-    return self.p.online
+    return self.p.online and self.p.printer
     
   def connect(self):
     if not self.isConnected():
@@ -63,5 +66,6 @@ class printcoredriver(bumbledriver.bumbledriver):
       super(printcoredriver, self).connect()
     
   def disconnect(self):
-    self.p.disconnect()
-    super(printcoredriver, self).disconnect()
+    if self.isConnected():
+      self.p.disconnect()
+      super(printcoredriver, self).disconnect()

@@ -37,6 +37,9 @@ class WorkerBee():
     self.driver = False
     self.cacheHit = False
     self.running = False
+    
+    #load up our driver
+    self.initializeDriver()
 
     #look at our current state to check for problems.
     try:
@@ -46,9 +49,6 @@ class WorkerBee():
       
   def startupCheckState(self):
     self.info("Bot startup")
-
-    #always connect to driver.
-    self.initializeDriver()
 
     #we shouldn't startup in a working state... that implies some sort of error.
     if (self.data['status'] == 'working'):
@@ -76,20 +76,20 @@ class WorkerBee():
     self.pipe.send(msg)
 
   def initializeDriver(self):
-    try:
-      if self.driver:
-        self.driver.disconnect()
-    except Exception as ex:
-      self.exception("Disconnecting driver: %s" % ex)
+    #try:
+    #  if self.driver:
+    #    self.driver.disconnect()
+    #except Exception as ex:
+    #  self.exception("Disconnecting driver: %s" % ex)
       
     try:
       self.driver = self.driverFactory()
-      self.debug("Connecting to driver.")
-      self.driver.connect()
+      #self.debug("Connecting to driver.")
+      #self.driver.connect()
     except Exception as ex:
       self.exception(ex) #dump a stacktrace for debugging.
       self.errorMode(ex)
-      self.driver.disconnect()
+      #self.driver.disconnect()
 
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
@@ -152,11 +152,11 @@ class WorkerBee():
             self.exception(e)
           if self.data['status'] == 'idle':
             self.info("Going online.");
-            self.initializeDriver()
           else:
             time.sleep(10) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
+      self.driver.disconnect()
       raise ex
 
     self.debug("Exiting.")
