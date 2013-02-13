@@ -2,17 +2,17 @@
 	<div class="span6">
 		<h2>Bumblebee - Official Client App</h2>
 		<p>
-			Bumblebee is the software that runs on your computer itself and turns it into a herder of bots.  This application will pull down jobs from BotQueue.com, and direct your 3D printer to create them.  To get nerdy, it is a cross-platform (w/m/l) python app designed to interface with BotQueue.  It is alpha software and currently only has a commandline interface.
+			Bumblebee is the software that runs on your computer itself and turns it into a herder of bots.  This application will pull down jobs from BotQueue.com, and direct your 3D printer to create them.  Bumblebee is Mac / Linux only.  It is alpha software and runs from the command line.  Most interaction happens through the website.
 		</p>
 		<p>
 			It is can control the following types of machines:
 			<ul>
 				<li>Most RepRap Machines (w/ <a href="https://github.com/grbl/grbl/">grbl</a>, <a href="https://github.com/kliment/Sprinter">Sprinter</a>, <a href="https://github.com/ErikZalm/Marlin/">marlin</a>, etc)</li>
+				<li>MakerBot Replicator - experimental / shitty driver that barely works.</li>
 			</ul>
 		</p>
-		<h3>Getting and Using Bumblebee</h3>
 		<p>
-			Bumblebee is currently under development, and a release will be made soon.  In the meantime, you can get it from the <a href="https://github.com/Hoektronics/BotQueue">BotQueue github repository</a>.
+			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is <strong>v0.1.0</strong>.
 		</p>
 		<p>
 		  For instructions on how to install and configure Bumblebee, please see the <a href="/help">help</a> page.

@@ -2,7 +2,6 @@ v2 Release - October 2012
 
 * WEB - add drop job flow to website for printing / slicing jobs.
 * BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
-* WEB - better client installation documentation
 * RELEASE - test upgrade flow.
 
 ------------------------------------------------------------------------------------
