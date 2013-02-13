@@ -164,16 +164,21 @@ class WorkerBee():
   #get bot info from the mothership
   def getOurInfo(self):
     self.debug("Looking up bot #%s." % self.data['id'])
-    result = self.api.getBotInfo(self.data['id'])
-    if (result['status'] == 'success'):
-      self.data = result['data']
-    else:
-      self.error("Error looking up bot info: %s" % result['error'])
-      raise Exception("Error looking up bot info: %s" % result['error'])
+    
+    try:
+      result = self.api.getBotInfo(self.data['id'])
+      if (result['status'] == 'success'):
+        self.data = result['data']
+      else:
+        self.error("Error looking up bot info: %s" % result['error'])
+        raise Exception("Error looking up bot info: %s" % result['error'])
 
-    #notify the mothership of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
+      #notify the mothership of our status.
+      msg = Message('bot_update', self.data)
+      self.pipe.send(msg)
+    except botqueueapi.NetworkError as e:
+      self.warning("Internet down: %s" % e)
+      time.sleep(10)
 
   #get bot info from the mothership
   def getJobInfo(self):
@@ -412,7 +417,7 @@ class WorkerBee():
     self.log.error("%s: %s" % (self.config['name'], msg))
     
   def exception(self, msg):
-    self.log.exception("F%s: %s" % (self.config['name'], msg))
+    self.log.exception("%s: %s" % (self.config['name'], msg))
     
 class Message():
   def __init__(self, name, data = None):

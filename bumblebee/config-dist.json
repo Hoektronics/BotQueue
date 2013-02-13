@@ -14,8 +14,14 @@
 	},
 	"workers" : [
 		{
-			"name" : "Zoltron6",
+			"name" : "Dummy Fake Printer",
 			"driver" : "dummy"
-		}
+		},
+		{
+  		"name": "Reprap Style Printer",
+  		"driver" : "printcore",
+  		"port" : "/dev/tty.usbmodem123",
+  		"baud" : "250000"
+  	}
 	]
 }
