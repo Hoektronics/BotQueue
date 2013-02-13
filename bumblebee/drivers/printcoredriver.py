@@ -1,8 +1,8 @@
 import bumbledriver
 import printcore
 import time
-from threading import Thread
 import logging
+from threading import Thread
 
 #todo: this whole thing sucks.  we need a much better way to interface with this.
 class printcoredriver(bumbledriver.bumbledriver):
