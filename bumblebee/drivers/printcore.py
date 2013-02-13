@@ -21,9 +21,22 @@ from select import error as SelectError
 import time, getopt, sys
 import logging
 
+# create logger with 'spam_application'
+log = logging.getLogger('printcore')
+log.setLevel(logging.DEBUG)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s')
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('printcore.log')
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+log.addHandler(fh)
+
 class printcore():
     def __init__(self,port=None,baud=None):
-        """Initializes a printcore instance. Pass the port and baud rate to connect immediately
+        """Initializes a printcore instance.
         """
         self.baud=None
         self.port=None
@@ -41,7 +54,6 @@ class printcore():
         self.resendfrom=-1
         self.paused=False
         self.sentlines={}
-        self.log=[]
         self.sent=[]
         self.tempcb=None#impl (wholeline)
         self.recvcb=None#impl (wholeline)
@@ -54,40 +66,11 @@ class printcore():
         self.greetings=['start','Grbl ']
         self.error = False
         self.errorMessage = None
-        
-        # create logger with 'spam_application'
+        self.listenThread = None
         self.log = logging.getLogger('printcore')
-        self.log.setLevel(logging.DEBUG)
 
-        # create formatter and add it to the handlers
-        formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s')
-
-        # create file handler which logs even debug messages
-        fh = logging.FileHandler('printcore.log')
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(formatter)
-        self.log.addHandler(fh)
-        
-        # this is dumb, don't automatically connect!!!
-        #if port is not None and baud is not None:
-        #    #print port, baud
-        #    self.connect(port, baud)
-        #    #print "connected\n"
-        
-        
-    def disconnect(self):
-        """Disconnects from printer and pauses the print
-        """
-        if(self.printer):
-            self.log.info("Disconnecting from serial")
-            self.printer.close()
-        self.printer=None
-        self.online=False
-        self.printing=False
-        self.error=False
-        
     def connect(self,port=None,baud=None):
-        """Set port and baudrate if given, then connect to printer
+        """Connect to printer
         """
         if(self.printer):
             self.disconnect()
@@ -98,7 +81,20 @@ class printcore():
         if self.port is not None and self.baud is not None:
             self.log.info("Connecting to %s @ %s" % (self.port, self.baud))
             self.printer=Serial(self.port,self.baud,timeout=5)
-            Thread(target=self._listen).start()
+            self.listenThread = Thread(target=self._listen)
+            self.listenThread.start()
+        
+    def disconnect(self):
+        """Disconnects from printer
+        """
+        self.log.info("Disconnecting from serial")
+        if self.printer:
+          self.printer.close()
+          self.listenThread.join(10)
+        self.printer=None
+        self.online=False
+        self.printing=False
+        self.error=False
             
     def reset(self):
         """Reset the printer
@@ -116,17 +112,21 @@ class printcore():
         time.sleep(1.0)
         self.send_now("M105")
         while(True):
-            if(not self.printer or not self.printer.isOpen):
+            if not self.printer or not self.printer.isOpen():
+                self.log.info("Printer closed, shutting down.")
                 break
             try:
                 line=self.printer.readline()
             except SelectError, e:
-                self.error = True
-                self.log.exception(e)
+                #TODO: the printcore driver will end before it gets the OKs back from the last commands.
+                #FIXME: someday.
                 if 'Bad file descriptor' in e.args[1]:
-                    self.errorMessage = "Unable to talk with printer (bad file)."
+                    self.errorMessage = "Unable to talk with printer (bad file descriptor - ok at end of print)."
+                    self.log.info(self.errorMessage)
                 else:
+                    self.error = True
                     self.errorMessage = "Unable to talk with printer (err1)."
+                    self.log.exception(e)
             except SerialException, e:
                 self.log.exception(e)
                 self.error = True
@@ -141,7 +141,6 @@ class printcore():
                 self.log.exception(e)
 
             if(len(line)>1):
-                #self.log+=[line]
                 if self.recvcb is not None:
                     try:
                         self.recvcb(line)
@@ -181,7 +180,7 @@ class printcore():
                 #callback for errors
                 pass
             if line.lower().startswith("resend") or line.startswith("rs"):
-                self.log.error("RESEND: %s") % line
+                self.log.error("RESEND: %s" % line)
                 try:
                     toresend=int(line.replace("N:"," ").replace("N"," ").replace(":"," ").split()[-1])
                 except:
@@ -275,7 +274,6 @@ class printcore():
             #print "in printcore thread"
             #time.sleep(1)
             self._sendnext()
-        self.log=[]
         self.sent=[]
         if self.endcb is not None:
             try:
@@ -336,6 +334,7 @@ class printcore():
                 self.clear=True
             self.queueindex+=1
         #okay, we're all out of lines now.
+        #todo: fix this so we wait for the rest of the okays from previously sent lines.
         else:
             #okay, we must be done!
             self.printing=False
