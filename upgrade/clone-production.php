@@ -12,6 +12,11 @@
   $cmd = "/usr/bin/mysqldump -u root devqueue > devqueue.sql";
   passthru($cmd);
   
+  //delete our dev db.
+  db()->execute("DROP DATABASE devqueue");
+  db()->execute("CREATE DATABASE devqueue");
+  db()->selectDb("devqueue");
+    
   //overwrite our dev database
   echo "Importing production data.\n";
   $cmd = "/usr/bin/mysql -u root devqueue < botqueue.sql";
@@ -40,14 +45,6 @@
     $s3->copyToBucket(AMAZON_S3_BUCKET_NAME);
     echo $id+1 . " / " . count($ids) . " / " . $s3->getName() . "\n";
   }
-  
-  //overwrite our dev database
-  echo "Upgrading v1 to v2.\n";
-  $cmd = "/usr/bin/mysql -u root devqueue < v1tov2.sql";
-  passthru($cmd);
-  
-  //temporary hack to make debug easier
-  db()->execute("UPDATE bots SET slice_config_id = 1, slice_engine_id = 1");
   
   //finished!!!!
   echo "\nProduction clone complete in " . round((microtime(true) - $start_time), 2) . " seconds.\n";

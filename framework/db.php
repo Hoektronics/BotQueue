@@ -245,6 +245,11 @@ class DatabaseSocket
 		return $this->link;
 	}
 	
+	public function selectDb($db)
+	{
+	  return $this->link->select_db($db);
+	}
+	
 	public static function drawDbStats()
 	{
 		echo "\nDB Activity.\n";

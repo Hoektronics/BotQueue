@@ -1,8 +1,8 @@
 v2 Release - October 2012
 
-* WEB - add drop job flow to website for printing / slicing jobs.
-* BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
-* RELEASE - test upgrade flow.
+* RELEASE - make 0.1.0 release of bumblebee.
+* RELEASE - update createdb.sql with v2 schema.
+* PUSH IT LIVE!
 
 ------------------------------------------------------------------------------------
 
@@ -10,7 +10,8 @@ v2.X Release - ???
 
 * Make adding bots in bumblebee easier. (No manual configuration editing)
 * Make registering a client a lot easier. (No opening a web browser on the client. I'll probably achieve this close to the same way. The only difference being that the client gives a number, and the user types that in on the server to link it. Please tell me if there are any problems with that or security flaws)
-
+* WEB - add drop job flow to website for printing / slicing jobs.
+* BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
 
 v3 Release - ???
 
