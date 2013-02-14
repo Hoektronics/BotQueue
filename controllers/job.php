@@ -137,22 +137,18 @@
 
 				$this->setTitle('Edit Job - ' . $job->getName());
 				$this->set('job', $job);
-
-				//load up our queues.
-				$queues = User::$me->getQueues()->getAll();
-				foreach ($queues AS $row)
-				{
-					$q = $row['Queue'];
-					$data[$q->id] = $q->getName();
-				}
-				$this->set('queues', $data);
 				
-				if ($this->args('submit'))
+				//load up our form.
+				$form = $this->_createEditForm($job);
+				$form->action = $job->getUrl() . "/edit";
+
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
 				{
-					$queue = new Queue($this->args('queue_id'));
+					$queue = new Queue($form->data('queue_id'));
 					if (!$queue->canAdd())
 						throw new Exception("That is not a valid queue.");
-					
+
 					$job->set('queue_id', $queue->id);
 					$job->save();
 
@@ -161,20 +157,37 @@
 					$this->forwardToUrl($job->getUrl());
 				}
 				
-				//errors?
-				if (!$this->get('megaerror'))
-				{
-					$this->set('file', $job->getFile());
-					$this->set('queue', $job->getQueue());
-					$this->set('bot', $job->getBot());
-					$this->set('creator', $job->getUser());
-				}
+			  $this->set('form', $form);
 			}
 			catch (Exception $e)
 			{
 				$this->setTitle('Edit Job - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
+		}
+		
+		public function _createEditForm($job)
+		{
+		  //load up our queues.
+			$queues = User::$me->getQueues()->getAll();
+			foreach ($queues AS $row)
+			{
+				$q = $row['Queue'];
+				$qs[$q->id] = $q->getName();
+			}
+			
+			$form = new Form();
+			
+			$form->add(new SelectField(array(
+				'name' => 'queue_id',
+				'label' => 'Queue',
+				'help' => 'Which queue does this bot pull jobs from?',
+				'required' => true,
+				'value' => $job->get('queue_id'),
+				'options' => $qs
+			)));
+			
+			return $form;
 		}
 
 		public function delete()
