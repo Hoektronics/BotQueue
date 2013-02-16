@@ -90,6 +90,8 @@
 				$this->set('bot', $bot);
 				$this->set('queue', $bot->getQueue());
 				$this->set('job', $bot->getCurrentJob());
+				$this->set('engine', $bot->getSliceEngine());
+				$this->set('config', $bot->getSliceConfig());
 
 				$jobs = $bot->getJobs(null, 'user_sort', 'DESC');
 				$this->set('jobs', $jobs->getRange(0, 50));
@@ -122,7 +124,7 @@
 				if (!$bot->isMine())
 					throw new Exception("You cannot view that bot.");
 				if ($bot->get('status') == 'working' && $this->args('status') == 'offline')
-					throw new Exception("You cannot take a working bot offline through the web interface.  Use the client app instead.");
+					throw new Exception("You cannot take a working bot offline through the web interface.  You must stop the job from the client first.");
 				
 				if ($this->args('status') == 'offline')
 					Activity::log("took the bot " . $bot->getLink() . " offline.");
@@ -145,6 +147,11 @@
 		{
 			$this->setArg('bots');
 		}
+
+    public function draw_bots_small()
+    {
+      $this->setArg('bots');
+    }
 		
 		public function edit()
 		{
@@ -172,6 +179,8 @@
 				if ($form->checkSubmitAndValidate($this->args()))
 				{
 					$bot->set('queue_id', $form->data('queue_id'));
+					$bot->set('slice_engine_id', $form->data('slice_engine_id'));
+					$bot->set('slice_config_id', $form->data('slice_config_id'));
 					$bot->set('name', $form->data('name'));
 					$bot->set('manufacturer', $form->data('manufacturer'));
 					$bot->set('model', $form->data('model'));
@@ -192,6 +201,98 @@
 				$this->set('megaerror', $e->getMessage());
 				$this->setTitle("Bot Edit - Error");
 			}			
+		}
+		
+		public function dropjob()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+        if (!($bot->get('status') == 'slicing' || $bot->get('status') == 'working'))
+          throw new Exception("Bot must be slicing or working to drop a job.");
+        $job = $bot->getCurrentJob();
+        if (!$job->isHydrated())
+          throw new Exception("Job must be a real job.");
+        if (!$bot->canDrop($job))
+          throw new Exception("Job cannot be dropped.");
+
+				$this->setTitle('Drop Job - ' . $bot->getName() . " - " . $job->getName());
+
+				//load up our form.
+				$form = $this->_createJobDropForm($bot, $job);
+				$form->action = $bot->getUrl() . "/dropjob";
+
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+          $bot->dropJob($job);
+
+          //do we want to delete the job?
+          if ($form->data('delete_job'))
+            $job->delete();
+          
+          //do we want to go offline?
+          if ($form->data('take_offline'))
+          {
+            $bot->set('status', 'offline');
+            $bot->save();
+          }
+          
+					Activity::log("dropped the job " . $job->getLink() . ".");
+				
+					$this->forwardToUrl($bot->getUrl());						
+				}
+				
+				$this->set('form', $form);
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("Bot Drop Job - Error");
+			}			
+		}
+		
+		public function _createJobDropForm($bot, $job)
+		{
+			$form = new Form();
+
+			$form->add(new DisplayField(array(
+				'name' => 'bot',
+				'label' => 'Bot Name',
+				'value' => $bot->getLink()
+			)));
+
+  		$form->add(new DisplayField(array(
+  			'name' => 'job',
+  			'label' => 'Job Name',
+  			'value' => $job->getLink()
+  		)));
+
+  		$form->add(new CheckBoxField(array(
+  			'name' => 'take_offline',
+  			'label' => 'Take Offline',
+  			'help' => 'Should the bot be taken offline afterwards?',
+  			'value' => true
+  		)));
+  		
+			$form->add(new CheckBoxField(array(
+				'name' => 'delete_job',
+				'label' => 'Delete Job',
+				'help' => 'Do you want to delete this job?',
+				'value' => false
+			)));
+			
+			return $form;
 		}
 
 		public function delete()
@@ -277,6 +378,35 @@
 				$qs[$q->id] = $q->getName();
 			}
 
+			//load up our engines.
+	    if (User::isAdmin())
+	      $engines = SliceEngine::getAllEngines()->getAll();
+	    else
+	     $engines = SliceEngine::getPublicEngines()->getAll();
+      $engs[0] = "None";
+			foreach ($engines AS $row)
+			{
+				$e = $row['SliceEngine'];
+				$engs[$e->id] = $e->getName();
+			}
+
+      //load up our configs
+      $engine = $bot->getSliceEngine();
+      if (User::isAdmin())
+	      $configs = $engine->getAllConfigs()->getAll();
+	    else
+	      $configs = $engine->getMyConfigs()->getAll();
+      if (!empty($configs))
+      {
+  			foreach ($configs AS $row)
+  			{
+  				$c = $row['SliceConfig'];
+  				$cfgs[$c->id] = $c->getName();
+  			}
+      }
+      else
+        $cfgs[0] = "None";
+			
 			$form = new Form();
 			
 			$form->add(new TextField(array(
@@ -295,6 +425,27 @@
 				'value' => $bot->get('queue_id'),
 				'options' => $qs
 			)));
+
+  		$form->add(new SelectField(array(
+  		  'id' => 'slice_engine_dropdown',
+  			'name' => 'slice_engine_id',
+  			'label' => 'Slice Engine',
+  			'help' => 'Which slicing engine does this bot use?',
+  			'required' => true,
+  			'value' => $bot->get('slice_engine_id'),
+  			'options' => $engs,
+  			'onchange' => 'update_slice_config_dropdown(this)'
+  		)));
+
+  		$form->add(new SelectField(array(
+  		  'id' => 'slice_config_dropdown',
+  			'name' => 'slice_config_id',
+  			'label' => 'Slice Configuration',
+  			'help' => 'Which slicing configuration to use? <a href="' . $engine->getUrl() . '">click here</a> to view/edit configs.',
+  			'required' => true,
+  			'value' => $bot->get('slice_config_id'),
+  			'options' => $cfgs
+  		)));
 
 			$form->add(new TextField(array(
 				'name' => 'manufacturer',
@@ -337,6 +488,28 @@
   		)));
 					
 			return $form;
+		}
+		
+		public function slice_config_select()
+		{
+      //load up our configs
+      $engine = new SliceEngine($this->args('id'));
+      if (User::isAdmin())
+	      $configs = $engine->getAllConfigs()->getAll();
+	    else
+	      $configs = $engine->getMyConfigs()->getAll();
+      if (!empty($configs))
+      {
+  			foreach ($configs AS $row)
+  			{
+  				$c = $row['SliceConfig'];
+  				echo '<option value="' . $c->id . '">' . $c->getName() . '</option>' . "\n";
+  			}
+      }
+      else
+				echo '<option value="0">None</option>' . "\n";
+
+      exit;
 		}
 
     public function statusbutton()

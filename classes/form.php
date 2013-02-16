@@ -124,28 +124,65 @@
 		public $required = false;
 		public $hasError = false;
 		public $errorText;
-				
+		
+		public $validAttributes = array(
+		  'id',
+		  'name',
+		  'onchange',
+		  'onclick',
+		  'ondblclick',
+		  'onmousedown',
+		  'onmousemove',
+		  'onmouseover',
+		  'onmouseout',
+		  'onmouseup',
+		  'onkeydown',
+		  'onkeypress',
+		  'onkeyup',
+		  'onblur',
+		  'onchange',
+		  'onfocus',
+		  'onreset',
+		  'onselect'
+		);
+		
+		public $attributes = array();
+		
 		public function __construct($opts)
 		{
+		  //pull in our name
 			if (isset($opts['name']))
 				$this->name = $opts['name'];
 				
-			if (isset($opts['id']))
-				$this->id = $opts['id'];
-			else
-				$this->id = "i{$this->name}";
+			//pull in our id
+			if (!isset($opts['id']))
+			  $opts['id'] = "i{$this->name}";
+			$this->id = $opts['id'];
 				
 			if (isset($opts['value']))
 				$this->setValue($opts['value']);
-				
 			if (isset($opts['label']))
 				$this->label = $opts['label'];
-				
 			if (isset($opts['help']))
 				$this->help = $opts['help'];				
-
 			if (isset($opts['required']))
 				$this->required = (boolean)$opts['required'];				
+
+      foreach ($this->validAttributes AS $attr)
+      {
+  			if (isset($opts[$attr]))
+  				$this->attributes[$attr] = $opts[$attr];
+      }
+		}
+		
+		public function getAttributes()
+		{
+		  $attribs = array();
+		  if (!empty($this->attributes))
+		    foreach ($this->attributes AS $key => $val)
+		      $attribs[] = "$key=\"$val\"";
+      
+      return implode(" ", $attribs);
 		}
 
 		public function getValue()
@@ -188,6 +225,23 @@
 	{
 	}
 
+	class TextareaField extends FormField
+	{
+	  public $width;
+	  
+	  public function __construct($opts)
+		{
+			if (isset($opts['width']))
+				$this->width = $opts['width'];
+			if (!isset($opts['rows']))
+			  $opts['rows'] = 4;
+			  
+			$this->validAttributes[] = 'rows';
+				
+			parent::__construct($opts);
+		}
+	}
+
 	class CheckboxField extends FormField
 	{
 	  //checkboxes have only 2 states and are valid no matter what.
@@ -222,4 +276,51 @@
 			return true;
 		}
 	}
+	
+	class UploadField extends FormField
+	{		
+		public function validate($data)
+		{
+      //upload our file to S3
+      $file = $_FILES[$this->name];
+
+      //default to no error.
+      $this->hasError = false;        
+
+      //double check for errors.
+      if($file['size'] == 0 && $file['error'] == 0)
+        $file['error'] = 5; 
+
+      //set our value for future reference.
+      $this->setValue($file);
+
+      //these our are english translations of errors.
+      $upload_errors = array( 
+        UPLOAD_ERR_OK        => "No errors.", 
+        UPLOAD_ERR_INI_SIZE    => "File uploaded larger than allowed.", 
+        UPLOAD_ERR_FORM_SIZE    => "File uploaded larger than allowed..", 
+        UPLOAD_ERR_PARTIAL    => "File upload failed during transfer.", 
+        UPLOAD_ERR_NO_FILE        => "No file uploaded.", 
+        UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+        UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+        UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+        UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+      );
+
+      //what did we get?
+      if ($file['error'] && $this->required)
+      {
+        $this->hasError = true;
+        $this->errorText = $upload_errors[$file['error']];          
+      }
+        
+      //how'd we do?
+      return !$this->hasError;
+		}
+	}
+	
+	class WarningField extends DisplayField {}
+	class ErrorField extends DisplayField {}
+	class SuccessField extends DisplayField {}
+	class InformationField extends DisplayField {}
 ?>

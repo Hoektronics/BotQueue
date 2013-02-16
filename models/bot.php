@@ -65,6 +65,7 @@
 			$s2c = array(
 			  'idle' => 'success',
 				'working' => 'info',
+				'slicing' => 'info',
 				'waiting' => 'warning',
 				'error' => 'danger',
 				'offline' => 'inverse',
@@ -87,12 +88,12 @@
 		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
-				$statusSql = " AND status = '{$status}'";
+				$statusSql = " AND status = '" . mysql_real_escape_string($status) . "'";
 				
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE bot_id = {$this->id}
+				WHERE bot_id = " . mysql_real_escape_string($this->id) ."
 					{$statusSql}
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -104,7 +105,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE bot_id = '{$this->id}'
+		    WHERE bot_id = '". mysql_real_escape_string($this->id) ."'
 		    ORDER BY error_date DESC
 		  ";
 		  
@@ -134,7 +135,7 @@
 			return true;
 		}
 		
-		public function grabJob($job)
+		public function grabJob($job, $can_slice = true)
 		{
 			$job->set('status', 'taken');
 			$job->set('bot_id', $this->id);
@@ -145,11 +146,57 @@
 			$job = new Job($job->id);
 			if ($job->get('bot_id') != $this->id)
 				throw new Exception("Unable to lock job #{$job->id}");
+
+      //do we need to slice this job?
+      if (!$job->getFile()->isHydrated())
+      {
+        //pull in our config and make sure its legit.
+        $config = $this->getSliceConfig();
+        if (!$config->isHydrated())
+        {
+          $job->set('status', 'available');
+          $job->set('bot_id', 0);
+    			$job->set('taken_time', 0);
+          $job->save();
+
+  				throw new Exception("This bot does not have a slice engine + configuration set.");
+        }
+        
+        //is there an existing slice job w/ this exact file and config?
+        $sj = SliceJob::byConfigAndSource($config->id, $job->get('source_file_id'));
+        if ($sj->isHydrated())
+        {
+          //update our job status.
+          $job->set('slice_job_id', $sj->id);
+          $job->set('slice_complete_time', $job->get('taken_time'));
+          $job->set('file_id', $sj->get('output_id'));
+          $job->save();
+        }
+        else
+        {
+          //nope, create our slice job for processing.
+          $sj->set('user_id', User::$me->id);
+          $sj->set('job_id', $job->id);
+          $sj->set('input_id', $job->get('source_file_id'));
+          $sj->set('slice_config_id', $config->id);
+          $sj->set('slice_config_snapshot', $config->getSnapshot());
+          $sj->set('add_date', date("Y-m-d H:i:s"));
+          $sj->set('status', 'available');
+          $sj->save();
+
+          //update our job status.
+          $job->set('status', 'slicing');
+          $job->set('slice_job_id', $sj->id);
+          $job->save();         
+        }
+      }
 			
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
+			
+			return $job;
 		}
 		
 		public function canDrop($job)
@@ -207,7 +254,7 @@
 			$sql = "
 				SELECT status, count(status) as cnt
 				FROM jobs
-				WHERE bot_id = {$this->id}
+				WHERE bot_id = ". mysql_real_escape_string($this->id) ."
 				GROUP BY status
 			";
 
@@ -232,17 +279,26 @@
 				SELECT sum(verified_time - finished_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - taken_time) as total
 				FROM jobs
 				WHERE status = 'complete'
-					AND bot_id = {$this->id}
-			";
+					AND bot_id = ". mysql_real_escape_string($this->id);
 
 			$stats = db()->getArray($sql);
 			
 			$data['total_waittime'] = (int)$stats[0]['wait'];
 			$data['total_runtime'] = (int)$stats[0]['runtime'];
 			$data['total_time'] = (int)$stats[0]['total'];
-			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
-			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
-			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+			
+			if ($data['total'])
+			{
+  			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
+  			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
+  			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+			}
+			else
+			{
+  			$data['avg_waittime'] = 0;
+  			$data['avg_runtime'] = 0;
+  			$data['avg_time'] = 0;
+			}
 
 			return $data;
 		}
@@ -257,6 +313,54 @@
 			}
 			
 			parent::delete();
+		}
+		
+		public function getSliceEngine()
+		{
+		  return new SliceEngine($this->get('slice_engine_id'));
+		}
+		
+		public function getSliceConfig()
+		{
+		  return new SliceConfig($this->get('slice_config_id'));
+		}
+		
+		public function getLastSeenHTML()
+		{
+		  $now = time();
+		  $last = strtotime($this->get('last_seen'));
+		  
+		  $elapsed = $now - $last;
+		  
+		  if ($last < 0)
+		   return "never";
+
+		  $months = floor($elapsed / (60*60*24*30));
+		  $elapsed = $elapsed - $months * 60 * 60 * 30;
+		  
+		  $days = floor($elapsed / (60*60*24));
+		  $elapsed = $elapsed - $days * 60 * 60 * 24;
+		  
+		  $hours = floor($elapsed / (60*60));
+		  $elapsed = $elapsed - $hours * 60 * 60;
+		  
+		  $minutes = floor($elapsed / (60));
+      if ($minutes > 1)
+		    $elapsed = $elapsed - $minutes * 60;
+		  		  		  
+		  if ($months)
+		    return "{$months} months";
+		  if ($days > 1)
+		    return "{$days} days ago";
+      if ($days)
+        return "{$days} day ago";
+		  if ($hours > 1)
+		    return "{$hours} hours ago";
+      if ($hours)
+        return "{$hours}:{$minutes}:{$elapsed} ago";
+		  if ($minutes > 1)
+        return "{$minutes} mins ago";
+		  return "{$elapsed}s ago";
 		}
 	}
 ?>

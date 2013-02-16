@@ -1,8 +1,8 @@
 import bumbledriver
 import printcore
 import time
-from threading import Thread
 import logging
+from threading import Thread
 
 #todo: this whole thing sucks.  we need a much better way to interface with this.
 class printcoredriver(bumbledriver.bumbledriver):
@@ -11,29 +11,36 @@ class printcoredriver(bumbledriver.bumbledriver):
     
     self.p = printcore.printcore()
     self.p.loud = False
-    time.sleep(2)
     self.log = logging.getLogger('botqueue')
 
-  def startPrint(self, jobfile, filesize):
+  def startPrint(self, jobfile):
     try:
       self.printing=True
       self.connect()
       while not self.isConnected():
         time.sleep(1)
         self.log.debug("Waiting for driver to connect.")
-      self.p.startprint(jobfile)
+      self.p.startprint(jobfile.localFile)
       Thread(target=self.printThreadEntry).start()
     except Exception as ex:
       self.log.error("Error starting print: %s" % ex)
+      self.disconnect()
       raise ex
 
   #this doesn't do much, just a thread to watch our thread indirectly.
   def executeFile(self):
     while(self.p.printing):
       self.printing = self.p.printing
+
       self.error = self.p.error
       self.errorMessage = self.p.errorMessage
+      if self.error:
+        self.disconnect()
+        raise Exception(self.errorMessage)
+
       time.sleep(0.1)
+    time.sleep(1)
+    self.disconnect()
 
   def getPercentage(self):
     return self.p.get_percentage()
@@ -51,7 +58,7 @@ class printcoredriver(bumbledriver.bumbledriver):
     super(printcoredriver, self).reset()
 
   def isConnected(self):
-    return self.p.online
+    return self.p.online and self.p.printer
     
   def connect(self):
     if not self.isConnected():
@@ -59,5 +66,6 @@ class printcoredriver(bumbledriver.bumbledriver):
       super(printcoredriver, self).connect()
     
   def disconnect(self):
-    self.p.disconnect()
-    super(printcoredriver, self).disconnect()
+    if self.isConnected():
+      self.p.disconnect()
+      super(printcoredriver, self).disconnect()

@@ -48,12 +48,23 @@
 			$s2c = array(
 				'taken' => 'label-info',
 				'qa' => 'label-warning',
+				'slicing' => 'label-slicing',
 				'complete' => 'label-success',
 				'failure' => 'label-important'
 			);
 			
 			return $s2c[$status];
 		}
+
+    public function getSourceFile()
+    {
+			return new S3File($this->get('source_file_id'));
+    }
+    
+    public function getSliceJob()
+    {
+      return new SliceJob($this->get('slice_job_id'));
+    }
 		
 		public function getFile()
 		{
@@ -74,9 +85,12 @@
 		{
 			$d = array();
 			$d['id'] = $this->id;
+			$d['bot_id'] = $this->get('bot_id');
 			$d['name'] = $this->getName();
 			$d['queue'] = $this->get('queue_id');
+			$d['source_file'] = $this->getSourceFile()->getAPIData();
 			$d['file'] = $this->getFile()->getAPIData();
+			$d['slicejob'] = $this->getSliceJob()->getAPIData();
 			$d['status'] = $this->get('status');
 			$d['created_time'] = $this->get('created_time');
 			$d['taken_time'] = $this->get('taken_time');
@@ -111,7 +125,7 @@
 				$start = strtotime($this->get('created_time'));
 				$end = time();
 			}
-			elseif ($this->get('status') == 'taken' || $this->get('status') == 'downloading')
+			elseif ($this->get('status') == 'taken' || $this->get('status') == 'downloading' || $this->get('status') == 'slicing')
 			{
 				$start = strtotime($this->get('taken_time'));
 				$end = time();
@@ -123,7 +137,7 @@
 			}
 			else
 			{
-				$start = strtotime($this->get('created_time'));
+				$start = strtotime($this->get('taken_time'));
 				$end = strtotime($this->get('verified_time'));
 			}
 			
@@ -172,11 +186,23 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE job_id = '{$this->id}'
+		    WHERE job_id = '".mysql_real_escape_string($this->id)."'
 		    ORDER BY error_date DESC
 		  ";
 		  
 		  return new Collection($sql, array('ErrorLog' => 'id'));
+		}
+		
+		public static function getJobsRequiringAction()
+		{
+		  $sql = "
+		    SELECT id, queue_id, bot_id
+		    FROM jobs
+		    WHERE status = 'qa'
+		    ORDER BY finished_time ASC
+		  ";
+		  
+		  return new Collection($sql, array('Job' => 'id', 'Queue' => 'queue_id', 'Bot' => 'bot_id'));
 		}
 	}
 ?>

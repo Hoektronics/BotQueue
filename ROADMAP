@@ -1,33 +1,39 @@
 v2 Release - October 2012
 
-* WEB - DEV SITE!
-
-* WEB - Slicers + Profiles
-  * support for multiple slice engines, and versions of slice engines
-  * support for multiple different configuration files
-    * can upload config files, or edit online
-  * initially only support slic3r
-
-* WEB - Pull in files from internet (Thingiverse, GrabCAD, etc)
-  * Prereq: slicer support
-
-* WEB - multi-job prints (eg: .zip file w/ manifest)
-
-* API - implement job creation via URL download
-* API - implement job creation via HTTP file POST
-	* use Poster to send HTTP files: http://atlee.ca/software/poster/
-* API - Add computer name / id to app approval so we can show that on app page... remove access token for a certain computer.
-* API - Add callback url support for web-based apps
-
-* BUMBLEBEE - Better / faster shutdown
-
-* WEB - better client installation documentation
-* WEB - replace all appropriate form controls with new form helper class.
-* WEB - protect sql calls from db injection attacks
+* MERGE V2 into master
+* PUSH IT LIVE!
 
 ------------------------------------------------------------------------------------
 
-v3 Release - Nov 2012
+v2.X Release - ???
+
+* Make adding bots in bumblebee easier. (No manual configuration editing)
+* Make registering a client a lot easier. (No opening a web browser on the client. I'll probably achieve this close to the same way. The only difference being that the client gives a number, and the user types that in on the server to link it. Please tell me if there are any problems with that or security flaws)
+* WEB - add drop job flow to website for printing / slicing jobs.
+* BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
+
+v3 Release - ???
+
+WEBCAM SUPPORT
+
+* use 'motion' to control multiple webcams to post files to the botqueue website.
+  * http://www.chriswpage.com/2009/05/setup-an-advanced-webcam-security-system-with-ubuntu-8-04-and-motion/
+  * http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
+  * automatically create a timelapse at the end of a successful print - watch your object grow
+    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
+    * also record the user removing the part - 5 seconds? -- this adds authenticity and a human touch.
+    * bonus: you can trigger on motion once print is complete!
+  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
+    * what interval?  1 minute?
+    * make sure each image is timestamped.
+    * and watermarked with the host url.
+
+v4 Release - ???
+
+MAJOR ARCHITECTURE
+
+* WEB - replace all appropriate form controls with new form helper class.
+* WEB - protect sql calls from db injection attacks
 
 WEBSITE 
 
@@ -49,27 +55,35 @@ WEBSITE
   
 * CLIENT - support for websockets for realtime comms
 
+* when downloading file to slice, status should be "downloading"
+
 ------------------------------------------------------------------------------------
 
 Long term wants:
 
-WEBCAM SUPPORT
 
-* use 'motion' to control multiple webcams to post files to the botqueue website.
-  * http://www.chriswpage.com/2009/05/setup-an-advanced-webcam-security-system-with-ubuntu-8-04-and-motion/
-  * http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
-  * automatically create a timelapse at the end of a successful print - watch your object grow
-    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
-    * also record the user removing the part - 5 seconds? -- this adds authenticity and a human touch.
-    * bonus: you can trigger on motion once print is complete!
-  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
-    * what interval?  1 minute?
-    * make sure each image is timestamped.
-    * and watermarked with the host url.
+
+* add filament_volume field to slicejob or job
+
+* BUMBLEBEE - Better / faster shutdown
+
+* API - Add computer name / id to app approval so we can show that on app page
+* WEB - Remove access token for a certain computer.
+* API - Add callback url support for web-based apps
+
+* WEB - multi-job prints (eg: .zip file w/ manifest)
+  * pull in all files from thingiverse.com/thing:####
+
+* WEB - print grouping using slic3r
+  * modify jobs to add allow_grouping file
+  * look at job grabbing to allow multiple jobs to be grabbed
+  * look at bumblebee to allow multiple jobs to be grabbed
+  * add option to allow job to be grouped into a single print
+  * modify code to use slic3r --merge to create build plate.
+  * create high-level job group to hold currently running jobs?
 
 * WEB - Reduce Amazon requirements for non-amazon / non-public installs.
 * WEB - Public queue support
-* WEB - Webcam support
 * WEB - full page statistics for bot / queue with graphs
 
 * BUMBLEBEE - new machine discovery
@@ -92,3 +106,4 @@ WEBCAM SUPPORT
 	* Use python+webkit for UI
 * WEB - simple script for installing botqueue onto a standalone ubuntu machine
 * WEB - 100% working Amazon bootup script.
+

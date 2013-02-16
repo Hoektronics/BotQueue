@@ -50,8 +50,12 @@
 			<style>
 				body
 				{
-					background-image: url("/img/devsite.png");
+					background: #D3BECF;
 					background-repeat: repeat-all;
+				}
+				
+				div.container {
+				  background: #fff;
 				}
 			</style>
 		<? endif ?>
@@ -73,20 +77,28 @@
         <a class="brand" href="/">BotQueue</a>
         <div class="nav-collapse">
           <ul class="nav">
-            <li class="active"><a href="/">Dashboard</a></li>
+            <li><a href="/">Dashboard</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="/queue/create">Create Queue</a></li>
+                <li><a href="/upload">Create Job</a></li>
                 <li><a href="/bot/register">Register Bot</a></li>
-                <li><a href="/upload">Upload Job</a></li>
+                <li><a href="/queue/create">Create Queue</a></li>
               </ul>
             </li>
             <li><a href="/bots">Bots</a></li>
             <li><a href="/queues">Queues</a></li>
             <li><a href="/jobs">Jobs</a></li>
             <li><a href="/apps">App</a></li>
+            <li><a href="/slicers">Slicers</a></li>
             <li><a href="/help">Help</a></li>
+            <? if (User::isAdmin()): ?>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                </ul>
+              </li>
+            <? endif ?>
           </ul>
           <ul class="nav pull-right">
             <li class="divider-vertical"></li>
@@ -95,9 +107,6 @@
 	              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Hello, <?=User::$me->getName()?> <b class="caret"></b></a>
 	              <ul class="dropdown-menu">
 	                <li><a href="/preferences">Preferences</a></li>
-									<? if (User::isAdmin()): ?>
-	                	<li><a href="/admin">Admin</a></li>
-	                <? endif ?>
 									<li class="divider"></li>
 	                <li><a href="/logout">Log Out</a></li>
 	              </ul>
@@ -126,19 +135,19 @@
 	  </div>
 	<? endif ?>
 	
-	<div class="alert">
-    <strong>Warning!</strong> This project is <strong>ALPHA</strong> software and should be considered experimental.  It might work great, or not.  Be careful. Love, Hoeken &lt;3
-  </div>
-	
   <!-- Headings & Paragraph Copy -->
 	<div class="row">
 	  <div class="span12">
 			<?=$content?>
 		</div>
 	</div> <!-- end content -->
-</section>
 
-<br><br><br><br>
+  <br/><br/>
+	<div class="alert alert-info">
+    <strong>Hey You!</strong> If you run into any problems, please <a href="https://github.com/Hoektronics/BotQueue/issues/new">report a bug</a>.  Make sure to include the <strong>bumblebee/info.log</strong> file if it is client-related.
+  </div>
+
+</section>
 
 <!-- Footer -->
 <hr>
@@ -165,9 +174,9 @@
 
 </div><!-- /container -->
 
-	 <!-- Le javascript -->
-	 <!-- Placed at the end of the document so the pages load faster -->
-	 <script src="/js/botqueue.js"></script>
-	 <script src="/bootstrap/2.1.1/js/bootstrap.js"></script>
+  <!-- Le javascript -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="/js/botqueue.js"></script>
+  <script src="/bootstrap/2.1.1/js/bootstrap.js"></script>
   </body>
 </html>

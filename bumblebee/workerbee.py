@@ -5,10 +5,12 @@ import urllib2
 import os
 import sys
 import hive
+import ginsu
 import botqueueapi
 import hashlib
 import logging
 import random
+import shutil
 
 class WorkerBee():
   
@@ -21,7 +23,7 @@ class WorkerBee():
     for row in self.global_config['workers']:
       if row['name'] == data['name']:
         self.config = row
-        
+    
     #communications with our mother bee!
     self.pipe = pipe
 
@@ -35,15 +37,19 @@ class WorkerBee():
     self.driver = False
     self.cacheHit = False
     self.running = False
+    
+    #load up our driver
+    self.initializeDriver()
 
     #look at our current state to check for problems.
-    self.startupCheckState()
-
+    try:
+      self.startupCheckState()
+    except Exception as ex:
+      self.exception(ex)
+      
   def startupCheckState(self):
     self.info("Bot startup")
-    #connect to our driver on startup if we're idle
-    if (self.data['status'] == 'idle'):
-      self.initializeDriver()
+
     #we shouldn't startup in a working state... that implies some sort of error.
     if (self.data['status'] == 'working'):
       self.errorMode("Startup in %s mode, dropping job # %s" % (self.data['status'], self.data['job']['id']))
@@ -59,7 +65,7 @@ class WorkerBee():
            
     #take the bot offline.
     self.info("Setting bot status as error.")
-    result = self.api.updateBotInfo({'bot_id' : self.data['id'], 'status' : 'error', 'error_text' : message})
+    result = self.api.updateBotInfo({'bot_id' : self.data['id'], 'status' : 'error', 'error_text' : error})
     if result['status'] == 'success':
       self.data = result['data']
     else:
@@ -70,19 +76,20 @@ class WorkerBee():
     self.pipe.send(msg)
 
   def initializeDriver(self):
-    try:
-      if self.driver:
-        self.driver.disconnect()
-    except Exception as ex:
-      self.exception("Disconnecting driver: %s" % ex)
+    #try:
+    #  if self.driver:
+    #    self.driver.disconnect()
+    #except Exception as ex:
+    #  self.exception("Disconnecting driver: %s" % ex)
       
     try:
       self.driver = self.driverFactory()
-      self.debug("Connecting to driver.")
-      self.driver.connect()
+      #self.debug("Connecting to driver.")
+      #self.driver.connect()
     except Exception as ex:
+      self.exception(ex) #dump a stacktrace for debugging.
       self.errorMode(ex)
-      self.driver.disconnect()
+      #self.driver.disconnect()
 
   def driverFactory(self):
     if (self.config['driver'] == 's3g'):
@@ -114,20 +121,25 @@ class WorkerBee():
         #idle mode means looking for a new job.
         if self.data['status'] == 'idle':
           try:
-            self.getNewJob()
-            time.sleep(10) #todo: make this sleep get longer with each successive try.
+            if not self.getNewJob():
+              time.sleep(10)
           except botqueueapi.NetworkError as e:
             self.warning("Internet down: %s" % e)
             time.sleep(10)
           except Exception as ex:
             self.exception(ex)
+        #slicing means we need to slice our job.
+        elif self.data['status'] == 'slicing':
+          if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
+              self.sliceJob()
+          else:
+            self.getOurInfo()
+            time.sleep(10)
+        #working means we need to process a job.
         elif self.data['status'] == 'working':
-          #okay, we're in work mode... handle our job.
-          self.processJob()
-
-          #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
-          self.getOurInfo()
-          self.debug("Bot finished @ state %s" % self.data['status'])
+            self.processJob()
+            self.getOurInfo() #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
+            self.debug("Bot finished @ state %s" % self.data['status'])
         else: #we're either waiting, error, or offline... wait until that changes
           self.info("Waiting in %s mode" % self.data['status'])
           try:
@@ -140,11 +152,11 @@ class WorkerBee():
             self.exception(e)
           if self.data['status'] == 'idle':
             self.info("Going online.");
-            self.initializeDriver()
           else:
             time.sleep(10) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
+      self.driver.disconnect()
       raise ex
 
     self.debug("Exiting.")
@@ -152,16 +164,21 @@ class WorkerBee():
   #get bot info from the mothership
   def getOurInfo(self):
     self.debug("Looking up bot #%s." % self.data['id'])
-    result = self.api.getBotInfo(self.data['id'])
-    if (result['status'] == 'success'):
-      self.data = result['data']
-    else:
-      self.error("Error looking up bot info: %s" % result['error'])
-      raise Exception("Error looking up bot info: %s" % result['error'])
+    
+    try:
+      result = self.api.getBotInfo(self.data['id'])
+      if (result['status'] == 'success'):
+        self.data = result['data']
+      else:
+        self.error("Error looking up bot info: %s" % result['error'])
+        raise Exception("Error looking up bot info: %s" % result['error'])
 
-    #notify the mothership of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
+      #notify the mothership of our status.
+      msg = Message('bot_update', self.data)
+      self.pipe.send(msg)
+    except botqueueapi.NetworkError as e:
+      self.warning("Internet down: %s" % e)
+      time.sleep(10)
 
   #get bot info from the mothership
   def getJobInfo(self):
@@ -176,13 +193,13 @@ class WorkerBee():
   #get a new job to process from the mothership  
   def getNewJob(self):
     self.info("Looking for new job.")
-    result = self.api.findNewJob(self.data['id'])
+    result = self.api.findNewJob(self.data['id'], self.global_config['can_slice'])
     if (result['status'] == 'success'):
       if (len(result['data'])):
         job = result['data']
-        jresult = self.api.grabJob(self.data['id'], job['id'])
+        jresult = self.api.grabJob(self.data['id'], job['id'], self.global_config['can_slice'])
         if (jresult['status'] == 'success'):
-          self.data = jresult['data']['bot']
+          self.data = jresult['data']
 
           #notify the mothership.
           data = hive.Object()
@@ -192,123 +209,85 @@ class WorkerBee():
           self.pipe.send(message)
 
           self.info("grabbed job %s" % self.data['job']['name'])
+          return True
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
       else:
         self.getOurInfo() #see if our status has changed.
     else:
       raise Exception("Error finding new job: %s" % result['error'])
+    return False
 
-  #download our job and make sure its cool
-  def downloadJob(self):
-    #prepare our file for storage
-    self.checkCacheDirectory()
-    self.openJobFile(self.data['job']['file'])
+  def sliceJob(self):
+    #download our slice file
+    sliceFile = self.downloadFile(self.data['job']['slicejob']['input_file'])
+    
+    #create and run our slicer
+    g = ginsu.Ginsu(sliceFile, self.data['job']['slicejob'])
+    g.slice()
+    
+    #watch the slicing progress
+    localUpdate = 0
+    while g.isRunning():
+      #notify the local mothership of our status.
+      if (time.time() - localUpdate > 0.5):
+        self.data['job']['progress'] = g.getProgress()
+        msg = Message('job_update', self.data['job'])
+        self.pipe.send(msg)
+        localUpdate = time.time()
+      time.sleep(0.1)
+      
+    #how did it go?
+    sushi = g.sliceResult
+    
+    #move the file to the cache directory
+    cacheDir = hive.getCacheDirectory()
+    baseFilename = os.path.splitext(os.path.basename(self.data['job']['slicejob']['input_file']['name']))[0]
+    md5sum = hive.md5sumfile(sushi.output_file)
+    uploadFile = "%s%s-%s.gcode" % (cacheDir, md5sum, baseFilename)
+    self.debug("Moved slice output to %s" % uploadFile)
+    shutil.copy(sushi.output_file, uploadFile)
 
-    #do we need to download it?
-    if not self.cacheHit:
-      #todo: do an actual API call.
-      self.data['job']['status'] = 'downloading'
+    #update our slice job progress and pull in our update info.
+    self.info("Finished slicing, uploading results to main site.")
+    result = self.api.updateSliceJob(job_id=self.data['job']['slicejob']['id'], status=sushi.status, output=sushi.output_log, errors=sushi.error_log, filename=uploadFile)
+    self.data = result['data']
+    
+    #notify the bumblebee of our status.
+    msg = Message('slice_update', self.data)
+    self.pipe.send(msg)
+ 
+  def downloadFile(self, fileinfo):
+    myfile = hive.URLFile(fileinfo)
 
-      #download our file.
-      self.info("downloading %s to %s." % (self.data['job']['file']['url'], self.jobFilePath))
-      urlFile = self.openUrl(self.data['job']['file']['url'])
-      chunk = 4096
-      md5 = hashlib.md5()
-      lastUpdate = 0
-      localUpdate = 0
-      self.fileSize = 0
-      while 1:
-        data = urlFile.read(chunk)
-        if not data:
-          break
-        md5.update(data)
-        self.jobFile.write(data)
-        self.fileSize = self.fileSize + len(data)
+    localUpdate = 0
+    try:
+      myfile.load()
 
-        latest = float(self.fileSize) / float(self.data['job']['file']['size'])*100
-
-        #notify the mothership of our status.
+      while myfile.getProgress() < 100:
+        #notify the local mothership of our status.
         if (time.time() - localUpdate > 0.5):
-          self.data['job']['progress'] = latest
+          self.data['job']['progress'] = myfile.getProgress()
           msg = Message('job_update', self.data['job'])
           self.pipe.send(msg)
-
-        #notify the remote server of our job progress.
-        if (time.time() - lastUpdate > 15):
-          self.debug("download: %0.2f%%" % latest)
-          lastUpdate = time.time()
-          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
-    
-      #check our final md5 sum.
-      if md5.hexdigest() != self.data['job']['file']['md5']:
-        self.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.data['job']['file']['md5']))
-        raise Exception()
-      else:
-        self.data['job']['status'] = 'taken'
-        self.info("Download complete.")
-    else:
-      self.info("Using cached file %s" % self.jobFilePath)
+          localUpdate = time.time()
+        time.sleep(0.1)
+      #okay, we're done... send it back.
+      return myfile
+    except Exception as ex:
+      self.exception(ex)
+            
+  def processJob(self):
+    #go get 'em, tiger!
+    self.jobFile = self.downloadFile(self.data['job']['file'])
 
     #notify the mothership of download completion
     self.api.downloadedJob(self.data['job']['id'])
 
-    #reset to the beginning.
-    self.jobFile.seek(0)
- 
-  def checkCacheDirectory(self):
-    if 'cache_directory' in self.global_config:
-      self.dirname = self.global_config['cache_directory']
-    else:
-      self.dirname = "./cache/"
-
-    if not os.path.isdir(self.dirname):
-      os.mkdir(self.dirname)      
-
-  def openUrl(self, url):
-    request = urllib2.Request(url)
-    #request.add_header('User-agent', 'Chrome XXX')
-    urlfile = urllib2.urlopen(request)
-
-    return urlfile
- 
-  def openJobFile(self, fileinfo):
-    self.cacheHit = False
-    try:
-      self.jobFilePath = self.dirname + os.path.basename(fileinfo['name'])
-      if os.path.exists(self.jobFilePath):
-        myhash = self.md5sumfile(self.jobFilePath)
-        if myhash != fileinfo['md5']:
-          self.warning("Existing file found: hashes did not match! %s != %s" % (myhash, fileinfo['md5']))
-          raise Exception
-        else:
-          self.cacheHit = True
-          self.fileSize = os.path.getsize(self.jobFilePath)
-          self.jobFile = open(self.jobFilePath, "r")
-      else:
-        self.jobFile = open(self.jobFilePath, "w+")
-    except Exception as ex:
-      self.jobFile = tempfile.NamedTemporaryFile()
-      self.jobFilePath = self.jobFile.name
-
-  def md5sumfile(self, filename, block_size=2**18):
-    md5 = hashlib.md5()
-    f = open(filename, "r")
-    while True:
-      data = f.read(block_size)
-      if not data:
-        break
-      md5.update(data)
-    f.close()
-    return md5.hexdigest()
-      
-  def processJob(self):
-    self.downloadJob()
     currentPosition = 0
     lastUpdate = time.time()
-
     try:
-      self.driver.startPrint(self.jobFile, self.fileSize)
+      self.driver.startPrint(self.jobFile)
       while self.driver.isRunning():
         latest = self.driver.getPercentage()
       
@@ -320,7 +299,7 @@ class WorkerBee():
         #check for messages like shutdown.
         self.checkMessages()
         if not self.running:
-          raise Exception("Shutting down.")
+          break;
 
         #occasionally update home base.
         try:
@@ -336,28 +315,31 @@ class WorkerBee():
           
         time.sleep(0.5)
 
-      self.info("Print finished.")
+      #did our print finish while running?
+      if self.running:
+        self.info("Print finished.")
   
-      #finish the job online, and mark as completed.
-      notified = False
-      while not notified:
-        try:
-          result = self.api.completeJob(self.data['job']['id'])
-          if result['status'] == 'success':
-            self.data = result['data']['bot']
-            notified = True
-            #notify the queen bee
-            data = hive.Object()
-            data.job = self.data['job']
-            data.bot = self.data
-            message = Message('job_end', data)
-            self.pipe.send(message)
-          else:
-            raise Exception("Error notifying mothership: %s" % result['error'])
-        except botqueueapi.NetworkError as e:
-          self.warning("Internet down: %s" % e)
-          time.sleep(10)
+        #finish the job online, and mark as completed.
+        notified = False
+        while not notified:
+          try:
+            result = self.api.completeJob(self.data['job']['id'])
+            if result['status'] == 'success':
+              self.data = result['data']['bot']
+              notified = True
+              #notify the queen bee
+              data = hive.Object()
+              data.job = self.data['job']
+              data.bot = self.data
+              message = Message('job_end', data)
+              self.pipe.send(message)
+            else:
+              raise Exception("Error notifying mothership: %s" % result['error'])
+          except botqueueapi.NetworkError as e:
+            self.warning("Internet down: %s" % e)
+            time.sleep(10)
     except Exception as ex:
+      self.exception(ex)
       self.errorMode(ex)
 
   def goOnline():
@@ -406,9 +388,9 @@ class WorkerBee():
   def handleMessage(self, message):
     self.log.debug("Got message %s" % message.name)
     if message.name == 'go_online':
-      self.data['status'] = 'idle'
-    elif message.name == 'go_offline':
       self.goOnline()
+    elif message.name == 'go_offline':
+      self.goOffline()
     elif message.name == 'pause_job':
       self.pauseJob()
     elif message.name == 'resume_job':

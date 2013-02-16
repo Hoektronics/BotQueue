@@ -28,7 +28,7 @@
 			$sql = "
 				SELECT id
 				FROM shortcodes
-				WHERE url = '{$url}'
+				WHERE url = '".mysql_real_escape_string($url)."'
 			";
 			
 			$value = db()->getValue($sql);

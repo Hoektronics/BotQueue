@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
 
+
 #setup our site configuration
 Options -Indexes
 DirectoryIndex dispatcher.php
@@ -66,6 +67,7 @@ RewriteRule ^queue:([0-9]+)/jobs/(available|taken|qa|failure|complete)(/page:([0
 
 #uploader
 RewriteRule ^upload$												dispatcher.php?controller=upload&view=home [NC,L]
+RewriteRule ^upload/url$												dispatcher.php?controller=upload&view=url [NC,L,QSA]
 RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&view=success&payload=$1 [NC,L,QSA]
 
 #bot stuff.
@@ -75,6 +77,7 @@ RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
 RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=edit&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/dropjob$												dispatcher.php?controller=bot&view=dropjob&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/jobs(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=listjobs&id=$1&page=$3 [NC,L]
 
 #jobs stuff.
@@ -91,6 +94,9 @@ RewriteRule ^job/create/job:([0-9]+)$												dispatcher.php?controller=job&v
 
 #file stuff
 RewriteRule ^file:([0-9]+)$												dispatcher.php?controller=job&view=file&id=$1 [NC,L]
+RewriteRule ^file:([0-9]+)/jobs(/page:([0-9]+))?$												dispatcher.php?controller=job&view=file_jobs&id=$1&page=$3 [NC,L]
+RewriteRule ^file:([0-9]+)/render$												dispatcher.php?mode=ajax&controller=job&view=render_frame&id=$1 [NC,L,QSA]
+RewriteRule ^passthru:([0-9]+)$												dispatcher.php?controller=job&view=passthru&id=$1 [NC,L]
 
 #help stuff.
 RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
@@ -98,7 +104,7 @@ RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
 #shortcode parsing
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
 
-#help stuff.
+#apps stuff.
 RewriteRule ^apps$											        dispatcher.php?controller=app&view=home [NC,L]
 RewriteRule ^app/register$											dispatcher.php?controller=app&view=register_app [NC,L]
 RewriteRule ^app:([0-9]+)$										  dispatcher.php?controller=app&view=view_app&app_id=$1 [NC,L]
@@ -107,10 +113,27 @@ RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=de
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
 
+#slicer stuff.
+RewriteRule ^slicers$											        dispatcher.php?controller=slicer&view=home [NC,L]
+RewriteRule ^slicer/create$									  		dispatcher.php?controller=slicer&view=create [NC,L]
+RewriteRule ^slicer:([0-9]+)$										  dispatcher.php?controller=slicer&view=view&id=$1 [NC,L]
+RewriteRule ^slicer:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=edit&id=$1 [NC,L]
+RewriteRule ^slicer:([0-9]+)/delete$						  dispatcher.php?controller=slicer&view=delete&id=$1 [NC,L]
+RewriteRule ^slicer:([0-9]+)/createconfig$	  		dispatcher.php?controller=slicer&view=config_create&id=$1 [NC,L]
+
+#slice config stuff
+RewriteRule ^sliceconfig:([0-9]+)$										  dispatcher.php?controller=slicer&view=config_view&id=$1 [NC,L]
+RewriteRule ^sliceconfig:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=config_edit&id=$1 [NC,L]
+RewriteRule ^sliceconfig:([0-9]+)/delete$						  dispatcher.php?controller=slicer&view=config_delete&id=$1 [NC,L]
+
+#slice config stuff
+RewriteRule ^slicejob:([0-9]+)$										  dispatcher.php?controller=slicer&view=job_view&id=$1 [NC,L]
+RewriteRule ^slicejob:([0-9]+)/pass$								dispatcher.php?controller=slicer&view=job_update&id=$1&pass=1 [NC,L]
+RewriteRule ^slicejob:([0-9]+)/fail$								dispatcher.php?controller=slicer&view=job_update&id=$1&fail=1 [NC,L]
+
 #ugh, legal stuff
 RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]
 RewriteRule ^privacy$										dispatcher.php?controller=main&view=privacy [NC,L]
-
 
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]

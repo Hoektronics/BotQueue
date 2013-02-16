@@ -8,12 +8,6 @@
 	<input type="hidden" name="Content-Type" value="">
 	<input type="hidden" name="Content-Disposition" value="">
 	<fieldset>
-    <div class="control-group">
-      <label class="control-label" for="iname"><?=$label?></label>
-      <div class="controls">
-				<input name="file" type="file"> <button type="submit" class="btn btn-primary">Upload File</button>
-        <p class="help-block">Choose the .gcode file you want to print.</p>
-      </div>
-    </div>
+		<input name="file" type="file"> <button type="submit" class="btn btn-primary">Upload File</button>
 	</fieldset>
 </form>

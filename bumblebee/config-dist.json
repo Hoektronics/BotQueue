@@ -1,5 +1,7 @@
 {
   "uid" : "",
+  "can_slice" : true,
+  "app_url" : "https://www.botqueue.com",
   "api" : {
     "authorize_url" : "https://www.botqueue.com/app/authorize",
     "endpoint_url" : "https://www.botqueue.com/api/v1/endpoint"
@@ -12,8 +14,14 @@
 	},
 	"workers" : [
 		{
-			"name" : "Zoltron6",
+			"name" : "Dummy Fake Printer",
 			"driver" : "dummy"
-		}
+		},
+		{
+  		"name": "Reprap Style Printer",
+  		"driver" : "printcore",
+  		"port" : "/dev/tty.usbmodem123",
+  		"baud" : "250000"
+  	}
 	]
 }

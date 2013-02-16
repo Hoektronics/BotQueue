@@ -4,7 +4,7 @@
   <? endif ?>
 	<div class="controls">
 		<? if (!empty($field->options)): ?>
-			<select id="<?=$field->id?>" name="<?=$field->name?>" <?=$onchange?>>
+			<select <?=$field->getAttributes()?>>
 				<? foreach ($field->options AS $key => $option): ?>
 					<? if ($key == $field->getValue()): ?>
 						<option value="<?=$key?>" selected><?=$option?></option>

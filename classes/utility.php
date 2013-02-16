@@ -1065,6 +1065,46 @@ class Utility
 	  
 	  return $url;
 	}
+	
+	public static function downloadUrl($url)
+	{
+    $tempFile = tempnam('/tmp', 'BOTQUEUE-');
+    $fileTarget = fopen($tempFile, 'w');
+    $headerFile = tmpfile();
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_WRITEHEADER, $headerFile);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_FILE, $fileTarget);
+    curl_exec($ch);
+
+    if(!curl_errno($ch))
+    {
+      $realName = basename($url);
+      
+      //check to see if we got a better name here.
+      rewind($headerFile);
+      $headers = stream_get_contents($headerFile);
+      if(preg_match("/Content-Disposition: .*filename=[\"']?([^ ]+)[\"']?/", $headers, $matches))
+        $realName = basename(trim($matches[1]));
+      if(preg_match("/Location: (.*)/", $headers, $matches))
+        $realName = basename(trim($matches[1]));
+      //format the info for our the caller.
+      $return = array(
+        'localpath' => $tempFile,
+        'realname' => $realName
+      );
+    }
+    else
+      $return = False;
+
+    //clean up.
+    curl_close($ch);
+    fclose($headerFile);
+    fclose($fileTarget);
+
+    return $return;
+	}
 }
 
 // mainly for use on things like cycling between the background colors on tables

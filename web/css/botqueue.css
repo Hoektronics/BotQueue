@@ -27,3 +27,14 @@
 .progress {margin-bottom: 0px;}
 
 .btn-bot-status {width: 60px;}
+
+
+#renderArea {
+  width: 100%;
+  height: 500px;
+  background-color: #000000;
+}
+
+.label-slicing {
+  background-color: #000080;
+}

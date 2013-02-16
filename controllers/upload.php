@@ -22,7 +22,7 @@
 		{
 			$this->assertLoggedIn();
 			
-			$this->setTitle("Step 1 of 2: Upload File");
+			$this->setTitle("Step 1 of 2: Choose File to Print");
 		}
 		
 		public function uploader()
@@ -63,19 +63,54 @@
 			$this->set('signature', $signature);
 		}
 		
+		public function url()
+		{
+		  $this->assertLoggedIn();
+		  
+		  $this->setTitle("Create Job from URL");
+		  
+		  try
+		  {
+		    //did we get a url?
+  		  $url = $this->args('url');
+  		  if (!$url)
+  		    throw new Exception("You must pass in the URL parameter!");
+
+        $data = Utility::downloadUrl($url);
+
+        //does it match?
+        if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $data['realname']))
+          throw new Exception("The file <a href=\"$url\">{$data[realname]}</a> is not valid for printing.");
+          
+        $s3 = new S3File();
+        $s3->set('user_id', User::$me->id);
+        $s3->set('source_url', $url);
+        $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+        
+  			Activity::log("uploaded a new file called " . $s3->getLink() . ".");
+
+  			//send us to step 2.
+ 			  $this->forwardToUrl("/job/create/file:{$s3->id}");
+		  }
+		  catch (Exception $e)
+		  {
+		    $this->set('megaerror', $e->getMessage());
+		  }
+		}
+		
 		public function success()
 		{
 			$this->assertLoggedIn();
 
 			//get our payload.
 			$payload = unserialize(base64_decode($this->args('payload')));
-
+			
 			//handle our upload
 			try
 			{
 				//some basic error checking.
-				if (!preg_match('/gcode$/i', $this->args('key')))
-					throw new Exception("Only .gcode files are allowed at this time.");
+				if (!preg_match('/(gcode|stl|obj|amf)$/i', $this->args('key')))
+					throw new Exception("Only .gcode, .stl, .obj, and .amf files are allowed at this time.");
 
 				//make our file.
 				$info = $this->_lookupFileInfo();
@@ -99,6 +134,7 @@
 			//look up our real info.
 			$s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
 			$info = $s3->getObjectInfo($this->args('bucket'), $this->args('key'), true);
+			
 			if ($info['size'] == 0)
 			{
 				//capture for debug
@@ -146,7 +182,7 @@
 			//format the name and stuff
 			$filename = basename($this->args('key'));
 			$filename = str_replace(" ", "_", $filename);
-			$filename = preg_replace("/[^-_.+[0-9a-zA-Z]/", "", $filename);
+			$filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
 			$path = "assets/" . S3File::getNiceDir($filename);
 
 			//check our info out.

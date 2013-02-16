@@ -1,59 +1,57 @@
-  /*
-    This file is part of BotQueue.
-
-    BotQueue is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    BotQueue is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
-  */
-
-SET character_set_client = utf8;
-
-CREATE DATABASE IF NOT EXISTS botqueue;
-USE botqueue;
-
-CREATE TABLE IF NOT EXISTS `activities` (
-  `id` int(11) unsigned NOT NULL auto_increment,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `activities` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `activity` text NOT NULL,
   `action_date` datetime NOT NULL,
-  PRIMARY KEY  (`id`),
+  PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `bots` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `user_id` int(11) unsigned NOT NULL default '0',
-  `job_id` int(11) unsigned NOT NULL default '0',
-  `name` varchar(255) NOT NULL DEFAULT '',
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bots` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(255) NOT NULL,
   `identifier` varchar(255) NOT NULL DEFAULT '',
   `model` varchar(255) NOT NULL,
-  `status` enum('idle', 'working', 'finished', 'error', 'maintenance', 'offline') NOT NULL default 'offline',
+  `status` enum('idle','slicing','working','waiting','error','maintenance','offline') DEFAULT 'idle',
   `last_seen` datetime NOT NULL,
-  PRIMARY KEY  (`id`),
+  `manufacturer` varchar(255) NOT NULL DEFAULT '',
+  `electronics` varchar(255) NOT NULL DEFAULT '',
+  `firmware` varchar(255) NOT NULL DEFAULT '',
+  `extruder` varchar(255) NOT NULL DEFAULT '',
+  `queue_id` int(11) NOT NULL DEFAULT '0',
+  `job_id` int(11) NOT NULL DEFAULT '0',
+  `error_text` varchar(255) NOT NULL DEFAULT '',
+  `slice_config_id` int(11) unsigned NOT NULL,
+  `slice_engine_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  KEY `identifier` (`identifier`)
+  KEY `identifier` (`identifier`),
+  KEY `queue_id` (`queue_id`),
+  KEY `job_id` (`job_id`),
+  KEY `slice_config_id` (`slice_config_id`),
+  KEY `slice_engine_id` (`slice_engine_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `comments` (
-  `id` int(11) unsigned NOT NULL auto_increment,
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `comments` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `comment` text NOT NULL,
   `comment_date` datetime NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `email_queue` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `user_id` int(11) unsigned NOT NULL default '0',
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `email_queue` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `subject` varchar(255) NOT NULL,
   `text_body` text NOT NULL,
   `html_body` text NOT NULL,
@@ -61,37 +59,72 @@ CREATE TABLE IF NOT EXISTS `email_queue` (
   `to_name` varchar(255) NOT NULL,
   `queue_date` datetime NOT NULL,
   `sent_date` datetime NOT NULL,
-  `status` enum('queued','sent') NOT NULL default 'queued',
+  `status` enum('queued','sent') NOT NULL DEFAULT 'queued',
   UNIQUE KEY `id` (`id`),
   KEY `user_id` (`user_id`),
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `jobs` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `user_id` int(11) unsigned NOT NULL default '0',
-  `queue_id` int(11) unsigned NOT NULL default '0',
-  `file_id` int(11) unsigned NOT NULL default '0',
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `error_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `job_id` int(11) unsigned NOT NULL,
+  `bot_id` int(11) unsigned NOT NULL,
+  `queue_id` int(11) unsigned NOT NULL,
+  `reason` varchar(255) NOT NULL,
+  `error_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `job_id` (`job_id`),
+  KEY `bot_id` (`bot_id`),
+  KEY `queue_id` (`queue_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `jobs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `queue_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `source_file_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `file_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `slice_job_id` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
-  `status` enum('available', 'taken', 'complete', 'failure', 'cancelled') NOT NULL default 'available',
-  `start` datetime NOT NULL,
-  `end` datetime NOT NULL,
-  `user_sort` int(11) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
+  `status` enum('available','taken','slicing','downloading','qa','complete','failure') NOT NULL DEFAULT 'available',
+  `user_sort` int(11) unsigned NOT NULL DEFAULT '0',
+  `bot_id` int(11) NOT NULL DEFAULT '0',
+  `progress` float NOT NULL DEFAULT '0',
+  `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `downloaded_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `finished_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `slice_complete_time` datetime NOT NULL,
+  `verified_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `queue_id` (`queue_id`),
-  KEY `status` (`status`)
+  KEY `status` (`status`),
+  KEY `bot_id` (`bot_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `oauth_consumer` (
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_consumer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `consumer_key` varchar(255) NOT NULL,
   `consumer_secret` varchar(255) NOT NULL,
   `active` tinyint(1) NOT NULL,
+  `name` varchar(255) DEFAULT '',
+  `user_id` int(11) DEFAULT '0',
+  `app_url` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_consumer_nonce` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `consumer_id` int(11) NOT NULL,
   `timestamp` bigint(20) NOT NULL,
@@ -99,8 +132,10 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `oauth_token` (
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
   `consumer_id` int(11) NOT NULL,
@@ -114,45 +149,115 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   KEY `user_id` (`user_id`),
   KEY `type` (`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `queues` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `user_id` int(11) unsigned NOT NULL default '0',
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `queues` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`),
+  PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `s3_files` (
-  `id` bigint(11) unsigned NOT NULL auto_increment,
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `s3_files` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(255) NOT NULL,
   `size` int(10) unsigned NOT NULL,
   `hash` char(32) NOT NULL,
   `bucket` varchar(255) NOT NULL,
   `path` varchar(255) NOT NULL,
   `add_date` datetime NOT NULL,
-  PRIMARY KEY  (`id`)
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `source_url` text,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `shortcodes` (
-  `id` int(11) unsigned NOT NULL auto_increment,
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `shortcodes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`),
+  PRIMARY KEY (`id`),
   KEY `url` (`url`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `tokens` (
-  `id` int(11) unsigned NOT NULL auto_increment,
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `slice_configs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `fork_id` int(11) unsigned NOT NULL,
+  `engine_id` int(11) unsigned NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  `config_name` varchar(255) NOT NULL,
+  `config_data` text NOT NULL,
+  `add_date` datetime NOT NULL,
+  `edit_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fork_id` (`fork_id`),
+  KEY `user_id` (`user_id`),
+  KEY `engine_id` (`engine_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `slice_engines` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `engine_name` varchar(255) NOT NULL,
+  `engine_path` varchar(255) NOT NULL,
+  `engine_description` text NOT NULL,
+  `is_featured` tinyint(1) NOT NULL,
+  `is_public` tinyint(1) NOT NULL,
+  `add_date` datetime NOT NULL,
+  `default_config_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `engine_name` (`engine_name`),
+  KEY `is_featured` (`is_featured`),
+  KEY `is_public` (`is_public`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `slice_jobs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `job_id` int(11) unsigned NOT NULL,
+  `input_id` int(11) unsigned NOT NULL,
+  `output_id` int(11) unsigned NOT NULL,
+  `output_log` text NOT NULL,
+  `error_log` text,
+  `slice_config_id` int(11) unsigned NOT NULL,
+  `slice_config_snapshot` text NOT NULL,
+  `status` enum('available','slicing','pending','complete','failure','expired') DEFAULT 'available',
+  `progress` float NOT NULL DEFAULT '0',
+  `add_date` datetime NOT NULL,
+  `taken_date` datetime NOT NULL,
+  `finish_date` datetime NOT NULL,
+  `uid` char(40) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `job_id` (`job_id`),
+  KEY `slice_config_id` (`slice_config_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `hash` varchar(40) NOT NULL,
-  `expire_date` datetime default NULL,
-  PRIMARY KEY  (`id`),
+  `expire_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `pass_hash` (`hash`),
   KEY `expire_date` (`expire_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) unsigned NOT NULL auto_increment,
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
   `email` varchar(255) NOT NULL,
   `pass_hash` varchar(40) NOT NULL,
@@ -161,13 +266,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `birthday` date NOT NULL,
   `last_active` datetime NOT NULL,
   `registered_on` datetime NOT NULL,
-  `is_admin` tinyint(1) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
   KEY `last_active` (`last_active`),
   KEY `username` (`username`),
   KEY `pass_hash` (`pass_hash`),
   KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-alter table oauth_consumer add name varchar(255) default '';
-alter table oauth_consumer add user_id int(11) default 0;
+/*!40101 SET character_set_client = @saved_cs_client */;

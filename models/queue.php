@@ -60,16 +60,34 @@
 		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
-				$statusSql = " AND status = '{$status}'";
+				$statusSql = " AND status = '".mysql_real_escape_string($status)."'";
+				
+			$sql = "
+				SELECT id
+				FROM jobs
+				WHERE queue_id = '".mysql_real_escape_string($this->id)."'
+					{$statusSql}
+				ORDER BY {$sortField} {$sortOrder}
+			";
+			return new Collection($sql, array('Job' => 'id'));
+		}
+		
+		public function findNewJob($bot, $can_slice = true)
+		{
+			if (!$can_slice)
+				$sliceSql = " AND file_id > 0 ";
 				
 			$sql = "
 				SELECT id
 				FROM jobs
 				WHERE queue_id = '{$this->id}'
-					{$statusSql}
-				ORDER BY {$sortField} {$sortOrder}
+					AND status = 'available'
+					$sliceSql
+				ORDER BY user_sort ASC
 			";
-			return new Collection($sql, array('Job' => 'id'));
+			$job_id = db()->getValue($sql);
+
+			return new Job($job_id);
 		}
 		
 		public function getActiveJobs($sortField = 'user_sort', $sortOrder = 'ASC')
@@ -77,7 +95,7 @@
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE queue_id = '{$this->id}'
+				WHERE queue_id = '".mysql_real_escape_string($this->id)."'
 					AND status IN ('available', 'taken')
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -89,11 +107,19 @@
 		  $sql = "
 		    SELECT id
 		    FROM bots
-		    WHERE queue_id = '{$this->id}'
+		    WHERE queue_id = '".mysql_real_escape_string($this->id)."'
 		    ORDER BY last_seen DESC
 		  ";
 		  
 		  return new Collection($sql, array('Bot' => 'id'));
+		}
+		
+		public function addFile($file, $qty = 1)
+		{
+		  if ($file->isGcode())
+		    return $this->addGCodeFile($file, $qty);
+		  elseif ($file->is3DModel())
+		    return $this->add3DModelFile($file, $qty);
 		}
 		
 		public function addGCodeFile($file, $qty = 1)
@@ -107,7 +133,32 @@
 				$job = new Job();
 				$job->set('user_id', User::$me->id);
 				$job->set('queue_id', $this->id);
+				$job->set('source_file_id', $file->id);
 				$job->set('file_id', $file->id);
+				$job->set('name', $file->get('path'));
+				$job->set('status', 'available');
+				$job->set('created_time', date("Y-m-d H:i:s"));
+				$job->set('user_sort', $sort);
+				$job->save();
+
+				$jobs[] = $job;
+			}
+			
+			return $jobs;
+		}
+
+		public function add3DModelFile($file, $qty = 1)
+		{
+			$jobs = array();
+			
+			for ($i=0; $i<$qty; $i++)
+			{
+				$sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+				
+				$job = new Job();
+				$job->set('user_id', User::$me->id);
+				$job->set('queue_id', $this->id);
+				$job->set('source_file_id', $file->id);
 				$job->set('name', $file->get('path'));
 				$job->set('status', 'available');
 				$job->set('created_time', date("Y-m-d H:i:s"));
@@ -125,7 +176,7 @@
 			$sql = "
 				SELECT status, count(status) as cnt
 				FROM jobs
-				WHERE queue_id = {$this->id}
+				WHERE queue_id = ". mysql_real_escape_string($this->id)."
 				GROUP BY status
 			";
 
@@ -150,7 +201,7 @@
 				SELECT sum(taken_time - created_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - created_time) as total
 				FROM jobs
 				WHERE status = 'complete'
-					AND queue_id = {$this->id}
+					AND queue_id = ". mysql_real_escape_string($this->id) ."
 			";
 
 			$stats = db()->getArray($sql);
@@ -179,7 +230,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE queue_id = '{$this->id}'
+		    WHERE queue_id = '". mysql_real_escape_string($this->id) ."'
 		    ORDER BY error_date DESC
 		  ";
 		  

@@ -99,7 +99,11 @@
 					$this->setTitle('View Job - ' . $job->getName());
 
 					$this->set('job', $job);
-					$this->set('file', $job->getFile());
+					$this->set('gcode_file', $job->getFile());
+					$this->set('source_file', $job->getSourceFile());
+					$this->set('slicejob', $job->getSliceJob());
+					$this->set('sliceengine', $this->get('slicejob')->getSliceEngine());
+					$this->set('sliceconfig', $this->get('slicejob')->getSliceConfig());
 					$this->set('queue', $job->getQueue());
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());
@@ -133,22 +137,18 @@
 
 				$this->setTitle('Edit Job - ' . $job->getName());
 				$this->set('job', $job);
-
-				//load up our queues.
-				$queues = User::$me->getQueues()->getAll();
-				foreach ($queues AS $row)
-				{
-					$q = $row['Queue'];
-					$data[$q->id] = $q->getName();
-				}
-				$this->set('queues', $data);
 				
-				if ($this->args('submit'))
+				//load up our form.
+				$form = $this->_createEditForm($job);
+				$form->action = $job->getUrl() . "/edit";
+
+				//handle our form
+				if ($form->checkSubmitAndValidate($this->args()))
 				{
-					$queue = new Queue($this->args('queue_id'));
+					$queue = new Queue($form->data('queue_id'));
 					if (!$queue->canAdd())
 						throw new Exception("That is not a valid queue.");
-					
+
 					$job->set('queue_id', $queue->id);
 					$job->save();
 
@@ -157,20 +157,37 @@
 					$this->forwardToUrl($job->getUrl());
 				}
 				
-				//errors?
-				if (!$this->get('megaerror'))
-				{
-					$this->set('file', $job->getFile());
-					$this->set('queue', $job->getQueue());
-					$this->set('bot', $job->getBot());
-					$this->set('creator', $job->getUser());
-				}
+			  $this->set('form', $form);
 			}
 			catch (Exception $e)
 			{
 				$this->setTitle('Edit Job - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
+		}
+		
+		public function _createEditForm($job)
+		{
+		  //load up our queues.
+			$queues = User::$me->getQueues()->getAll();
+			foreach ($queues AS $row)
+			{
+				$q = $row['Queue'];
+				$qs[$q->id] = $q->getName();
+			}
+			
+			$form = new Form();
+			
+			$form->add(new SelectField(array(
+				'name' => 'queue_id',
+				'label' => 'Queue',
+				'help' => 'Which queue does this bot pull jobs from?',
+				'required' => true,
+				'value' => $job->get('queue_id'),
+				'options' => $qs
+			)));
+			
+			return $form;
 		}
 
 		public function delete()
@@ -232,6 +249,8 @@
 
 				$this->set('job', $job);
 				$this->set('bot', $bot);
+				$this->set('gcode_file', $job->getFile());
+				$this->set('source_file', $job->getSourceFile());
 				
 				$this->setTitle('Verify Job - ' . $job->getName());	
 				
@@ -441,16 +460,57 @@
 				if ($file->get('user_id') != User::$me->id)
 					throw new Exception("You do not own that file.");
 			
-				$this->setTitle('View File - ' . $file->getName());
+				$this->setTitle($file->getName());
 
 				$this->set('file', $file);
 				$this->set('creator', $file->getUser());
+				
+				$jobs = $file->getJobs();
+				$this->set('jobs', $jobs->getRange(0, 10));
+				$this->set('job_count', $jobs->count());
 			}
 			catch (Exception $e)
 			{
 				$this->setTitle('View File - Error');
 				$this->set('megaerror', $e->getMessage());
 			}
+		}
+
+		
+		public function passthru()
+		{
+		  $this->assertLoggedIn();
+		  
+		  try
+		  {
+  		  $file = new S3File($this->args('id'));
+  		  if (!$file->isHydrated())
+  		    throw new Exception("This file does not exist.");
+  		    
+  		  if ($file->get('user_id') != User::$me->id)
+  		    throw new Exception("This is not your file.");
+  		    
+  		  //get our headers ready.
+        header('Content-Description: File Transfer');
+        if ($file->get('type'))
+          header('Content-Type: ' . $file->get('type'));
+        else
+          header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename='.basename($file->getRealUrl()));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . (int)$file->get('size'));
+
+        //kay, send it
+        readfile($file->getRealUrl());
+        exit;
+		  }
+		  catch (Exception $e)
+		  {
+		    $this->set('megaerror', $e->getMessage());
+		  }
 		}
 			
 		public function draw_jobs()
@@ -482,7 +542,8 @@
 					if ($job->get('user_id') != User::$me->id)
 						throw new Exception("You do not own this job.");
 					
-					$file = $job->getFile();
+					$file = $job->getSourceFile();
+					  
 					$queue_id = $job->get('queue_id');
 				}
 				else
@@ -518,9 +579,17 @@
 						throw new Exception("You do not have permission to add to that queue.");
 					
 					//okay, we good?
-					$queue->addGCodeFile($file, $quantity);
+					if ($file->isGCode())
+					  $queue->addGCodeFile($file, $quantity);
+					else if ($file->is3DModel())
+					  $queue->add3DModelFile($file, $quantity);
+          else
+            throw new Exception("Oops, I don't know what type of file this is!");
+
+          //let them know.
 					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
 						
+					//send us ot the queue!
 					$this->forwardToUrl($queue->getUrl());
 				}
 				
@@ -568,6 +637,85 @@
 			)));
 		
 			return $form;
+		}
+
+		public function render_frame()
+		{
+		  $this->assertLoggedIn();
+		  
+		  try
+		  {
+  		  $file = new S3File($this->args('id'));
+  		  if (!$file->isHydrated())
+  		    throw new Exception("This file does not exist.");
+  		    
+  		  if ($file->get('user_id') != User::$me->id)
+  		    throw new Exception("This is not your file.");
+  		    
+  		  $this->set('file', $file);
+  		    
+        if ($this->args('width'))
+          $this->setArg('width');
+        else
+          $this->set('width', '100%');
+
+        if ($this->args('height'))
+          $this->setArg('height');
+        else
+          $this->set('height', '100%');
+		  }
+		  catch (Exception $e)
+		  {
+		    $this->set('megaerror', $e->getMessage());
+		  }
+		}
+		
+		function render_model()
+		{
+		  $this->setArg('file');
+		  $this->setArg('width');
+		  $this->setArg('height');
+		}
+		
+		function render_gcode()
+		{
+		  $this->setArg('file');
+		  $this->setArg('width');
+		  $this->setArg('height');
+		}
+		
+		public function file_jobs()
+		{
+			$this->assertLoggedIn();
+			
+			try
+			{
+				//did we get a queue?
+				$file = new S3File($this->args('id'));
+				if (!$file->isHydrated())
+					throw new Exception("Could not find that queue.");
+				if ($file->get('user_id') != User::$me->id)
+					throw new Exception("You do not have permission to view this file.");
+				
+				$this->set('file', $file);
+
+				//what sort of jobs to view?
+				$this->setTitle($file->getLink() . " Jobs");
+				$collection = $file->getJobs();
+				
+	      $per_page = 20;
+	      $page = $collection->putWithinBounds($this->args('page'), $per_page);
+    
+	      $this->set('per_page', $per_page);
+	      $this->set('total', $collection->count());
+	      $this->set('page', $page);
+	      $this->set('jobs', $collection->getPage($page, $per_page));	
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('File Jobs - Error');
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 	}
 ?>

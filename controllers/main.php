@@ -20,7 +20,11 @@
 	{
 		public function home()
 		{
-			if (User::isLoggedIn())
+		}
+		
+		public function dashboard()
+		{
+		  if (User::isLoggedIn())
 			{
 				$queues = User::$me->getQueues();
 				$this->set('queues', $queues->getRange(0, 10));
@@ -39,7 +43,12 @@
 				$this->set('activity_count', $activities->count());
 				
 				$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
+				
+				//$this->set('action_jobs', Job::getJobsRequiringAction()->getRange(0, 50));
+				//$this->set('action_slicejobs', SliceJob::getJobsRequiringAction()->getRange(0, 50));
 			}
+			else
+			  die('argh');
 		}
 		
 		public function activity()

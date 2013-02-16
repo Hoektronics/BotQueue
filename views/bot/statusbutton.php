@@ -7,9 +7,11 @@
     <? if ($bot->get('status') == 'working'): ?>
       <!--
       <li><i class="icon-pause"></i>pause job</li>
-      <li><i class="icon-stop"></i>stop job</li>
       <li><i class="icon-play"></i>resume job</li>
     -->
+      <li><a href="<?=$bot->getUrl()?>/dropjob"><i class="icon-stop"></i> stop job</a></li>
+    <? elseif ($bot->get('status') == 'slicing'): ?>
+      <li><a href="<?=$bot->getUrl()?>/dropjob"><i class="icon-stop"></i> stop job</a></li>
     <? elseif ($bot->get('status') == 'waiting'): ?>
       <li><a href="<?=$bot->getCurrentJob()->getUrl()?>/qa"><i class="icon-check"></i> verify output</a></li>
     <? elseif ($bot->get('status') == 'idle'): ?>

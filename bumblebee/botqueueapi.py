@@ -1,4 +1,4 @@
-oimport urlparse
+import urlparse
 import oauth2 as oauth
 import json
 import hive
@@ -8,24 +8,24 @@ import httplib2
 import socket
 import hashlib
 import time
-import certifi
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+import urllib2
 
 class NetworkError(Exception):
   pass
 
 class BotQueueAPI():
   
-  version = '0.1'
+  version = '2.0'
   name = 'Bumblebee'
   
   def __init__(self):
-    self.config = hive.config.get()
     self.log = logging.getLogger('botqueue')
+    self.config = hive.config.get()
 
-    #create a unique hash that will identify this computers requests
-    if not self.config['uid']:
-      self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
-      hive.config.save(self.config)
+    # Register the poster module's streaming http handlers with urllib2
+    register_openers()
 
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']
@@ -33,7 +33,6 @@ class BotQueueAPI():
     
     #pull in our user credentials, or trigger the auth process if they aren't found.
     self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
-    client.ca_certs = certifi.where() #python ships with a really dumbass certificates list.  this fixes that.
     if self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:
@@ -41,7 +40,7 @@ class BotQueueAPI():
 
   def setToken(self, token_key, token_secret):
     self.token = oauth.Token(token_key, token_secret)
-    self.client = oauth.Client(self.consumer, self.token)
+    self.client = oauth.Client(self.consumer, self.token, timeout=10)
 
   def apiCall(self, call, parameters = {}, url = False, method = "POST"):
     #what url to use?
@@ -59,12 +58,17 @@ class BotQueueAPI():
       body = body + "&%s=%s" % (k, v)
     
     # make the call
+    resp = ""
+    content = ""
     try:
+      self.log.debug("Calling %s" % url)
+
       resp, content = self.client.request(url, "POST", body)
 
       if resp['status'] != '200':
         raise NetworkError("Invalid response %s." % resp['status'])
 
+      self.log.debug("loading json")
       result = json.loads(content)
    
     #these are our known errors that typically mean the network is down.
@@ -72,9 +76,61 @@ class BotQueueAPI():
       raise NetworkError(str(ex))
     #unknown exceptions... get a stacktrace for debugging.
     except Exception as ex:
+      self.log.error("response: %s" % resp)
+      self.log.error("content: %s" % content)
       self.log.exception(ex)
       raise NetworkError(str(ex))
     
+    return result
+
+  def apiUploadCall(self, call, parameters = {}, url = False, method = "POST", filepath = None):
+    #what url to use?
+    if (url == False):
+        url = self.endpoint_url
+
+    #add in our special variables
+    parameters['_client_version'] = self.version
+    parameters['_client_name'] = self.name
+    parameters['_uid'] = self.config['uid']
+    parameters['api_call'] = call
+    parameters['api_output'] = 'json'   
+
+    #get our custom request object for file uploads
+    req = oauth.Request.from_consumer_and_token(
+      self.client.consumer,
+      token=self.client.token,
+      http_method="POST",
+      http_url=url,
+      parameters=parameters)
+
+    #sign our request w/o any of the file variables included
+    req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.client.consumer, self.client.token)
+    compiled_postdata = req.to_postdata()
+    all_upload_params = urlparse.parse_qs(compiled_postdata, keep_blank_values=True)
+    
+    #parse_qs returns values as arrays, so convert back to strings
+    for key, val in all_upload_params.iteritems():
+      all_upload_params[key] = val[0]
+      
+    #add our file to upload and make the request
+    all_upload_params['file'] = open(filepath, 'rb')
+    datagen, headers = multipart_encode(all_upload_params)
+    request = urllib2.Request(url, datagen, headers)
+    
+    # make the call
+    try:
+      respdata = urllib2.urlopen(request).read()
+      result = json.loads(respdata)
+    except urllib2.HTTPError, ex:
+      self.log.warning('Received error code: %s' % ex.code)
+    #these are our known errors that typically mean the network is down.
+    except (httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
+      raise NetworkError(str(ex))
+    #unknown exceptions... get a stacktrace for debugging.
+    except Exception as ex:
+      self.log.exception(ex)
+      raise NetworkError(str(ex))
+
     return result
 
   def requestToken(self):
@@ -103,7 +159,7 @@ class BotQueueAPI():
     else:
       raise Exception("Error converting token: %s" % result['error'])
 
-  def authorize(self  ):
+  def authorize(self):
     try:
       # Step 1: Get a request token. This is a temporary token that is used for 
       # having the user authorize an access token and to sign the request to obtain 
@@ -146,8 +202,8 @@ class BotQueueAPI():
   def listJobs(self, queue_id):
     return self.apiCall('listjobs', {'queue_id' : queue_id});
     
-  def grabJob(self, bot_id, job_id):
-    return self.apiCall('grabjob', {'bot_id' : bot_id, 'job_id' : job_id})
+  def grabJob(self, bot_id, job_id, can_slice):
+    return self.apiCall('grabjob', {'bot_id' : bot_id, 'job_id' : job_id, 'can_slice' : can_slice})
 
   def dropJob(self, job_id, error = False):
     return self.apiCall('dropjob', {'job_id' : job_id, 'error' : error})
@@ -158,6 +214,15 @@ class BotQueueAPI():
   def failJob(self, job_id):
     return self.apiCall('failjob', {'job_id' : job_id})
 
+  def createJobFromJob(self, job_id, quantity = 1, queue_id = 0):
+    return self.apiCall('createjob', {'job_id' : job_id, 'queue_id' : queue_id, 'quantity': quantity})
+
+  def createJobFromURL(self, url, quantity = 1, queue_id = 0):
+    return self.apiCall('createjob', {'job_url' : url, 'queue_id' : queue_id, 'quantity': quantity})
+
+  def createJobFromFile(self, filename, quantity = 1, queue_id = 0):
+    return self.apiUploadCall('createjob', {'quantity': quantity, 'queue_id' : queue_id}, filepath=filename)
+      
   def downloadedJob(self, job_id):
     return self.apiCall('downloadedjob', {'job_id' : job_id})
     
@@ -173,11 +238,14 @@ class BotQueueAPI():
   def listBots(self):
     return self.apiCall('listbots')
     
-  def findNewJob(self, bot_id):
-    return self.apiCall('findnewjob', {'bot_id' : bot_id})
+  def findNewJob(self, bot_id, can_slice):
+    return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})
     
   def getBotInfo(self, bot_id):
     return self.apiCall('botinfo', {'bot_id' : bot_id})
     
   def updateBotInfo(self, data):
     return self.apiCall('updatebot', data)
+    
+  def updateSliceJob(self, job_id=0, status="", output="", errors="", filename=""):
+    return self.apiUploadCall('updateslicejob', {'job_id':job_id, 'status':status, 'output':output, 'errors':errors}, filepath=filename)

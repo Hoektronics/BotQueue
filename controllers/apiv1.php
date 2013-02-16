@@ -53,10 +53,12 @@
 					'listjobs',           //ok
 					'jobinfo',            //ok
 					'grabjob',            //ok
+					'grabslicejob',       //ok
 					'findnewjob',         //ok
 					'dropjob',            //ok
 					'canceljob',          //ok
 					'completejob',        //ok
+					'completeslicejob',   //ok
 					'downloadedjob',      //ok
 					'createjob',          //ok
 					'updatejobprogress',  //ok
@@ -64,6 +66,7 @@
 					'botinfo',            //ok
 					'registerbot',        //ok
 					'updatebot',          //ok
+					'updateslicejob',     //ok
 				);
 				if (in_array($c, $calls))
 				{
@@ -168,11 +171,10 @@
 
 		public function api_createjob()
 		{
-			if ($this->args('queue_id'))
-				$queue = new Queue($this->args('queue_id'));
-			else
-				$queue = User::$me->getDefaultQueue();
-				
+			$queue = new Queue($this->args('queue_id'));
+			if (!$queue->isHydrated())
+			  $queue = User::$me->getDefaultQueue();
+			  
 			if (!$queue->isHydrated())
 				throw new Exception("Could not find a queue.");
 			if (!$queue->isMine())
@@ -192,25 +194,75 @@
 
 				if (!$oldjob->isHydrated())
 					throw new Exception("Job does not exist.");
-				if (!$job->getQueue()->isMine())
+				if (!$oldjob->getQueue()->isMine())
 					throw new Exception("This job is not in your queue.");
 
-				$file = $oldjob->getFile();
-				if (!$file->isHydrated())
-					throw new Exception("That job does not exist anymore.");
+        $file = $oldjob->getSourceFile();
+        if (!$file->isHydrated())
+				  $file = $oldjob->getFile();
 				
-				$jobs = $queue->addGCodeFile($file, $quantity);
+				if (!$file->isHydrated())
+					throw new Exception("No file found!");
+				
+				$jobs = $queue->addFile($file, $quantity);
 			}
 			// #2 - send a file url and we'll grab it.
 			else if ($this->args('job_url'))
 			{
-				throw new Exception("Job add via URL is not implemented yet.");
+			  //download our file.
+			  $url = $this->args('job_url');
+        $data = Utility::downloadUrl($url);
+
+        //does it match?
+        if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $data['realname']))
+          throw new Exception("The file <a href=\"$url\">{$data[realname]}</a> is not valid for printing.");
+          
+        //create our file object.
+        $s3 = new S3File();
+        $s3->set('user_id', User::$me->id);
+        $s3->set('source_url', $url);
+        $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+
+        //okay, create our jobs.
+				$jobs = $queue->addFile($s3, $quantity);
 			}
 			// #3 - post a file via http multipart form
-			else if (!empty($_FILES['job_data']) && is_uploaded_file($_FILES['job_data']['tmp_name']))
+			else if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name']))
 			{
-				throw new Exception("Job add via HTTP POST is not implemented yet.");
-			}
+        //upload our file to S3
+        $file = $_FILES['file'];
+        if ($file['error'] != 0)
+        {
+          if($file['size'] == 0 && $file['error'] == 0)
+            $file['error'] = 5; 
+
+          $upload_errors = array( 
+            UPLOAD_ERR_OK        => "No errors.", 
+            UPLOAD_ERR_INI_SIZE    => "Larger than upload_max_filesize.", 
+            UPLOAD_ERR_FORM_SIZE    => "Larger than form MAX_FILE_SIZE.", 
+            UPLOAD_ERR_PARTIAL    => "Partial upload.", 
+            UPLOAD_ERR_NO_FILE        => "No file.", 
+            UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+            UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+            UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+            UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+          );
+
+          throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
+        }
+        
+        //does it match?
+        if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $file['name']))
+          throw new Exception("The file '$file[name]' is not valid for printing.");
+
+        //okay, we're good.. do it.
+        $s3 = new S3File();
+        $s3->set('user_id', User::$me->id);
+        $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+        
+        //okay, create our jobs.
+				$jobs = $queue->addFile($s3, $quantity);
+      }
 			else
 			{
 				throw new Exception("Unknown job creation method.");
@@ -269,14 +321,42 @@
 			
 			if (!$bot->canGrab($job))
 				throw new Exception("You cannot grab this job.");
-				
-			$bot->grabJob($job);
 			
-			$data = array();
-			$data['job'] = $job->getAPIData();
-			$data['bot'] = $bot->getAPIData();
+			//attempt to grab our job.  will throw exceptions on failure.
+			$job = $bot->grabJob($job, (bool)$this->args('can_slice'));
+
+			//okay, do we slice it?
+			if ($job->get('status') == 'slicing' && $this->args('can_slice'))
+			  $job->getSliceJob()->grab($this->args('_uid'));
+			
+			//return the bot data w/ all our info.
+			$bot = new Bot($bot->id);
+			$data = $bot->getAPIData();
 
 			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " job via the API.");
+			
+			return $data;
+		}
+
+		public function api_grabslicejob()
+		{
+			$sj = new SliceJob($this->args('job_id'));
+			if (!$sj->isHydrated())
+				throw new Exception("Slice job does not exist.");
+
+			if ($sj->get('user_id') != User::$me->id && User::$me->isAdmin())
+				throw new Exception("This slice job is not yours to grab.");
+				
+			if (!$sj->get('status') != 'available')
+				throw new Exception("You cannot grab this job.");
+			
+			//attempt to grab our job.  will throw exceptions on failure.
+			$sj->grab($this->args('_uid'));
+			
+			//return the bot data w/ all our info.
+			$data = $sj->getAPIData();
+
+			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " slice job via the API.");
 			
 			return $data;
 		}
@@ -361,6 +441,26 @@
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
 			
+			return $data;
+		}
+
+
+		public function api_completeslicejob()
+		{
+			$sj = new SliceJob($this->args('slice_job_id'));
+			if (!$sj->isHydrated())
+				throw new Exception("Slice job does not exist.");
+			
+			if ($sj->get('worker_token') != $this->args("_uid"))
+				throw new Exception("You cannot complete this slice job.");
+				
+			//okay, complete the job.
+			$sj->complete();
+
+			Activity::log($sj->getLink() . " slice job completed via the API.");
+			
+			$data = $sj->getAPIData();
+
 			return $data;
 		}
 		
@@ -463,12 +563,15 @@
 			
 			if (!$bot->isMine())
 				throw new Exception("This bot is not yours.");
+				
+			//can we slice?
+			$can_slice = ($this->args('can_slice') && $bot->get('slice_engine_id') && $bot->get('slice_config_id'));
 
 			//load up our data.
 			$data = array();	
-			$jobs = $bot->getQueue()->getJobs('available')->getRange(0, 1);
-			if (!empty($jobs))
-				$data = $jobs[0]['Job']->getAPIData();
+			$job = $bot->getQueue()->findNewJob($bot, $can_slice);
+			if ($job->isHydrated())
+				$data = $job->getAPIData();
 			
 			//record our bot as having checked in.
 			$bot->set('last_seen', date("Y-m-d H:i:s"));
@@ -545,6 +648,77 @@
 			Activity::log("updated the bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
+		}
+		
+		public function api_updateslicejob()
+		{
+	    if (!$this->args('job_id'))
+		    throw new Exception("You must provide the 'bot_id' parameter.");
+		    
+			$sj = new SliceJob($this->args('job_id'));
+			if (!$sj->isHydrated())
+				throw new Exception("Slice job does not exist.");
+			
+			if ($sj->get('user_id') != User::$me->id)
+				throw new Exception("This slice job is not yours.");
+
+      //load up our objects
+      $job = $sj->getJob();
+      $bot = $job->getBot();
+
+      //upload our file to S3
+      $file = $_FILES['file'];
+      if ($file['error'] != 0)
+      {
+        if($file['size'] == 0 && $file['error'] == 0)
+          $file['error'] = 5; 
+
+        $upload_errors = array( 
+          UPLOAD_ERR_OK        => "No errors.", 
+          UPLOAD_ERR_INI_SIZE    => "Larger than upload_max_filesize.", 
+          UPLOAD_ERR_FORM_SIZE    => "Larger than form MAX_FILE_SIZE.", 
+          UPLOAD_ERR_PARTIAL    => "Partial upload.", 
+          UPLOAD_ERR_NO_FILE        => "No file.", 
+          UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+          UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+          UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+          UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+        );
+      
+        throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
+      }
+      
+      //okay, we're good.. do it.
+      $s3 = new S3File();
+      $s3->set('user_id', User::$me->id);
+      $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+
+      //update our status.
+      $sj->set('output_log', $this->args('output'));
+      $sj->set('error_log', $this->args('errors'));
+      $sj->set('output_id', $s3->id);
+      $sj->save();
+      
+      //update our job
+      $job->set('slice_complete_time', date("Y-m-d H:i:s"));
+      $job->set('file_id', $s3->id);
+      $job->save();
+      
+      //what do do with it now?
+      if ($this->args('status') == 'complete')
+        $sj->pass();
+      else if ($this->args('status') == 'failure')
+        $sj->fail();
+      else if ($this->args('status') == 'pending')
+      {
+        $sj->set('status', 'pending');
+        $sj->set('finish_date', date("Y-m-d H:i:s"));
+        $sj->save();
+      }
+      
+			Activity::log($bot->getLink() . " sliced the " . $job->getLink() . " job via the API.");
+			
+			return $job->getBot()->getAPIData();
 		}
 	}
 ?>

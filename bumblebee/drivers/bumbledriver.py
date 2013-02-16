@@ -35,12 +35,11 @@ class bumbledriver(object):
   def reset(self):
     pass
 
-  def startPrint(self, jobfile, filesize):
+  def startPrint(self, jobfile):
     if(self.isRunning() or not self.isConnected()):
         return False
 
     self.jobfile = jobfile
-    self.filesize = filesize
     self.printing=True
     Thread(target=self.printThreadEntry).start()
 

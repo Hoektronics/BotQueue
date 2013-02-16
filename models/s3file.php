@@ -68,7 +68,7 @@
 					return true;
 			}
 			else
-				echo "No file at $path or $file\n";
+				throw new Exception("S3 Upload: no file found at: '$file'\n");
 			
 			//fail!
 			return false;
@@ -100,6 +100,19 @@
 
 			//where do we download it?
 			return $path;
+		}
+		
+		public function exists($bucket = null, $file = null)
+		{
+		  if ($bucket === null)
+		    $bucket = $this->get('bucket');
+		  if ($file === null)
+		    $file = $this->get('path');
+		    
+	    $s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
+			$result = $s3->getObjectInfo($bucket, $file, false);
+			
+			return $result;
 		}
 		
 		public static function createHashDirectory()
@@ -253,6 +266,29 @@
 			$d['size'] = $this->get('size');
 
 			return $d;
+		}
+		
+		public function isGCode()
+		{
+		  return preg_match("/(g|gcode)$/i", $this->get('path'));
+		}
+		
+		public function is3DModel()
+		{
+		  return preg_match("/(stl|obj|amf)$/i", $this->get('path'));
+		}
+		
+		public function getJobs()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM jobs
+		    WHERE source_file_id = '". mysql_real_escape_string($this->id) ."'
+		      OR file_id = '". mysql_real_escape_string($this->id) ."'
+		    ORDER BY id DESC
+		  ";
+		  
+		  return new Collection($sql, array('Job' => 'id'));
 		}
 	}
 ?>
