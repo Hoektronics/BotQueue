@@ -69,7 +69,8 @@
 		</h3>
 		<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $jobs)); ?>
 	</div>
-	*/ ?>
+	*/
+	 ?>
 <div class="row">
 	<div class="span12">
 		<h3>
@@ -135,6 +136,7 @@
     <? endif ?>
 	</div>
 </div>
+<? /* ?>
 <div class="row">
 	<div class="span6">
 		<h3>
@@ -159,3 +161,4 @@
 	  </div>
 	</div>
 <? endif ?>
+<? */ ?>

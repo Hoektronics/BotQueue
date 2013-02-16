@@ -26,23 +26,23 @@
 		{
 		  if (User::isLoggedIn())
 			{
-				$queues = User::$me->getQueues();
-				$this->set('queues', $queues->getRange(0, 10));
-				$this->set('queue_count', $queues->count());
+				//$queues = User::$me->getQueues();
+				//$this->set('queues', $queues->getRange(0, 10));
+				//$this->set('queue_count', $queues->count());
 
 				$bots = User::$me->getBots();
 				$this->set('bots', $bots->getRange(0, 10));
 				$this->set('bot_count', $bots->count());
 
-				$jobs = User::$me->getJobs(null, 'user_sort', 'DESC');
-				$this->set('jobs', $jobs->getRange(0, 10));
-				$this->set('job_count', $jobs->count());
+				//$jobs = User::$me->getJobs(null, 'user_sort', 'DESC');
+				//$this->set('jobs', $jobs->getRange(0, 10));
+				//$this->set('job_count', $jobs->count());
 				
-				$activities = Activity::getStream();
-      	$this->set('activities', $activities->getRange(0, 10));
-				$this->set('activity_count', $activities->count());
+				//$activities = Activity::getStream();
+      	//$this->set('activities', $activities->getRange(0, 10));
+				//$this->set('activity_count', $activities->count());
 				
-				$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
+				//$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
 				
 				//$this->set('action_jobs', Job::getJobsRequiringAction()->getRange(0, 50));
 				//$this->set('action_slicejobs', SliceJob::getJobsRequiringAction()->getRange(0, 50));
