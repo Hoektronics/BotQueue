@@ -43,19 +43,20 @@
 		
 		public function hasNonce($nonce, $timestamp)
 		{
+		  $timestamp = (int)$timestamp;
+		  $nonce = (int)$nonce;
+		  
 			$check = db()->getValue("
 				SELECT count(*) AS cnt 
 				FROM oauth_consumer_nonce
-				WHERE timestamp = '{$timestamp}'
-					AND nonce = '{$nonce}'
-					AND consumer_id = ". mysql_real_escape_string($this->id) ."
+				WHERE timestamp = {$timestamp}
+					AND nonce = {$nonce}
+					AND consumer_id = {$this->id}
 			");
 
 			return ($check==1);
 		}
 		
-		//todo: create OAuthConsumerNonce
-		//todo: make sure calls to this are okay.
 		public function addNonce($nonce)
 		{
 			$n = new OAuthConsumerNonce();

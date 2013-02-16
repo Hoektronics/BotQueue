@@ -274,3 +274,10 @@ CREATE TABLE `users` (
   KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+alter table oauth_consumer_nonce modify consumer_id int(11) unsigned default 0;
+alter table oauth_consumer_nonce modify nonce int(11) unsigned default 0;
+alter table oauth_consumer_nonce modify	 `timestamp` int(11) unsigned default 0;
+alter table oauth_consumer_nonce add index(nonce);
+alter table oauth_consumer_nonce add index(`timestamp`);
+
