@@ -17,6 +17,9 @@
 		<p>
 		  For instructions on how to install and configure Bumblebee, please see the <a href="/help">help</a> page.
 		</p>
+		<p>
+		  <img src="/img/bumblebee.png" width="558" height="232">
+	  </p>
 	</div>
 	<div class="span6">
 		<? if (User::isLoggedIn()): ?>
