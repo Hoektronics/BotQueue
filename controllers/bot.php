@@ -124,7 +124,7 @@
 				if (!$bot->isMine())
 					throw new Exception("You cannot view that bot.");
 				if ($bot->get('status') == 'working' && $this->args('status') == 'offline')
-					throw new Exception("You cannot take a working bot offline through the web interface.  Use the client app instead.");
+					throw new Exception("You cannot take a working bot offline through the web interface.  You must stop the job from the client first.");
 				
 				if ($this->args('status') == 'offline')
 					Activity::log("took the bot " . $bot->getLink() . " offline.");
