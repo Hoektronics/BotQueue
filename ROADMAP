@@ -1,6 +1,8 @@
 v2.x Release - Ongoing
 
 * WEB - add drop job flow to website for printing / slicing jobs.
+* WEB - add ability to make notes on individual jobs
+* WEB - slice configs only accessible to owner
 * BUMBLEBEE - Make adding bots in bumblebee easier. (No manual configuration editing)
 * BUMBLEBEE - headless app authentication support
 * BUMBLEBEE - add support for dropping jobs mid-print / mid-slice

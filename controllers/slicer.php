@@ -377,7 +377,7 @@
         if (!$config->isHydrated())
           throw new Exception("That slice config does not exist.");	
 
-	      if (User::$me->id != $config->get('user_id') || !User::isAdmin())
+	      if (User::$me->id != $config->get('user_id'))
 	        throw new Exception("You cannot edit this slice config.");
 
 	      $this->setTitle("Edit Slice Config - " . $config->getName());

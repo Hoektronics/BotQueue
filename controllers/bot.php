@@ -392,9 +392,9 @@
 
       //load up our configs
       $engine = $bot->getSliceEngine();
-      if (User::isAdmin())
-	      $configs = $engine->getAllConfigs()->getAll();
-	    else
+      //       if (User::isAdmin())
+      //   $configs = $engine->getAllConfigs()->getAll();
+      // else
 	      $configs = $engine->getMyConfigs()->getAll();
       if (!empty($configs))
       {
@@ -494,9 +494,9 @@
 		{
       //load up our configs
       $engine = new SliceEngine($this->args('id'));
-      if (User::isAdmin())
-	      $configs = $engine->getAllConfigs()->getAll();
-	    else
+      //       if (User::isAdmin())
+      //   $configs = $engine->getAllConfigs()->getAll();
+      // else
 	      $configs = $engine->getMyConfigs()->getAll();
       if (!empty($configs))
       {
