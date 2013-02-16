@@ -2,7 +2,7 @@
   require("../extensions/global.php");
   $start_time = microtime(true);
   
-  $database = "devqueue";
+  $database = "botqueue";
   
   //dump our production database
   echo "Dumping backup data.\n";

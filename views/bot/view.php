@@ -33,11 +33,19 @@
 					</tr>
 					<tr>
 						<th>Slice Engine:</th>
-						<td><?=$engine->getLink()?></td>
+						<? if ($engine->isHydrated()): ?>
+  						<td><?=$engine->getLink()?></td>
+  					<? else: ?>
+  						<td><span class="text-error">No slice engine selected!</span></td>
+            <? endif ?>
 					</tr>
 					<tr>
 						<th>Engine Config:</th>
-						<td><?=$config->getLink()?></td>
+						<? if ($config->isHydrated()): ?>
+  						<td><?=$config->getLink()?></td>
+						<? else: ?>
+  						<td><span class="text-error">No slice config selected!</span></td>
+            <? endif ?>
 					</tr>					
 					<? if ($bot->get('manufacturer')): ?>
 						<tr>

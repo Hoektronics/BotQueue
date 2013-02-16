@@ -23,5 +23,6 @@
 				<a href="/app/revoke/<?=$token->get('token')?>?submit=1">Click here</a>, or just ignore this page and no access will be granted.
 			</div>
 		</div>
+	</div>
 <? endif ?>
 
