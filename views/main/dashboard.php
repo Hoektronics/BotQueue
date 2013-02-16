@@ -117,7 +117,7 @@
                     <a class="btn btn-success" href="<?=$sj->getUrl()?>/pass">PASS</a>
                     <a class="btn btn-danger" href="<?=$sj->getUrl()?>/fail">FAIL</a>
                   <? else: ?>
-        						<div class="progress progress-striped" style="width: 400px">
+        						<div class="progress progress-striped active" style="width: 400px">
         						  <div class="bar" style="width: <?=round($j->get('progress'))?>%;"></div>
         						</div>
         					<? endif ?>
