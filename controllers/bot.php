@@ -441,7 +441,7 @@
   		  'id' => 'slice_config_dropdown',
   			'name' => 'slice_config_id',
   			'label' => 'Slice Configuration',
-  			'help' => 'Which slicing configuration to use? <a href="' . $engine->getUrl() . '">click here</a> to view/edit configs.',
+  			'help' => 'Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.',
   			'required' => true,
   			'value' => $bot->get('slice_config_id'),
   			'options' => $cfgs

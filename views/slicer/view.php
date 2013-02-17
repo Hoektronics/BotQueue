@@ -42,14 +42,7 @@
 			</table>
 		</div>
 	</div>
-	<? if (User::isAdmin()): ?>
-	  <h2>All User Configurations</h2>
-	<? else: ?>
-	  <h2>My Engine Configurations</h2>
-	<? endif ?>
-	<p>
-    <a class="btn btn-primary" href="<?=$engine->getUrl()?>/createconfig">Create New Config</a>
-  </p>
+  <h2>Slice Engine Configurations <a class="btn btn-primary" href="<?=$engine->getUrl()?>/createconfig">Create New Config</a></h2>
 	<div class="row">
 		<div class="span12">
 			<table class="table table-striped table-bordered table-condensed">

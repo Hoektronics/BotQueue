@@ -367,5 +367,17 @@
 		  
 		  return new Collection($sql, array('ErrorLog' => 'id'));
 		}
+		
+		public function getMySliceConfigs()
+		{
+		  $sql = "
+		    SELECT id, engine_id
+		    FROM slice_configs
+		    WHERE user_id = '". mysql_real_escape_string($this->id) ."'
+		    ORDER BY engine_id DESC
+		  ";
+		  
+		  return new Collection($sql, array('SliceConfig' => 'id', 'SliceEngine' => 'engine_id'));		  
+		}
 	}
 ?>

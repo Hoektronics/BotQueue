@@ -27,6 +27,9 @@
 	      $this->set('slicers', SliceEngine::getAllEngines()->getAll());
 	    else
 	      $this->set('slicers', SliceEngine::getPublicEngines()->getAll());
+	      
+	    if (User::isLoggedIn())
+	      $this->set('configs', User::$me->getMySliceConfigs()->getAll());
 	  }
  
 	  public function create()
@@ -265,18 +268,28 @@
 	    try
 	    {
 	      //load the data and check for errors.
-        $engine = new SliceEngine($this->args('id'));
-        if (!$engine->isHydrated())
-          throw new Exception("That slice engine does not exist.");
-        if (!$engine->get('is_public') && !User::isAdmin())
-          throw new Exception("You do not have access to view this slice engine.");
-
-	      $this->setTitle("Create Slice Config - " . $engine->getName());
+        if ($this->args('id'))
+        {
+          $engine = new SliceEngine($this->args('id'));
+          if (!$engine->isHydrated())
+            throw new Exception("That slice engine does not exist.");
+          if (!$engine->get('is_public') && !User::isAdmin())
+            throw new Exception("You do not have access to view this slice engine.");
+  	      $this->setTitle("Create Slice Config - " . $engine->getName());
+        }
+        else
+        {
+          $this->setTitle("Create Slice Config");
+          $engine = new SliceEngine();
+        }
 	      
 	      //setup some objects
 	      $config = new SliceConfig();
   	    $form = $this->_createSliceConfigUploadForm($config);
-  	    $form->action = $engine->getUrl() . "/createconfig";
+  	    if ($engine->id)
+  	      $form->action = $engine->getUrl() . "/createconfig";
+  			else
+  	      $form->action = "/slicer/createconfig";
   			$this->set('form', $form);
 			
         //check our form
@@ -286,7 +299,7 @@
   			  $config->set('config_name', $form->data('config_name'));
   			  $file = $form->data('config_file');
   			  $config->set('config_data', file_get_contents($file['tmp_name']));
-  			  $config->set('engine_id', $engine->id);
+  			  $config->set('engine_id', $form->data('engine_id'));
   			  $config->set('user_id', User::$me->id);
   			  $config->set('add_date', date("Y-m-d H:i:s"));
   			  $config->set('edit_date', date("Y-m-d H:i:s"));
@@ -306,6 +319,25 @@
 	  public function _createSliceConfigRawForm($config)
 	  {
 	    $form = new Form('raw');
+
+			//load up our engines.
+	    if (User::isAdmin())
+	      $engines = SliceEngine::getAllEngines()->getAll();
+	    else
+	     $engines = SliceEngine::getPublicEngines()->getAll();
+			foreach ($engines AS $row)
+			{
+				$e = $row['SliceEngine'];
+				$engs[$e->id] = $e->getName();
+			}
+			$form->add(new SelectField(array(
+  			'name' => 'engine_id',
+  			'label' => 'Slice Engine',
+  			'help' => 'Which slicing engine does this config use?',
+  			'required' => true,
+  			'value' => $config->get('engine_id'),
+  			'options' => $engs
+  		)));
 
 			$form->add(new TextField(array(
 				'name' => 'config_name',
@@ -340,6 +372,24 @@
 	  {
 	    $form = new Form('upload');
 
+			//load up our engines.
+	    if (User::isAdmin())
+	      $engines = SliceEngine::getAllEngines()->getAll();
+	    else
+	     $engines = SliceEngine::getPublicEngines()->getAll();
+			foreach ($engines AS $row)
+			{
+				$e = $row['SliceEngine'];
+				$engs[$e->id] = $e->getName();
+			}
+			$form->add(new SelectField(array(
+  			'name' => 'engine_id',
+  			'label' => 'Slice Engine',
+  			'help' => 'Which slicing engine does this config use?',
+  			'required' => true,
+  			'value' => $config->get('engine_id'),
+  			'options' => $engs
+  		)));
 			$form->add(new TextField(array(
 				'name' => 'config_name',
 				'label' => 'Config Name',
@@ -396,6 +446,7 @@
   			if ($rawform->checkSubmitAndValidate($this->args()))
   			{
   			  //edit the config object
+  			  $config->set('engine_id', $rawform->data('engine_id'));
   			  $config->set('config_name', $rawform->data('config_name'));
   			  $config->set('config_data', $rawform->data('default_config'));
   			  $config->set('edit_date', date("Y-m-d H:i:s"));
@@ -412,6 +463,7 @@
   			{
   			  //edit the config object
   			  $config->set('config_name', $uploadform->data('config_name'));
+  			  $config->set('engine_id', $uploadform->data('engine_id'));
   			  
   			  $file = $uploadform->data('config_file');
   			  $config->set('config_data', file_get_contents($file['tmp_name']));
