@@ -109,21 +109,15 @@
     					  <td><?=$j->getStatusHTML()?></td>
     					  <td class="muted"><?=$j->getElapsedText()?></td>
       					<td class="muted"><?=$j->getEstimatedText()?></td>
-    					  <td style="width:300px">
+    					  <td style="width:250px">
     					    <? if ($j->get('status') == 'qa'): ?>
-    					      <? /* ?>
-                    <a class="btn btn-primary" href="<?=$j->getUrl()?>/qa">VIEW</a>
-                    <a class="btn btn-success" href="<?=$j->getUrl()?>/pass">PASS</a>
-                    <a class="btn btn-danger" href="<?=$j->getUrl()?>/fail">FAIL</a>
-                    */ ?>
                     <a class="btn btn-primary" href="<?=$j->getUrl()?>/qa">VERIFY JOB</a>
-
                   <? elseif ($j->get('status') == 'slicing' && $sj->get('status') == 'pending'): ?>
                     <a class="btn btn-primary" href="<?=$sj->getUrl()?>">VIEW</a>
                     <a class="btn btn-success" href="<?=$sj->getUrl()?>/pass">PASS</a>
                     <a class="btn btn-danger" href="<?=$sj->getUrl()?>/fail">FAIL</a>
                   <? else: ?>
-        						<div class="progress progress-striped active" style="width: 300px">
+        						<div class="progress progress-striped active" style="width: 250px">
         						  <div class="bar" style="width: <?=round($j->get('progress'))?>%;"></div>
         						</div>
         					<? endif ?>
@@ -132,7 +126,7 @@
                   <?= round($j->get('progress'), 2) ?>%      					  
     					  </td>
     					<? else: ?>
-    						<td colspan="5" class="muted">&nbsp;</td>
+    						<td colspan="6" class="muted">&nbsp;</td>
     					<? endif ?>
     				</tr>
     			<?endforeach?>

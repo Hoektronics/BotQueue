@@ -1,6 +1,5 @@
 v2.x Release - Ongoing
 
-* WEB - add ability to edit queue
 * WEB - create list of contributors and add Justin to it.
 * WEB - setup cron to delete old oauth nonces
 * WEB - setup cron to handle email sending
