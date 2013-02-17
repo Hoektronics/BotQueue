@@ -1,7 +1,6 @@
 v2.x Release - Ongoing
 
-* WEB - make sure all the right options are set with SES email
-* WEB - add ability to make notes on individual jobs
+* WEB - add ability to make comments on individual jobs
 
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.

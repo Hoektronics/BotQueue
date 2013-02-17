@@ -73,16 +73,34 @@
 		
 		public function sesSend()
 		{
-		  require_once(CLASSES_DIR . "AmazonSESMailer.php");
-			
-		  // Create a mailer class with your Amazon ID/Secret in the constructor
-      $mailer = new AmazonSESMailer(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
-      $mailer->AddAddress($this->get('to_email'));
-      $mailer->SetFrom(EMAIL_FROM);
-      $mailer->Subject = $this->get('subject');
-      $mailer->MsgHtml($this->get('html_body'));
+		  require_once('AWSSDKforPHP/sdk.class.php');
+      require_once('AWSSDKforPHP/services/ses.class.php');
+      
+  		$ses = new AmazonSES(array(
+  			"key" => AMAZON_AWS_KEY, 
+  			"secret" => AMAZON_AWS_SECRET
+  			));
 
-      return $mailer->Send();
+  		if(defined('SES_USE_DKIM'))
+  		  $ses->set_identity_dkim_enabled($this->From, true);
+  		
+  		//format our from and to emails.
+  		$from = '"' . RR_PROJECT_NAME . '" <' . EMAIL_FROM . '>';
+  		if ($this->get('to_name'))
+  		  $to = '"' . $this->get('to_name') . '" <' . $this->get('to_email') . '>';
+  		else
+  		  $to = $this->get('to_email');
+  		  
+      $response = $ses->send_email($from,
+            array('ToAddresses' => array($to)),
+                 array(
+                      'Subject.Data' => $this->get('subject'),
+                      'Body.Text.Data' => $this->get('text_body'),
+                      'Body.Html.Data' => $this->get('html_body'),
+                 )
+       );
+
+       return $response->isOK();
 		}
 		
 		public function smtpSend()
