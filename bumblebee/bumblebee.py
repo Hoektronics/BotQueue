@@ -77,7 +77,6 @@ class BumbleBee():
   def mainMenu(self, screen):
     self.screen = screen
     self.screen.nodelay(1) #non-blocking, so we can refresh the screen
-    curses.curs_set(0)
 
     #Try/except for the terminals that don't support hiding the cursor
     try: 
