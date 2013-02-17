@@ -39,6 +39,12 @@
 
 		</div>
 		<div class="span4">
+		  <p>
+        <a class="btn btn-primary" href="<?=$queue->getUrl()?>/edit">Edit Queue</a>
+        <a class="btn btn-warning" href="<?=$queue->getUrl()?>/empty">Empty Queue</a>
+        <a class="btn btn-danger" href="<?=$queue->getUrl()?>/delete">Delete Queue</a>
+	    </p>
+	    
 		  <h3>Bots</h3>
 		  <?= Controller::byName('bot')->renderView('draw_bots_small', array('bots' => $bots))?>
 

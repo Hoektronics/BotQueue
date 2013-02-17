@@ -63,6 +63,9 @@ RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?$						dispatcher.php?contro
 RewriteRule ^queues(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=home&page=$2 [NC,L]
 RewriteRule ^queue/create$												dispatcher.php?controller=queue&view=create [NC,L]
 RewriteRule ^queue:([0-9]+)$												dispatcher.php?controller=queue&view=view&id=$1 [NC,L]
+RewriteRule ^queue:([0-9]+)/empty$												dispatcher.php?controller=queue&view=flush&id=$1 [NC,L]
+RewriteRule ^queue:([0-9]+)/edit$												dispatcher.php?controller=queue&view=edit&id=$1 [NC,L]
+RewriteRule ^queue:([0-9]+)/delete$												dispatcher.php?controller=queue&view=delete&id=$1 [NC,L]
 RewriteRule ^queue:([0-9]+)/jobs/(available|taken|qa|failure|complete)(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=listjobs&id=$1&status=$2&page=$4 [NC,L]
 
 #uploader

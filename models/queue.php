@@ -236,5 +236,32 @@
 		  
 		  return new Collection($sql, array('ErrorLog' => 'id'));
 		}	
+		
+		public function flush()
+		{
+		  $sql = "
+		    DELETE FROM jobs
+		    WHERE queue_id = ". (int)$this->id ."
+		    AND status = 'available'
+		  ";
+		  db()->execute($sql);
+		}
+
+		public function delete()
+		{
+		  $sql = "
+		    DELETE FROM jobs
+		    WHERE queue_id = ". (int)$this->id ."
+		  ";
+		  db()->execute($sql);
+
+		  $sql = "
+		    DELETE FROM error_log
+		    WHERE queue_id = ". (int)$this->id ."
+		  ";
+		  db()->execute($sql);
+		  
+		  parent::delete();
+		}
 	}
 ?>
