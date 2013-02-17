@@ -74,7 +74,11 @@
 <div class="row">
 	<div class="span12">
 		<h3>
-			Your Bot Activity Dashboard <small><span class="muted">(Auto Refreshes every 10s)</span></small>
+			Bot Activity Dashboard
+			<a class="btn btn-primary" href="/upload">New Job</a>
+	    <a class="btn btn-primary" href="/bot/register">New Bot</a>
+	    <a class="btn btn-primary" href="/queue/create">New Queue</a>
+	    <small><span class="muted">(Auto Refreshes every 10s)</span></small>
 		</h3>
 		<? if (!empty($bots)): ?>
     	<table class="table table-striped table-bordered table-condensed">

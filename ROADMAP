@@ -1,21 +1,27 @@
 v2.x Release - Ongoing
 
 * WEB - add ability to make notes on individual jobs
-* WEB - add name info to oauth consumer registration
-* WEB - Remove access token for a certain computer.
+* WEB - upgrade to latest version of bootstrap
+* WEB - create list of contributors and add Justin to it.
+* WEB - setup cron to delete old oauth nonces
+* WEB - setup cron to handle email sending
+* WEB - make sure all the right options are set with SES email
+
+* WEB - add name info to app registration
+* WEB - Remove access token for a certain app.
+* WEB - ability to assign each bot to an app.
+* WEB - online editing of bot configs.
+
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
 * WEB - add source info for jobs added by url.
-* WEB - upgrade to latest version of bootstrap
-* WEB - create list of contributors and add Justin to it.
   
-* BUMBLEBEE - Make adding bots in bumblebee easier. (No manual configuration editing)
+* BUMBLEBEE - pull list of bots + config from web directly
 * BUMBLEBEE - headless app authentication support
 * BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
 * BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
 * BUMBLEBEE - raspberry pi image & support
 * BUMBLEBEE - temperature reporting
-* BUMBLEBEE - when getting list of bots - show non-config'd bots and allow you to configure them.
 
 v3 - ???
 

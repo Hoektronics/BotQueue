@@ -134,7 +134,7 @@
 				$bot->set('status', $this->args('status'));
 				$bot->save();
 				
-				$this->forwardToUrl($bot->getUrl());
+				$this->forwardToUrl("/");
 			}
 			catch (Exception $e)
 			{
