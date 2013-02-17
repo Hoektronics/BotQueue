@@ -1,6 +1,5 @@
 v2.x Release - Ongoing
 
-* WEB - create list of contributors and add Justin to it.
 * WEB - setup cron to delete old oauth nonces
 * WEB - setup cron to handle email sending
 * WEB - make sure all the right options are set with SES email

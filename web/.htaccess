@@ -35,6 +35,7 @@ RewriteRule ^ajax/([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$		dispatcher.php?mode=ajax&con
 RewriteRule ^$					dispatcher.php?controller=main&view=home [NC,L]
 RewriteRule ^bootstrap$					dispatcher.php?controller=main&view=bootstrap&mode=ajax [NC,L]
 RewriteRule ^home$					dispatcher.php?controller=user&view=home [NC,L]
+RewriteRule ^about$					dispatcher.php?controller=main&view=about [NC,L]
 RewriteRule ^activity(/page:([0-9]+))?$					dispatcher.php?controller=main&view=activity&page=$2 [NC,L]
 
 #user login action

@@ -160,18 +160,18 @@
 <footer>
 	<div class="row">
 		<div class="span6">
-			<h3>Links</h3>
+			<h3>Connect</h3>
 			<a href="http://www.hoektronics.com">Blog</a><br/>
 			<a href="https://twitter.com/hoeken">Twitter</a><br/>
 			<a href="irc://irc.freenode.net/botqueue">Freenode #BotQueue</a><br/>
-			<a href="https://groups.google.com/d/forum/botqueue">Google Groups</a><br/>
+			<a href="https://groups.google.com/d/forum/botqueue">Google Group</a><br/>
 		</div>
 		<div class="span6">
 			<h3>Info</h3>
-			Made by <a href="mailto:zach@hoektronics.com">Zach Hoeken</a> especially for you.<br/>
+			Made by <a href="/about">Zach Hoeken and friends</a> especially for you.<br/>
 			Software licensed under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL v3.0</a>. Code at <a href="https://github.com/Hoektronics/BotQueue">GitHub</a>.<br/>
 			&copy; <?= date("Y") ?> <a href="http://www.hoektronics.com"><?= COMPANY_NAME ?></a>. Powered by <a href="http://www.botqueue.com">BotQueue</a>.<br/>
-			Generated in <?= round(microtime(true) - START_TIME, 3) ?> seconds.			
+			Page generated in <?= round(microtime(true) - START_TIME, 3) ?> seconds.			
 		</div>
 	</div>
 	<br/>
