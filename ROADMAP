@@ -1,11 +1,13 @@
 v2.x Release - Ongoing
 
-* WEB - add ability to make notes on individual jobs
 * WEB - upgrade to latest version of bootstrap
+* WEB - add ability to empty queue
+* WEB - add ability to delete queue
 * WEB - create list of contributors and add Justin to it.
 * WEB - setup cron to delete old oauth nonces
 * WEB - setup cron to handle email sending
 * WEB - make sure all the right options are set with SES email
+* WEB - add ability to make notes on individual jobs
 
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.

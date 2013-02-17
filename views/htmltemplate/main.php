@@ -17,13 +17,13 @@
     <![endif]-->
 
     <!-- Le styles -->
-    <link href="/bootstrap/2.1.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/bootstrap/2.1.1/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/bootstrap/2.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap/2.3.0/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/css/botqueue.css" rel="stylesheet">
 
     <!-- Le jquery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
 
 		<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		 <script type="text/javascript">
@@ -182,6 +182,6 @@
   <!-- Le javascript -->
   <!-- Placed at the end of the document so the pages load faster -->
   <script src="/js/botqueue.js"></script>
-  <script src="/bootstrap/2.1.1/js/bootstrap.js"></script>
+  <script src="/bootstrap/2.3.0/js/bootstrap.js"></script>
   </body>
 </html>
