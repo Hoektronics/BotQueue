@@ -20,6 +20,11 @@ sudo apt-get install git apache2 php5-mysql php-pear build-essential libpcre3-de
 
 sudo pecl install oauth
 
+sudo pear channel-discover pear.amazonwebservices.com
+sudo pear channel-discover guzzlephp.org/pear
+sudo pear channel-discover pear.symfony.com
+sudo pear install aws/sdk
+
 git clone git://github.com/Hoektronics/BotQueue.git
 sudo cp ~/BotQueue/install/oauth.ini /etc/php5/apache2/conf.d/oauth.ini
 

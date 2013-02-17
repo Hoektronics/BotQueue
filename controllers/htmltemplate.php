@@ -25,6 +25,11 @@
 			$this->setArg('sidebar');
 		}
 
+		public function statusbar()
+		{
+			$this->setArg('message');
+		}
+		
 		public function errorbar()
 		{
 			$this->setArg('message');

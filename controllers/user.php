@@ -224,9 +224,9 @@
 					if (!$error)
 					{
 						$user->set('pass_hash', User::hashPass($this->args('changepass1')));
-						$user->set('force_password_change', 0); //pass updated.
+						//$user->set('force_password_change', 0); //pass updated.
 						$user->save();
-						$this->set('status', "The password has been updated.");
+						$this->set('status', "Your password has been updated.");
 					}
 					else
 						$this->set('error', $error);
@@ -263,12 +263,12 @@
 
 				//one time use only.
 				$user->set('pass_reset_hash', '');
-				$user->set('force_password_change', 1);
+				//$user->set('force_password_change', 1);
 				$user->save();
 			
 				User::createLogin($user);
 			
-				$this->forwardToUrl('/');
+				$this->forwardToUrl('/user/changepass');
 			}
 			catch (Exception $e)
 			{

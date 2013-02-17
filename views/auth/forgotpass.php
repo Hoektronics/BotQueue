@@ -11,7 +11,7 @@
 		<table>
 			<tr>
 				<td><b>Email</b></td>
-				<td><input type="text" name="email" value="<?=$email?>" style="width: 50%"></td>
+				<td><input type="text" name="email" value="<?=$email?>" class="input-xlarge"></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>

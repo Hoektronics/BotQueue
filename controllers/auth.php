@@ -66,7 +66,8 @@
 
 					Activity::log("forgot his/her password. :P", $user);
 
-					Email::queue($user, "Password Reset", $text, $html);
+					$email = Email::queue($user, "Password Reset", $text, $html);
+					$email->send();
 					
 					$this->set('status', "We have sent a reset password confirmation email to '" . $this->args('email') . "'.");
 				}
