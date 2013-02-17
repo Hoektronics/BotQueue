@@ -207,6 +207,8 @@
 					throw new Exception("You do not own this job.");
 				if ($job->get('status') == 'taken')
 					throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
+				if ($job->get('status') == 'slicing')
+					throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
 
 				$this->set('job', $job);
 				$this->setTitle('Delete Job - ' . $job->getName());

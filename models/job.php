@@ -104,7 +104,7 @@
 		
 		public function cancelJob()
 		{
-			$bot = $job->getBot();
+			$bot = $this->getBot();
 			if ($bot->isHydrated())
 			{
 				$bot->set('job_id', 0);
@@ -204,5 +204,27 @@
 		  
 		  return new Collection($sql, array('Job' => 'id', 'Queue' => 'queue_id', 'Bot' => 'bot_id'));
 		}
+		
+		public function delete()
+		{
+		  //clean up our bot.
+      $bot = $this->getBot();
+			if ($bot->isHydrated())
+			{
+				$bot->set('job_id', 0);
+				$bot->set('status', 'idle');
+				$bot->save();
+			}
+			
+      $sql = "DELETE FROM error_log WHERE job_id = {$this->id}";
+      db()->execute($sql);		  
+
+      $sql = "DELETE FROM slice_jobs WHERE job_id = {$this->id}";
+      db()->execute($sql);		  
+
+		  
+		  parent::delete();
+		}
+		
 	}
 ?>

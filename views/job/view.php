@@ -82,7 +82,7 @@
 							<? if ($job->get('status') == 'qa'): ?>
 								<a class="btn btn-mini" href="<?=$job->getUrl()?>/qa"><i class="icon-check"></i> verify</a>
 							<? endif ?>
-							<? if ($job->get('status') != 'taken' && $job->get('status') != 'qa'): ?>
+							<? if ($job->get('status') != 'taken' && $job->get('status') != 'qa' && $job->get('status') != 'slicing'): ?>
 								<a class="btn btn-mini" href="<?=$job->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
 							<? endif ?>
 							<a class="btn btn-mini" href="/job/create/job:<?=$job->id?>"><i class="icon-repeat"></i> re-run</a>

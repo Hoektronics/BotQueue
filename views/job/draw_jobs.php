@@ -38,7 +38,7 @@
 						<? if ($j->get('status') == 'available'): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
 						<? endif ?>
-						<? if ($j->get('status') != 'taken' && $j->get('status') != 'qa' && $j->get('status') != 'downloading'): ?>
+						<? if ($j->get('status') != 'taken' && $j->get('status') != 'qa' && $j->get('status') != 'downloading' && $j->get('status') != 'slicing' ): ?>
 							<a class="btn btn-mini" href="<?=$j->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
 						<? endif ?>
 						<? if ($j->get('status') == 'qa'): ?>
