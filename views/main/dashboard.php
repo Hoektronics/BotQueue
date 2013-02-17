@@ -90,7 +90,8 @@
     				<th>Job</th>
     				<th>Status</th>
     				<th>Elapsed</th>
-    				<th>Progress</th>
+    				<th>ETA</th>
+    				<th colspan="2">Progress</th>
     			</tr>
     		</thead>
     		<tbody>
@@ -107,7 +108,8 @@
     						<td><?=$j->getLink()?></td>
     					  <td><?=$j->getStatusHTML()?></td>
     					  <td class="muted"><?=$j->getElapsedText()?></td>
-    					  <td>
+      					<td class="muted"><?=$j->getEstimatedText()?></td>
+    					  <td style="width:300px">
     					    <? if ($j->get('status') == 'qa'): ?>
     					      <? /* ?>
                     <a class="btn btn-primary" href="<?=$j->getUrl()?>/qa">VIEW</a>
@@ -121,13 +123,16 @@
                     <a class="btn btn-success" href="<?=$sj->getUrl()?>/pass">PASS</a>
                     <a class="btn btn-danger" href="<?=$sj->getUrl()?>/fail">FAIL</a>
                   <? else: ?>
-        						<div class="progress progress-striped active" style="width: 400px">
+        						<div class="progress progress-striped active" style="width: 300px">
         						  <div class="bar" style="width: <?=round($j->get('progress'))?>%;"></div>
         						</div>
         					<? endif ?>
       					</td>
+      					<td class="muted">
+                  <?= round($j->get('progress'), 2) ?>%      					  
+    					  </td>
     					<? else: ?>
-    						<td colspan="4" class="muted">&nbsp;</td>
+    						<td colspan="5" class="muted">&nbsp;</td>
     					<? endif ?>
     				</tr>
     			<?endforeach?>

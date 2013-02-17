@@ -22,10 +22,10 @@
 					<td><?=$j->id?></td>
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getStatusHTML()?></td>
-					<td><?=$j->getElapsedText()?></td>
-					<td><?=$j->getEstimatedText()?></td>
+					<td class="muted"><?=$j->getElapsedText()?></td>
+					<td class="muted"><?=$j->getEstimatedText()?></td>
 					<td align="right" style="width: 300px">
-						<div class="progress progress-striped">
+						<div class="progress progress-striped <?=($j->get('status') == 'working') ? 'active' : ''?>">
 						  <div class="bar" style="width: <?=round($j->get('progress'))?>%;"></div>
 						</div>
 					</td>
