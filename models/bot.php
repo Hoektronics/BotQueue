@@ -209,6 +209,14 @@
 		
 		public function dropJob($job)
 		{
+		  //if its a sliced job, clear it for a potentially different bot.
+		  if ($job->getSliceJob()->isHydrated())
+		  {
+		    $job->set('slice_job_id', 0);
+		    $job->set('file_id', 0);
+		  }
+		  
+		  //clear out our data for the next bot.
 			$job->set('status', 'available');
 			$job->set('bot_id', 0);
 			$job->set('taken_time', 0);
