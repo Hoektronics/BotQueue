@@ -51,6 +51,8 @@
 			{
 			  $bot->set('user_id', User::$me->id);
 				$bot->set('queue_id', $form->data('queue_id'));
+        $bot->set('slice_engine_id', $form->data('slice_engine_id'));
+        $bot->set('slice_config_id', $form->data('slice_config_id'));
 				$bot->set('name', $form->data('name'));
 				$bot->set('manufacturer', $form->data('manufacturer'));
 				$bot->set('model', $form->data('model'));
