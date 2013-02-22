@@ -16,6 +16,7 @@ class BumbleBee():
     self.workers = []
     self.bots = []
     self.config = hive.config.get()
+    self.networkUp = True
     
     #check for default info.
     if not 'can_slice' in self.config:
@@ -42,10 +43,7 @@ class BumbleBee():
     except Exception as ex:
       self.log.exception(ex)
 
-  def main(self):
-    #load up our bots and start processing them.
-    self.log.info("Started up, loading bot list.")
-    
+  def getbots(self):
     try:
       bots = self.api.listBots()
       if (bots['status'] == 'success'):
@@ -55,7 +53,7 @@ class BumbleBee():
             parent_conn, child_conn = multiprocessing.Pipe()
             p = multiprocessing.Process(target=self.loadbot, args=(child_conn,row,))
             p.start()
-            
+
             #link = 'process' : p, 'pipe' : parent_conn }
             link = hive.Object()
             link.bot = row
@@ -65,14 +63,22 @@ class BumbleBee():
             self.workers.append(link)
           else:
             self.log.info("Skipping unknown bot %s" % row['name'])
+          self.networkUp = True
       else:
         self.log.error("Bot list failure: %s" % bots['error'])
-
-      curses.wrapper(self.mainMenu)
     except botqueueapi.NetworkError as e:
+      self.networkUp = False
       self.log.error("Internet connection is down, quitting.")
     except KeyboardInterrupt as e:
       pass
+
+  def main(self):
+    #load up our bots and start processing them.
+    self.log.info("Started up, loading bot list.")
+
+    self.getbots()
+
+    curses.wrapper(self.mainMenu)
 
   def mainMenu(self, screen):
     self.screen = screen
@@ -86,6 +92,8 @@ class BumbleBee():
     lastUpdate = 0
     self.quit = False
     while not self.quit:
+      if self.networkUp == False:
+        self.getbots()
       if (time.time() - lastUpdate > 1):
         self.checkMessages()
         self.drawMenu()
@@ -160,16 +168,19 @@ class BumbleBee():
   def drawMenu(self):
     self.screen.erase()
     self.screen.addstr("%s\n\n" % time.asctime())
-    self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
-    for link in self.workers:
-      self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
-      if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
-        self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
-      elif link.bot['status'] == 'error':
-        self.screen.addstr("%s" % link.bot['error_text'])
-      else:
-        self.screen.addstr("   --         --         --")
-      self.screen.addstr("\n")
+    if self.networkUp == True:
+      self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
+      for link in self.workers:
+        self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
+        if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
+          self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+        elif link.bot['status'] == 'error':
+          self.screen.addstr("%s" % link.bot['error_text'])
+        else:
+          self.screen.addstr("   --         --         --")
+        self.screen.addstr("\n")
+    else:
+      self.screen.addstr("     Bots will be listed once an internet connection is established\n")
     self.screen.addstr("\nq = quit program\n")
     self.screen.refresh()
 
