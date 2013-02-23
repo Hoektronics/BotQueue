@@ -153,7 +153,7 @@
 		
 		public static function byUsername($username)
 		{
-		  $username = mysql_real_escape_string($username);
+		  $username = mysqli_real_escape_string(db()->getLink(), $username);
 		  
 			//look up the token
 			$sql = "
@@ -169,7 +169,7 @@
 
 		public static function byUsernameAndPassword($username, $password)
 		{
-		  $username = mysql_real_escape_string($username);
+		  $username = mysqli_real_escape_string(db()->getLink(), $username);
 			$pass_hash = sha1($password);
 
 			//look up the combo.
@@ -187,7 +187,7 @@
 		
 		public static function byEmail($email)
 		{
-		  $email = mysql_real_escape_string($email);
+		  $email = mysqli_real_escape_string(db()->getLink(), $email);
 		  
 			//look up the token
 			$sql = "
@@ -249,7 +249,7 @@
 			$sql = "
 				SELECT id, user_id
 				FROM activities
-				WHERE user_id = '". mysql_real_escape_string($this->id) ."'
+				WHERE user_id = '". mysqli_real_escape_string(db()->getLink(), $this->id) ."'
 				ORDER BY id DESC
 			";
 			
@@ -275,7 +275,7 @@
 			$sql = "
 				SELECT id
 				FROM queues
-				WHERE user_id = ". mysql_real_escape_string($this->id) ."
+				WHERE user_id = ". mysqli_real_escape_string(db()->getLink(), $this->id) ."
 				ORDER BY name
 			";
 
@@ -287,7 +287,7 @@
 			$sql = "
 				SELECT id FROM queues
 				WHERE name = 'Default'
-					AND user_id = ". mysql_real_escape_string($this->id) ."
+					AND user_id = ". mysqli_real_escape_string(db()->getLink(), $this->id) ."
 			";
 			$q = new Queue(db()->getValue($sql));
 		
@@ -308,7 +308,7 @@
 			$sql = "
 				SELECT id, queue_id, job_id
 				FROM bots
-				WHERE user_id = ". mysql_real_escape_string($this->id) ."
+				WHERE user_id = ". mysqli_real_escape_string(db()->getLink(), $this->id) ."
 				ORDER BY name
 			";
 
@@ -323,7 +323,7 @@
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE user_id = ". mysql_real_escape_string($this->id) ."
+				WHERE user_id = ". mysqli_real_escape_string(db()->getLink(), $this->id) ."
 					{$statusSQL}
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -336,7 +336,7 @@
 			$sql = "
 				SELECT id, consumer_id
 				FROM oauth_token
-				WHERE user_id = ". mysql_real_escape_string($this->id) ."
+				WHERE user_id = ". mysqli_real_escape_string(db()->getLink(), $this->id) ."
 					AND type = 2
 				ORDER BY id
 			";
@@ -349,7 +349,7 @@
 			$sql = "
 				SELECT id
 				FROM oauth_consumer
-				WHERE user_id = ". mysql_real_escape_string($this->id) ."
+				WHERE user_id = ". mysqli_real_escape_string(db()->getLink(), $this->id) ."
 				ORDER BY name
 			";
 
@@ -361,7 +361,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE user_id = '". mysql_real_escape_string($this->id) ."'
+		    WHERE user_id = '". mysqli_real_escape_string(db()->getLink(), $this->id) ."'
 		    ORDER BY error_date DESC
 		  ";
 		  
@@ -373,7 +373,7 @@
 		  $sql = "
 		    SELECT id, engine_id
 		    FROM slice_configs
-		    WHERE user_id = '". mysql_real_escape_string($this->id) ."'
+		    WHERE user_id = '". mysqli_real_escape_string(db()->getLink(), $this->id) ."'
 		    ORDER BY engine_id DESC
 		  ";
 		  
