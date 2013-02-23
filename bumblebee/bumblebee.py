@@ -68,7 +68,6 @@ class BumbleBee():
         self.log.error("Bot list failure: %s" % bots['error'])
     except botqueueapi.NetworkError as e:
       self.networkUp = False
-      self.log.error("Internet connection is down, quitting.")
     except KeyboardInterrupt as e:
       pass
 
