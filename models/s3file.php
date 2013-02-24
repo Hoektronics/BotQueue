@@ -283,8 +283,8 @@
 		  $sql = "
 		    SELECT id
 		    FROM jobs
-		    WHERE source_file_id = '". mysqli_real_escape_string($this->id) ."'
-		      OR file_id = '". mysqli_real_escape_string($this->id) ."'
+		    WHERE source_file_id = '". db()->escape($this->id) ."'
+		      OR file_id = '". db()->escape($this->id) ."'
 		    ORDER BY id DESC
 		  ";
 		  

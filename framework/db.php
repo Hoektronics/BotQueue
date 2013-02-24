@@ -86,6 +86,11 @@ class DatabaseSocket
 		return $this->link->error;
 	}
 	
+	public function escape($data)
+	{
+	  return $this->link->real_escape_string($data);
+	}
+	
 	public function insert($sql, $data = array())
 	{
     if (TRACK_SQL_QUERIES)

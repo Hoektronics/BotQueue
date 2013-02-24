@@ -88,12 +88,12 @@
 		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
-				$statusSql = " AND status = '" . mysqli_real_escape_string($status) . "'";
+				$statusSql = " AND status = '" . db()->escape($status) . "'";
 				
 			$sql = "
 				SELECT id
 				FROM jobs
-				WHERE bot_id = " . mysqli_real_escape_string($this->id) ."
+				WHERE bot_id = " . db()->escape($this->id) ."
 					{$statusSql}
 				ORDER BY {$sortField} {$sortOrder}
 			";
@@ -105,7 +105,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE bot_id = '". mysqli_real_escape_string($this->id) ."'
+		    WHERE bot_id = '". db()->escape($this->id) ."'
 		    ORDER BY error_date DESC
 		  ";
 		  
@@ -262,7 +262,7 @@
 			$sql = "
 				SELECT status, count(status) as cnt
 				FROM jobs
-				WHERE bot_id = ". mysqli_real_escape_string($this->id) ."
+				WHERE bot_id = ". db()->escape($this->id) ."
 				GROUP BY status
 			";
 
@@ -287,7 +287,7 @@
 				SELECT sum(verified_time - finished_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - taken_time) as total
 				FROM jobs
 				WHERE status = 'complete'
-					AND bot_id = ". mysqli_real_escape_string($this->id);
+					AND bot_id = ". db()->escape($this->id);
 
 			$stats = db()->getArray($sql);
 			

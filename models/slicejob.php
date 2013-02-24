@@ -185,8 +185,8 @@
 		  $sql = "
 		    SELECT id
 		    FROM slice_jobs
-		    WHERE slice_config_id = ".mysqli_real_escape_string($config_id)."
-		      AND input_id = ".mysqli_real_escape_string($source_id)."
+		    WHERE slice_config_id = ".db()->escape($config_id)."
+		      AND input_id = ".db()->escape($source_id)."
 		      AND user_id = " . User::$me->id . "
 		      AND status = 'complete'
 		  ";

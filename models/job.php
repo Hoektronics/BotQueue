@@ -186,7 +186,7 @@
 		  $sql = "
 		    SELECT id
 		    FROM error_log
-		    WHERE job_id = '".mysqli_real_escape_string($this->id)."'
+		    WHERE job_id = '".db()->escape($this->id)."'
 		    ORDER BY error_date DESC
 		  ";
 		  

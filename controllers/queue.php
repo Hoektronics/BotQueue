@@ -151,7 +151,7 @@
 			
 			//find our our current max
 			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" .
-        mysqli_real_escape_string(implode($jids, ",")) .
+        db()->escape(implode($jids, ",")) .
         ")";
 			$min = (int)db()->getValue($sql);
 			
