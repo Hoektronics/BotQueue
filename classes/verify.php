@@ -37,7 +37,7 @@
 
 		public static function email($email)
 		{
-			return eregi("^[_a-z0-9-]+((\+)?(\.)?[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", $email);
+      return filter_var($email, FILTER_VALIDATE_EMAIL);
 		}
 	
 	}

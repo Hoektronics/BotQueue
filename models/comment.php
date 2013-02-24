@@ -29,7 +29,7 @@
 			$sql = "
 				SELECT id
 				FROM comments
-				WHERE guid = '".mysql_real_escape_string($guid)."'";
+				WHERE guid = '".mysqli_real_escape_string(db()->getLink(), $guid)."'";
 			$id = db()->getValue($sql);
 			
 			//send it!

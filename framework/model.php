@@ -386,7 +386,7 @@ class Model
 				//$val = str_replace("\\\"", "\"", $val);
 
 				//add it if we have it...
-				$fields[] = "`$key` = '" . mysql_real_escape_string($val) . "'";
+				$fields[] = "`$key` = '" . mysqli_real_escape_string(db()->getLink(), $val) . "'";
 			}
 		}
 		

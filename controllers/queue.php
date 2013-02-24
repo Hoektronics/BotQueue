@@ -150,7 +150,9 @@
 			}
 			
 			//find our our current max
-			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" . mysql_real_escape_string(implode($jids, ",")) . ")";
+			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" .
+        mysqli_real_escape_string(db()->getLink(), implode($jids, ",")) .
+        ")";
 			$min = (int)db()->getValue($sql);
 			
 			//now actually update.

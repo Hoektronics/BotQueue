@@ -1,5 +1,6 @@
 *.pyc
 *.DS_Store
+.idea/
 extensions/config.php
 bumblebee/config.json
 bumblebee/cache*
