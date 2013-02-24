@@ -139,6 +139,7 @@ RewriteRule ^slicejob:([0-9]+)/fail$								dispatcher.php?controller=slicer&vie
 #ugh, legal stuff
 RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]
 RewriteRule ^privacy$										dispatcher.php?controller=main&view=privacy [NC,L]
+RewriteRule ^stats$								  		dispatcher.php?controller=main&view=stats [NC,L]
 
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]

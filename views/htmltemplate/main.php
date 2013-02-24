@@ -91,6 +91,7 @@
             <li><a href="/jobs">Jobs</a></li>
             <li><a href="/apps">App</a></li>
             <li><a href="/slicers">Slicers</a></li>
+            <li><a href="/stats">Stats</a></li>
             <li><a href="/help">Help</a></li>
             <? if (User::isAdmin()): ?>
               <li class="dropdown">

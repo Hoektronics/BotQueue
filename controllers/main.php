@@ -103,5 +103,46 @@
 		{
 		  $this->setTitle("Privacy Policy");
 		}
+		
+		public function stats()
+		{
+		  $this->setTitle("Overall BotQueue.com Stats");
+		  
+		  //active bots
+		  $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300";
+		  $this->set('total_active_bots', db()->getValue($sql));
+
+		  //total prints
+		  $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'available'";
+		  $this->set('total_pending_jobs', db()->getValue($sql));
+		  		  
+		  //total prints
+		  $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'complete'";
+		  $this->set('total_completed_jobs', db()->getValue($sql));
+		  
+		  //total printing hours
+		  $sql = "SELECT CEIL(SUM(finished_time - taken_time) / (60*60)) AS total FROM jobs WHERE status = 'complete'";
+		  $this->set('total_printing_time', db()->getValue($sql));
+		  
+		  if (User::isLoggedIn())
+		  {
+  		  //active bots
+  		  $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300 AND user_id = " . (int)User::$me->id;
+  		  $this->set('my_total_active_bots', db()->getValue($sql));
+
+  		  //total prints
+  		  $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'available' AND user_id = " . (int)User::$me->id;
+  		  $this->set('my_total_pending_jobs', db()->getValue($sql));
+
+  		  //total prints
+  		  $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'complete' AND user_id = " . (int)User::$me->id;
+  		  $this->set('my_total_completed_jobs', db()->getValue($sql));
+
+  		  //total printing hours
+  		  $sql = "SELECT CEIL(SUM(finished_time - taken_time) / (60*60)) AS total FROM jobs WHERE status = 'complete' AND user_id = " . (int)User::$me->id;
+  		  $this->set('my_total_printing_time', db()->getValue($sql));		    
+		    
+		  }
+		}
 	}
 ?>
