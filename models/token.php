@@ -29,7 +29,7 @@
 			$sql = "
 				SELECT id
 				FROM tokens
-				WHERE hash = '".mysqli_real_escape_string(db()->getLink(), $token)."'
+				WHERE hash = '".mysqli_real_escape_string($token)."'
 			";
 			$id = db()->getValue($sql);
 			

@@ -158,7 +158,7 @@
 
 			$sql = file_get_contents($path);
 
-			$sql .= "\nINSERT INTO schema_changes SET name='" . mysqli_real_escape_string(db()->getLink(), $name) . "';\n";
+			$sql .= "\nINSERT INTO schema_changes SET name='" . mysqli_real_escape_string($name) . "';\n";
 
 			return $sql;
 		}

@@ -146,12 +146,12 @@
 				$jid = (int)$jarray[1];
 				if (!$jid)
 					die("Error: format must be a csv of job_### where ### is the job id.");
-				$jids[] = $jid;
+				$jids[] = (int)$jid;
 			}
 			
 			//find our our current max
 			$sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" .
-        mysqli_real_escape_string(db()->getLink(), implode($jids, ",")) .
+        mysqli_real_escape_string(implode($jids, ",")) .
         ")";
 			$min = (int)db()->getValue($sql);
 			

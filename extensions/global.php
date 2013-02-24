@@ -41,6 +41,6 @@
 	ini_set('include_path', ini_get('include_path') . $path_delimiter . CLASSES_DIR . 'PEAR');
 	
 	//load our db if we need it.
-	if (defined('BQ_DB_HOST'))
-		db()->selectDb(BQ_DB_NAME);
+	if (defined('RR_DB_NAME'))
+		db()->selectDb(RR_DB_NAME);
 ?>
