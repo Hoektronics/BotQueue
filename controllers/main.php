@@ -121,7 +121,7 @@
 		  $this->set('total_completed_jobs', db()->getValue($sql));
 		  
 		  //total printing hours
-		  $sql = "SELECT CEIL(SUM(finished_time - taken_time) / (60*60)) AS total FROM jobs WHERE status = 'complete'";
+		  $sql = "SELECT CEIL(SUM(unix_timestamp(finished_time) - unix_timestamp(taken_time)) / 3600) AS total FROM jobs WHERE status = 'complete'";
 		  $this->set('total_printing_time', db()->getValue($sql));
 		  
 		  if (User::isLoggedIn())
@@ -139,7 +139,7 @@
   		  $this->set('my_total_completed_jobs', db()->getValue($sql));
 
   		  //total printing hours
-  		  $sql = "SELECT CEIL(SUM(finished_time - taken_time) / (60*60)) AS total FROM jobs WHERE status = 'complete' AND user_id = " . (int)User::$me->id;
+  		  $sql = "SELECT CEIL(SUM(unix_timestamp(finished_time) - unix_timestamp(taken_time)) / 3600) AS total FROM jobs WHERE status = 'complete' AND user_id = " . (int)User::$me->id;
   		  $this->set('my_total_printing_time', db()->getValue($sql));		    
 		    
 		  }
