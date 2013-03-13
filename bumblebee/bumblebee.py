@@ -5,7 +5,6 @@ import time
 import hive
 import logging
 import curses
-import webbrowser
 import hashlib
 
 class BumbleBee():
@@ -31,7 +30,15 @@ class BumbleBee():
     #create a unique hash that will identify this computers requests
     if not self.config['uid']:
       self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
-      hive.config.save(self.config)    
+      hive.config.save(self.config)
+
+    #alert the user if pyserial should be installed
+    try:
+      from serial import Serial, SerialException
+    except ImportError:
+      self.log.fatal("Error loading PySerial module")
+      print "Error: PySerial not found. Please install the PySerial module."
+      exit()
 
   def loadbot(self, pipe, data):
     try:
