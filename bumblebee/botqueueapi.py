@@ -42,7 +42,7 @@ class BotQueueAPI():
     self.token = oauth.Token(token_key, token_secret)
     self.client = oauth.Client(self.consumer, self.token, timeout=10)
 
-  def apiCall(self, call, parameters = {}, url = False, method = "POST"):
+  def apiCall(self, call, parameters = {}, url = False, method = "POST", retries = 999999):
     #what url to use?
     if (url == False):
         url = self.endpoint_url
@@ -56,32 +56,46 @@ class BotQueueAPI():
     body = "api_call=%s&api_output=json" % (call)
     for k, v in parameters.iteritems():
       body = body + "&%s=%s" % (k, v)
+
+    #how many times have we tried?
+    tries = 0
     
-    # make the call
-    resp = ""
-    content = ""
-    try:
-      self.log.debug("Calling %s" % url)
+    # make the call for as long as it takes.
+    while retries > 0:
+      resp = ""
+      content = ""
+      try:
+        self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
 
-      resp, content = self.client.request(url, "POST", body)
+        resp, content = self.client.request(url, "POST", body)
 
-      if resp['status'] != '200':
-        raise NetworkError("Invalid response %s." % resp['status'])
+        if resp['status'] != '200':
+          raise NetworkError("Invalid response %s." % resp['status'])
 
-      self.log.debug("loading json")
-      result = json.loads(content)
+        result = json.loads(content)
+        self.netStatus = True
+        
+        return result    
    
-    #these are our known errors that typically mean the network is down.
-    except (httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
-      raise NetworkError(str(ex))
-    #unknown exceptions... get a stacktrace for debugging.
-    except Exception as ex:
-      self.log.error("response: %s" % resp)
-      self.log.error("content: %s" % content)
-      self.log.exception(ex)
-      raise NetworkError(str(ex))
-    
-    return result
+      #these are our known errors that typically mean the network is down.
+      except (NetworkError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
+        #raise NetworkError(str(ex))
+        self.log.error("Internet connection is down: %s" % ex)
+        retries = retries - 1
+        self.netStatus = False
+        time.sleep(10)
+      #unknown exceptions... get a stacktrace for debugging.
+      except Exception as ex:
+        self.log.error("Unknown API error: %s" % ex)
+        self.log.error("response: %s" % resp)
+        self.log.error("content: %s" % content)
+        self.log.exception(ex)
+        retries = retries - 1
+        self.netStatus = False
+        time.sleep(10)
+
+    #something bad happened.
+    return False
 
   def apiUploadCall(self, call, parameters = {}, url = False, method = "POST", filepath = None):
     #what url to use?
@@ -230,7 +244,7 @@ class BotQueueAPI():
     return self.apiCall('completejob', {'job_id' : job_id})
   
   def updateJobProgress(self, job_id, progress):
-    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress})
+    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress}, retries = 1)
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})
