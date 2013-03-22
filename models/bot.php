@@ -119,10 +119,15 @@
 		
 		public function canGrab($job)
 		{
+      //if we're already the owner, we can grab the job.
+      //this is because sometimes the grab request times out and the bot doesn't know it hasn't grabbed the job.
+			if ($job->get('status') == 'taken' && $job->get('bot_id') == $this->id)
+			  return true;
+
 			//todo: fix me once we have the bot_to_queues table
 			if ($this->get('user_id') != $job->getQueue()->get('user_id'))
 				return false;
-
+				
 			if ($job->get('status') != 'available')
 				return false;
 			
@@ -203,6 +208,9 @@
 		{
 			if ($job->get('bot_id') == $this->id && $this->get('job_id') == $job->id)
 				return true;
+			//if nobody has the job, we can safely drop it.  sometimes the web requests will time out and a bot will get stuck trying to drop a job.
+      else if ($job->get('bot_id' == 0) && $job->get('bot_id') == 0)
+        return true;
 			else
 				return false;
 		}
@@ -236,6 +244,9 @@
 		{
 			if ($job->get('bot_id') == $this->id && $job->get('status') == 'taken')
 				return true;
+			//sometimes the web requests will time out and a bot will get stuck trying to complete a job.
+			else if ($job->get('bot_id') == $this->id && $job->get('status') == 'qa')
+			  return true;
 			else
 				return false;
 		}
