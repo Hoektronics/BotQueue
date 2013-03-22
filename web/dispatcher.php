@@ -41,42 +41,44 @@
 	//figure out what mode we're looking at.
 	if (!$mode)
 	{
-		//do we have a cookie based mode?
-		if ($_COOKIE['viewmode'])
-		{
-			switch ($_COOKIE['viewmode'])
-			{
-				case 'iphone':
-					$mode = 'iphone';
-					break;
-				
-				case 'html':
-				default:
-					$mode = 'html';
-					break;
-			}
-		}
-		else
-		{
-			//figure out if we're iphone or not.
-			if (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false)
-				$mode = 'iphone';
-			else
-				$mode = 'html';
-				
-			//save it for later!
-			setcookie('viewmode', $mode, time()+60*60*24*30, '/');
-		}
-	}
+	//  //do we have a cookie based mode?
+  //  if ($_COOKIE['viewmode'])
+  //  {
+  //    switch ($_COOKIE['viewmode'])
+  //    {
+  //      case 'iphone':
+  //        $mode = 'iphone';
+  //        break;
+  //      
+  //      case 'html':
+  //      default:
+  //        $mode = 'html';
+  //        break;
+  //    }
+  //  }
+  //  else
+  //  {
+  //    //figure out if we're iphone or not.
+  //    if (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false)
+  //      $mode = 'iphone';
+  //    else
+  //      $mode = 'html';
+  //      
+  //    //save it for later!
+  //    setcookie('viewmode', $mode, time()+60*60*24*30, '/');
+  //  }
+    $mode = 'html';
+  }
+  
 
 	//what controller to show?
 	//If the user hasn't supplied a controller (e.g. item), then use either the iphone or main controllers (which display the home page)
 	if (!$controller)
 	{
-		if ($mode == 'iphone')
-			$controller = 'iphone';
-		else
-			$controller = 'main';
+    // if ($mode == 'iphone')
+    //  $controller = 'iphone';
+    // else
+		$controller = 'main';
 	}
 	if (!$view)
 		$view = 'home';
