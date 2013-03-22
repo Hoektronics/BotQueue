@@ -125,6 +125,8 @@
       					<td class="muted">
                   <?= round($j->get('progress'), 2) ?>%      					  
     					  </td>
+    					<? elseif ($b->get('status') == 'error'): ?>
+  						  <td colspan="6" class="muted"><span class="text-error"><?=$b->get('error_text')?></span></td>
     					<? else: ?>
     						<td colspan="6" class="muted">&nbsp;</td>
     					<? endif ?>
