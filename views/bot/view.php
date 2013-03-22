@@ -132,14 +132,6 @@
 				</table>
 			</div>
 	</div>
-	<? if (!empty($errors)): ?>
-  	<div class="row">
-  	  <div class="span12">
-    	  <h3>Error Log</h3>
-  	    <?= Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'bot'))?>
-  	  </div>
-  	</div>
-	<? endif ?>
 	<div class="row">
 		<div class="span12">
 			<h3>
@@ -149,4 +141,12 @@
 			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $jobs)) ?>
 		</div>
 	</div>
+	<? if (!empty($errors)): ?>
+  	<div class="row">
+  	  <div class="span12">
+    	  <h3>Error Log</h3>
+  	    <?= Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'bot'))?>
+  	  </div>
+  	</div>
+	<? endif ?>
 <? endif ?>
