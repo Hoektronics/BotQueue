@@ -16,7 +16,7 @@ class BumbleBee():
     self.workers = []
     self.bots = []
     self.config = hive.config.get()
-    self.networkUp = True
+    self.version = "0.2"
     
     #check for default info.
     if not 'can_slice' in self.config:
@@ -44,66 +44,70 @@ class BumbleBee():
       self.log.exception(ex)
 
   def getbots(self):
-    try:
-      bots = self.api.listBots()
-      if (bots['status'] == 'success'):
-        for row in bots['data']:
-          if (self.isOurBot(row)):
-            #create our thread and start it.
-            parent_conn, child_conn = multiprocessing.Pipe()
-            p = multiprocessing.Process(target=self.loadbot, args=(child_conn,row,))
-            p.start()
+    bots = self.api.listBots()
+    if (bots['status'] == 'success'):
+      for row in bots['data']:
+        if (self.isOurBot(row)):
+          #create our thread and start it.
+          parent_conn, child_conn = multiprocessing.Pipe()
+          p = multiprocessing.Process(target=self.loadbot, args=(child_conn,row,))
+          p.start()
 
-            #link = 'process' : p, 'pipe' : parent_conn }
-            link = hive.Object()
-            link.bot = row
-            link.process = p
-            link.pipe = parent_conn
-            link.job = None
-            self.workers.append(link)
-          else:
-            self.log.info("Skipping unknown bot %s" % row['name'])
-          self.networkUp = True
-      else:
-        self.log.error("Bot list failure: %s" % bots['error'])
-    except botqueueapi.NetworkError as e:
-      self.networkUp = False
-    except KeyboardInterrupt as e:
-      pass
+          #link = 'process' : p, 'pipe' : parent_conn }
+          link = hive.Object()
+          link.bot = row
+          link.process = p
+          link.pipe = parent_conn
+          link.job = None
+          self.workers.append(link)
+        else:
+          self.log.info("Skipping unknown bot %s" % row['name'])
+    else:
+      self.log.error("Bot list failure: %s" % bots['error'])
 
   def main(self):
     #load up our bots and start processing them.
     self.log.info("Started up, loading bot list.")
 
-    self.getbots()
-
     curses.wrapper(self.mainMenu)
-
+      
   def mainMenu(self, screen):
-    self.screen = screen
-    self.screen.nodelay(1) #non-blocking, so we can refresh the screen
+    try:
+      self.screen = screen
+      self.screen.nodelay(1) #non-blocking, so we can refresh the screen
 
-    #Try/except for the terminals that don't support hiding the cursor
-    try: 
-        curses.curs_set(0)
-    except:
-        pass
-    lastUpdate = 0
-    self.quit = False
-    while not self.quit:
-      if self.networkUp == False:
-        self.getbots()
-      if (time.time() - lastUpdate > 1):
-        self.checkMessages()
-        self.drawMenu()
-      key = self.screen.getch()
-      if key >= 0:
-        if key == ord('.'): self.toggle()
-        elif key == ord('q'):
-          self.handleQuit()
-      else:
-        #sleep so we don't hog the CPU
-        time.sleep(0.1)
+      #Try/except for the terminals that don't support hiding the cursor
+      try: 
+          curses.curs_set(0)
+      except:
+          pass
+      lastUpdate = 0
+
+      #show an intro screen.
+      self.screen.erase()
+      self.screen.addstr("\nBotQueue v%s starting up - loading bot list.\n\n" % self.version)
+      self.screen.refresh()
+    
+      #load our bots!
+      self.getbots()
+    
+      #our main loop until we're done.
+      self.quit = False
+      while not self.quit:
+        if (time.time() - lastUpdate > 1):
+          self.checkMessages()
+          self.drawMenu()
+        key = self.screen.getch()
+        if key >= 0:
+          if key == ord('.'): self.toggle()
+          elif key == ord('q'):
+            self.handleQuit()
+        else:
+          #sleep so we don't hog the CPU
+          time.sleep(0.1)
+    except KeyboardInterrupt:
+      self.handleQuit()
+    
 
   def handleQuit(self):
     self.quit = True
@@ -128,6 +132,8 @@ class BumbleBee():
         self.screen.addstr("Waiting for worker threads to shut down (%d/%d)" % (threads, len(self.workers)))
         self.screen.refresh()
         lastUpdate = time.time()
+        
+    self.screen.erase()    
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
@@ -166,21 +172,26 @@ class BumbleBee():
     
   def drawMenu(self):
     self.screen.erase()
-    self.screen.addstr("%s\n\n" % time.asctime())
-    if self.networkUp == True:
-      self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
-      for link in self.workers:
-        self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
-        if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
-          self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
-        elif link.bot['status'] == 'error':
-          self.screen.addstr("%s" % link.bot['error_text'])
-        else:
-          self.screen.addstr("   --         --         --")
-        self.screen.addstr("\n")
-    else:
-      self.screen.addstr("     Bots will be listed once an internet connection is established\n")
+    self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.version, time.asctime()))
+    self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
+    for link in self.workers:
+      self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
+      if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
+        self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+      elif link.bot['status'] == 'error':
+        self.screen.addstr("%s" % link.bot['error_text'])
+      else:
+        self.screen.addstr("   --         --         --")
+      self.screen.addstr("\n")
     self.screen.addstr("\nq = quit program\n")
+
+    # todo: how to get this to work?
+    # self.screen.addstr("\nNetwork Status: ")
+    # if self.api.netStatus == True:
+    #   self.screen.addstr("ONLINE")
+    # else:
+    #   self.screen.addstr("OFFLINE")
+
     self.screen.refresh()
 
   def isOurBot(self, bot):

@@ -113,6 +113,7 @@ class WorkerBee():
       #okay, we're off!
       self.running = True
       while self.running:
+        
         #see if there are any messages from the motherbee
         self.checkMessages()
         if not self.running: #did we get a shutdown notice?
@@ -123,9 +124,6 @@ class WorkerBee():
           try:
             if not self.getNewJob():
               time.sleep(10)
-          except botqueueapi.NetworkError as e:
-            self.warning("Internet down: %s" % e)
-            time.sleep(10)
           except Exception as ex:
             self.exception(ex)
         #slicing means we need to slice our job.
@@ -144,9 +142,6 @@ class WorkerBee():
           self.info("Waiting in %s mode" % self.data['status'])
           try:
             self.getOurInfo() #see if our job has changed.
-          except botqueueapi.NetworkError as e:
-            self.warning("Internet down: %s" % e)
-            time.sleep(10)
           except Exception as e:
             #todo: better error handling here.
             self.exception(e)
@@ -165,20 +160,16 @@ class WorkerBee():
   def getOurInfo(self):
     self.debug("Looking up bot #%s." % self.data['id'])
     
-    try:
-      result = self.api.getBotInfo(self.data['id'])
-      if (result['status'] == 'success'):
-        self.data = result['data']
-      else:
-        self.error("Error looking up bot info: %s" % result['error'])
-        raise Exception("Error looking up bot info: %s" % result['error'])
+    result = self.api.getBotInfo(self.data['id'])
+    if (result['status'] == 'success'):
+      self.data = result['data']
+    else:
+      self.error("Error looking up bot info: %s" % result['error'])
+      raise Exception("Error looking up bot info: %s" % result['error'])
 
-      #notify the mothership of our status.
-      msg = Message('bot_update', self.data)
-      self.pipe.send(msg)
-    except botqueueapi.NetworkError as e:
-      self.warning("Internet down: %s" % e)
-      time.sleep(10)
+    #notify the mothership of our status.
+    msg = Message('bot_update', self.data)
+    self.pipe.send(msg)
 
   #get bot info from the mothership
   def getJobInfo(self):
@@ -302,14 +293,11 @@ class WorkerBee():
           break;
 
         #occasionally update home base.
-        try:
-          if (time.time() - lastUpdate > 15):
-            lastUpdate = time.time()
-            self.info("print: %0.2f%%" % latest)
-            self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
-        except botqueueapi.NetworkError as e:
-          self.warning("Internet down: %s" % e)
-            
+        if (time.time() - lastUpdate > 15):
+          lastUpdate = time.time()
+          self.info("print: %0.2f%%" % latest)
+          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
+
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
           
@@ -322,21 +310,19 @@ class WorkerBee():
         #finish the job online, and mark as completed.
         notified = False
         while not notified:
-          try:
-            result = self.api.completeJob(self.data['job']['id'])
-            if result['status'] == 'success':
-              self.data = result['data']['bot']
-              notified = True
-              #notify the queen bee
-              data = hive.Object()
-              data.job = self.data['job']
-              data.bot = self.data
-              message = Message('job_end', data)
-              self.pipe.send(message)
-            else:
-              raise Exception("Error notifying mothership: %s" % result['error'])
-          except botqueueapi.NetworkError as e:
-            self.warning("Internet down: %s" % e)
+          result = self.api.completeJob(self.data['job']['id'])
+          if result['status'] == 'success':
+            self.data = result['data']['bot']
+            notified = True
+            
+            #notify the queen bee
+            data = hive.Object()
+            data.job = self.data['job']
+            data.bot = self.data
+            message = Message('job_end', data)
+            self.pipe.send(message)
+          else:
+            self.log.error("Error notifying mothership: %s" % result['error'])
             time.sleep(10)
     except Exception as ex:
       self.exception(ex)

@@ -433,7 +433,7 @@
   			'name' => 'slice_engine_id',
   			'label' => 'Slice Engine',
   			'help' => 'Which slicing engine does this bot use?',
-  			'required' => true,
+  			'required' => false,
   			'value' => $bot->get('slice_engine_id'),
   			'options' => $engs,
   			'onchange' => 'update_slice_config_dropdown(this)'
@@ -444,7 +444,7 @@
   			'name' => 'slice_config_id',
   			'label' => 'Slice Configuration',
   			'help' => 'Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.',
-  			'required' => true,
+  			'required' => false,
   			'value' => $bot->get('slice_config_id'),
   			'options' => $cfgs
   		)));
