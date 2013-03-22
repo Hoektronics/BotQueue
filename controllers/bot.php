@@ -18,6 +18,17 @@
 
 	class BotController extends Controller
 	{
+	  public static $failure_options = array(
+	    "Unknown" => "Unknown Failure",
+	    "Extruder Jam" => "Extruder Jam (Stopped extrusion, filament stripped, etc.)",
+	    "XY Offset" => "XY Layers Offset (Motors skipping, etc.)",
+	    "Print Dislodged" => "Print dislodged from build platform",
+	    "Machine Frozen" => "Machine frozen and not responding (software crash, etc.)",
+	    "Out of Filament" => "Ran out of filament, print did not complete.",
+	    "Poor Quality" => "Poor print quality (blobbing, loose threads, etc.)",
+	    "Other" => "Other - Please enter reason in field below."
+	  );
+
 		public function home()
 		{
 			$this->assertLoggedIn();
@@ -250,6 +261,18 @@
             $bot->save();
           }
           
+          //was there a job error?
+          if ($form->data('job_error'))
+          {
+            if ($form->data('failure_reason') == 'Other')
+      			  $error_text = $form->data('failure_reason_other');
+      			else
+      			  $error_text = $form->data('failure_reason');
+
+            //log that shit!
+            $log = $job->logError($error_text);
+          }
+          
 					Activity::log("dropped the job " . $job->getLink() . ".");
 				
 					$this->forwardToUrl($bot->getUrl());						
@@ -284,7 +307,7 @@
   			'name' => 'take_offline',
   			'label' => 'Take Offline',
   			'help' => 'Should the bot be taken offline afterwards?',
-  			'value' => true
+  			'value' => false
   		)));
   		
 			$form->add(new CheckBoxField(array(
@@ -294,6 +317,29 @@
 				'value' => false
 			)));
 			
+  		$form->add(new CheckBoxField(array(
+  			'name' => 'job_error',
+  			'label' => 'Job/Bot Error',
+  			'help' => 'Were there errors with the job or bot?',
+  			'value' => false
+  		)));
+					
+			$form->add(new SelectField(array(
+				'name' => 'failure_reason',
+				'label' => 'Reason for failure',
+				'help' => 'Please enter a reason for rejecting this print.',
+				'required' => true,
+				'options' => self::$failure_options
+			)));
+			
+			$form->add(new TextField(array(
+				'name' => 'failure_reason_other',
+				'label' => 'Other Reason',
+				'help' => 'If you selected "other" above, please enter the reason here.',
+				'required' => false,
+				'value' => ""
+			)));
+		
 			return $form;
 		}
 

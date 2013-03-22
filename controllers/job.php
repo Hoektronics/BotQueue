@@ -405,23 +405,23 @@
 		  $form = new Form();
 		  $form->action = $job->getUrl() . "/qa/fail";
 		  
-		  $options = array(
-		    "Unknown" => "Unknown Failure",
-		    "Extruder Jam" => "Extruder Jam (Stopped extrusion, filament stripped, etc.)",
-		    "XY Offset" => "XY Layers Offset (Motors skipping, etc.)",
-		    "Print Dislodged" => "Print dislodged from build platform",
-		    "Machine Frozen" => "Machine frozen and not responding (software crash, etc.)",
-		    "Out of Filament" => "Ran out of filament, print did not complete.",
-		    "Poor Quality" => "Poor print quality (blobbing, loose threads, etc.)",
-		    "Other" => "Other - Please enter reason in field below."
-		  );
-					
+		  $failure_options = array(
+  	    "Unknown" => "Unknown Failure",
+  	    "Extruder Jam" => "Extruder Jam (Stopped extrusion, filament stripped, etc.)",
+  	    "XY Offset" => "XY Layers Offset (Motors skipping, etc.)",
+  	    "Print Dislodged" => "Print dislodged from build platform",
+  	    "Machine Frozen" => "Machine frozen and not responding (software crash, etc.)",
+  	    "Out of Filament" => "Ran out of filament, print did not complete.",
+  	    "Poor Quality" => "Poor print quality (blobbing, loose threads, etc.)",
+  	    "Other" => "Other - Please enter reason in field below."
+  	  );
+  	  
 			$form->add(new SelectField(array(
 				'name' => 'failure_reason',
 				'label' => 'Reason for failure',
 				'help' => 'Please enter a reason for rejecting this print.',
 				'required' => true,
-				'options' => $options
+				'options' => $failure_options
 			)));
 			
 			$form->add(new TextField(array(
