@@ -1,6 +1,7 @@
 * BUMBLEBEE - test slic3r on raspberry pi.
 * BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
 * BUMBLEBEE / API / WEB - add temperature reporting
+* WEB - add available jobs and recently finished jobs (max 5) to dashboard
 
 v2.x Release - Ongoing
 
