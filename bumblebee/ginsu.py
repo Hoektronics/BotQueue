@@ -6,7 +6,6 @@ import tempfile
 import subprocess
 import os
 import hive
-import string
 import re
 
 class Ginsu():
@@ -24,7 +23,7 @@ class Ginsu():
   def getProgress(self):
     return self.slicer.getProgress()
 
-  def getResult():
+  def getResult(self):
     return self.sliceResult
 
   def slicerFactory(self):
@@ -95,7 +94,10 @@ class Slic3r(GenericSlicer):
     if sys.platform.startswith('darwin'):
       osPath = "osx.app/Contents/MacOS/slic3r"
     elif sys.platform.startswith('linux'):
-      osPath = "linux/bin/slic3r"
+      if os.uname()[1].startswith('raspberrypi'):
+        osPath = "raspberrypi/slic3r"
+      else:
+        osPath = "linux/bin/slic3r"
     else:
       raise Exception("Slicing is not supported on your OS.")
 

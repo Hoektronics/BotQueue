@@ -40,7 +40,7 @@ class BotQueueAPI():
 
   def setToken(self, token_key, token_secret):
     self.token = oauth.Token(token_key, token_secret)
-    self.client = oauth.Client(self.consumer, self.token, timeout=10)
+    self.client = oauth.Client(self.consumer, self.token, timeout=30)
 
   def apiCall(self, call, parameters = {}, url = False, method = "POST", retries = 999999):
     #what url to use?

@@ -144,7 +144,7 @@ class BumbleBee():
 
   #these are the messages we know about.
   def handleMessage(self, link, message):
-    self.log.debug("Got message %s" % message.name)
+    #self.log.debug("Got message %s" % message.name)
     if message.name == 'job_start':
       link.bot = message.data.bot
       link.job = message.data.job
