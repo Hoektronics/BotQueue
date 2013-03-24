@@ -131,9 +131,11 @@
 <!-- Content -->
 <section id="content">
   
+  <!--
   <div class="alert alert-info">
     <strong>Welcome to BotQueue v2.0!</strong> Please check out the <a href="http://www.hoektronics.com/2013/02/16/botqueue-v2-slic3r-integration/">blog entry about the new release</a> for more details.  TL;DR: Slic3r integration.
   </div>
+  -->
   
 	<? if ($title): ?>
 	  <div class="page-header">

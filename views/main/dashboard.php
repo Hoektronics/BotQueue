@@ -75,11 +75,11 @@
 	<div class="span12">
 		<h3>
 			Bot Activity Dashboard
-	    <small><span class="muted">(Auto Refreshes every 10s)</span></small>
 			<a class="btn btn-primary" href="/upload">New Job</a>
 	    <a class="btn btn-primary" href="/bot/register">New Bot</a>
 	    <a class="btn btn-primary" href="/queue/create">New Queue</a>
 		</h3>
+   <span class="muted">Auto refresh every 10s - Last Update <?=date("Y-m-d H:i:s")?></span>
 		<? if (!empty($bots)): ?>
     	<table class="table table-striped table-bordered table-condensed">
     		<thead>
@@ -141,6 +141,23 @@
     <? endif ?>
 	</div>
 </div>
+<div class="row">
+	<div class="span6">
+		<h3>
+			On Deck Jobs
+			:: 1-<?=min(5, $on_deck_count)?> of <?=$on_deck_count?> :: <a href="/jobs/available">see all</a>
+		</h3>
+		<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $on_deck)); ?>
+	</div>
+	<div class="span6">
+		<h3>
+			Finished Jobs
+			:: 1-<?=min(5, $finished_count)?> of <?=$finished_count?> :: <a href="/jobs/complete">see all</a>
+		</h3>
+		<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $finished)); ?>
+	</div>
+</div>
+
 <? /* ?>
 <div class="row">
 	<div class="span6">

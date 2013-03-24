@@ -34,9 +34,13 @@
 				$this->set('bots', $bots->getRange(0, 10));
 				$this->set('bot_count', $bots->count());
 
-				//$jobs = User::$me->getJobs(null, 'user_sort', 'DESC');
-				//$this->set('jobs', $jobs->getRange(0, 10));
-				//$this->set('job_count', $jobs->count());
+				$on_deck = User::$me->getJobs('available', 'user_sort', 'DESC');
+				$this->set('on_deck', $on_deck->getRange(0, 5));
+				$this->set('on_deck_count', $on_deck->count());
+
+				$finished = User::$me->getJobs('complete', 'verified_time', 'DESC');
+				$this->set('finished', $finished->getRange(0, 5));
+				$this->set('finished_count', $finished->count());
 				
 				//$activities = Activity::getStream();
       	//$this->set('activities', $activities->getRange(0, 10));
