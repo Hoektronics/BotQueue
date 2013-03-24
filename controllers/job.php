@@ -525,6 +525,16 @@
 			$this->setArg('jobs');
 		}
 
+		public function draw_on_deck_jobs()
+		{
+			$this->setArg('jobs');
+		}
+		
+		public function draw_finished_jobs()
+		{
+			$this->setArg('jobs');
+		}
+		
 		public function create()
 		{
 			$this->assertLoggedIn();
