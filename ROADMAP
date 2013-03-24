@@ -1,7 +1,8 @@
 * BUMBLEBEE - test slic3r on raspberry pi.
-* BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
 * BUMBLEBEE / API / WEB - add temperature reporting
-* WEB - add available jobs and recently finished jobs (max 5) to dashboard
+
+* POTENTIAL PROBLEM / RACE CONDITION - worker bee changes state during loading of information, and mothership drops in stale information.
+* POTENTIAL FIX - add a bot data age flag into bumblebee and only update data if current time is newer.
 
 v2.x Release - Ongoing
 

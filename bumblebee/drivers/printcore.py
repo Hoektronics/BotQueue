@@ -231,6 +231,15 @@ class printcore():
         self.paused=True
         self.printing=False
         time.sleep(1)
+
+    def stop(self):
+        """Stops the print completely.
+        """
+        self.log.info("Paused.")
+        self.paused=False
+        self.printing=False
+        time.sleep(1)
+
         
     def resume(self):
         """Resumes a paused print.

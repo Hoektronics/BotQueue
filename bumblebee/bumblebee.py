@@ -33,7 +33,7 @@ class BumbleBee():
       self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
       hive.config.save(self.config)    
 
-  def loadbot(self, pipe, data):
+  def loadBot(self, pipe, data):
     try:
       self.log.info("Loading bot %s" % data['name'])
       worker = workerbee.WorkerBee(data, pipe)
@@ -43,27 +43,45 @@ class BumbleBee():
     except Exception as ex:
       self.log.exception(ex)
 
-  def getbots(self):
+  def getBots(self):
     bots = self.api.listBots()
-    if (bots['status'] == 'success'):
-      for row in bots['data']:
-        if (self.isOurBot(row)):
-          #create our thread and start it.
-          parent_conn, child_conn = multiprocessing.Pipe()
-          p = multiprocessing.Process(target=self.loadbot, args=(child_conn,row,))
-          p.start()
+    if bots:
+      if (bots['status'] == 'success'):
+        for row in bots['data']:
+          if self.isOurBot(row):
+            link = self.getWorker(row['id'])
+            if link is not False:
+              message = workerbee.Message('updatedata', row)
+              link.pipe.send(message)
+              link.bot = row
+            else:
+              self.log.info("Creating worker thread for bot %s" % row['name'])
+              #create our thread and start it.
+              parent_conn, child_conn = multiprocessing.Pipe()
+              p = multiprocessing.Process(target=self.loadBot, args=(child_conn,row,))
+              p.start()
 
-          #link = 'process' : p, 'pipe' : parent_conn }
-          link = hive.Object()
-          link.bot = row
-          link.process = p
-          link.pipe = parent_conn
-          link.job = None
-          self.workers.append(link)
-        else:
-          self.log.info("Skipping unknown bot %s" % row['name'])
-    else:
-      self.log.error("Bot list failure: %s" % bots['error'])
+              #make our link object to track all this cool stuff.
+              link = hive.Object()
+              link.bot = row
+              link.process = p
+              link.pipe = parent_conn
+              link.job = None
+              self.workers.append(link)
+          
+            #should we find a new job?
+            if link.bot['status'] == 'idle':
+              self.getNewJob(link)
+          # else:
+          #   self.log.info("Skipping unknown bot %s" % row['name'])
+      else:
+        self.log.error("Bot list failure: %s" % bots['error'])
+
+  def getWorker(self, id):
+    for link in self.workers:
+      if link.bot['id'] == id:
+        return link
+    return False
 
   def main(self):
     #load up our bots and start processing them.
@@ -81,34 +99,41 @@ class BumbleBee():
           curses.curs_set(0)
       except:
           pass
-      lastUpdate = 0
+
+      #when did we last update?
+      lastBotUpdate = 0
+      lastScreenUpdate = 0
 
       #show an intro screen.
-      self.screen.erase()
-      self.screen.addstr("\nBotQueue v%s starting up - loading bot list.\n\n" % self.version)
-      self.screen.refresh()
-    
-      #load our bots!
-      self.getbots()
+      # self.screen.erase()
+      # self.screen.addstr("\nBotQueue v%s starting up - loading bot list.\n\n" % self.version)
+      # self.screen.refresh()
     
       #our main loop until we're done.
       self.quit = False
       while not self.quit:
-        if (time.time() - lastUpdate > 1):
-          self.checkMessages()
+
+        #any messages?
+        self.checkMessages()
+        if (time.time() - lastScreenUpdate > 1):
           self.drawMenu()
+          lastScreenUpdate = time.time()
+        if (time.time() - lastBotUpdate > 10):
+          self.getBots()
+          lastBotUpdate = time.time()
+
+        #keyboard interface stuff.
         key = self.screen.getch()
         if key >= 0:
-          if key == ord('.'): self.toggle()
+          if key == ord('.'):
+            self.toggle()
           elif key == ord('q'):
             self.handleQuit()
-        else:
-          #sleep so we don't hog the CPU
-          time.sleep(0.1)
+
+        time.sleep(0.1)
     except KeyboardInterrupt:
       self.handleQuit()
     
-
   def handleQuit(self):
     self.quit = True
     self.log.info("Shutting down.")
@@ -144,31 +169,26 @@ class BumbleBee():
 
   #these are the messages we know about.
   def handleMessage(self, link, message):
-    #self.log.debug("Got message %s" % message.name)
-    if message.name == 'job_start':
-      link.bot = message.data.bot
-      link.job = message.data.job
-    elif message.name == 'job_end':
-      link.bot = message.data.bot
-      link.job = message.data.job
-      #webbrowser.open_new("%s/job:%s/qa" % (self.config['app_url'], link.job['id']))
-      #curses.beep()
-      #curses.flash()
-    elif message.name == 'slice_update':
-      link.bot = message.data
-      if link.bot['job']['slicejob']['status'] == 'pending':
-        #webbrowser.open_new("%s/slicejob:%s" % (self.config['app_url'], link.bot['job']['slicejob']['id']))
-        #curses.beep()
-        #curses.flash()
-        pass
-    elif message.name == 'print_error':
-      pass
-    elif message.name == 'human_required':
-      pass
-    elif message.name == 'job_update':
+    #self.log.debug("Mothership got message %s" % message.name)
+    if message.name == 'job_update':
       link.job = message.data
     elif message.name == 'bot_update':
       link.bot = message.data
+
+    # if message.name == 'job_start':
+    #   link.bot = message.data.bot
+    #   link.job = message.data.job
+    # if message.name == 'job_end':
+    #   link.bot = message.data.bot
+    #   link.job = message.data.job
+    # elif message.name == 'slice_update':
+    #   link.bot = message.data
+    #   if link.bot['job']['slicejob']['status'] == 'pending':
+    #     pass
+    # elif message.name == 'print_error':
+    #   pass
+    # elif message.name == 'human_required':
+    #   pass
     
   def drawMenu(self):
     self.screen.erase()
@@ -198,8 +218,37 @@ class BumbleBee():
     for row in self.config['workers']:
       if bot['name'] == row['name']:
         return True
-
     return False
+
+  def getNewJob(self, link):
+    self.log.info("Looking for new job.")
+
+    result = self.api.findNewJob(link.bot['id'], self.config['can_slice'])
+    if (result['status'] == 'success'):
+      if (len(result['data'])):
+        job = result['data']
+        jresult = self.api.grabJob(link.bot['id'], job['id'], self.config['can_slice'])
+
+        if (jresult['status'] == 'success'):
+          #save it to our link.
+          link.job = job
+          link.job = job
+          
+          #notify the bot
+          data = hive.Object()
+          data.job = job
+          data.bot = link.bot
+          message = workerbee.Message('job_start', data)
+          link.pipe.send(message)  
+          return True
+        else:
+          raise Exception("Error grabbing job: %s" % jresult['error'])
+      # else:
+      #   self.getOurInfo() #see if our status has changed.
+    else:
+      raise Exception("Error finding new job: %s" % result['error'])
+    return False
+
 if __name__ == '__main__':
   bee = BumbleBee()
   bee.main()

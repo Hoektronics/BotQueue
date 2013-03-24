@@ -250,7 +250,7 @@ class BotQueueAPI():
     return self.apiCall('jobinfo', {'job_id' : job_id})
   
   def listBots(self):
-    return self.apiCall('listbots')
+    return self.apiCall('listbots', retries = 1)
     
   def findNewJob(self, bot_id, can_slice):
     return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})
