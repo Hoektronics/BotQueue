@@ -23,6 +23,7 @@ class BotQueueAPI():
   def __init__(self):
     self.log = logging.getLogger('botqueue')
     self.config = hive.config.get()
+    self.netStatus = False
 
     # Register the poster module's streaming http handlers with urllib2
     register_openers()

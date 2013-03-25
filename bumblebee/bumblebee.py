@@ -15,6 +15,7 @@ class BumbleBee():
     self.api = botqueueapi.BotQueueAPI()
     self.workers = []
     self.bots = []
+    self.workerDataAge = {}
     self.config = hive.config.get()
     self.version = "0.2"
     
@@ -44,16 +45,26 @@ class BumbleBee():
       self.log.exception(ex)
 
   def getBots(self):
+
+    startTime = time.time()
     bots = self.api.listBots()
+    self.checkMessages() #must come after listbots
+
     if bots:
       if (bots['status'] == 'success'):
         for row in bots['data']:
           if self.isOurBot(row):
             link = self.getWorker(row['id'])
-            if link is not False:
-              message = workerbee.Message('updatedata', row)
-              link.pipe.send(message)
-              link.bot = row
+            if link:
+              if not (row['id'] in self.workerDataAge):
+                self.workerDataAge[row['id']] = 0
+              if self.workerDataAge[row['id']] < startTime:
+                message = workerbee.Message('updatedata', row)
+                link.pipe.send(message)
+                link.bot = row
+                self.workerDataAge[row['id']] = startTime
+              else:
+                self.log.debug("Worker for %s is stale: %s / %s" % (row['name'], startTime, self.workerDataAge[row['id']]))
             else:
               self.log.info("Creating worker thread for bot %s" % row['name'])
               #create our thread and start it.
@@ -68,12 +79,12 @@ class BumbleBee():
               link.pipe = parent_conn
               link.job = None
               self.workers.append(link)
-          
+            
             #should we find a new job?
             if link.bot['status'] == 'idle':
               self.getNewJob(link)
-          # else:
-          #   self.log.info("Skipping unknown bot %s" % row['name'])
+          else:
+            self.log.info("Skipping unknown bot %s" % row['name'])
       else:
         self.log.error("Bot list failure: %s" % bots['error'])
 
@@ -174,6 +185,7 @@ class BumbleBee():
       link.job = message.data
     elif message.name == 'bot_update':
       link.bot = message.data
+      self.workerDataAge[message.data['id']] = time.time()
 
     # if message.name == 'job_start':
     #   link.bot = message.data.bot
@@ -205,12 +217,12 @@ class BumbleBee():
       self.screen.addstr("\n")
     self.screen.addstr("\nq = quit program\n")
 
-    # todo: how to get this to work?
-    # self.screen.addstr("\nNetwork Status: ")
-    # if self.api.netStatus == True:
-    #   self.screen.addstr("ONLINE")
-    # else:
-    #   self.screen.addstr("OFFLINE")
+    #show our network status.
+    self.screen.addstr("\nNetwork Status: ")
+    if self.api.netStatus == True:
+      self.screen.addstr("ONLINE")
+    else:
+      self.screen.addstr("OFFLINE")
 
     self.screen.refresh()
 

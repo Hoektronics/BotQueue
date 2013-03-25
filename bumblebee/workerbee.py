@@ -250,6 +250,8 @@ class WorkerBee():
     #notify the queen bee of our status.
     msg = Message('bot_update', self.data)
     self.pipe.send(msg)
+    msg = Message('job_update', self.data['job'])
+    self.pipe.send(msg)
  
   def downloadFile(self, fileinfo):
     myfile = hive.URLFile(fileinfo)

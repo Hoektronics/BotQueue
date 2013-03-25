@@ -22,5 +22,6 @@ sudo apt-get install libwx-perl
 sudo cpanm Boost::Geometry::Utils Math::Clipper Math::ConvexHull Math::Geometry::Voronoi Math::PlanePath Moo Wx Math::ConvexHull::MonotoneChain 
 git clone https://github.com/alexrj/Slic3r.git
 cd Slic3r
-git checkout 0.9.8
+git checkout
 sudo perl Build.PL 
+sudo ./Build install
