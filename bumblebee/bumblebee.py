@@ -83,8 +83,8 @@ class BumbleBee():
             #should we find a new job?
             if link.bot['status'] == 'idle':
               self.getNewJob(link)
-          else:
-            self.log.info("Skipping unknown bot %s" % row['name'])
+          # else:
+          #   self.log.info("Skipping unknown bot %s" % row['name'])
       else:
         self.log.error("Bot list failure: %s" % bots['error'])
 

@@ -223,6 +223,13 @@ class WorkerBee():
     #watch the slicing progress
     localUpdate = 0
     while g.isRunning():
+      #check for messages like shutdown or stop job.
+      self.checkMessages()
+      if not self.running or self.data['status'] != 'slicing':
+        #todo: implement this.
+        #g.stop()
+        return
+      
       #notify the local mothership of our status.
       if (time.time() - localUpdate > 0.5):
         self.data['job']['progress'] = g.getProgress()
@@ -358,7 +365,7 @@ class WorkerBee():
         self.getOurInfo()
       else:
         raise Exception("Unable to drop job: %s" % result['error'])
-
+ 
   def shutdown(self):
     self.info("Shutting down.")
     if(self.data['status'] == 'working' and self.data['job']['id']):

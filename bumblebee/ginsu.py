@@ -19,6 +19,10 @@ class Ginsu():
 
   def isRunning(self):
     return self.running
+
+  # implement this!
+  # def stop(self):
+  #   self.running = False
     
   def getProgress(self):
     return self.slicer.getProgress()
