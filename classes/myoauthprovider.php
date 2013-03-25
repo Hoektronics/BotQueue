@@ -90,6 +90,9 @@
 		 */
 		public function checkNonce($provider)
 		{
+		  return OAUTH_OK;
+			
+		  /*
 		  //give them an hour!
 			if($this->oauth->timestamp < time() - 60*30)
 				return OAUTH_BAD_TIMESTAMP;
@@ -100,6 +103,7 @@
 				$this->consumer->addNonce($this->oauth->nonce);
 				return OAUTH_OK;
 			}
+			*/
 		}
 		
 		public function getUser()
