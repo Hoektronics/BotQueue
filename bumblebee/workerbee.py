@@ -252,6 +252,11 @@ class WorkerBee():
     #update our slice job progress and pull in our update info.
     self.info("Finished slicing, uploading results to main site.")
     result = self.api.updateSliceJob(job_id=self.data['job']['slicejob']['id'], status=sushi.status, output=sushi.output_log, errors=sushi.error_log, filename=uploadFile)
+
+    #hack because the upload takes forever and mothership probably has an old status.
+    self.checkMessages()
+
+    #now pull in our new data.
     self.data = result['data']
     
     #notify the queen bee of our status.
