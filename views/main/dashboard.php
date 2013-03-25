@@ -147,14 +147,14 @@
 			On Deck Jobs
 			:: 1-<?=min(5, $on_deck_count)?> of <?=$on_deck_count?> :: <a href="/jobs/available">see all</a>
 		</h3>
-		<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $on_deck)); ?>
+		<?= Controller::byName('job')->renderView('draw_on_deck_jobs', array('jobs' => $on_deck)); ?>
 	</div>
 	<div class="span6">
 		<h3>
 			Finished Jobs
 			:: 1-<?=min(5, $finished_count)?> of <?=$finished_count?> :: <a href="/jobs/complete">see all</a>
 		</h3>
-		<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $finished)); ?>
+		<?= Controller::byName('job')->renderView('draw_finished_jobs', array('jobs' => $finished)); ?>
 	</div>
 </div>
 
