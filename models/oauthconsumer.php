@@ -43,6 +43,7 @@
 		
 		public function hasNonce($nonce, $timestamp)
 		{
+		  /*
 		  $timestamp = (int)$timestamp;
 		  $nonce = (int)$nonce;
 		  
@@ -55,10 +56,14 @@
 			");
 
 			return ($check==1);
+			*/
+			
+			return true;
 		}
 		
 		public function addNonce($nonce)
 		{
+		  /*
 			$n = new OAuthConsumerNonce();
 			$n->set('consumer_id', $this->id);
 			$n->set('timestamp', time());
@@ -66,6 +71,7 @@
 			$n->save();
 			
 			return $n;
+			*/
 		}
 		
 		/* setters */
