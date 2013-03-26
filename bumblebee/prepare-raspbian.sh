@@ -1,15 +1,15 @@
 #!/bin/sh
 
-sudo apt-get update
-sudo apt-get install git-core vim screen
+sudo apt-get install git-core 
 git clone git://github.com/Hoektronics/BotQueue.git
 
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install vim screen python-pip
 sudo usermod -a -G dialout pi
-sudo apt-get install python-pip
 sudo pip install pyserial
 
-screen -dR botqueue
-
+#screen -dR botqueue
 
 #installing slic3r:
 

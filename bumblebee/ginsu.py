@@ -38,7 +38,7 @@ class Ginsu():
       raise Exception("Unknown slicer path specified: %s" % path)    
 
   def slice(self):
-    self.log.debug("Starting slice.")
+    self.log.info("Starting slice.")
     self.running = True
     self.slicer = self.slicerFactory()
 
@@ -144,18 +144,18 @@ class Slic3r(GenericSlicer):
         self.outFile.name,
         self.sliceFile.localPath
       )
-      self.log.debug("Slice Command: %s" % command)
+      self.log.info("Slice Command: %s" % command)
 
       outputLog = ""
       errorLog = ""
       
       # this starts our thread to slice the model into gcode
       p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-      self.log.debug("Slic3r started.")
+      self.log.info("Slic3r started.")
       while p.poll() is None:
         output = p.stdout.readline()
         if output:
-          self.log.debug("Slic3r: %s" % output.strip())
+          self.log.info("Slic3r: %s" % output.strip())
           outputLog = outputLog + output
           self.checkProgress(output)
                         
