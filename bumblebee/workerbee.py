@@ -329,6 +329,12 @@ class WorkerBee():
         while not notified:
           result = self.api.completeJob(self.data['job']['id'])
           if result['status'] == 'success':
+            
+            #check for messages like shutdown or stop job.
+            self.checkMessages()
+            if not self.running or self.data['status'] != 'working':
+              return
+            
             self.data = result['data']['bot']
             notified = True
 
@@ -379,7 +385,7 @@ class WorkerBee():
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
-    if self.pipe.poll():
+    while self.pipe.poll():
       message = self.pipe.recv()
       self.handleMessage(message)
 
@@ -390,6 +396,8 @@ class WorkerBee():
 
     #mothership gave us new information!
     if message.name == 'updatedata':
+      if message.data['status'] != self.data['status']:
+        self.info("Changing status from %s to %s" % (self.data['status'], message.data['status']))
       status = message.data['status']
       #did our status change?  if so, make sure to stop our currently running job.
       if self.data['status'] == 'working' and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
@@ -398,9 +406,10 @@ class WorkerBee():
       self.data = message.data
 
     #mothership sent us a new job!
-    elif message.name == 'job_start':
-      self.data = message.data.bot
-      self.job = message.data.job
+    # elif message.name == 'job_start':
+    #   self.info("Got new job %s" % (message.data.job['id']))
+    #   self.data = message.data.bot
+    #   self.job = message.data.job
 
     #time to die, mr bond!
     elif message.name == 'shutdown':

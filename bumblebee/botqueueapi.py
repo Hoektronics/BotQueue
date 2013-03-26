@@ -4,6 +4,7 @@ import json
 import hive
 import webbrowser
 import logging
+import httplib
 import httplib2
 import socket
 import hashlib
@@ -79,7 +80,7 @@ class BotQueueAPI():
         return result    
    
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
+      except (NetworkError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
         #raise NetworkError(str(ex))
         self.log.error("Internet connection is down: %s" % ex)
         retries = retries - 1

@@ -184,6 +184,8 @@ class BumbleBee():
     if message.name == 'job_update':
       link.job = message.data
     elif message.name == 'bot_update':
+      if link.bot['status'] != message.data['status']:
+        self.log.info("Mothership: %s status changed from %s to %s" % (link.bot['name'], link.bot['status'], message.data['status']))
       link.bot = message.data
       self.workerDataAge[message.data['id']] = time.time()
 
@@ -239,19 +241,19 @@ class BumbleBee():
     if (result['status'] == 'success'):
       if (len(result['data'])):
         job = result['data']
+        startTime = time.time()
         jresult = self.api.grabJob(link.bot['id'], job['id'], self.config['can_slice'])
 
         if (jresult['status'] == 'success'):
           #save it to our link.
           link.job = job
-          link.job = job
+          link.bot['job'] = job
           
           #notify the bot
-          data = hive.Object()
-          data.job = job
-          data.bot = link.bot
-          message = workerbee.Message('job_start', data)
-          link.pipe.send(message)  
+          message = workerbee.Message('updatedata', link.bot)
+          link.pipe.send(message)
+          self.workerDataAge[link.bot['id']] = startTime
+
           return True
         else:
           raise Exception("Error grabbing job: %s" % jresult['error'])
