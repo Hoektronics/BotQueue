@@ -295,7 +295,7 @@
 			
 			//pull in our time based stats.
 			$sql = "
-				SELECT sum(verified_time - finished_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - taken_time) as total
+				SELECT sum(unix_timestamp(verified_time) - unix_timestamp(finished_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(verified_time) - unix_timestamp(taken_time)) as total
 				FROM jobs
 				WHERE status = 'complete'
 					AND bot_id = ". db()->escape($this->id);

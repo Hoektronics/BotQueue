@@ -138,7 +138,7 @@
 			else
 			{
 				$start = strtotime($this->get('taken_time'));
-				$end = strtotime($this->get('verified_time'));
+				$end = strtotime($this->get('finished_time'));
 			}
 			
 			return $end - $start;			
