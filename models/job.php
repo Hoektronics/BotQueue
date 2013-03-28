@@ -118,6 +118,16 @@
 			$this->save();
 		}
 		
+		public function pushToTop()
+		{
+		  //find our our current max
+			$sql = "SELECT min(user_sort)-1 FROM jobs WHERE queue_id = " . (int)$this->get('queue_id');
+			$min = (int)db()->getValue($sql);
+
+      $this->set('user_sort', $min);
+      $this->save();
+		}
+		
 		public function getElapsedTime()
 		{
 			if ($this->get('status') == 'available')

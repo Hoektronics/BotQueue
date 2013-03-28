@@ -595,11 +595,17 @@
 					
 					//okay, we good?
 					if ($file->isGCode())
-					  $queue->addGCodeFile($file, $quantity);
+					  $jobs = $queue->addGCodeFile($file, $quantity);
 					else if ($file->is3DModel())
-					  $queue->add3DModelFile($file, $quantity);
+					  $jobs = $queue->add3DModelFile($file, $quantity);
           else
             throw new Exception("Oops, I don't know what type of file this is!");
+
+          //priority or not?
+          if ($form->data('priority'))
+            if (!empty($jobs))
+              foreach ($jobs AS $job)
+                $job->pushToTop();
 
           //let them know.
 					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
@@ -650,7 +656,13 @@
 				'required' => true,
 				'value' => 1
 			)));
-		
+			
+			$form->add(new CheckboxField(array(
+			 'name' => 'priority',
+			 'label' => 'Is this a priority job?',
+			 'help' => 'Check this box to push this job to the top of the queue.'
+			)));
+			
 			return $form;
 		}
 
