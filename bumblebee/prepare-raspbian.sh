@@ -1,27 +1,37 @@
 #!/bin/sh
 
-sudo apt-get install git-core 
-git clone git://github.com/Hoektronics/BotQueue.git
+#make sure we're on the latest raspbian
+sudo apt-get update -qy
+sudo apt-get upgrade -qy
 
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install vim screen python-pip
+#install botqueue
+sudo apt-get install -qy git-core 
+git clone git://github.com/Hoektronics/BotQueue.git
+sudo apt-get install -qy vim screen python-pip
 sudo usermod -a -G dialout pi
 sudo pip install pyserial
 
-#screen -dR botqueue
+#get it linked up and working on boot.
+cd /home/pi/BotQueue/bumblebee
+mkdir /home/pi/bin
+ln -s raspi/bumblebee /home/pi/bin/bumblebee
+sudo chmod a+x /home/pi/bin/bumblebee
+sudo cat raspi/inittab >> /etc/inittab
+cat raspi/profile >> /home/pi/.profile
 
-#installing slic3r:
+#authorize our app now.
+clear
+bumblebee
 
-sudo apt-get install git build-essential libgtk2.0-dev libwxgtk2.8-dev libwx-perl libmodule-build-perl libnet-dbus-perl
-sudo apt-get install cpanminus
-sudo apt-get install libextutils-cbuilder-perl
-sudo apt-get install gcc-4.7
-sudo apt-get install g++-4.7
-sudo apt-get install libwx-perl
+#install slic3r:
+sudo apt-get install -qy git-core build-essential libgtk2.0-dev libwxgtk2.8-dev libwx-perl libmodule-build-perl libnet-dbus-perl cpanminus libextutils-cbuilder-perl gcc-4.7 g++-4.7 libwx-perl
 sudo cpanm Boost::Geometry::Utils Math::Clipper Math::ConvexHull Math::Geometry::Voronoi Math::PlanePath Moo Wx Math::ConvexHull::MonotoneChain 
+cd /home/pi/
 git clone https://github.com/alexrj/Slic3r.git
 cd Slic3r
 git checkout
 sudo perl Build.PL 
 sudo ./Build install
+
+#reboot to make everything cool
+sudo reboot

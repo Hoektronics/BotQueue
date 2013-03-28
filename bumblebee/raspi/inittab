@@ -1,0 +1,1 @@
+7:2345:respawn:/bin/login -f pi tty7 </dev/tty7 >/dev/tty7 2>&1

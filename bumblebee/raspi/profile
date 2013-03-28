@@ -1,0 +1,6 @@
+#startup of botqueue on tty7
+if [ $(tty) = /dev/tty7 ]; then
+    setterm -blank 0
+    sleep 10
+    screen -dR botqueue bumblebee
+fi

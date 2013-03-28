@@ -226,8 +226,7 @@ class WorkerBee():
       #check for messages like shutdown or stop job.
       self.checkMessages()
       if not self.running or self.data['status'] != 'slicing':
-        #todo: implement this.
-        #g.stop()
+        g.stop()
         return
       
       #notify the local mothership of our status.
@@ -352,6 +351,12 @@ class WorkerBee():
       self.exception(ex)
       self.errorMode(ex)
 
+  def takePicture(self):
+    try:
+      import cv
+    except ImportError:
+      self.error("OpenCV not installed.")
+  
   def pauseJob(self):
     self.driver.pause()
     self.paused = True

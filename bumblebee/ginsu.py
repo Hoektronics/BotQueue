@@ -14,18 +14,23 @@ class Ginsu():
     self.log = logging.getLogger('botqueue')
     self.sliceFile = sliceFile
     self.sliceJob = sliceJob
-
-    self.running = False
+    self.slicer = False
+    self.sliceThread = False
 
   def isRunning(self):
-    return self.running
+    return self.slicer.isRunning()
 
-  # implement this!
-  # def stop(self):
-  #   self.running = False
-    
+  def stop(self):
+    if self.slicer:
+      self.slicer.stop()
+    if self.sliceThread:
+      self.sliceThread.join(10)
+
   def getProgress(self):
-    return self.slicer.getProgress()
+    if self.slicer:
+      return self.slicer.getProgress()
+    else:
+      return 0
 
   def getResult(self):
     return self.sliceResult
@@ -39,14 +44,12 @@ class Ginsu():
 
   def slice(self):
     self.log.info("Starting slice.")
-    self.running = True
     self.slicer = self.slicerFactory()
 
-    Thread(target=self.threadEntry).start()
+    self.sliceThread = Thread(target=self.threadEntry).start()
     
   def threadEntry(self):
     self.sliceResult = self.slicer.slice()
-    self.running = False
     
 class GenericSlicer(object):
   def __init__(self, config, slicefile):
@@ -55,9 +58,16 @@ class GenericSlicer(object):
     
     self.sliceFile = slicefile
     self.progress = 0
+    self.running = False
     
     self.prepareFiles()
 
+  def stop(self):
+    self.running = False
+    
+  def isRunning(self):
+    return self.running
+    
   def prepareFiles(self):
     pass
     
@@ -159,7 +169,12 @@ class Slic3r(GenericSlicer):
           outputLog = outputLog + output
           self.checkProgress(output)
                         
-        time.sleep(1)
+        time.sleep(0.1)
+        
+        #did we get cancelled?
+        if not self.running:
+          p.terminate()
+          return
 
         # this code does not work for some reason and ends up blocking the loop until program exits if there is no errors
         # this is a bummer, because we can't get realtime error logging.  :(
