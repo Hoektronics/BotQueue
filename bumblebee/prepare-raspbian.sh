@@ -12,11 +12,10 @@ sudo usermod -a -G dialout pi
 sudo pip install pyserial
 
 #get it linked up and working on boot.
-cd /home/pi/BotQueue/bumblebee
 mkdir /home/pi/bin
-ln -s raspi/bumblebee /home/pi/bin/bumblebee
-sudo chmod a+x /home/pi/bin/bumblebee
-sudo cat raspi/inittab >> /etc/inittab
+sudo chmod a+x /home/pi/BotQueue/bumblebee/raspi/bumblebee
+ln -s /home/pi/BotQueue/bumblebee/raspi/bumblebee /home/pi/bin/bumblebee
+sudo /bin/sh -c 'cat /home/pi/BotQueue/bumblebee/raspi/inittab >> /etc/inittab'
 cat raspi/profile >> /home/pi/.profile
 
 #authorize our app now.

@@ -1,6 +1,13 @@
+April 2013 Release
+
+* Add reordering to on-deck jobs on dashboard
+* Add 'bump to top' / priority job when adding new job
+* Add temperature reporting / display on site
+* Test raspberry pi install script
+* Allow pass/failing of jobs from the dashboard
+
 v2.x Release - Ongoing
 
-* BUMBLEBEE / API / WEB - add temperature reporting
 
 * WEB - add ability to make comments on individual jobs
 
@@ -16,8 +23,6 @@ v2.x Release - Ongoing
 * BUMBLEBEE - pull list of bots + config from web directly
 * BUMBLEBEE - headless app authentication support
 * BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
-* BUMBLEBEE - raspberry pi image & support
-* BUMBLEBEE - temperature reporting
 
 v3 - ???
 
