@@ -8,7 +8,9 @@
     function loadDashtron() {
        console.log("running");
        setTimeout(loadDashtron, 10000);
-       $('#Dashtron').load('/ajax/main/dashboard');
+       $('#Dashtron').load('/ajax/main/dashboard', function() {
+         prepare_jobqueue_drag();
+       });
     }
   </script>
 <? else: ?>

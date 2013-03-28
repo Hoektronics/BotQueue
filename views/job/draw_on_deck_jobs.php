@@ -1,19 +1,19 @@
 <? if (!empty($jobs)): ?>
-	<table class="table table-striped table-bordered table-condensed">
+	<table class="table table-striped table-bordered table-condensed jobtable">
 		<thead>
 			<tr>
-				<th>#</th>
+			  <th></th>
 				<th>Name</th>
 				<th>Queue</th>
 				<th>Age</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="joblist">
 			<? foreach ($jobs AS $row): ?>
 				<? $j = $row['Job'] ?>
 				<? $bot = $j->getBot() ?>
-				<tr>
-					<td><?=$j->id?></td>
+				<tr id="job_<?=$j->id?>">
+				  <td><i class="icon-resize-vertical"></i></td>
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getQueue()->getLink()?></td>
 					<td><?=$j->getElapsedText()?></td>
