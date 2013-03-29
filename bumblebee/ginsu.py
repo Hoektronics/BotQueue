@@ -16,6 +16,7 @@ class Ginsu():
     self.sliceJob = sliceJob
     self.slicer = False
     self.sliceThread = False
+    self.sliceResult = False
 
   def isRunning(self):
     return self.slicer.isRunning()
@@ -58,7 +59,7 @@ class GenericSlicer(object):
     
     self.sliceFile = slicefile
     self.progress = 0
-    self.running = False
+    self.running = True
     
     self.prepareFiles()
 

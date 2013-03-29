@@ -1,10 +1,9 @@
 April 2013 Release
 
-* Add reordering to on-deck jobs on dashboard
-* Add 'bump to top' / priority job when adding new job
+* Allow pass/failing of jobs from the dashboard
+* Test canceling of jobs mid-slice
 * Add temperature reporting / display on site
 * Test raspberry pi install script
-* Allow pass/failing of jobs from the dashboard
 
 v2.x Release - Ongoing
 
