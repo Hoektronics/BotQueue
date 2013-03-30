@@ -98,7 +98,7 @@ class printcore():
         self.printing=False
         self.error=False
         
-    def get_temperatures():
+    def get_temperatures(self):
         self.send_now("M105")
         time.sleep(0.2)
         
@@ -157,10 +157,12 @@ class printcore():
                 self.log.debug("RECV: %s" % line.rstrip())
                 
                 #look for our temperature strings
-                if matches = re.findall('T:(\d+\.\d+)', line):
-                  self.temperatures.extruder = matches[0]
-                if matches = re.findall('B:(\d+\.\d+)', line):
-                  self.temperatures.bed = matches[0]
+                matches = re.findall('T:(\d+\.\d+)', line)
+                if matches:
+                  self.temperatures['extruder'] = matches[0]
+                matches = re.findall('B:(\d+\.\d+)', line)
+                if matches:
+                  self.temperatures['bed'] = matches[0]
                 
             if(line.startswith('DEBUG_')):
                 continue

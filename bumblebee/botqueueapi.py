@@ -245,8 +245,8 @@ class BotQueueAPI():
   def completeJob(self, job_id):
     return self.apiCall('completejob', {'job_id' : job_id})
   
-  def updateJobProgress(self, job_id, progress):
-    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress}, retries = 1)
+  def updateJobProgress(self, job_id, progress, temps):
+    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress, 'temperatures' : json.dumps(temps)}, retries = 1)
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})

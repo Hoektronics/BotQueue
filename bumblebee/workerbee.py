@@ -304,8 +304,6 @@ class WorkerBee():
         if (time.time() - lastTemp > 1):
           lastTemp = time.time()
           temps = self.driver.getTemperature()
-          if temps:
-            self.log.debug("Current temps: %s" % temps)
       
         #notify the mothership of our status.
         self.data['job']['progress'] = latest
@@ -322,7 +320,7 @@ class WorkerBee():
         if (time.time() - lastUpdate > 15):
           lastUpdate = time.time()
           self.info("print: %0.2f%%" % latest)
-          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
+          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest, temps)
 
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())

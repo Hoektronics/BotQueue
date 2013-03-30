@@ -64,8 +64,8 @@ class printcoredriver(bumbledriver.bumbledriver):
     self.p.stop()
     self.disconnect()
   
-  def getTemperature():
-    return self.p.getTemperature()
+  def getTemperature(self):
+    return self.p.get_temperatures()
   
   def connect(self):
     if not self.isConnected():
