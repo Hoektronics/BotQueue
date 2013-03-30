@@ -32,7 +32,7 @@
 			$this->set('taken', $taken->getRange(0, 10));
 			$this->set('taken_count', $taken->count());
 			
-			$complete = User::$me->getJobs('complete');
+			$complete = User::$me->getJobs('complete', 'finished_time', 'DESC');
 			$this->set('complete', $complete->getRange(0, 10));
 			$this->set('complete_count', $complete->count());
 			
@@ -60,7 +60,10 @@
 				else
 					throw new Exception("That is not a valid status!");
 				
-				$collection = User::$me->getJobs($status);
+				if ($status == 'complete')
+				  $collection = User::$me->getJobs($status, 'finished_time', 'DESC');
+	      else
+	        $collection = User::$me->getJobs($status);
 	      $per_page = 20;
 	      $page = $collection->putWithinBounds($this->args('page'), $per_page);
     
@@ -592,11 +595,17 @@
 					
 					//okay, we good?
 					if ($file->isGCode())
-					  $queue->addGCodeFile($file, $quantity);
+					  $jobs = $queue->addGCodeFile($file, $quantity);
 					else if ($file->is3DModel())
-					  $queue->add3DModelFile($file, $quantity);
+					  $jobs = $queue->add3DModelFile($file, $quantity);
           else
             throw new Exception("Oops, I don't know what type of file this is!");
+
+          //priority or not?
+          if ($form->data('priority'))
+            if (!empty($jobs))
+              foreach ($jobs AS $job)
+                $job->pushToTop();
 
           //let them know.
 					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
@@ -647,7 +656,13 @@
 				'required' => true,
 				'value' => 1
 			)));
-		
+			
+			$form->add(new CheckboxField(array(
+			 'name' => 'priority',
+			 'label' => 'Is this a priority job?',
+			 'help' => 'Check this box to push this job to the top of the queue.'
+			)));
+			
 			return $form;
 		}
 

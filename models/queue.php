@@ -198,7 +198,7 @@
 			
 			//pull in our time based stats.
 			$sql = "
-				SELECT sum(taken_time - created_time) as wait, sum(finished_time - taken_time) as runtime, sum(verified_time - created_time) as total
+				SELECT sum(unix_timestamp(taken_time) - unix_timestamp(created_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(finished_time) - unix_timestamp(created_time)) as total
 				FROM jobs
 				WHERE status = 'complete'
 					AND queue_id = ". db()->escape($this->id) ."

@@ -4,7 +4,7 @@
 			<tr>
 				<th>#</th>
 				<th>Name</th>
-				<th>Elapsed</th>
+				<th>Duration</th>
 				<th>Manage</th>
 			</tr>
 		</thead>

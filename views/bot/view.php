@@ -86,27 +86,27 @@
 					<tbody>
 						<tr>
 							<th>Total Wait Time</th>
-							<td><?= Utility::getElapsed($stats['total_waittime'])?></td>
+							<td><?= Utility::getHours($stats['total_waittime'])?></td>
 						</tr>
 						<tr>
 							<th>Total Run Time</th>
-							<td><?= Utility::getElapsed($stats['total_runtime'])?></td>
+							<td><?= Utility::getHours($stats['total_runtime'])?></td>
 						</tr>
 						<tr>
 							<th>Total Overall Time</th>
-							<td><?= Utility::getElapsed($stats['total_time'])?></td>
+							<td><?= Utility::getHours($stats['total_time'])?></td>
 						</tr>
 						<tr>
 							<th>Average Wait Time</th>
-							<td><?= Utility::getElapsed($stats['avg_waittime'])?></td>
+							<td><?= Utility::getHours($stats['avg_waittime'])?></td>
 						</tr>
 						<tr>
 							<th>Average Run Time</th>
-							<td><?= Utility::getElapsed($stats['avg_runtime'])?></td>
+							<td><?= Utility::getHours($stats['avg_runtime'])?></td>
 						</tr>
 						<tr>
 							<th>Average Overall Time</th>
-							<td><?= Utility::getElapsed($stats['avg_time'])?></td>
+							<td><?= Utility::getHours($stats['avg_time'])?></td>
 						</tr>
 						<tr>
 							<th>Available Jobs</th>

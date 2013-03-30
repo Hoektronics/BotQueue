@@ -325,6 +325,12 @@ class Utility
 		return false;
 	}	
 	
+	public static function getHours($datediff)
+	{
+  	$hours =  round($datediff / (60 * 60));
+		return "$hours hour".self::pluralizer($hours>1);
+	}
+	
 	public static function getTimeAgo($datetime)
 	{
 		if (trim($datetime) == "" || trim($datetime) == "0000-00-00 00:00:00")

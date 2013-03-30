@@ -34,7 +34,7 @@
 				$this->set('bots', $bots->getRange(0, 10));
 				$this->set('bot_count', $bots->count());
 
-				$on_deck = User::$me->getJobs('available', 'user_sort', 'DESC');
+				$on_deck = User::$me->getJobs('available', 'user_sort', 'ASC');
 				$this->set('on_deck', $on_deck->getRange(0, 5));
 				$this->set('on_deck_count', $on_deck->count());
 
