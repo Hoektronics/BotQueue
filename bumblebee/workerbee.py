@@ -294,13 +294,22 @@ class WorkerBee():
 
     currentPosition = 0
     lastUpdate = time.time()
+    lastTemp = time.time()
     try:
       self.driver.startPrint(self.jobFile)
       while self.driver.isRunning():
         latest = self.driver.getPercentage()
+
+        #look up our temps?
+        if (time.time() - lastTemp > 1):
+          lastTemp = time.time()
+          temps = self.driver.getTemperature()
+          if temps:
+            self.log.debug("Current temps: %s" % temps)
       
         #notify the mothership of our status.
         self.data['job']['progress'] = latest
+        self.data['job']['temperature'] = temps
         msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
       

@@ -20,6 +20,7 @@ from threading import Thread
 from select import error as SelectError
 import time, getopt, sys
 import logging
+import re
 
 # create logger with 'spam_application'
 log = logging.getLogger('printcore')
@@ -68,6 +69,7 @@ class printcore():
         self.errorMessage = None
         self.listenThread = None
         self.log = logging.getLogger('printcore')
+        self.temperatures = {}
 
     def connect(self,port=None,baud=None):
         """Connect to printer
@@ -95,6 +97,12 @@ class printcore():
         self.online=False
         self.printing=False
         self.error=False
+        
+    def get_temperatures():
+        self.send_now("M105")
+        time.sleep(0.2)
+        
+        return self.temperatures
             
     def reset(self):
         """Reset the printer
@@ -147,6 +155,13 @@ class printcore():
                     except:
                         pass
                 self.log.debug("RECV: %s" % line.rstrip())
+                
+                #look for our temperature strings
+                if matches = re.findall('T:(\d+\.\d+)', line):
+                  self.temperatures.extruder = matches[0]
+                if matches = re.findall('B:(\d+\.\d+)', line):
+                  self.temperatures.bed = matches[0]
+                
             if(line.startswith('DEBUG_')):
                 continue
             if(line.startswith(tuple(self.greetings)) or line.startswith('ok')):

@@ -1,7 +1,6 @@
 April 2013 Release
 
 * Allow pass/failing of jobs from the dashboard
-* Test canceling of jobs mid-slice
 * Add temperature reporting / display on site
 * Test raspberry pi install script
 
