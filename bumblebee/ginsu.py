@@ -5,6 +5,7 @@ import sys
 import tempfile
 import subprocess
 import os
+import signal
 import hive
 import re
 
@@ -22,6 +23,7 @@ class Ginsu():
     return self.slicer.isRunning()
 
   def stop(self):
+    self.log.debug("Ginsu - stopping slice job.")
     if self.slicer:
       self.slicer.stop()
     if self.sliceThread:
@@ -64,6 +66,7 @@ class GenericSlicer(object):
     self.prepareFiles()
 
   def stop(self):
+    self.log.debug("Generic slicer stopped.")
     self.running = False
     
   def isRunning(self):
@@ -81,7 +84,9 @@ class GenericSlicer(object):
 class Slic3r(GenericSlicer):
   def __init__(self, config, slicefile):
     super(Slic3r, self).__init__(config, slicefile)
-    
+ 
+    self.p = False  
+ 
     #our regexes
     self.reg05 = re.compile('Processing input file')
     self.reg10 = re.compile('Processing triangulated mesh')
@@ -95,6 +100,28 @@ class Slic3r(GenericSlicer):
     self.reg90 = re.compile('Generating skirt')
     self.reg100 = re.compile('Exporting G-code to')
   
+  def stop(self):
+    self.log.debug("Slic3r slicer stopped.")
+    if self.p:
+      try:
+        self.log.info("Killing slic3r process.")
+        #self.p.terminate()
+        os.kill(self.p.pid, signal.SIGTERM)
+        t = 5 # max wait time in secs
+        while self.p.poll() < 0:
+          if t > 0.5:
+            t -= 0.25
+            time.sleep(0.25)
+          else: # still there, force kill
+            os.kill(self.p.pid, signal.SIGKILL)
+            time.sleep(0.5)
+        self.p.poll() # final try   
+      except OSError as ex:
+        #self.log.info("Kill exception: %s" % ex)
+        pass #successfully killed process 
+      self.log.info("Slicer killed.")
+    self.running = False
+ 
   def prepareFiles(self):
     self.configFile = tempfile.NamedTemporaryFile(delete=False)
     self.configFile.write(self.config['config_data'])
@@ -149,7 +176,7 @@ class Slic3r(GenericSlicer):
   def slice(self):
     #create our command to do the slicing
     try:
-      command = "%s --load %s --output %s %s" % (
+      command = "exec %s --load %s --output %s %s" % (
         self.getSlicerPath(),
         self.configFile.name,
         self.outFile.name,
@@ -161,10 +188,10 @@ class Slic3r(GenericSlicer):
       errorLog = ""
       
       # this starts our thread to slice the model into gcode
-      p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
       self.log.info("Slic3r started.")
-      while p.poll() is None:
-        output = p.stdout.readline()
+      while self.p.poll() is None:
+        output = self.p.stdout.readline()
         if output:
           self.log.info("Slic3r: %s" % output.strip())
           outputLog = outputLog + output
@@ -174,30 +201,32 @@ class Slic3r(GenericSlicer):
         
         #did we get cancelled?
         if not self.running:
-          p.terminate()
+          self.log.info("Killing slic3r process.")
+          self.p.terminate()
+          self.p.kill()
           return
 
         # this code does not work for some reason and ends up blocking the loop until program exits if there is no errors
         # this is a bummer, because we can't get realtime error logging.  :(
-        # err = p.stderr.readline().strip()
+        # err = self.p.stderr.readline().strip()
         #         if err:
         #           self.log.error("Slic3r: %s" % error)
         #           errorLog = errorLog + err         
 
       #get any last lines of output
-      output = p.stdout.readline()
+      output = self.p.stdout.readline()
       while output:
         self.log.debug("Slic3r: %s" % output.strip())
         outputLog = outputLog + output
         self.checkProgress(output)
-        output = p.stdout.readline()
+        output = self.p.stdout.readline()
 
       #get our errors (if any)
-      error = p.stderr.readline()
+      error = self.p.stderr.readline()
       while error:
         self.log.error("Slic3r: %s" % error.strip())
         errorLog = errorLog + error
-        error = p.stderr.readline()
+        error = self.p.stderr.readline()
 
       #give us 1 second for the main loop to pull in our finished status.
       time.sleep(1)
@@ -212,11 +241,14 @@ class Slic3r(GenericSlicer):
       if errorLog:
         sushi.status = "pending"
       #unknown return code... failure
-      elif p.returncode > 0:
+      elif self.p.returncode > 0:
         sushi.status = "failure"
-        self.log.error("Program returned code %s" % p.returncode)
+        self.log.error("Program returned code %s" % self.p.returncode)
       else:
         sushi.status = "complete"
+    
+      #okay, we're done!
+      self.running = False
       
       return sushi
     except Exception as ex:

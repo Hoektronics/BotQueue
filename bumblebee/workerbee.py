@@ -226,6 +226,7 @@ class WorkerBee():
       #check for messages like shutdown or stop job.
       self.checkMessages()
       if not self.running or self.data['status'] != 'slicing':
+        self.debug("Stopping slice job")
         g.stop()
         return
       
