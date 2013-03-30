@@ -506,10 +506,31 @@
 			
 			if (!$job->getQueue()->isMine())
 				throw new Exception("This job is not in your queue.");
-				
+
+      //did we get temperatures?
+      $temps = JSON::decode($this->args('temperatures'));
+      if ($temps != NULL)
+			{
+			  $jobtemps = JSON::decode($job->get('temperature_data'));
+			  if ($jobtemps == NULL)
+			  {
+			    $jobtemps = array();
+  			  $jobtemps[time()] = $temps;  
+			  }
+			  else
+			  {
+  			  $index = time();
+  			  $jobtemps->$index = $temps;  
+			  }
+			  $job->set('temperature_data', JSON::encode($jobtemps));
+  			$bot->set('temperature_data', $this->args('temperatures'));
+			}
+
+			//update our job info.
 			$job->set('progress', (float)$this->args('progress'));
 			$job->save();
 			
+      //update our bot info
 			$bot->set('last_seen', date("Y-m-d H:i:s"));
 			$bot->save();
 			

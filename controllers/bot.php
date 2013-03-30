@@ -144,6 +144,9 @@
 				else
 					Activity::log("brought the bot " . $bot->getLink() . " online.");
 
+        //save it and clear out some junk
+        $bot->set('temperature_data', '');
+        $bot->set('error_text', '');
 				$bot->set('status', $this->args('status'));
 				$bot->save();
 				

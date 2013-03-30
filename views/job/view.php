@@ -146,7 +146,14 @@
 			</table>
 		</div>
 	</div>
-	
+
+  <!-- >
+  <? $temps = JSON::decode($job->get('temperature_data')) ?>
+	<? foreach ($temps AS $time => $data): ?>
+    <?=$time?>: <?= $data->bed ?> / <?= $data->extruder ?><br/>
+	<? endforeach ?>
+  --> 
+
   <div class="row">
 		<div class="span6">
 		  <h3>Source File: <?=$source_file->getLink()?></h3>
