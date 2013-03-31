@@ -114,7 +114,7 @@
     						    B: <?=$temps->bed?>C
     						  </td>
     						<? else: ?>
-    						  <td class="muted">n/a <?print_r($temps)?></td>
+    						  <td class="muted">n/a</td>
     						<? endif ?>
     					  <td><?=$j->getStatusHTML()?></td>
     					  <td class="muted"><?=$j->getElapsedText()?></td>
