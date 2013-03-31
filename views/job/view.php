@@ -147,12 +147,88 @@
 		</div>
 	</div>
 
-  <!-- >
   <? $temps = JSON::decode($job->get('temperature_data')) ?>
-	<? foreach ($temps AS $time => $data): ?>
-    <?=$time?>: <?= $data->bed ?> / <?= $data->extruder ?><br/>
-	<? endforeach ?>
-  --> 
+
+  <? if (is_object($temps) && $temps != false): ?>
+
+	<div class="row">
+		<div class="span12">
+
+    <h3>Temperature Log</h3>
+
+    <div id="temperature_graph_<?=$gid?>" style="width:100%;height:300px;"></div>
+    <!-- <div id="legend_<?=$gid?>" style="width:150px;height:100px; float: right; margin: 10px;"></div> -->
+    <!-- <div id="overview_<?=$gid?>" style="width:500px; height:100px; float: left; margin: 10px 10px 10px 0px;"></div> -->
+    <br clear="all"/>
+
+    <script type="text/javascript">
+    	$(function ()
+    	{
+  	    var tempData = [];
+        <?
+    			echo "\t\tvar bed = [];\n";
+    			echo "\t\tvar extruder = [];\n";
+
+        	foreach ($temps AS $time => $data)
+        	{
+    				echo "\t\tbed.push([" . $time*1000 . ", " . round($data->bed, 1) . "]);\n";
+    				echo "\t\textruder.push([" . $time*1000 . ", " . round($data->extruder, 1) . "]);\n";
+    			}
+
+    			echo "\t\ttempData.push({label: 'Bed Temp (C)', data: bed })\n\n";
+    			echo "\t\ttempData.push({label: 'Extruder Temp (C)', data: extruder })\n\n";
+        ?>
+        var options = {
+            legend: { show: true, position: "se" },
+            series: {
+                lines: { show: true },
+                points: { show: false }
+            },
+        		xaxis: { mode: 'time', timeformat: "%h:%M"},
+            yaxis: { ticks: 10 },
+            selection: { mode: "xy" }
+        };
+        var tempGraph_<?=$gid?> = $.plot($("#temperature_graph_<?=$gid?>"), tempData, options);
+
+      // var overviewOptions = {
+      //             legend: { show: true, container: $("#legend_<?=$gid?>") },
+      //             series: {
+      //                 lines: { show: true, lineWidth: 1 },
+      //                 shadowSize: 0
+      //             },
+      //  xaxis: { show: false },
+      //  yaxis: { show: false },
+      //             grid: { color: "#999" },
+      //             selection: { mode: "x" }
+      //         };
+      // var overview_<?=$gid?> = $.plot($("#overview_<?=$gid?>"), tempData, overviewOptions);    
+
+    	// now connect the two
+        $("#temperature_graph_<?=$gid?>").bind("plotselected", function (event, ranges) {
+            // clamp the zooming to prevent eternal zoom
+            if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+                ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+            if (ranges.yaxis.to - ranges.yaxis.from < 0.00001)
+                ranges.yaxis.to = ranges.yaxis.from + 0.00001;
+
+            // do the zooming
+            tempGraph = $.plot($("#temperature_graph_<?=$gid?>"), tempData,
+                          $.extend(true, {}, options, {
+                              xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+                              yaxis: { min: ranges.yaxis.from, max: ranges.yaxis.to }
+                          }));
+
+            // don't fire event on the overview to prevent eternal loop
+            //overview_<?=$gid?>.setSelection(ranges, true);
+        });
+        // $("#overview_<?=$gid?>").bind("plotselected", function (event, ranges) {
+        //     tempGraph_<?=$gid?>.setSelection(ranges);
+        // });
+    	});
+    </script>
+    </div>
+  </div>
+<? endif ?>
 
   <div class="row">
 		<div class="span6">

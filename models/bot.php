@@ -232,10 +232,12 @@
 			$job->set('finished_time', 0);
 			$job->set('verified_time', 0);
       $job->set('progress', 0);
+			$job->set('temperature_data', '');
 			$job->save();
 			
 			$this->set('job_id', 0);
 			$this->set('status', 'idle');
+			$this->set('temperature_data', '');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
