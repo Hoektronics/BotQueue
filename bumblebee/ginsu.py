@@ -137,7 +137,7 @@ class Slic3r(GenericSlicer):
       osPath = "osx.app/Contents/MacOS/slic3r"
     elif sys.platform.startswith('linux'):
       if os.uname()[1].startswith('raspberrypi'):
-        osPath = "raspberrypi/slic3r"
+        osPath = "raspberrypi/slic3r.pl"
       else:
         osPath = "linux/bin/slic3r"
     else:

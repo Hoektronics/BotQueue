@@ -99,8 +99,9 @@ class printcore():
         self.error=False
         
     def get_temperatures(self):
-        self.send_now("M105")
-        time.sleep(0.2)
+        if self.printer and self.printing:
+          self.send_now("M105")
+          time.sleep(0.2)
         
         return self.temperatures
             
