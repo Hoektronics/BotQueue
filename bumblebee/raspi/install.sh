@@ -28,7 +28,7 @@ sudo cpanm Boost::Geometry::Utils Math::Clipper Math::ConvexHull Math::Geometry:
 cd /home/pi/
 git clone https://github.com/alexrj/Slic3r.git
 cd Slic3r
-#git checkout
+git checkout 0.9.9
 sudo perl Build.PL 
 sudo ./Build install
 
