@@ -121,7 +121,10 @@
       					<td class="muted"><?=$j->getEstimatedText()?></td>
     					  <td style="width:250px">
     					    <? if ($j->get('status') == 'qa'): ?>
-                    <a class="btn btn-primary" href="<?=$j->getUrl()?>/qa">VERIFY JOB</a>
+    					      <?$qa_fail = Controller::byName('job')->_createQAFailForm($j) ?>
+                    <a class="btn btn-primary" href="<?=$j->getUrl()?>/qa">VIEW</a>
+                    <a class="btn btn-success" href="<?=$j->getUrl()?>/qa/pass">PASS</a>
+                    <a class="btn btn-danger" href="<?=$j->getUrl()?>/qa/fail">FAIL</a>
                   <? elseif ($j->get('status') == 'slicing' && $sj->get('status') == 'pending'): ?>
                     <a class="btn btn-primary" href="<?=$sj->getUrl()?>">VIEW</a>
                     <a class="btn btn-success" href="<?=$sj->getUrl()?>/pass">PASS</a>

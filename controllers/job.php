@@ -292,24 +292,17 @@
 				$this->set('job', $job);
 				$this->set('bot', $bot);
 				
-				if ($this->args('submit'))
-				{
-			    $bot->set('job_id', 0);
-    			$bot->set('status', 'idle');
-    			$bot->save();
-    			
-    			$job->set('status', 'complete');
-    			$job->set('verified_time', date("Y-m-d H:i:s"));
-    			$job->save();
-    			
-					Activity::log("accepted the output of job " . $job->getLink() . ".");
+		    $bot->set('job_id', 0);
+  			$bot->set('status', 'idle');
+  			$bot->save();
+  			
+  			$job->set('status', 'complete');
+  			$job->set('verified_time', date("Y-m-d H:i:s"));
+  			$job->save();
+  			
+				Activity::log("accepted the output of job " . $job->getLink() . ".");
 
-          $this->forwardToUrl("/");  
-			  }
-        else
-        {
-          $this->forwardToUrl($job->getUrl() . "/qa");  
-        }				
+        $this->forwardToUrl("/");  
 			}
 			catch (Exception $e)
 			{
@@ -336,6 +329,7 @@
 				if ($job->get('status') != 'qa')
 					throw new Exception("You cannot do QA on this job.");
 
+				$this->setTitle("Fail Job - " . $job->getName());
 		    $bot = $job->getBot();
 
 				$this->set('job', $job);
@@ -393,12 +387,10 @@
 
           $this->forwardToUrl("/");  
 				}
-				else
-			  	$this->forwardToUrl($job->getUrl() . "/qa"); 				
 			}
 			catch (Exception $e)
 			{
-				$this->setTitle('Reject Job - Error');
+				$this->setTitle('Fail Job - Error');
 				$this->set('megaerror', $e->getMessage());
 			}			
 		}
