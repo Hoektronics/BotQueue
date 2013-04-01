@@ -101,7 +101,7 @@ class printcore():
     def get_temperatures(self):
         if self.printer and self.printing:
           self.send_now("M105")
-          time.sleep(0.2)
+          #time.sleep(0.2)
         
         return self.temperatures
             
@@ -155,7 +155,7 @@ class printcore():
                         self.recvcb(line)
                     except:
                         pass
-                self.log.debug("RECV: %s" % line.rstrip())
+                #self.log.debug("RECV: %s" % line.rstrip())
                 
                 #look for our temperature strings
                 matches = re.findall('T:(\d+\.\d+)', line)
@@ -385,7 +385,7 @@ class printcore():
                 self.sentlines[lineno]=command
         if(self.printer):
             self.sent+=[command]
-            self.log.debug("SENT: %s" % command)
+            #self.log.debug("SENT: %s" % command)
             if self.sendcb is not None:
                 try:
                     self.sendcb(command)
