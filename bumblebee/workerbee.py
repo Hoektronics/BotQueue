@@ -222,6 +222,7 @@ class WorkerBee():
     
     #watch the slicing progress
     localUpdate = 0
+    lastUpdate = 0
     while g.isRunning():
       #check for messages like shutdown or stop job.
       self.checkMessages()
@@ -236,6 +237,12 @@ class WorkerBee():
         msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
         localUpdate = time.time()
+        
+      #occasionally update home base.
+      if (time.time() - lastUpdate > 15):
+        lastUpdate = time.time()
+        self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % g.getProgress())
+        
       time.sleep(0.1)
       
     #how did it go?
