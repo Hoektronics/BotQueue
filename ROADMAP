@@ -2,7 +2,7 @@ April 2013 Release
 
 * Test raspberry pi install script
 * Document Raspberry Pi install
-* fix progress update during slicing to hit botqueue.com
+* make raspi/bin folder and add it to the path variable.
 
 v2.x Release - Ongoing
 
