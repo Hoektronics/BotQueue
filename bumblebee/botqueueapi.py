@@ -4,6 +4,7 @@ import json
 import hive
 import webbrowser
 import logging
+import httplib
 import httplib2
 import socket
 import hashlib
@@ -23,6 +24,7 @@ class BotQueueAPI():
   def __init__(self):
     self.log = logging.getLogger('botqueue')
     self.config = hive.config.get()
+    self.netStatus = False
 
     # Register the poster module's streaming http handlers with urllib2
     register_openers()
@@ -78,7 +80,7 @@ class BotQueueAPI():
         return result    
    
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error) as ex:
+      except (NetworkError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
         #raise NetworkError(str(ex))
         self.log.error("Internet connection is down: %s" % ex)
         retries = retries - 1
@@ -243,14 +245,14 @@ class BotQueueAPI():
   def completeJob(self, job_id):
     return self.apiCall('completejob', {'job_id' : job_id})
   
-  def updateJobProgress(self, job_id, progress):
-    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress}, retries = 1)
+  def updateJobProgress(self, job_id, progress, temps = {}):
+    return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress, 'temperatures' : json.dumps(temps)}, retries = 1)
 
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})
   
   def listBots(self):
-    return self.apiCall('listbots')
+    return self.apiCall('listbots', retries = 1)
     
   def findNewJob(self, bot_id, can_slice):
     return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})

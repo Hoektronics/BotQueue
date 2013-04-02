@@ -59,6 +59,9 @@ class bumbledriver(object):
   def hasError(self):
     return self.error
 
+  def getTemperature(self):
+    return False
+
   def getErrorMessage(self):
     return self.errorMessage
     

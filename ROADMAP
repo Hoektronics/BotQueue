@@ -1,8 +1,11 @@
-* BUMBLEBEE - test slic3r on raspberry pi.
-* BUMBLEBEE - add support for dropping jobs mid-print / mid-slice
-* BUMBLEBEE / API / WEB - add temperature reporting
+April 2013 Release
+
+* Test raspberry pi install script
+* Document Raspberry Pi install
+* make raspi/bin folder and add it to the path variable.
 
 v2.x Release - Ongoing
+
 
 * WEB - add ability to make comments on individual jobs
 
@@ -18,8 +21,6 @@ v2.x Release - Ongoing
 * BUMBLEBEE - pull list of bots + config from web directly
 * BUMBLEBEE - headless app authentication support
 * BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
-* BUMBLEBEE - raspberry pi image & support
-* BUMBLEBEE - temperature reporting
 
 v3 - ???
 

@@ -20,6 +20,7 @@ from threading import Thread
 from select import error as SelectError
 import time, getopt, sys
 import logging
+import re
 
 # create logger with 'spam_application'
 log = logging.getLogger('printcore')
@@ -68,6 +69,7 @@ class printcore():
         self.errorMessage = None
         self.listenThread = None
         self.log = logging.getLogger('printcore')
+        self.temperatures = {}
 
     def connect(self,port=None,baud=None):
         """Connect to printer
@@ -95,6 +97,13 @@ class printcore():
         self.online=False
         self.printing=False
         self.error=False
+        
+    def get_temperatures(self):
+        if self.printer and self.printing:
+          self.send_now("M105")
+          #time.sleep(0.2)
+        
+        return self.temperatures
             
     def reset(self):
         """Reset the printer
@@ -146,7 +155,16 @@ class printcore():
                         self.recvcb(line)
                     except:
                         pass
-                self.log.debug("RECV: %s" % line.rstrip())
+                #self.log.debug("RECV: %s" % line.rstrip())
+                
+                #look for our temperature strings
+                matches = re.findall('T:(\d+\.\d+)', line)
+                if matches:
+                  self.temperatures['extruder'] = matches[0]
+                matches = re.findall('B:(\d+\.\d+)', line)
+                if matches:
+                  self.temperatures['bed'] = matches[0]
+                
             if(line.startswith('DEBUG_')):
                 continue
             if(line.startswith(tuple(self.greetings)) or line.startswith('ok')):
@@ -231,6 +249,15 @@ class printcore():
         self.paused=True
         self.printing=False
         time.sleep(1)
+
+    def stop(self):
+        """Stops the print completely.
+        """
+        self.log.info("Paused.")
+        self.paused=False
+        self.printing=False
+        time.sleep(1)
+
         
     def resume(self):
         """Resumes a paused print.
@@ -358,7 +385,7 @@ class printcore():
                 self.sentlines[lineno]=command
         if(self.printer):
             self.sent+=[command]
-            self.log.debug("SENT: %s" % command)
+            #self.log.debug("SENT: %s" % command)
             if self.sendcb is not None:
                 try:
                     self.sendcb(command)

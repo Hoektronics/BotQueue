@@ -7,6 +7,7 @@ import tempfile
 import urllib2
 import sys
 import hashlib
+import time
 from threading import Thread
 
 class BeeConfig():
@@ -70,14 +71,15 @@ class URLFile():
       if os.path.exists(self.localPath):
         myhash = md5sumfile(self.localPath)
         if myhash != self.remotefile['md5']:
+          os.unlink(self.localPath)
           self.log.warning("Existing file found: hashes did not match! %s != %s" % (myhash, self.remotefile['md5']))
-          raise Exception
         else:
           self.cacheHit = True
           self.localSize = os.path.getsize(self.localPath)
           self.localFile = open(self.localPath, "r")
           self.progress = 100
-      else:
+      #okay, should we open it for writing?
+      if not os.path.exists(self.localPath):
         self.localFile = open(self.localPath, "w+")
     except Exception as ex:
       self.localFile = tempfile.NamedTemporaryFile()
@@ -87,34 +89,40 @@ class URLFile():
   def downloadFile(self):
     #do we need to download it?
     if not self.cacheHit:
-      #download our file.
-      self.log.info("Downloading %s to %s" % (self.remotefile['url'], self.localPath))
-      urlFile = self.openUrl(self.remotefile['url'])
-      chunk = 4096
-      md5 = hashlib.md5()
-      self.localSize = 0
       while 1:
-        data = urlFile.read(chunk)
-        if not data:
-          break
-        md5.update(data)
-        self.localFile.write(data)
-        self.localSize = self.localSize + len(data)
-        self.progress = float(self.localSize) / float(self.remotefile['size'])*100
+        try:
+          #download our file.
+          self.log.info("Downloading %s to %s" % (self.remotefile['url'], self.localPath))
+          urlFile = self.openUrl(self.remotefile['url'])
+          chunk = 4096
+          md5 = hashlib.md5()
+          self.localSize = 0
+          while 1:
+            data = urlFile.read(chunk)
+            if not data:
+              break
+            md5.update(data)
+            self.localFile.write(data)
+            self.localSize = self.localSize + len(data)
+            self.progress = float(self.localSize) / float(self.remotefile['size'])*100
 
-      #check our final md5 sum.
-      if md5.hexdigest() != self.remotefile['md5']:
-        self.log.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.remotefile['md5']))
-        os.unlink(self.localPath)
-        raise Exception()
-      else:
-        self.progress = 100
-        self.log.info("Download complete: %s" % self.remotefile['url'])
+          #check our final md5 sum.
+          if md5.hexdigest() != self.remotefile['md5']:
+            self.log.error("Downloaded file hash did not match! %s != %s" % (md5.hexdigest(), self.remotefile['md5']))
+            os.unlink(self.localPath)
+            raise Exception()
+          else:
+            self.progress = 100
+            self.log.info("Download complete: %s" % self.remotefile['url'])
+            self.localFile.seek(0)  
+            return
+        except Exception as ex:
+          self.log.exception(ex)
+          self.localFile.seek(0)  
+          time.sleep(5)
     else:
+      self.localFile.seek(0)  
       self.log.info("Using cached file %s" % self.localPath)
-
-    #reset to the beginning.
-    self.localFile.seek(0)  
 
   def openUrl(self, url):
     request = urllib2.Request(url)
