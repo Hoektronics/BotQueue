@@ -18,5 +18,9 @@
 
 	class HelpController extends Controller
 	{
+	  function raspberry_pi_installation()
+	  {
+	    $this->setTitle("Raspberry Pi Installation");
+	  }
 	}
 ?>

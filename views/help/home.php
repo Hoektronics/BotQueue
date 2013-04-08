@@ -4,10 +4,10 @@
 
 		<h4>Prerequisites:</h4>
 		<ul>
-			<li>A reliable 3D printer.  BotQueue is designed for printing dozens or hundreds of jobs.</li>
-			<li>An automated 3D printer.  You should not need to touch your machine after hitting print until the job is done.</li>
-			<li>A 3D printer running supported software like GRBL, Sprinter, Marlin, or MakerBot 5D (eg. Replicator)</li>
-			<li>Mac or Linux preferred.  Never been tested on Windows.  Likely broken. Testers/Devs wanted.</li>
+			<li>A <em>reliable</em> 3D printer.  BotQueue is designed for printing dozens or hundreds of jobs.</li>
+			<li>An <em>automated</em> 3D printer.  You should not need to touch your machine after hitting print.</li>
+			<li>A <em>supported</em> 3D printer running software like GRBL, Sprinter, Marlin, or Teacup.</li>
+			<li><strong>Mac or Linux preferred.</strong>  Never been tested on Windows.  Likely broken. Testers/Devs wanted.</li>
 		</ul>
 
 		<h4>Step 1: Register an account</h4>
@@ -16,15 +16,20 @@
 
 		<h4>Step 2: Register your Bots</h4>
 		<p>
-			On the botqueue.com website, <a href="/bot/register">register a new bot</a>.  Give it a unique name.  If you want to use the integrated Slic3r support, you'll need to choose the slic3r version and upload your config.  From slic3r, click File-&gt;Export Config.  Upload that as your slice config.  Once you do that, you can upload STL files directly to the site and they will be sliced before printing.
+			On the BotQueue.com website, <a href="/bot/register">register a new bot</a>.  Give it a unique name.  If you want to use the integrated Slic3r support, you'll need to choose the slic3r version and upload your config.  From slic3r, click File-&gt;Export Config.  Upload that as your slice config.  Once you do that, you can upload STL files directly to the site and they will be sliced before printing.
 		</p>
 		
 		<h4>Step 3: Download BumbleBee, the client software</h4>
-		<p>Download the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git</a>.</p>
+		<p>
+		  Download the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git</a>
+		</p>
+		<p>
+		  If you are running bumblebee on a Raspberry Pi, see these <a href="/help/raspberry-pi-installation">installation instructions</a>.
+		</p>
 
 		<h4>Step 4: Authorize the client software</h4>
 		<p>From the command line, navigate to the <strong>bumblebee</strong> folder and run this command: <strong>python bumblebee.py</strong></p>
-		<p>It should spawn a web browser and take you to the BotQueue.com page where you authorize the app to access your account.  Take the code it gives you and enter it into the terminal.</p>
+		<p>It should give you a url where you authorize the app to access your account.  Take the code that page gives you and enter it into the terminal.</p>
 
 		<h4>Step 5: Configure your bots</h4>
 		<p>
@@ -51,13 +56,13 @@
 		"name": "MendelMax",
 		"driver" : "printcore",
 		"port" : "/dev/tty.usbmodem123",
-		"baud" : "250000"
+		"baud" : "115200"
 	},
 	{
 		"name": "Prusa",
 		"driver" : "printcore",
-		"port" : "/dev/tty.usbmodem345",
-		"baud" : "250000"
+		"port" : "/dev/ttyACM0",
+		"baud" : "115200"
 	}
  ]
 }</pre>
