@@ -20,8 +20,8 @@
 		{
   		"name": "Reprap Style Printer",
   		"driver" : "printcore",
-  		"port" : "/dev/tty.usbmodem123",
-  		"baud" : "250000"
+  		"port" : "/dev/ttyACM0",
+  		"baud" : "115200"
   	}
 	]
 }
