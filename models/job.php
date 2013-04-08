@@ -140,11 +140,6 @@
 				$start = strtotime($this->get('taken_time'));
 				$end = time();
 			}
-			elseif ($this->get('status') == 'qa')
-			{
-				$start = strtotime($this->get('finished_time'));
-				$end = time();			  
-			}
 			else
 			{
 				$start = strtotime($this->get('taken_time'));

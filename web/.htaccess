@@ -104,6 +104,7 @@ RewriteRule ^passthru:([0-9]+)$												dispatcher.php?controller=job&view=pa
 
 #help stuff.
 RewriteRule ^help$												dispatcher.php?controller=help&view=home [NC,L]
+RewriteRule ^help/raspberry-pi-installation$												dispatcher.php?controller=help&view=raspberry_pi_installation [NC,L]
 
 #shortcode parsing
 RewriteRule ^shortcode/([0-9a-zA-Z]+)?$										dispatcher.php?controller=main&view=shortcode&code=$1 [NC,L]
