@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /home/pi/BotQueue/bumblebee/
+python bumblebee.py

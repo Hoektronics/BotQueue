@@ -8,12 +8,12 @@ from threading import Thread
 class printcoredriver(bumbledriver.bumbledriver):
   def __init__(self, config):
     super(printcoredriver, self).__init__(config)
-    
-    self.p = printcore.printcore()
-    self.p.loud = False
     self.log = logging.getLogger('botqueue')
+    self.printThread = False
 
   def startPrint(self, jobfile):
+    self.p = printcore.printcore()
+    self.p.loud = False
     try:
       self.printing=True
       self.connect()
@@ -21,7 +21,7 @@ class printcoredriver(bumbledriver.bumbledriver):
         time.sleep(1)
         self.log.debug("Waiting for driver to connect.")
       self.p.startprint(jobfile.localFile)
-      Thread(target=self.printThreadEntry).start()
+      self.printThread = Thread(target=self.printThreadEntry).start()
     except Exception as ex:
       self.log.error("Error starting print: %s" % ex)
       self.disconnect()
@@ -59,7 +59,14 @@ class printcoredriver(bumbledriver.bumbledriver):
 
   def isConnected(self):
     return self.p.online and self.p.printer
-    
+
+  def stop(self):
+    self.p.stop()
+    self.disconnect()
+  
+  def getTemperature(self):
+    return self.p.get_temperatures()
+  
   def connect(self):
     if not self.isConnected():
       self.p.connect(self.config['port'], self.config['baud'])
@@ -67,5 +74,7 @@ class printcoredriver(bumbledriver.bumbledriver):
     
   def disconnect(self):
     if self.isConnected():
+      if self.printThread:
+        self.printThread.join(10)
       self.p.disconnect()
       super(printcoredriver, self).disconnect()

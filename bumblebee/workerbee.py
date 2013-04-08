@@ -116,39 +116,42 @@ class WorkerBee():
         
         #see if there are any messages from the motherbee
         self.checkMessages()
-        if not self.running: #did we get a shutdown notice?
+        
+        #did we get a shutdown notice?
+        if not self.running:
           break
       
         #idle mode means looking for a new job.
-        if self.data['status'] == 'idle':
-          try:
-            if not self.getNewJob():
-              time.sleep(10)
-          except Exception as ex:
-            self.exception(ex)
+        # if self.data['status'] == 'idle':
+        #   try:
+        #     if not self.getNewJob():
+        #       time.sleep(10)
+        #   except Exception as ex:
+        #     self.exception(ex)
         #slicing means we need to slice our job.
-        elif self.data['status'] == 'slicing':
+        if self.data['status'] == 'slicing':
           if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
               self.sliceJob()
-          else:
-            self.getOurInfo()
-            time.sleep(10)
+          # else:
+          #   self.getOurInfo()
+          #   time.sleep(10)
         #working means we need to process a job.
         elif self.data['status'] == 'working':
             self.processJob()
-            self.getOurInfo() #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
+            #self.getOurInfo() #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
             self.debug("Bot finished @ state %s" % self.data['status'])
-        else: #we're either waiting, error, or offline... wait until that changes
-          self.info("Waiting in %s mode" % self.data['status'])
-          try:
-            self.getOurInfo() #see if our job has changed.
-          except Exception as e:
-            #todo: better error handling here.
-            self.exception(e)
-          if self.data['status'] == 'idle':
-            self.info("Going online.");
-          else:
-            time.sleep(10) # sleep for a bit to not hog resources
+        # else: #we're either waiting, error, or offline... wait until that changes
+        #   self.info("Waiting in %s mode" % self.data['status'])
+        #   try:
+        #     self.getOurInfo() #see if our job has changed.
+        #   except Exception as e:
+        #     #todo: better error handling here.
+        #     self.exception(e)
+        #   if self.data['status'] == 'idle':
+        #     self.info("Going online.");
+        #   else:
+        #     time.sleep(10) # sleep for a bit to not hog resources
+        time.sleep(0.1) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
       self.driver.disconnect()
@@ -182,32 +185,32 @@ class WorkerBee():
       raise Exception("Error looking up job info: %s" % result['error'])
  
   #get a new job to process from the mothership  
-  def getNewJob(self):
-    self.info("Looking for new job.")
-    result = self.api.findNewJob(self.data['id'], self.global_config['can_slice'])
-    if (result['status'] == 'success'):
-      if (len(result['data'])):
-        job = result['data']
-        jresult = self.api.grabJob(self.data['id'], job['id'], self.global_config['can_slice'])
-        if (jresult['status'] == 'success'):
-          self.data = jresult['data']
-
-          #notify the mothership.
-          data = hive.Object()
-          data.job = self.data['job']
-          data.bot = self.data
-          message = Message('job_start', data)
-          self.pipe.send(message)
-
-          self.info("grabbed job %s" % self.data['job']['name'])
-          return True
-        else:
-          raise Exception("Error grabbing job: %s" % jresult['error'])
-      else:
-        self.getOurInfo() #see if our status has changed.
-    else:
-      raise Exception("Error finding new job: %s" % result['error'])
-    return False
+  # def getNewJob(self):
+  #   self.info("Looking for new job.")
+  #   result = self.api.findNewJob(self.data['id'], self.global_config['can_slice'])
+  #   if (result['status'] == 'success'):
+  #     if (len(result['data'])):
+  #       job = result['data']
+  #       jresult = self.api.grabJob(self.data['id'], job['id'], self.global_config['can_slice'])
+  #       if (jresult['status'] == 'success'):
+  #         self.data = jresult['data']
+  # 
+  #         #notify the mothership.
+  #         data = hive.Object()
+  #         data.job = self.data['job']
+  #         data.bot = self.data
+  #         message = Message('job_start', data)
+  #         self.pipe.send(message)
+  # 
+  #         self.info("grabbed job %s" % self.data['job']['name'])
+  #         return True
+  #       else:
+  #         raise Exception("Error grabbing job: %s" % jresult['error'])
+  #     else:
+  #       self.getOurInfo() #see if our status has changed.
+  #   else:
+  #     raise Exception("Error finding new job: %s" % result['error'])
+  #   return False
 
   def sliceJob(self):
     #download our slice file
@@ -219,13 +222,27 @@ class WorkerBee():
     
     #watch the slicing progress
     localUpdate = 0
+    lastUpdate = 0
     while g.isRunning():
+      #check for messages like shutdown or stop job.
+      self.checkMessages()
+      if not self.running or self.data['status'] != 'slicing':
+        self.debug("Stopping slice job")
+        g.stop()
+        return
+      
       #notify the local mothership of our status.
       if (time.time() - localUpdate > 0.5):
         self.data['job']['progress'] = g.getProgress()
         msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
         localUpdate = time.time()
+        
+      #occasionally update home base.
+      if (time.time() - lastUpdate > 15):
+        lastUpdate = time.time()
+        self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % g.getProgress())
+        
       time.sleep(0.1)
       
     #how did it go?
@@ -242,10 +259,17 @@ class WorkerBee():
     #update our slice job progress and pull in our update info.
     self.info("Finished slicing, uploading results to main site.")
     result = self.api.updateSliceJob(job_id=self.data['job']['slicejob']['id'], status=sushi.status, output=sushi.output_log, errors=sushi.error_log, filename=uploadFile)
+
+    #hack because the upload takes forever and mothership probably has an old status.
+    self.checkMessages()
+
+    #now pull in our new data.
     self.data = result['data']
     
-    #notify the bumblebee of our status.
-    msg = Message('slice_update', self.data)
+    #notify the queen bee of our status.
+    msg = Message('bot_update', self.data)
+    self.pipe.send(msg)
+    msg = Message('job_update', self.data['job'])
     self.pipe.send(msg)
  
   def downloadFile(self, fileinfo):
@@ -277,34 +301,41 @@ class WorkerBee():
 
     currentPosition = 0
     lastUpdate = time.time()
+    lastTemp = time.time()
     try:
       self.driver.startPrint(self.jobFile)
       while self.driver.isRunning():
         latest = self.driver.getPercentage()
+
+        #look up our temps?
+        if (time.time() - lastTemp > 1):
+          lastTemp = time.time()
+          temps = self.driver.getTemperature()
       
         #notify the mothership of our status.
         self.data['job']['progress'] = latest
+        self.data['job']['temperature'] = temps
         msg = Message('job_update', self.data['job'])
         self.pipe.send(msg)
       
-        #check for messages like shutdown.
+        #check for messages like shutdown or stop job.
         self.checkMessages()
-        if not self.running:
-          break;
+        if not self.running or self.data['status'] != 'working':
+          return
 
         #occasionally update home base.
         if (time.time() - lastUpdate > 15):
           lastUpdate = time.time()
           self.info("print: %0.2f%%" % latest)
-          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest)
+          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest, temps)
 
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
           
-        time.sleep(0.5)
+        time.sleep(0.1)
 
       #did our print finish while running?
-      if self.running:
+      if self.running and self.data['status'] == 'working':
         self.info("Print finished.")
   
         #finish the job online, and mark as completed.
@@ -312,28 +343,35 @@ class WorkerBee():
         while not notified:
           result = self.api.completeJob(self.data['job']['id'])
           if result['status'] == 'success':
+            
+            #check for messages like shutdown or stop job.
+            self.checkMessages()
+            if not self.running or self.data['status'] != 'working':
+              return
+            
             self.data = result['data']['bot']
             notified = True
-            
-            #notify the queen bee
-            data = hive.Object()
-            data.job = self.data['job']
-            data.bot = self.data
-            message = Message('job_end', data)
-            self.pipe.send(message)
+
+            #notify the queen bee of our status.
+            msg = Message('bot_update', self.data)
+            self.pipe.send(msg)
+
+            #notify the queen bee of our status.
+            msg = Message('job_update', self.data['job'])
+            self.pipe.send(msg)
           else:
-            self.log.error("Error notifying mothership: %s" % result['error'])
+            self.error("Error notifying mothership: %s" % result['error'])
             time.sleep(10)
     except Exception as ex:
       self.exception(ex)
       self.errorMode(ex)
 
-  def goOnline():
-    self.data['status'] = 'idle'
-
-  def goOffline():
-    self.data['status'] = 'offline'
-
+  def takePicture(self):
+    try:
+      import cv
+    except ImportError:
+      self.error("OpenCV not installed.")
+  
   def pauseJob(self):
     self.driver.pause()
     self.paused = True
@@ -345,7 +383,8 @@ class WorkerBee():
   def stopJob(self):
     if self.driver and not self.driver.hasError():
       if self.driver.isRunning() or self.driver.isPaused():
-        self.driver.stop()      
+        self.info("stopping driver.")
+        self.driver.stop()
     
   def dropJob(self, error = False):
     self.stopJob()
@@ -357,7 +396,7 @@ class WorkerBee():
         self.getOurInfo()
       else:
         raise Exception("Unable to drop job: %s" % result['error'])
-
+ 
   def shutdown(self):
     self.info("Shutting down.")
     if(self.data['status'] == 'working' and self.data['job']['id']):
@@ -366,29 +405,46 @@ class WorkerBee():
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
-    if self.pipe.poll():
+    while self.pipe.poll():
       message = self.pipe.recv()
       self.handleMessage(message)
 
   #these are the messages we know about.
   def handleMessage(self, message):
-    self.log.debug("Got message %s" % message.name)
-    if message.name == 'go_online':
-      self.goOnline()
-    elif message.name == 'go_offline':
-      self.goOffline()
-    elif message.name == 'pause_job':
-      self.pauseJob()
-    elif message.name == 'resume_job':
-      self.resumeJob()
-    elif message.name == 'stop_job':
-      self.stopJob()
-    elif message.name == 'drop_job':
-      self.dropJob()
-      pass
+
+    self.debug("Got message %s" % message.name)
+
+    #mothership gave us new information!
+    if message.name == 'updatedata':
+      if message.data['status'] != self.data['status']:
+        self.info("Changing status from %s to %s" % (self.data['status'], message.data['status']))
+      status = message.data['status']
+      #did our status change?  if so, make sure to stop our currently running job.
+      if self.data['status'] == 'working' and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
+        self.info("Stopping job.")
+        self.stopJob()
+      self.data = message.data
+
+    #mothership sent us a new job!
+    # elif message.name == 'job_start':
+    #   self.info("Got new job %s" % (message.data.job['id']))
+    #   self.data = message.data.bot
+    #   self.job = message.data.job
+
+    #time to die, mr bond!
     elif message.name == 'shutdown':
       self.shutdown()
       pass
+
+    # elif message.name == 'pause_job':
+    #   self.pauseJob()
+    # elif message.name == 'resume_job':
+    #   self.resumeJob()
+    # elif message.name == 'stop_job':
+    #   self.stopJob()
+    # elif message.name == 'drop_job':
+    #   self.dropJob()
+    #   pass
 
   def debug(self, msg):
     self.log.debug("%s: %s" % (self.config['name'], msg))
