@@ -142,6 +142,9 @@ RewriteRule ^tos$												dispatcher.php?controller=main&view=tos [NC,L]
 RewriteRule ^privacy$										dispatcher.php?controller=main&view=privacy [NC,L]
 RewriteRule ^stats$								  		dispatcher.php?controller=main&view=stats [NC,L]
 
+#comments
+RewriteRule ^comment/add$												    dispatcher.php?controller=comment&view=add_comment [NC,L]
+
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]
 RewriteRule ^api/v1/endpoint$										apiv1.php [NC,L,QSA]

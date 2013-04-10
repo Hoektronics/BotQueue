@@ -81,6 +81,11 @@
 			return new Bot($this->get('bot_id'));
 		}
 		
+		public function getComments()
+		{
+		  return Comment::byContentAndType($this->id, 'job');
+		}
+		
 		public function getAPIData()
 		{
 			$d = array();
@@ -101,6 +106,23 @@
 			
 			return $d;
 		}
+
+    public function canView()
+    {
+      if ($this->get('user_id') == User::$me->id)
+        return true;
+      return false;
+    }
+
+    public function canEdit()
+    {
+      return $this->canView();
+    }
+		
+    public function canComment()
+    {
+      return $this->canView();
+    }
 		
 		public function cancelJob()
 		{

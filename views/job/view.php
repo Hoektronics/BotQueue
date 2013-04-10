@@ -157,8 +157,6 @@
     <h3>Temperature Log</h3>
 
     <div id="temperature_graph_<?=$gid?>" style="width:100%;height:300px;"></div>
-    <!-- <div id="legend_<?=$gid?>" style="width:150px;height:100px; float: right; margin: 10px;"></div> -->
-    <!-- <div id="overview_<?=$gid?>" style="width:500px; height:100px; float: left; margin: 10px 10px 10px 0px;"></div> -->
     <br clear="all"/>
 
     <script type="text/javascript">
@@ -247,6 +245,14 @@
         GCode file does not exist yet.
       <? endif ?>
 		</div>
+	</div>
+	
+  <div class="row">
+	  <div class="span12 comments">
+	    <h3>Comments</h3>
+      <?=Controller::byName('comment')->renderView('draw_all', array('comments' => $comments)) ?>
+      <?=Controller::byName('comment')->renderView('add_comment', array('content_type' => 'job', 'content_id' => $job->id)) ?>
+	  </div>
 	</div>
 		
 	<? if (!empty($errors)): ?>

@@ -91,6 +91,8 @@
 					$job = new Job($this->args('id'));
 
 				//did we really get someone?
+				if (!$job->canView())
+					throw new Exception("You do not have permission to view this job.");
 				if (!$job->isHydrated())
 					throw new Exception("Could not find that job.");
 
@@ -111,6 +113,7 @@
 					$this->set('bot', $job->getBot());
 					$this->set('creator', $job->getUser());
 					$this->set('errors', $job->getErrorLog()->getAll());
+					$this->set('comments', $job->getComments()->getAll());
 				}
 			}
 			catch (Exception $e)
@@ -133,8 +136,8 @@
 				//did we really get someone?
 				if (!$job->isHydrated())
 					throw new Exception("Could not find that job.");
-				if ($job->get('user_id') != User::$me->id)
-					throw new Exception("You do not own this job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to edit this job.");
 				if ($job->get('status') != 'available')
 					throw new Exception("You can only edit jobs that have not been taken yet.");
 
@@ -206,8 +209,8 @@
 				//did we really get someone?
 				if (!$job->isHydrated())
 					throw new Exception("Could not find that job.");
-				if ($job->get('user_id') != User::$me->id)
-					throw new Exception("You do not own this job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to delete this job.");
 				if ($job->get('status') == 'taken')
 					throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
 				if ($job->get('status') == 'slicing')
@@ -245,8 +248,8 @@
 				//did we really get someone?
 				if (!$job->isHydrated())
 					throw new Exception("Could not find that job.");
-				if ($job->get('user_id') != User::$me->id)
-					throw new Exception("You do not own this job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to edit this job.");
 				if ($job->get('status') != 'qa')
 					throw new Exception("You cannot do QA on this job.");
 
@@ -282,8 +285,8 @@
 				//did we really get someone?
 				if (!$job->isHydrated())
 					throw new Exception("Could not find that job.");
-				if ($job->get('user_id') != User::$me->id)
-					throw new Exception("You do not own this job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to edit this job.");
 				if ($job->get('status') != 'qa')
 					throw new Exception("You cannot do QA on this job.");
 
@@ -324,8 +327,8 @@
 				//did we really get someone?
 				if (!$job->isHydrated())
 					throw new Exception("Could not find that job.");
-				if ($job->get('user_id') != User::$me->id)
-					throw new Exception("You do not own this job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to edit this job.");
 				if ($job->get('status') != 'qa')
 					throw new Exception("You cannot do QA on this job.");
 

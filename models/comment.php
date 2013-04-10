@@ -35,10 +35,20 @@
 				SELECT id, user_id
 				FROM comments
 				WHERE content_id = {$id}
-				  AND content_type = {$type}
+				  AND content_type = '{$type}'
         ORDER BY comment_date ASC
 			";
 			return new Collection($sql, array('Comment' => 'id', 'User' => 'user_id'));
+		}
+		
+		public static function getContent($id, $type)
+		{
+		  if ($type == 'bot')
+		    return new Bot($id);
+		  elseif ($type == 'job')
+		    return new Job($id);
+		  else
+		    return null;
 		}
 		
 		public function getUser()

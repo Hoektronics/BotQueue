@@ -171,6 +171,14 @@ class Utility
 		return $value;
 	}
 	
+	public function cleanAndPretty($text)
+	{
+	  $text = self::sanitize($text);
+	  $text = nl2br($text);
+	  
+	  return $text;
+	}
+	
 	public function formatNumber($number)
 	{
 		if (round($number) == $number)
@@ -804,143 +812,6 @@ class Utility
 	public static function getIP()
 	{
 		return (getenv(HTTP_X_FORWARDED_FOR)) ?  getenv(HTTP_X_FORWARDED_FOR) :  getenv(REMOTE_ADDR);
-	}
-	
-	/**
-	 * Converts a string to html using special identifiers
-	 */
-	public function convertToHTML($text, $max_link_length = 35, $nl2br = true) 
-	{
-		// figure out if we're dealing in utf8... everything *should* be, that isn't the case though
-		$encode_to_utf8 = false;
-		if(utf8_encode(utf8_decode($text)) == $text) {
-			$encode_to_utf8 = true;
-			$text = utf8_decode($text);
-		}
-		
-		//strip out garbage tags.
-		$text = stripslashes($text);
-		$text = strip_tags($text, "<b><i><pre><verbatim><big><small><br><em><strike><strong>");
-
-		$text = str_replace('<br />', '', $text);
-		$text .= "\n";
-		
-    // $valid_url       = "[-a-zA-Z0-9@\$:%_\+.~#?&//=\']+[-a-zA-Z0-9@:%_\+~#?&//=\']+";
-		$valid_url   		= "[-a-zA-Z0-9@\$:%_\+.~#?&\/\/=\']+[-a-zA-Z0-9@:%_\+~#?&\/\/=\']+";
-		$domain_extensions  = array('com', 'net', 'org', 'co\.uk', 'edu', 'info', 'biz', 'mobi', 'eu', 'bz', 'de', 'us', 'tv');
-		
-		// Some link preparation
-    // $text = eregi_replace("([[:space:]]*)?((www\.)?([-a-zA-Z0-9@:%_\+.~#?&//=\']+\.(".implode('|',$domain_extensions).")))","\\1http://\\2", $text);
-		$text = preg_replace("/([[:space:]]*)?((www\.)?([-a-zA-Z0-9@:%_\+.~#?&\/\/=\']+\.(".implode('|',$domain_extensions).")))/i","\\1http://\\2", $text);
-
-		// clean up extra https
-    // $text = eregi_replace('((http://)(([a-z]+)://))',"\\4://", $text);  
-		$text = preg_replace('/((http:\/\/)(([a-z]+):\/\/))/i',"\\4://", $text);  
-    // $text = eregi_replace('(http://)([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3})',"\\2", $text);  
-    $text = preg_replace('/(http:\/\/)([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3})/i',"\\2", $text);  
-
-		// break long strings, use this to signify a line break
-		$uniq_vimeo_br = "#@#";
-
-		// make sure we don't break the long urls in the links, use this to signify start/end 
-		$delim = "@@@" . rand(1000, 9999);
-
-		// break the long strings apart
-		if(strlen($text) > $max_link_length)
-      // $text = eregi_replace("([a-zA-Z0-9]{".$max_link_length."})", "\\1{$uniq_vimeo_br}", $text);
-		  $text = preg_replace("/([a-zA-Z0-9]{".$max_link_length."})/i", "\\1{$uniq_vimeo_br}", $text);
-
-		// Convert emails to links
-    // $text = eregi_replace('([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3})','<a href="mailto:\\1">\\1</a>', $text);
-		$text = preg_replace('/([_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,3})/i','<a href="mailto:\\1">\\1</a>', $text);
-		
-		// convert all the urls to links
-    // $text = eregi_replace("([[:space:]]+)(((f|ht){1}tp(s)?://)(www\.)?($valid_url))",'\\1<a href="'. $delim . '\\2' . $delim . '" target="_blank" rel="nofollow">\\7</a>', $text);  
-		$text = preg_replace("/([[:space:]]+)(((f|ht){1}tp(s)?:\/\/)(www\.)?($valid_url))/i",'\\1<a href="'. $delim . '\\2' . $delim . '" target="_blank" rel="nofollow">\\7</a>', $text);  
-
-		if (strpos($text, $uniq_vimeo_br) !== false) {
-			while (ereg("{$delim}(.+){$uniq_vimeo_br}(.+){$delim}", $text)) 
-				$text = ereg_replace("{$delim}(.+){$uniq_vimeo_br}(.+){$delim}", "{$delim}\\1\\2{$delim}", $text);
-		}
-
-		// strip out the delim stuff from above
-		if (strpos($text, $delim) !== false)
-			$text = str_replace($delim, '', $text );
-			
-		// berak up the string with a space. it will line break if it needs to.
-		$text = str_replace($uniq_vimeo_br, ' ', $text);
-		
-		// special case for converting links at beginning of string
-    // $text = eregi_replace("^(((f|ht){1}tp(s)?://)(www\.)?($valid_url))",'<a href="\\1" target="_blank" rel="nofollow">\\6</a>', $text);  
-		$text = preg_replace("/^(((f|ht){1}tp(s)?:\/\/)(www\.)?($valid_url))/i",'<a href="\\1" target="_blank" rel="nofollow">\\6</a>', $text);  
-
-		//$text = preg_replace('/>(http:\/\/)?(www)?|([^<]+)</a>/', ">$3</a>", $text);
-		$text = preg_replace('/<a href="([^"]+)" target="_blank">([^\n]{'.$max_link_length.'})[^\n]*<\/a>/', '<a href="\\1" target="_blank" rel="nofollow">\\2&nbsp;...</a>', $text);
-
-		// find any clip:112512 matches
-		/*global $i;
-		$i = 0;
-		$text = preg_replace_callback('/<a href="([^"]+clip:([0-9]+))" target="_blank">[^<]+<\/a>/',
-									 	create_function('$matches','
-									 		global $i; $i++;  
-									 		$rand = rand()*100;
-									 		$i += $rand;
-									 		$c = new Clip($matches[2]);
-											$img = "<span id=\"clip-thumb-$i-$matches[2]\" style=\"z-index:5000;display:none;\"><img src=\"{$c->getThumbnail(120,160)->url()}\" style=\"width:160px;height:120px;\" alt="" /></span><script type=\"text/javascript\">var t = new Tooltip(\'clip-link-$i-$matches[2]\', \'clip-thumb-$i-$matches[2]\');</script>";
-									 		return "<a id=\"clip-link-$i-$matches[2]\" href=\"$matches[1]\">{$c->get(\'title\')}</a>$img";'),
-									 	$text);*/
-									 	
-		// topic:15112 matches
-		/*$text = preg_replace_callback('/<a href="([^"]+topic:([0-9]+))" target="_blank">[^<]+<\/a>/',
-									 	create_function('$matches','
-									 		$t = new ForumTopic($matches[2]);
-									 		return "<a href=\"$matches[1]\">{$t->get(\'name\')}</a>";'),
-									 	$text);*/
-		
-		/**
-		 * Vimeo Code
-		 */
-		//$text = preg_replace('(\[(c:([0-9]+))\])',    '<a href="http://'.VIMEO_URL.'/\\1">\\1</a>', $text);
-		//$text = preg_replace('(\[(clip:([0-9]+))([^\]]+)\])', '<a href="http://'.VIMEO_URL.'/\\1">\\3</a>', $text);
-		
-				
-		// *Bold*
-		//$text = preg_replace('/\*([^\s][^\n\*]*)\*+?/','<strong>\\1</strong>',$text);
-		
-		// _Italic_
-		//$text = preg_replace('/\_([^\n_]+)\_+?/','<i>\\1</i>',$text);
-		
-		// -Strikethrough-
-		//$text = preg_replace('/-([^\n\-]+)-+?/','<strike>\\1</strike>',$text);
-		
-		// ??Citation?? --- not totally working.. it's being greedy for some reason
-		//$text = preg_replace('/\?{2}(([^\?{2}]|\n)+)(\?\?)+?/','<blockquote>\\1</blockquote>',$text);
-		
-		// * Bullets
-		/*$text = preg_replace('/[\n\r]\*\s+((.+)([^\*\n]+)*)/',"<uli>\\1</uli>",$text);
-		$text = preg_replace('/^\*\s+((.+)([^\*\n]+)*)/',"<uli>\\1</uli>",$text);
-		$text = preg_replace('/((<uli>)+?(.|\n)+?<\/uli>)\n/',"<ul>\\1</ul>",$text);
-		
-		// # Numbering
-		$text = preg_replace('/[\n\r]\#\s+((.+)([^\#\n]+)*)/',"<oli>\\1</oli>",$text);
-		$text = preg_replace('/^\#\s+((.+)([^\#\n]+)*)/',"<oli>\\1</oli>",$text);
-		$text = preg_replace('/((<oli>)+?(.|\n)+?<\/oli>)\n/',"<ol>\\1</ol>",$text);*/
-	
-
-		//$text = preg_replace(array('/\n*(<ol>|<\/ol>|<ul>|<\/ul>|<blockquote>|<\/blockquote>)\n*/'),'\\1',$text); // remove line breaks inbetween certain styles
-		
-		/*$text = preg_replace('/(<oli>|<uli>)/','<li>',$text); // convert unique list tags to <li>'s
-		$text = preg_replace('/(<\/oli>|<\/uli>)/','</li>',$text); // convert unique list tags to </li>'s
-		$text = preg_replace('/(<\/ol>|<\/ul>)[\s\n\r]+.*?/','\\1',$text); // trime new lines after end of lists
-		$text = preg_replace('/(<\/li>)((<br \/>)|\n)+(<li>)+?/',"</li><li>",$text); // remove spaces inbetween bullets
-		$text = preg_replace('/((<\/ul><ul>)|(<\/ol><ol>))/',"",$text); // remove uneeded lists*/
-		
-		// For making a transition from non-hardcoded nl2brs in DB
-    // if (!eregi('<br />', $text) && $nl2br) $text = nl2br($text);
-		if (!preg_match('/<br \/>/i', $text) && $nl2br)	$text = nl2br($text);
-		$text = preg_replace('/(<br \/>)+$/','', $text);	
-
-		return ($encode_to_utf8 ? utf8_encode($text) : $text);
 	}
 	
 	public function stripAllCaps($string) {

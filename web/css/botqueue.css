@@ -38,3 +38,33 @@
 .label-slicing {
   background-color: #000080;
 }
+
+div.comment_meta {
+  line-height: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+div.comment_meta h4 {
+  float: left;
+  display: inline;
+  margin: 0 20px 0 0;
+  padding: 0;
+}
+
+div.comment_meta muted {
+  font-size: 75%;
+}
+
+div.comment_body {
+  clear: both;
+  border: 1px solid rgba(0,0,0,.1);
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+div.comments div.controls, div.comments div.form-actions {
+  margin-left: 0px;
+  padding-left: 0px;
+  border: none;
+}
