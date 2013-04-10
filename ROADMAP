@@ -1,20 +1,25 @@
 v2.x Release - Ongoing
 
-
 * WEB - add ability to make comments on individual jobs
+* WEB - add canceled status to jobs & remove all calls to delete()
+* WEB - Allow pausing / resuming through website
+
+* WEB - multi-job prints (eg: .zip file w/ manifest)
+  * pull in all files from thingiverse.com/thing:####
+
+* WEB - add source info for jobs added by url.
+* WEB - Single unified queue view w/ auto-update
+  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
 
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.
 * WEB - ability to assign each bot to an app.
 * WEB - online editing of bot configs.
 
-* WEB - multi-job prints (eg: .zip file w/ manifest)
-  * pull in all files from thingiverse.com/thing:####
-* WEB - add source info for jobs added by url.
-  
 * BUMBLEBEE - pull list of bots + config from web directly
 * BUMBLEBEE - headless app authentication support
 * BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
+* BUMBLEBEE - compile slic3r and update install script
 
 v3 - ???
 
@@ -35,13 +40,6 @@ WEBCAM SUPPORT
 v4 Release - ???
 
 WEBSITE 
-
-* WEB - Single unified queue view w/ auto-update
-  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
-
-* WEB - Allow pausing / resuming through website
-
-* WEB - bot current status / mini-dashboard with machine vitals such as temp.
 
 * API - Websockets server
   * define events to pass to clients

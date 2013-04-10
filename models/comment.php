@@ -23,17 +23,27 @@
 			parent::__construct($id, "comments");
 		}
 		
-		public static function byGUID($guid)
+		public static function byContentAndType($id, $type)
 		{
-			//look up the token
+      //some validation
+		  $id = (int)$id;
+		  if (!in_array($type, array('job', 'bot')))
+		    return new Comment();
+		  
+			//look up the comments
 			$sql = "
-				SELECT id
+				SELECT id, user_id
 				FROM comments
-				WHERE guid = '".db()->escape($guid)."'";
-			$id = db()->getValue($sql);
-			
-			//send it!
-			return new Comment($id);
+				WHERE content_id = {$id}
+				  AND content_type = {$type}
+        ORDER BY comment_date ASC
+			";
+			return new Collection($sql, array('Comment' => 'id', 'User' => 'user_id'));
+		}
+		
+		public function getUser()
+		{
+		  return new User($this->get('user_id'));
 		}
     		
 		public function getUrl()
