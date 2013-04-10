@@ -1,4 +1,4 @@
-v2.x Release - Ongoing
+v0.3 Release - Ongoing
 
 * WEB - add ability to make comments on individual jobs
 * WEB - add canceled status to jobs & remove all calls to delete()
@@ -11,6 +11,19 @@ v2.x Release - Ongoing
 * WEB - Single unified queue view w/ auto-update
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
 
+* BUMBLEBEE - use OpenCV? to capture webcam images and upload to site.
+  * make sure each image is timestamped.
+  * and watermarked with the host url.
+  * automatically create a timelapse at the end of a successful print - watch your object grow
+    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
+  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
+    * what interval?  1 minute?
+* WEB - show latest webcam image for each bot on the site.
+
+* BUMBLEBEE - compile slic3r and update install script
+
+v0.4 Release
+
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.
 * WEB - ability to assign each bot to an app.
@@ -19,27 +32,12 @@ v2.x Release - Ongoing
 * BUMBLEBEE - pull list of bots + config from web directly
 * BUMBLEBEE - headless app authentication support
 * BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
-* BUMBLEBEE - compile slic3r and update install script
 
-v3 - ???
+------------------------------------------------------------------------------------
 
-WEBCAM SUPPORT
+Long term wants:
 
-* use 'motion' to control multiple webcams to post files to the botqueue website.
-  * http://www.chriswpage.com/2009/05/setup-an-advanced-webcam-security-system-with-ubuntu-8-04-and-motion/
-  * http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome
-  * automatically create a timelapse at the end of a successful print - watch your object grow
-    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
-    * also record the user removing the part - 5 seconds? -- this adds authenticity and a human touch.
-    * bonus: you can trigger on motion once print is complete!
-  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
-    * what interval?  1 minute?
-    * make sure each image is timestamped.
-    * and watermarked with the host url.
-
-v4 Release - ???
-
-WEBSITE 
+* when downloading file to slice, status should be "downloading"
 
 * API - Websockets server
   * define events to pass to clients
@@ -47,12 +45,6 @@ WEBSITE
   * use autobahn or tornado for python side.
   
 * CLIENT - support for websockets for realtime comms
-
-* when downloading file to slice, status should be "downloading"
-
-------------------------------------------------------------------------------------
-
-Long term wants:
 
 * WEB - add diff of slicer configs to slicejob page (current vs snapshot)
 
