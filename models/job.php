@@ -50,7 +50,8 @@
 				'qa' => 'label-warning',
 				'slicing' => 'label-slicing',
 				'complete' => 'label-success',
-				'failure' => 'label-important'
+				'failure' => 'label-important',
+				'canceled' => 'label-inverse'
 			);
 			
 			return $s2c[$status];
@@ -131,12 +132,13 @@
 			{
 				$bot->set('job_id', 0);
 				$bot->set('status', 'idle');
+  			$bot->set('temperature_data', '');
 				$bot->save();
 			}
 			
-			$this->set('status', 'cancelled');
+			$this->set('status', 'canceled');
 			$this->set('bot_id', 0);
-			$this->set('start', 0);
+			$this->set('finished_time', date("Y-m-d H:i:s"));
 			$this->save();
 		}
 		

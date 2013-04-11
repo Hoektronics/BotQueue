@@ -234,6 +234,45 @@
 				$this->set('megaerror', $e->getMessage());
 			}			
 		}
+		
+		public function cancel()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to cancel this job.");
+        // if ($job->get('status') == 'taken')
+        //  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
+        // if ($job->get('status') == 'slicing')
+        //  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
+
+				$this->set('job', $job);
+				$this->setTitle('Cancel Job - ' . $job->getName());
+
+				if ($this->args('submit'))
+				{
+					Activity::log("cancelled the job <strong>" . $job->getName() . "</strong>.");
+
+					$job->cancelJob();
+					
+					$this->forwardToUrl($job->getUrl());
+				}				
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Cancel Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
 
 		public function qa()
 		{

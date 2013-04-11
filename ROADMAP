@@ -1,6 +1,7 @@
 v0.3 Release - Ongoing
 
 * WEB - add canceled status to jobs & remove all calls to delete()
+* WEB - include canceled jobs into tally of total run time
 * WEB - Allow pausing / resuming through website
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)

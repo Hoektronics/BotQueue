@@ -235,6 +235,7 @@
 			$job->set('temperature_data', '');
 			$job->save();
 			
+			//update the bot to be idle.
 			$this->set('job_id', 0);
 			$this->set('status', 'idle');
 			$this->set('temperature_data', '');
