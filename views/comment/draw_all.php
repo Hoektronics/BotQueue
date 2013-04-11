@@ -10,4 +10,8 @@
       <div class="comment_body"><?= Utility::cleanAndPretty($c->get('comment'))?></div>
     </div>
   <? endforeach ?>
+<? else: ?>
+  <div class="alert alert-info">
+    No comments found.
+  </div>
 <? endif ?>

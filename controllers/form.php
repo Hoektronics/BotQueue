@@ -22,6 +22,11 @@
 		{
 			$this->_form();
 		}
+
+		public function horizontal_form()
+		{
+			$this->_form();
+		}
 		
 		public function hiddenfield()
 		{

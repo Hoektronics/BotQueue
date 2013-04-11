@@ -86,7 +86,8 @@
   		$form->add(new TextAreaField(array(
   			'name' => 'comment',
   			'required' => true,
-  			'width' => '50%'
+  			'width' => '50%',
+  			'rows' => '3'
   		)));
 			
 		  return $form;

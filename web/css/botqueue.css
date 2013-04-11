@@ -68,3 +68,7 @@ div.comments div.controls, div.comments div.form-actions {
   padding-left: 0px;
   border: none;
 }
+
+form.form-inline div.control-group, form.form-inline div.controls {
+  display: inline;
+}
