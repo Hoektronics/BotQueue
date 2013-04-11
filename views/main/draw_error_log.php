@@ -37,4 +37,8 @@
       </tr>
     <? endforeach ?>
   </table>
+<? else: ?>
+  <div class="alert alert-success ">
+    Yay!  No errors!!
+  </div>
 <? endif ?>

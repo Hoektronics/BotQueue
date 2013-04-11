@@ -1,6 +1,5 @@
 v0.3 Release - Ongoing
 
-* WEB - add ability to make comments on individual jobs
 * WEB - add canceled status to jobs & remove all calls to delete()
 * WEB - Allow pausing / resuming through website
 
@@ -21,6 +20,9 @@ v0.3 Release - Ongoing
 
 v0.3 CHANGELOG
 
+* WEB - add ability to make comments on individual jobs
+* WEB - fixed a major security flaw that allowed people to see your jobs
+* WEB - add organization to job view page - tabs?
 
 ------------------------------------------------------------------------------------
 
