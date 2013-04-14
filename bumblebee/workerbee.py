@@ -320,6 +320,13 @@ class WorkerBee():
       
         #check for messages like shutdown or stop job.
         self.checkMessages()
+        
+        #did we get paused?
+        while self.data['status'] == 'paused':
+          self.checkMessages()
+          time.sleep(0.1)
+
+        #should we bail out of here?
         if not self.running or self.data['status'] != 'working':
           return
 
@@ -345,9 +352,9 @@ class WorkerBee():
           if result['status'] == 'success':
             
             #check for messages like shutdown or stop job.
-            self.checkMessages()
-            if not self.running or self.data['status'] != 'working':
-              return
+            # self.checkMessages()
+            # if not self.running or self.data['status'] != 'working':
+            #   return
             
             self.data = result['data']['bot']
             notified = True
@@ -373,10 +380,12 @@ class WorkerBee():
       self.error("OpenCV not installed.")
   
   def pauseJob(self):
+    self.info("Pausing job.")
     self.driver.pause()
     self.paused = True
 
   def resumeJob(self):
+    self.info("Resuming job.")
     self.driver.resume()
     self.paused = False
 
@@ -418,33 +427,24 @@ class WorkerBee():
     if message.name == 'updatedata':
       if message.data['status'] != self.data['status']:
         self.info("Changing status from %s to %s" % (self.data['status'], message.data['status']))
+
+        #okay, are we transitioning from paused to unpaused?
+        if message.data['status'] == 'paused':
+          self.pauseJob()
+        if self.data['status'] == 'paused' and message.data['status'] == 'working':
+          self.resumeJob()
+
       status = message.data['status']
+
       #did our status change?  if so, make sure to stop our currently running job.
       if self.data['status'] == 'working' and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
         self.info("Stopping job.")
         self.stopJob()
       self.data = message.data
-
-    #mothership sent us a new job!
-    # elif message.name == 'job_start':
-    #   self.info("Got new job %s" % (message.data.job['id']))
-    #   self.data = message.data.bot
-    #   self.job = message.data.job
-
     #time to die, mr bond!
     elif message.name == 'shutdown':
       self.shutdown()
       pass
-
-    # elif message.name == 'pause_job':
-    #   self.pauseJob()
-    # elif message.name == 'resume_job':
-    #   self.resumeJob()
-    # elif message.name == 'stop_job':
-    #   self.stopJob()
-    # elif message.name == 'drop_job':
-    #   self.dropJob()
-    #   pass
 
   def debug(self, msg):
     self.log.debug("%s: %s" % (self.config['name'], msg))
