@@ -32,6 +32,7 @@ v0.3 CHANGELOG
 * WEB - update main stats page to reflect job_clock times
 * WEB - update bot stats page to reflect job_clock times
 * WEB - update queue stats page to reflect job_clock times
+* WEB - added leaderboard to stats page.
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 

@@ -128,6 +128,14 @@
 		  $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock";
 		  $this->set('total_printing_time', db()->getValue($sql));
 		  
+		  //user leaderboard
+		  $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, user_id FROM job_clock WHERE status != 'working' GROUP BY user_id ORDER BY total DESC LIMIT 10";
+		  $this->set('user_leaderboard', db()->getArray($sql));
+
+		  //bot leaderboard
+		  $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, bot_id FROM job_clock WHERE status != 'working' GROUP BY bot_id ORDER BY total DESC LIMIT 10";
+		  $this->set('bot_leaderboard', db()->getArray($sql));
+
 		  if (User::isLoggedIn())
 		  {
   		  //active bots
