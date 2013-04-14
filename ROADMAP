@@ -1,11 +1,10 @@
 v0.3 Release - Ongoing
 
-* WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
-
+* WEB - add source info for jobs added by url.
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
-* WEB - add source info for jobs added by url.
 
+* BUMBLEBEE - compile slic3r and update install script
 * BUMBLEBEE - use OpenCV? to capture webcam images and upload to site.
   * make sure each image is timestamped.
   * and watermarked with the host url.
@@ -15,7 +14,6 @@ v0.3 Release - Ongoing
     * what interval?  1 minute?
 * WEB - show latest webcam image for each bot on the site.
 
-* BUMBLEBEE - compile slic3r and update install script
 
 v0.3 CHANGELOG
 
@@ -33,6 +31,7 @@ v0.3 CHANGELOG
 * WEB - update bot stats page to reflect job_clock times
 * WEB - update queue stats page to reflect job_clock times
 * WEB - added leaderboard to stats page.
+* WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 

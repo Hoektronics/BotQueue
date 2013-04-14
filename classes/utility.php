@@ -310,19 +310,19 @@ class Utility
 	public static function getElapsed($datediff)
 	{
 		$min = 	  round($datediff / (60));
-		$hours =  round($datediff / (60 * 60));
-		$days =   round($datediff / (60 * 60 * 24));
-		$months = round($datediff / (60 * 60 * 24 * 31));
-		$years =  round($datediff / (60 * 60 * 24 * 365));
+		$hours =  round($datediff / (60 * 60), 1);
+		$days =   round($datediff / (60 * 60 * 24), 2);
+		$months = round($datediff / (60 * 60 * 24 * 31), 2);
+		$years =  round($datediff / (60 * 60 * 24 * 365), 2);
 		
-		if ($datediff < 60) { // seconds
+		if ($datediff < 100) { // seconds
 			if ($datediff == 0) return "none";
 			return "$datediff second".self::pluralizer($datediff>1);
-		} else if ($min < 60) {
+		} else if ($min < 100) {
 			return "$min minute".self::pluralizer($min>1);
-		} else if ($hours < 24) {
+		} else if ($hours < 100) {
 			return "$hours hour".self::pluralizer($hours>1);
-		} else if ($days < 31) {
+		} else if ($days < 10) {
 			return "$days day".self::pluralizer($days>1);
 	    } else if ($months < 12) {
 			return "$months month".self::pluralizer($months>1);
