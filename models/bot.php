@@ -192,10 +192,20 @@
           //update our job status.
           $job->set('status', 'slicing');
           $job->set('slice_job_id', $sj->id);
-          $job->save();         
+          $job->save();    
         }
       }
+      
+      //create our time log entry
+      $log = new JobClockEntry();
+      $log->set('bot_id', $this->id);
+      $log->set('job_id', $job->id);
+      $log->set('queue_id', $job->get('queue_id'));
+      $log->set('start_date', date("Y-m-d H:i:s"));
+      $log->set('status', 'working');
+      $log->save();
 			
+			//okay, update our status.
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
@@ -223,6 +233,12 @@
 		    $job->set('slice_job_id', 0);
 		    $job->set('file_id', 0);
 		  }
+		  
+		  //update our log status.
+		  $log = $job->getLatestTimeLog();
+		  $log->set('end_date', date("Y-m-d H:i:s"));
+		  $log->set('status', 'dropped');
+		  $log->save();
 		  
 		  //clear out our data for the next bot.
 			$job->set('status', 'available');
@@ -268,6 +284,11 @@
 		
 		public function completeJob($job)
 		{
+		  $log = $job->getLatestTimeLog();
+		  $log->set('end_date', date("Y-m-d H:i:s"));
+		  $log->set('status', 'complete');
+		  $log->save();
+		  
 			$job->set('status', 'qa');
 			$job->set('progress', 100);
 			$job->set('finished_time', date('Y-m-d H:i:s'));

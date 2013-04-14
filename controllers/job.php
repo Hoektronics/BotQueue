@@ -411,8 +411,6 @@
 			      $job->set('status', 'failure');
 			      $job->set('verified_time', date("Y-m-d H:i:s"));
 			      $job->save();
-			      
-			      Activity::log("dropped the job " . $job->getLink() . ".");
 			    }
 			    else
 			    {
