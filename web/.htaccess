@@ -83,6 +83,8 @@ RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=ed
 RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/dropjob$												dispatcher.php?controller=bot&view=dropjob&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/jobs(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=listjobs&id=$1&page=$3 [NC,L]
+RewriteRule ^bot:([0-9]+)/play$												dispatcher.php?controller=bot&view=play&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/pause$												dispatcher.php?controller=bot&view=pause&id=$1 [NC,L]
 
 #jobs stuff.
 RewriteRule ^jobs$												dispatcher.php?controller=job&view=home [NC,L]

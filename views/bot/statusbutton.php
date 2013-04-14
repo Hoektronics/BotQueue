@@ -5,10 +5,10 @@
   </a>
   <ul class="dropdown-menu">
     <? if ($bot->get('status') == 'working'): ?>
-      <!--
-      <li><i class="icon-pause"></i>pause job</li>
-      <li><i class="icon-play"></i>resume job</li>
-    -->
+      <li><a href="<?=$bot->getUrl()?>/pause"><i class="icon-pause"></i>pause job</a></li>
+      <li><a href="<?=$bot->getUrl()?>/dropjob"><i class="icon-stop"></i> stop job</a></li>
+    <? elseif ($bot->get('status') == 'paused'): ?>
+      <li><a href="<?=$bot->getUrl()?>/play"><i class="icon-play"></i>resume job</a></li>
       <li><a href="<?=$bot->getUrl()?>/dropjob"><i class="icon-stop"></i> stop job</a></li>
     <? elseif ($bot->get('status') == 'slicing'): ?>
       <li><a href="<?=$bot->getUrl()?>/dropjob"><i class="icon-stop"></i> stop job</a></li>

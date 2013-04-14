@@ -234,8 +234,8 @@
 					throw new Exception("Could not find that bot.");
 				if (!$bot->isMine())
 					throw new Exception("You cannot view that bot.");
-        if (!($bot->get('status') == 'slicing' || $bot->get('status') == 'working'))
-          throw new Exception("Bot must be slicing or working to drop a job.");
+        if (!($bot->get('status') == 'slicing' || $bot->get('status') == 'working' || $bot->get('status') == 'paused'))
+          throw new Exception("Bot must be slicing, working, or paused to drop a job.");
         $job = $bot->getCurrentJob();
         if (!$job->isHydrated())
           throw new Exception("Job must be a real job.");
@@ -253,9 +253,9 @@
 				{
           $bot->dropJob($job);
 
-          //do we want to delete the job?
-          if ($form->data('delete_job'))
-            $job->delete();
+          //do we want to cancel the job?
+          if ($form->data('cancel_job'))
+            $job->cancelJob();
           
           //do we want to go offline?
           if ($form->data('take_offline'))
@@ -290,6 +290,80 @@
 			}			
 		}
 		
+		public function pause()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+        if ($bot->get('status') != 'working')
+          throw new Exception("Bot must be working to pause a job.");
+        $job = $bot->getCurrentJob();
+        if (!$job->isHydrated())
+          throw new Exception("Job must be a real job.");
+        if (!$bot->canDrop($job))
+          throw new Exception("Job cannot be dropped.");
+
+        //okay, pause it.
+        $bot->pause();
+
+				Activity::log("paused the bot " . $bot->getLink() . ".");
+				
+				$this->forwardToUrl("/");						
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("Bot Pause Job - Error");
+			}			
+		}
+		
+		public function play()
+		{
+			$this->assertLoggedIn();
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$bot = new Bot($this->args('id'));
+
+				//did we really get someone?
+				if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+        if ($bot->get('status') != 'paused')
+          throw new Exception("Bot must be paused to unpause a job.");
+        $job = $bot->getCurrentJob();
+        if (!$job->isHydrated())
+          throw new Exception("Job must be a real job.");
+        if (!$bot->canDrop($job))
+          throw new Exception("Job cannot be dropped.");
+
+        //okay, unpause it.
+        $bot->unpause();
+
+				Activity::log("unpaused the bot " . $bot->getLink() . ".");
+				
+				$this->forwardToUrl("/");						
+			}
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+				$this->setTitle("Bot Unpause Job - Error");
+			}			
+		}
+		
 		public function _createJobDropForm($bot, $job)
 		{
 			$form = new Form();
@@ -314,9 +388,9 @@
   		)));
   		
 			$form->add(new CheckBoxField(array(
-				'name' => 'delete_job',
-				'label' => 'Delete Job',
-				'help' => 'Do you want to delete this job?',
+				'name' => 'cancel_job',
+				'label' => 'Cancel Job',
+				'help' => 'Do you want to cancel this job?',
 				'value' => false
 			)));
 			
@@ -361,7 +435,7 @@
 					throw new Exception("Could not find that bot.");
 				if ($bot->get('user_id') != User::$me->id)
 					throw new Exception("You do not own this bot.");
-				if ($bot->get('status') == 'working')
+				if ($bot->get('status') == 'working' || $bot->get('status') == 'paused')
 					throw new Exception("You cannot delete bots that are currently working.  First, use the client software to cancel the job and then delete the bot.");
 
 				$this->set('bot', $bot);

@@ -6,6 +6,7 @@
 				<th>Name</th>
 				<th>Queue</th>
 				<th>Age</th>
+				<th>Manage</th>
 			</tr>
 		</thead>
 		<tbody class="joblist">
@@ -17,6 +18,7 @@
 					<td><?=$j->getLink()?></td>
 					<td><?=$j->getQueue()->getLink()?></td>
 					<td><?=$j->getElapsedText()?></td>
+					<td><a class="btn btn-mini" href="<?=$j->getUrl()?>/cancel"><i class="icon-eject"></i> cancel</a></td>
 				</tr>
 			<?endforeach?>
 		</tbody>
