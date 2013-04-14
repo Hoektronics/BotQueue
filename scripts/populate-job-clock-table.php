@@ -11,22 +11,14 @@
     $log = new JobClockEntry();
     $log->set('job_id', $row['id']);
     $log->set('bot_id', $row['bot_id']);
+    $log->set('user_id', $row['user_id']);
     $log->set('queue_id', $row['queue_id']);
     
-    if ($row['status'] == 'working' || $row['status'] == 'qa')
+    if ($row['status'] == 'complete' || $row['status'] == 'failure' || $row['status'] == 'qa')
     {
-      $log->set('start_date', $row['downloaded_time']);
+      $log->set('start_date', $row['taken_time']);
       $log->set('end_date', $row['finished_time']);
-      $log->set('status', 'working');
-      $log->save();
-    }
-    else if ($row['status'] == 'complete' || $row['status'] == 'failure')
-    {
-      $log->set('start_date', $row['downloaded_time']);
-      $log->set('end_date', $row['finished_time']);
-      $log->set('status', $row['status']);
-      if ($row['status'] == 'failure')
-        $log->set('status', 'error');
+      $log->set('status', 'complete');
       $log->save();
     }
   }

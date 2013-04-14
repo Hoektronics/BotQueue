@@ -1,14 +1,5 @@
 v0.3 Release - Ongoing
 
-* WEB - create job_clock entry on start of job.
-* WEB - close job clock entry on QA
-* WEB - close job clock entry on job drop
-* WEB - close job clock entry on job cancel
-* WEB - update main stats page to reflect job_clock times
-* WEB - update bot stats page to reflect job_clock times
-* WEB - update queue stats page to reflect job_clock times
-* WEB - update job stats page to reflect job_clock times
-
 * WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
 
 * WEB - multi-job prints (eg: .zip file w/ manifest)
@@ -35,6 +26,14 @@ v0.3 CHANGELOG
 * WEB - Allow pausing / resuming through website
 * WEB - create job time logging table to better track time spent in jobs (and be able to handle errors, dropped jobs, and canceled jobs)
 * WEB - create script to populate job_clock with times from existing jobs.
+* WEB - create job_clock entry on start of job.
+* WEB - close job clock entry on job drop
+* WEB - close job clock entry on job finish
+* WEB - update main stats page to reflect job_clock times
+* WEB - update bot stats page to reflect job_clock times
+* WEB - update queue stats page to reflect job_clock times
+
+* BUMBLEBEE - allow pausing and unpausing based on api status change.
 
 ------------------------------------------------------------------------------------
 

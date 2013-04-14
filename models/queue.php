@@ -205,15 +205,18 @@
 			";
 
 			$stats = db()->getArray($sql);
-			
 			$data['total_waittime'] = (int)$stats[0]['wait'];
-			$data['total_runtime'] = (int)$stats[0]['runtime'];
 			$data['total_time'] = (int)$stats[0]['total'];
+
+      //pull in our runtime stats
+      $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE queue_id = " . db()->escape($this->id);
+			$data['total_runtime'] = (int)db()->getValue($sql);
+
 			if ($data['total'] > 0)
 			{
-  			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
-  			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
-  			$data['avg_time'] = $stats[0]['total'] / $data['total'];			  
+  			$data['avg_waittime'] = $data['total_waittime'] / $data['total'];
+  			$data['avg_runtime'] = $data['total_runtime'] / $data['total'];
+  			$data['avg_time'] = $data['total_time'] / $data['total'];			  
 			}
 			else
 			{
