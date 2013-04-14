@@ -188,21 +188,6 @@ class BumbleBee():
         self.log.info("Mothership: %s status changed from %s to %s" % (link.bot['name'], link.bot['status'], message.data['status']))
       link.bot = message.data
       self.workerDataAge[message.data['id']] = time.time()
-
-    # if message.name == 'job_start':
-    #   link.bot = message.data.bot
-    #   link.job = message.data.job
-    # if message.name == 'job_end':
-    #   link.bot = message.data.bot
-    #   link.job = message.data.job
-    # elif message.name == 'slice_update':
-    #   link.bot = message.data
-    #   if link.bot['job']['slicejob']['status'] == 'pending':
-    #     pass
-    # elif message.name == 'print_error':
-    #   pass
-    # elif message.name == 'human_required':
-    #   pass
     
   def drawMenu(self):
     self.screen.erase()
