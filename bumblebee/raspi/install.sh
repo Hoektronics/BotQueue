@@ -22,6 +22,11 @@ git checkout 0.9.9
 sudo perl Build.PL 
 sudo ./Build install
 
+#install simplecv
+sudo apt-get install ipython python-opencv python-scipy python-numpy python-pygame python-setuptools python-pip
+sudo pip install https://github.com/ingenuitas/SimpleCV/zipball/master
+sudo apt-get install fswebcam uvcdynctrl
+
 #get Botqueue linked up and working on boot.
 sudo apt-get install -qy git-core vim screen python-pip
 git clone git://github.com/Hoektronics/BotQueue.git

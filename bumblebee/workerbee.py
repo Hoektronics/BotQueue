@@ -333,9 +333,8 @@ class WorkerBee():
         #occasionally update home base.
         if (time.time() - lastUpdate > 15):
           lastUpdate = time.time()
-          self.info("print: %0.2f%%" % latest)
-          self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % latest, temps)
-
+          self.updateHomeBase()
+          
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
           
@@ -460,6 +459,70 @@ class WorkerBee():
     
   def exception(self, msg):
     self.log.exception("%s: %s" % (self.config['name'], msg))
+ 
+  def updateHomeBase():
+    self.info("print: %0.2f%%" % latest)
+    if self.takePicture():
+      self.api.updateBotImage(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'], webcamImage)
+    else:
+      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'])
+ 
+  def takePicture(self):
+    #create our command to do the webcam image grabbing
+    try:
+      command = "exec %s -q -jpeg 75 -d %s -r %s -o %s --title '%s'" % (
+        "/usr/bin/fswebcam",
+        "/dev/video0",
+        "640x480",
+        "webcam.jpg",
+        "%s :: %0.2f :: BotQueue.com" % (self.config['name'], self.data['job']['progress'])
+      )
+      self.info("Webcam Command: %s" % command)
+
+      outputLog = ""
+      errorLog = ""
+      
+      # this starts our thread to slice the model into gcode
+      self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      self.info("Webcam Capture started.")
+      while self.p.poll() is None:
+        output = self.p.stdout.readline()
+        if output:
+          self.info("Webcam: %s" % output.strip())
+          outputLog = outputLog + output
+          self.checkProgress(output)
+                        
+        time.sleep(0.1)
+        
+      #get any last lines of output
+      output = self.p.stdout.readline()
+      while output:
+        self.debug("Webcam: %s" % output.strip())
+        outputLog = outputLog + output
+        self.checkProgress(output)
+        output = self.p.stdout.readline()
+
+      #get our errors (if any)
+      error = self.p.stderr.readline()
+      while error:
+        self.error("Webcam: %s" % error.strip())
+        errorLog = errorLog + error
+        error = self.p.stderr.readline()
+
+      #did we get errors?
+      if errorLog or self.p.returncode > 0:
+        self.error("Errors detected.  Bailing.")
+        return False
+      #unknown return code... failure
+      elif :
+        self.error("Program returned code %s" % self.p.returncode)
+        return False
+      else:
+        return True
+        
+    except Exception as ex:
+      self.exception(ex)
+    
     
 class Message():
   def __init__(self, name, data = None):
