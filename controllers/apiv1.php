@@ -67,6 +67,7 @@
 					'registerbot',        //ok
 					'updatebot',          //ok
 					'updateslicejob',     //ok
+					'webcamupdate',       //ok
 				);
 				if (in_array($c, $calls))
 				{
@@ -536,6 +537,91 @@
 			
 			return $job->getAPIData();
 		}
+		
+		public function api_webcamupdate()
+		{
+			$job = new Job($this->args('job_id'));
+			if (!$job->isHydrated())
+				throw new Exception("Job does not exist.");
+			
+			$bot = $job->getBot();
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+				
+			if (!$bot->isMine())
+				throw new Exception("This is not your bot.");
+			
+			if (!$job->getQueue()->isMine())
+				throw new Exception("This job is not in your queue.");
+
+      //did we get temperatures?
+      $temps = JSON::decode($this->args('temperatures'));
+      if ($temps != NULL)
+			{
+			  $jobtemps = JSON::decode($job->get('temperature_data'));
+			  if ($jobtemps == NULL)
+			  {
+			    $jobtemps = array();
+  			  $jobtemps[time()] = $temps;  
+			  }
+			  else
+			  {
+  			  $index = time();
+  			  $jobtemps->$index = $temps;  
+			  }
+			  $job->set('temperature_data', JSON::encode($jobtemps));
+  			$bot->set('temperature_data', $this->args('temperatures'));
+			}
+			
+			if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name']))
+			{
+        //upload our file to S3
+        $file = $_FILES['file'];
+        if ($file['error'] != 0)
+        {
+          if($file['size'] == 0 && $file['error'] == 0)
+            $file['error'] = 5; 
+
+          $upload_errors = array( 
+            UPLOAD_ERR_OK        => "No errors.", 
+            UPLOAD_ERR_INI_SIZE    => "Larger than upload_max_filesize.", 
+            UPLOAD_ERR_FORM_SIZE    => "Larger than form MAX_FILE_SIZE.", 
+            UPLOAD_ERR_PARTIAL    => "Partial upload.", 
+            UPLOAD_ERR_NO_FILE        => "No file.", 
+            UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+            UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+            UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+            UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+          );
+
+          throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
+        }
+        
+        //does it match?
+        if (!preg_match("/\.jpg$/i", $file['name']))
+          throw new Exception("The file must end in .jpg");
+
+        //is it a real image?
+        $size = getimagesize($file['tmp_name']);
+        if (!$size[0] || !$size[1])
+          throw new Exception("The file is not a valid image.");
+        
+        //okay, we're good.. do it.
+        move_uploaded_file($file['tmp_name'], WEB_DIR . $bot->get('webcam_hash') . ".jpg");
+      }
+      else
+        throw new Exception("No file uploaded.");
+
+			//update our job info.
+			$job->set('progress', (float)$this->args('progress'));
+			$job->save();
+			
+      //update our bot info
+			$bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->save();
+			
+			return $job->getAPIData();
+		}
 
 		public function api_jobinfo()
 		{
@@ -625,6 +711,48 @@
 			$bot->save();
 
 			Activity::log("registered the new bot " . $bot->getLink() . " via the API.");
+			
+			return $bot->getAPIData();
+		}
+		
+		public function api_updatebot()
+		{
+		  if (!$this->args('bot_id'))
+		    throw new Exception("You must provide the 'bot_id' parameter.");
+		    
+			$bot = new Bot($this->args('bot_id'));
+			if (!$bot->isHydrated())
+				throw new Exception("Bot does not exist.");
+			
+			if (!$bot->isMine())
+				throw new Exception("This bot is not yours.");
+
+			//if (!$this->args('manufacturer'))
+			//	throw new Exception('Bot manufacturer is a required parameter.');
+			//if (!$this->args('model'))
+			//	throw new Exception('Bot model is a required parameter.');
+			
+			if ($this->args('name'))	
+  			$bot->set('name', $this->args('name'));
+  		if ($this->args('name'))
+  			$bot->set('identifier', $this->args('identifier'));
+  		if ($this->args('manufacturer'))
+  			$bot->set('manufacturer', $this->args('manufacturer'));
+  		if ($this->args('model'))
+  			$bot->set('model', $this->args('model'));
+  		if ($this->args('electronics'))
+  			$bot->set('electronics', $this->args('electronics'));
+      if ($this->args('firmware'))
+  			$bot->set('firmware', $this->args('firmware'));
+  		if ($this->args('extruder'))
+  			$bot->set('extruder', $this->args('extruder'));
+  		if ($this->args('status'))
+  		  $bot->set('status', $this->args('status'));
+  		if ($this->args('error_text'))
+  		  $bot->set('error_text', $this->args('error_text'));
+			$bot->save();
+
+			Activity::log("updated the bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
 		}

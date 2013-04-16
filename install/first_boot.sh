@@ -20,6 +20,9 @@ sudo apt-get install git apache2 php5-mysql php-pear build-essential libpcre3-de
 
 sudo pecl install oauth
 
+sudo apt-get install libcurl3 php5-dev libcurl4-gnutls-dev libmagic-dev
+sudo pecl install pecl_http
+
 sudo pear channel-discover pear.amazonwebservices.com
 sudo pear channel-discover guzzlephp.org/pear
 sudo pear channel-discover pear.symfony.com

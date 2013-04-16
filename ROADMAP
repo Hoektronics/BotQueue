@@ -1,6 +1,5 @@
 v0.3 Release - Ongoing
 
-* WEB - add source info for jobs added by url.
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
 
@@ -12,8 +11,14 @@ v0.3 Release - Ongoing
     * timelapse interval should be calculated to last an exact time... 10 seconds or so.
   * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
     * what interval?  1 minute?
-* WEB - show latest webcam image for each bot on the site.
+  * keep all images from webcam on error jobs - forensic viewing of failed jobs.
+    * automatically delete after 1 day.
+  * synchronize temp readings + picture - then synchronize images w/ temperatures on bot view page
+  * send status updates during download.
 
+* WEB - when downloading file to slice, status should be "downloading"
+* WEB - change homepage to show live shots from currently printing bots.
+* WEB - show latest webcam image for each bot on its view page.
 
 v0.3 CHANGELOG
 
@@ -32,6 +37,7 @@ v0.3 CHANGELOG
 * WEB - update queue stats page to reflect job_clock times
 * WEB - added leaderboard to stats page.
 * WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
+* WEB - add source info for jobs added by url.
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 
@@ -54,13 +60,14 @@ v0.4 Release
 
 ------------------------------------------------------------------------------------
 
+OMG BOTQUEUE:
+
+
 Long term wants:
 
 * WEB - filament spool info (it keeps track of how big each machine spool is/when a new one is installed and appoximates how much is left based on volume info in gcode)
 * WEB / BUMBLEBEE - a way to pre-slice jobs AKA "on-deck" functionality
-* WEB - user-specific job ids that increment for user only.
 
-* when downloading file to slice, status should be "downloading"
 
 * API - Websockets server
   * define events to pass to clients

@@ -10,6 +10,13 @@
 						<th>Download URL:</th>
 						<td><a href="<?=$file->getRealUrl()?>"><?=$file->getName()?></a></td>
 					</tr>
+					<? if ($file->get('source_url')): ?>
+					  <? $data = parse_url($file->get('source_url')) ?>
+            <tr>
+  					  <th>Source:</th>
+  					  <td><a href="<?=http_build_url($file->get('source_url'))?>"><?=$data['host']?></a></td>
+            </tr>
+					<? endif ?>
 					<tr>
 						<th>Creator:</th>
 						<td><?=$creator->getLink()?></td>
