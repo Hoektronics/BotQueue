@@ -192,10 +192,20 @@
           //update our job status.
           $job->set('status', 'slicing');
           $job->set('slice_job_id', $sj->id);
-          $job->save();         
+          $job->save();    
         }
       }
+      
+      //create our time log entry
+      $log = new JobClockEntry();
+      $log->set('bot_id', $this->id);
+      $log->set('job_id', $job->id);
+      $log->set('queue_id', $job->get('queue_id'));
+      $log->set('start_date', date("Y-m-d H:i:s"));
+      $log->set('status', 'working');
+      $log->save();
 			
+			//okay, update our status.
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
@@ -224,6 +234,12 @@
 		    $job->set('file_id', 0);
 		  }
 		  
+		  //update our log status.
+		  $log = $job->getLatestTimeLog();
+		  $log->set('end_date', date("Y-m-d H:i:s"));
+		  $log->set('status', 'dropped');
+		  $log->save();
+		  
 		  //clear out our data for the next bot.
 			$job->set('status', 'available');
 			$job->set('bot_id', 0);
@@ -242,6 +258,18 @@
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
+		
+		function pause()
+		{
+		  $this->set('status', 'paused');
+		  $this->save();
+		}
+		
+		function unpause()
+		{
+		  $this->set('status', 'working');
+		  $this->save();
+		}
 
 		public function canComplete($job)
 		{
@@ -256,6 +284,11 @@
 		
 		public function completeJob($job)
 		{
+		  $log = $job->getLatestTimeLog();
+		  $log->set('end_date', date("Y-m-d H:i:s"));
+		  $log->set('status', 'complete');
+		  $log->save();
+		  
 			$job->set('status', 'qa');
 			$job->set('progress', 100);
 			$job->set('finished_time', date('Y-m-d H:i:s'));
@@ -298,22 +331,23 @@
 			
 			//pull in our time based stats.
 			$sql = "
-				SELECT sum(unix_timestamp(verified_time) - unix_timestamp(finished_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(verified_time) - unix_timestamp(taken_time)) as total
+				SELECT sum(unix_timestamp(verified_time) - unix_timestamp(finished_time)) as wait, sum(unix_timestamp(verified_time) - unix_timestamp(taken_time)) as total
 				FROM jobs
 				WHERE status = 'complete'
 					AND bot_id = ". db()->escape($this->id);
-
 			$stats = db()->getArray($sql);
-			
 			$data['total_waittime'] = (int)$stats[0]['wait'];
-			$data['total_runtime'] = (int)$stats[0]['runtime'];
 			$data['total_time'] = (int)$stats[0]['total'];
+
+      //pull in our runtime stats
+      $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE bot_id = " . db()->escape($this->id);
+			$data['total_runtime'] = (int)db()->getValue($sql);
 			
 			if ($data['total'])
 			{
-  			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
-  			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
-  			$data['avg_time'] = $stats[0]['total'] / $data['total'];
+  			$data['avg_waittime'] = $data['total_waittime'] / $data['total'];
+  			$data['avg_runtime'] = $data['total_runtime'] / $data['total'];
+  			$data['avg_time'] = $data['total_time'] / $data['total'];
 			}
 			else
 			{

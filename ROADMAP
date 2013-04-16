@@ -1,13 +1,10 @@
 v0.3 Release - Ongoing
 
-* WEB - add canceled status to jobs & remove all calls to delete()
-* WEB - include canceled jobs into tally of total run time
-* WEB - Allow pausing / resuming through website
-
+* WEB - add source info for jobs added by url.
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
-* WEB - add source info for jobs added by url.
 
+* BUMBLEBEE - compile slic3r and update install script
 * BUMBLEBEE - use OpenCV? to capture webcam images and upload to site.
   * make sure each image is timestamped.
   * and watermarked with the host url.
@@ -19,13 +16,26 @@ v0.3 Release - Ongoing
 
 * WEB - show latest webcam image for each bot on the site.
 
-* BUMBLEBEE - compile slic3r and update install script
 
 v0.3 CHANGELOG
 
 * WEB - add ability to make comments on individual jobs
 * WEB - fixed a major security flaw that allowed people to see your jobs
 * WEB - add organization to job view page - tabs?
+* WEB - add canceled status to jobs & remove all calls to delete()
+* WEB - Allow pausing / resuming through website
+* WEB - create job time logging table to better track time spent in jobs (and be able to handle errors, dropped jobs, and canceled jobs)
+* WEB - create script to populate job_clock with times from existing jobs.
+* WEB - create job_clock entry on start of job.
+* WEB - close job clock entry on job drop
+* WEB - close job clock entry on job finish
+* WEB - update main stats page to reflect job_clock times
+* WEB - update bot stats page to reflect job_clock times
+* WEB - update queue stats page to reflect job_clock times
+* WEB - added leaderboard to stats page.
+* WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
+
+* BUMBLEBEE - allow pausing and unpausing based on api status change.
 
 
 ------------------------------------------------------------------------------------

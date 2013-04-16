@@ -87,6 +87,14 @@
 		  return Comment::byContentAndType($this->id, 'job');
 		}
 		
+		public function getLatestTimeLog()
+		{
+		  $sql = "SELECT id FROM job_clock WHERE job_id = {$this->id} AND status = 'working' ORDER BY id DESC";
+		  $id = db()->getValue($sql);
+		  
+		  return new JobClockEntry($id);
+		}
+		
 		public function getAPIData()
 		{
 			$d = array();
