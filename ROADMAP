@@ -15,6 +15,9 @@ v0.3 Release - Ongoing
     * automatically delete after 1 day.
   * synchronize temp readings + picture - then synchronize images w/ temperatures on bot view page
   * send status updates during download.
+* BUMBLEBEE - http://iharder.sourceforge.net/current/macosx/imagesnap/
+
+* WEB - show latest webcam image for each bot on the site.
 
 * WEB - when downloading file to slice, status should be "downloading"
 * WEB - change homepage to show live shots from currently printing bots.
@@ -40,6 +43,7 @@ v0.3 CHANGELOG
 * WEB - add source info for jobs added by url.
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
+
 
 ------------------------------------------------------------------------------------
 
