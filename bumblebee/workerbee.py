@@ -462,8 +462,9 @@ class WorkerBee():
  
   def updateHomeBase():
     self.info("print: %0.2f%%" % latest)
-    if self.takePicture():
-      self.api.updateBotImage(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'], webcamImage)
+    webcamImage = self.takePicture()
+    if webcamImage
+      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'], "webcam.jpg")
     else:
       self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'])
  

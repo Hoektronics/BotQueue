@@ -248,6 +248,9 @@ class BotQueueAPI():
   def updateJobProgress(self, job_id, progress, temps = {}):
     return self.apiCall('updatejobprogress', {'job_id' : job_id, 'progress' : progress, 'temperatures' : json.dumps(temps)}, retries = 1)
 
+  def webcamUpdate(self, job_id, progress, temps = {}, filename):
+    return self.apiUploadCall('webcamupdate', {'job_id' : job_id, 'progress' : progress, 'temperatures' : json.dumps(temps)}, filepath=filename)
+
   def jobInfo(self, job_id):
     return self.apiCall('jobinfo', {'job_id' : job_id})
   
