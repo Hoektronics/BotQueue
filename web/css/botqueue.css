@@ -72,3 +72,46 @@ div.comments div.controls, div.comments div.form-actions {
 form.form-inline div.control-group, form.form-inline div.controls {
   display: inline;
 }
+
+div.bot_thumbnail img.webcam {
+  background: #ccc;
+}
+
+div.bot_thumbnail {
+  position: relative;
+  margin-bottom: 5px;
+}
+
+div.bot_thumbnail div.bot_header div.bot_status_button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+div.bot_thumbnail div.bot_header {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  background-color:rgba(255, 255, 255, 0.75);
+}
+
+div.bot_header h3 {
+  font-size: 20px;
+  margin: 0px;
+  padding: 3px;
+  line-height: normal;
+}
+
+div.bot_thumbnail div.bot_info {
+  position: absolute;
+  margin: 0px;
+  height: 24px;
+  width: 100%;
+  padding: 3px 0px;
+  line-height: normal;
+  bottom: -1px;
+  left: 0px;
+  background: #ddd; 
+}
+

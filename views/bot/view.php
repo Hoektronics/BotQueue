@@ -77,60 +77,67 @@
 							<td><?=$bot->get('extruder')?></td>
 						</tr>
 					<? endif ?>
+					<!-- >
+					<tr>
+						<th>Total Wait Time</th>
+						<td><?= Utility::getHours($stats['total_waittime'])?></td>
+					</tr>
+					-->
+					<tr>
+						<th>Total Run Time</th>
+						<td><?= Utility::getHours($stats['total_runtime'])?></td>
+					</tr>
+					<!-- >
+					<tr>
+						<th>Total Overall Time</th>
+						<td><?= Utility::getHours($stats['total_time'])?></td>
+					</tr>
+					<tr>
+						<th>Average Wait Time</th>
+						<td><?= Utility::getHours($stats['avg_waittime'])?></td>
+					</tr>
+					<tr>
+						<th>Average Run Time</th>
+						<td><?= Utility::getHours($stats['avg_runtime'])?></td>
+					</tr>
+					<tr>
+						<th>Average Overall Time</th>
+						<td><?= Utility::getHours($stats['avg_time'])?></td>
+					</tr>
+					<tr>
+						<th>Available Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span> (<?= round($stats['available_pct'], 2)?>%)</td>
+					</tr>
+					<tr>
+						<th>Taken Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span> (<?= round($stats['taken_pct'], 2)?>%)</td>
+					</tr>
+					-->
+					<tr>
+						<th>Complete Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span> (<?= round($stats['complete_pct'], 2)?>%)</td>
+					</tr>
+					<tr>
+						<th>Failed Jobs</th>
+						<td><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$stats['failure'] ?></span> (<?= round($stats['failure_pct'], 2)?>%)</td>
+					</tr>
+					<!-- >
+					<tr>
+						<th>Total Jobs</th>
+						<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
+					</tr>
+					-->
 				</tbody>
 			</table>
 		</div>
 		<div class="span6">
-			<h3>Statistics</h3>
-				<table class="table table-striped table-bordered table-condensed">
-					<tbody>
-						<tr>
-							<th>Total Wait Time</th>
-							<td><?= Utility::getHours($stats['total_waittime'])?></td>
-						</tr>
-						<tr>
-							<th>Total Run Time</th>
-							<td><?= Utility::getHours($stats['total_runtime'])?></td>
-						</tr>
-						<tr>
-							<th>Total Overall Time</th>
-							<td><?= Utility::getHours($stats['total_time'])?></td>
-						</tr>
-						<tr>
-							<th>Average Wait Time</th>
-							<td><?= Utility::getHours($stats['avg_waittime'])?></td>
-						</tr>
-						<tr>
-							<th>Average Run Time</th>
-							<td><?= Utility::getHours($stats['avg_runtime'])?></td>
-						</tr>
-						<tr>
-							<th>Average Overall Time</th>
-							<td><?= Utility::getHours($stats['avg_time'])?></td>
-						</tr>
-						<tr>
-							<th>Available Jobs</th>
-							<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span> (<?= round($stats['available_pct'], 2)?>%)</td>
-						</tr>
-						<tr>
-							<th>Taken Jobs</th>
-							<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span> (<?= round($stats['taken_pct'], 2)?>%)</td>
-						</tr>
-						<tr>
-							<th>Complete Jobs</th>
-							<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span> (<?= round($stats['complete_pct'], 2)?>%)</td>
-						</tr>
-						<tr>
-							<th>Failed Jobs</th>
-							<td><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$stats['failure'] ?></span> (<?= round($stats['failure_pct'], 2)?>%)</td>
-						</tr>
-						<tr>
-							<th>Total Jobs</th>
-							<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+		  <? if ($webcam->isHydrated()): ?>
+		    <h3>Latest Image - <span class="muted"><?=Utility::getTimeAgo($webcam->get('add_date'))?></span></h3>
+		    <img src="<?=$webcam->getRealUrl()?>">
+		  <? else: ?>
+		    No webcam image. :(
+		  <? endif ?>
+		</div>
 	</div>
 	<div class="row">
 		<div class="span12">

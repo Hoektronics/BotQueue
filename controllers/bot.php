@@ -106,6 +106,7 @@
 				$this->set('job', $bot->getCurrentJob());
 				$this->set('engine', $bot->getSliceEngine());
 				$this->set('config', $bot->getSliceConfig());
+				$this->set('webcam', $bot->getWebcamImage());
 
 				$jobs = $bot->getJobs(null, 'user_sort', 'DESC');
 				$this->set('jobs', $jobs->getRange(0, 50));
@@ -642,6 +643,20 @@
     {
       $bot = $this->args('bot');
 			$this->set('bot', $bot);
+    }
+    
+    public function thumbnail()
+    {
+      $bot = $this->args('bot');
+      $queue = $this->args('queue');
+      $job = $this->args('job');
+      
+      $this->setArg('size');
+      $this->set('b', $bot);
+      $this->set('q', $queue);
+      $this->set('j', $job);
+      $this->set('sj', $job->getSliceJob());
+      $this->set('webcam', $bot->getWebcamImage());
     }
 	}
 ?>

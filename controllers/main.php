@@ -55,6 +55,26 @@
 			  die('argh');
 		}
 		
+		public function dashboard_list()
+		{
+		  $this->setArg('bots');
+		}
+		
+		public function dashboard_large_thumbnails()
+		{
+		  $this->setArg('bots');
+		}
+
+		public function dashboard_medium_thumbnails()
+		{
+		  $this->setArg('bots');
+		}
+
+		public function dashboard_small_thumbnails()
+		{
+		  $this->setArg('bots');
+		}
+		
 		public function activity()
 		{
 			$this->setTitle('Activity Log');

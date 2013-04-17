@@ -607,7 +607,19 @@
           throw new Exception("The file is not a valid image.");
         
         //okay, we're good.. do it.
-        move_uploaded_file($file['tmp_name'], WEB_DIR . $bot->get('webcam_hash') . ".jpg");
+        $s3 = $bot->getWebcamImage();
+        if ($s3->isHydrated())
+        {
+          //overwrite the existing file.
+          $s3->uploadFile($file['tmp_name'], $s3->get('path'));
+        }
+        else
+        {
+          //create a new file.
+          $s3->set('user_id', User::$me->id);
+          $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+          $bot->set('webcam_image_id', $s3->id);
+        }
       }
       else
         throw new Exception("No file uploaded.");
@@ -711,48 +723,6 @@
 			$bot->save();
 
 			Activity::log("registered the new bot " . $bot->getLink() . " via the API.");
-			
-			return $bot->getAPIData();
-		}
-		
-		public function api_updatebot()
-		{
-		  if (!$this->args('bot_id'))
-		    throw new Exception("You must provide the 'bot_id' parameter.");
-		    
-			$bot = new Bot($this->args('bot_id'));
-			if (!$bot->isHydrated())
-				throw new Exception("Bot does not exist.");
-			
-			if (!$bot->isMine())
-				throw new Exception("This bot is not yours.");
-
-			//if (!$this->args('manufacturer'))
-			//	throw new Exception('Bot manufacturer is a required parameter.');
-			//if (!$this->args('model'))
-			//	throw new Exception('Bot model is a required parameter.');
-			
-			if ($this->args('name'))	
-  			$bot->set('name', $this->args('name'));
-  		if ($this->args('name'))
-  			$bot->set('identifier', $this->args('identifier'));
-  		if ($this->args('manufacturer'))
-  			$bot->set('manufacturer', $this->args('manufacturer'));
-  		if ($this->args('model'))
-  			$bot->set('model', $this->args('model'));
-  		if ($this->args('electronics'))
-  			$bot->set('electronics', $this->args('electronics'));
-      if ($this->args('firmware'))
-  			$bot->set('firmware', $this->args('firmware'));
-  		if ($this->args('extruder'))
-  			$bot->set('extruder', $this->args('extruder'));
-  		if ($this->args('status'))
-  		  $bot->set('status', $this->args('status'));
-  		if ($this->args('error_text'))
-  		  $bot->set('error_text', $this->args('error_text'));
-			$bot->save();
-
-			Activity::log("updated the bot " . $bot->getLink() . " via the API.");
 			
 			return $bot->getAPIData();
 		}
