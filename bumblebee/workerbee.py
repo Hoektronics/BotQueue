@@ -3,6 +3,7 @@ import drivers
 import tempfile
 import urllib2
 import os
+import subprocess
 import sys
 import hive
 import ginsu
@@ -460,23 +461,22 @@ class WorkerBee():
   def exception(self, msg):
     self.log.exception("%s: %s" % (self.config['name'], msg))
  
-  def updateHomeBase():
-    self.info("print: %0.2f%%" % latest)
-    webcamImage = self.takePicture()
-    if webcamImage
-      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'], "webcam.jpg")
+  def updateHomeBase(self):
+    self.info("print: %0.2f%%" % float(self.data['job']['progress']))
+    if self.takePicture():
+      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'], "webcam.jpg")
     else:
-      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % self.data['job']['progress'], self.data['job']['temperature'])
+      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'])
  
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
-      command = "exec %s -q -jpeg 75 -d %s -r %s -o %s --title '%s'" % (
+      command = "exec %s -q --jpeg 75 -d %s -r %s --title '%s' %s" % (
         "/usr/bin/fswebcam",
         "/dev/video0",
         "640x480",
-        "webcam.jpg",
-        "%s :: %0.2f :: BotQueue.com" % (self.config['name'], self.data['job']['progress'])
+        "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress'])),
+        "webcam.jpg"
       )
       self.info("Webcam Command: %s" % command)
 
@@ -491,7 +491,6 @@ class WorkerBee():
         if output:
           self.info("Webcam: %s" % output.strip())
           outputLog = outputLog + output
-          self.checkProgress(output)
                         
         time.sleep(0.1)
         
@@ -500,7 +499,6 @@ class WorkerBee():
       while output:
         self.debug("Webcam: %s" % output.strip())
         outputLog = outputLog + output
-        self.checkProgress(output)
         output = self.p.stdout.readline()
 
       #get our errors (if any)
@@ -510,13 +508,11 @@ class WorkerBee():
         errorLog = errorLog + error
         error = self.p.stderr.readline()
 
+      self.log.info("Webcam: capture complete.")
+
       #did we get errors?
-      if errorLog or self.p.returncode > 0:
+      if (errorLog or self.p.returncode > 0):
         self.error("Errors detected.  Bailing.")
-        return False
-      #unknown return code... failure
-      elif :
-        self.error("Program returned code %s" % self.p.returncode)
         return False
       else:
         return True
