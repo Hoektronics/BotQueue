@@ -133,12 +133,12 @@ class Slic3r(GenericSlicer):
 
   def getSlicerPath(self):
     #figure out where our path is.
-    os = hive.determineOS()
-    if os == "osx":
+    myos = hive.determineOS()
+    if myos == "osx":
       osPath = "osx.app/Contents/MacOS/slic3r"
-    elif os == "raspberrypi":
+    elif myos == "raspberrypi":
       osPath = "raspberrypi/slic3r.pl"
-    elif os == "linux":
+    elif myos == "linux":
         osPath = "linux/bin/slic3r"
     else:
       raise Exception("Slicing is not supported on your OS.")

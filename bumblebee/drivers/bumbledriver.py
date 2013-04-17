@@ -49,11 +49,15 @@ class bumbledriver(object):
     Thread(target=self.printThreadEntry).start()
 
   def printThreadEntry(self):
-    self.log.debug("Bumbledrive: print thread entry.")
-    self.executeFile()
-    self.finishPrint()
+    try:
+      self.log.debug("Bumbledrive: print thread entry.")
+      self.executeFile()
+      self.finishPrint()
+    except Exception as ex:
+      self.log.exception(ex)
 
   def finishPrint(self):
+    self.log.debug("Bumbledrive: finishing print.")
     self.printing = False
     
   def getPercentage(self):

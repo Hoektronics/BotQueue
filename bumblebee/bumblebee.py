@@ -59,8 +59,7 @@ class BumbleBee():
               if not (row['id'] in self.workerDataAge):
                 self.workerDataAge[row['id']] = 0
               if self.workerDataAge[row['id']] < startTime:
-                message = workerbee.Message('updatedata', row)
-                link.pipe.send(message)
+                self.sendMessage(link, 'updatedata', row)
                 link.bot = row
                 self.workerDataAge[row['id']] = startTime
               else:
@@ -68,7 +67,7 @@ class BumbleBee():
             else:
               self.log.info("Creating worker thread for bot %s" % row['name'])
               #create our thread and start it.
-              parent_conn, child_conn = multiprocessing.Pipe()
+              parent_conn, child_conn = multiprocessing.Pipe(True)
               p = multiprocessing.Process(target=self.loadBot, args=(child_conn,row,))
               p.start()
 
@@ -82,6 +81,7 @@ class BumbleBee():
             
             #should we find a new job?
             if link.bot['status'] == 'idle':
+              self.log.debug("Getting new job for bot")
               self.getNewJob(link)
           # else:
           #   self.log.info("Skipping unknown bot %s" % row['name'])
@@ -151,8 +151,7 @@ class BumbleBee():
 
     #tell all our threads to stop
     for link in self.workers:
-      message = workerbee.Message('shutdown')
-      link.pipe.send(message)
+      self.sendMessage(link, 'shutdown')
 
     #wait for all our threads to stop
     threads = len(self.workers)
@@ -170,6 +169,11 @@ class BumbleBee():
         lastUpdate = time.time()
         
     self.screen.erase()    
+
+  def sendMessage(self, link, name, data = False):
+    self.checkMessages()
+    message = workerbee.Message(name, data)
+    link.pipe.send(message)
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
@@ -190,6 +194,8 @@ class BumbleBee():
       self.workerDataAge[message.data['id']] = time.time()
     
   def drawMenu(self):
+    #self.log.debug("drawing screen")
+    
     self.screen.erase()
     self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.version, time.asctime()))
     self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
@@ -235,8 +241,7 @@ class BumbleBee():
           link.bot['job'] = job
           
           #notify the bot
-          message = workerbee.Message('updatedata', link.bot)
-          link.pipe.send(message)
+          self.sendMessage(link, 'updatedata', link.bot)
           self.workerDataAge[link.bot['id']] = startTime
 
           return True

@@ -73,8 +73,7 @@ class WorkerBee():
       self.error("Error talking to mothership: %s" % result['error'])
       
     #notify the queen bee of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
+    self.sendMessage('bot_update', self.data)
 
   def initializeDriver(self):
     #try:
@@ -172,8 +171,7 @@ class WorkerBee():
       raise Exception("Error looking up bot info: %s" % result['error'])
 
     #notify the mothership of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
+    self.sendMessage('bot_update', self.data)
 
   #get bot info from the mothership
   def getJobInfo(self):
@@ -235,8 +233,7 @@ class WorkerBee():
       #notify the local mothership of our status.
       if (time.time() - localUpdate > 0.5):
         self.data['job']['progress'] = g.getProgress()
-        msg = Message('job_update', self.data['job'])
-        self.pipe.send(msg)
+        self.sendMessage('job_update', self.data['job'])
         localUpdate = time.time()
         
       #occasionally update home base.
@@ -268,10 +265,8 @@ class WorkerBee():
     self.data = result['data']
     
     #notify the queen bee of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
-    msg = Message('job_update', self.data['job'])
-    self.pipe.send(msg)
+    self.sendMessage('bot_update', self.data)
+    self.sendMessage('job_update', self.data['job'])
  
   def downloadFile(self, fileinfo):
     myfile = hive.URLFile(fileinfo)
@@ -284,8 +279,7 @@ class WorkerBee():
         #notify the local mothership of our status.
         if (time.time() - localUpdate > 0.5):
           self.data['job']['progress'] = myfile.getProgress()
-          msg = Message('job_update', self.data['job'])
-          self.pipe.send(msg)
+          self.sendMessage('job_update', self.data['job'])
           localUpdate = time.time()
         time.sleep(0.1)
       #okay, we're done... send it back.
@@ -301,6 +295,7 @@ class WorkerBee():
     self.api.downloadedJob(self.data['job']['id'])
 
     currentPosition = 0
+    localUpdate = 0
     lastUpdate = 0
     lastTemp = 0
     try:
@@ -314,10 +309,11 @@ class WorkerBee():
           temps = self.driver.getTemperature()
       
         #notify the mothership of our status.
-        self.data['job']['progress'] = latest
-        self.data['job']['temperature'] = temps
-        msg = Message('job_update', self.data['job'])
-        self.pipe.send(msg)
+        if (time.time() - localUpdate > 0.5):
+          localUpdate = time.time()
+          self.data['job']['progress'] = latest
+          self.data['job']['temperature'] = temps
+          self.sendMessage('job_update', self.data['job'])
       
         #check for messages like shutdown or stop job.
         self.checkMessages()
@@ -360,12 +356,10 @@ class WorkerBee():
             notified = True
 
             #notify the queen bee of our status.
-            msg = Message('bot_update', self.data)
-            self.pipe.send(msg)
+            self.sendMessage('bot_update', self.data)
 
             #notify the queen bee of our status.
-            msg = Message('job_update', self.data['job'])
-            self.pipe.send(msg)
+            self.sendMessage('job_update', self.data['job'])
           else:
             self.error("Error notifying mothership: %s" % result['error'])
             time.sleep(10)
@@ -373,12 +367,6 @@ class WorkerBee():
       self.exception(ex)
       self.errorMode(ex)
 
-  def takePicture(self):
-    try:
-      import cv
-    except ImportError:
-      self.error("OpenCV not installed.")
-  
   def pauseJob(self):
     self.info("Pausing job.")
     self.driver.pause()
@@ -412,6 +400,11 @@ class WorkerBee():
       self.dropJob("Shutting down.")
     self.running = False
 
+  def sendMessage(self, name, data = False):
+    self.checkMessages()
+    msg = Message(name, data)
+    self.pipe.send(msg)
+    
   #loop through our workers and check them all for messages
   def checkMessages(self):
     while self.pipe.poll():
@@ -421,7 +414,7 @@ class WorkerBee():
   #these are the messages we know about.
   def handleMessage(self, message):
 
-    self.debug("Got message %s" % message.name)
+    #self.debug("Got message %s" % message.name)
 
     #mothership gave us new information!
     if message.name == 'updatedata':
@@ -467,18 +460,18 @@ class WorkerBee():
       self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'], "webcam.jpg")
     else:
       self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'])
- 
+
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
       if self.config['webcam']:
         
-        os = hive.determineOS()
-        if os == "osx":
+        myos = hive.determineOS()
+        if myos == "osx":
           command = "exec ./imagesnap -q -d '%s' webcam.jpg" % (
             self.config['webcam']['device']
           )
-        elif os == "raspberrypi" or os == "linux":
+        elif myos == "raspberrypi" or os == "linux":
           command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --title '%s' webcam.jpg" % (
             self.config['webcam']['device'],
             self.config['webcam']['resolution'],

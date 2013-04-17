@@ -20,8 +20,10 @@ class APITest():
       # jobs = self.api.createJobFromURL('http://www.thingiverse.com/download:91915')
       # self.printJobs(jobs)
 
-      jobs = self.api.createJobFromFile("test.stl")
-      self.printJobs(jobs)
+      #jobs = self.api.createJobFromFile("test.stl")
+      #self.printJobs(jobs)
+
+      print self.api.listBots()
 
     except KeyboardInterrupt as e:
       pass
