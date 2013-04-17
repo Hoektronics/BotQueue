@@ -301,8 +301,8 @@ class WorkerBee():
     self.api.downloadedJob(self.data['job']['id'])
 
     currentPosition = 0
-    lastUpdate = time.time()
-    lastTemp = time.time()
+    lastUpdate = 0
+    lastTemp = 0
     try:
       self.driver.startPrint(self.jobFile)
       while self.driver.isRunning():
@@ -471,52 +471,61 @@ class WorkerBee():
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
-      command = "exec %s -q --jpeg 75 -d %s -r %s --title '%s' %s" % (
-        "/usr/bin/fswebcam",
-        "/dev/video0",
-        "640x480",
-        "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress'])),
-        "webcam.jpg"
-      )
-      self.info("Webcam Command: %s" % command)
+      if self.config['webcam']:
+        
+        os = hive.determineOS()
+        if os == "osx":
+          command = "exec ./imagesnap -q -d '%s' webcam.jpg" % (
+            self.config['webcam']['device']
+          )
+        elif os == "raspberrypi" or os == "linux":
+          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --title '%s' webcam.jpg" % (
+            self.config['webcam']['device'],
+            self.config['webcam']['resolution'],
+            "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
+          )
+        else:
+          raise Exception("Webcams are not supported on your OS.")
+              
+        self.info("Webcam Command: %s" % command)
 
-      outputLog = ""
-      errorLog = ""
+        outputLog = ""
+        errorLog = ""
       
-      # this starts our thread to slice the model into gcode
-      self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-      self.info("Webcam Capture started.")
-      while self.p.poll() is None:
-        output = self.p.stdout.readline()
-        if output:
-          self.info("Webcam: %s" % output.strip())
-          outputLog = outputLog + output
+        # this starts our thread to slice the model into gcode
+        self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        self.info("Webcam Capture started.")
+        while self.p.poll() is None:
+          output = self.p.stdout.readline()
+          if output:
+            self.info("Webcam: %s" % output.strip())
+            outputLog = outputLog + output
                         
-        time.sleep(0.1)
+          time.sleep(0.1)
         
-      #get any last lines of output
-      output = self.p.stdout.readline()
-      while output:
-        self.debug("Webcam: %s" % output.strip())
-        outputLog = outputLog + output
+        #get any last lines of output
         output = self.p.stdout.readline()
+        while output:
+          self.debug("Webcam: %s" % output.strip())
+          outputLog = outputLog + output
+          output = self.p.stdout.readline()
 
-      #get our errors (if any)
-      error = self.p.stderr.readline()
-      while error:
-        self.error("Webcam: %s" % error.strip())
-        errorLog = errorLog + error
+        #get our errors (if any)
         error = self.p.stderr.readline()
+        while error:
+          self.error("Webcam: %s" % error.strip())
+          errorLog = errorLog + error
+          error = self.p.stderr.readline()
 
-      self.log.info("Webcam: capture complete.")
+        self.info("Webcam: capture complete.")
 
-      #did we get errors?
-      if (errorLog or self.p.returncode > 0):
-        self.error("Errors detected.  Bailing.")
-        return False
-      else:
-        return True
-        
+        #did we get errors?
+        if (errorLog or self.p.returncode > 0):
+          self.error("Errors detected.  Bailing.")
+          return False
+        else:
+          return True
+    #main try/catch block  
     except Exception as ex:
       self.exception(ex)
     

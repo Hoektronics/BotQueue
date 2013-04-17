@@ -158,7 +158,18 @@ def getCacheDirectory():
     os.mkdir(cacheDir)
     
   return cacheDir
-  
+
+def determineOS():
+  if sys.platform.startswith('darwin'):
+    return "osx"
+  elif sys.platform.startswith('linux'):
+    if os.uname()[1].startswith('raspberrypi'):
+      return "raspberrypi"
+    else:
+      return "linux"
+  else:
+    return "unknown"
+ 
 def loadLogger():
   # create logger with 'spam_application'
   logger = logging.getLogger('botqueue')
