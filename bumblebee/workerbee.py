@@ -330,7 +330,7 @@ class WorkerBee():
         #occasionally update home base.
         if (time.time() - lastUpdate > 15):
           lastUpdate = time.time()
-          self.updateHomeBase()
+          self.updateHomeBase(latest, temps)
           
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
@@ -454,12 +454,12 @@ class WorkerBee():
   def exception(self, msg):
     self.log.exception("%s: %s" % (self.config['name'], msg))
  
-  def updateHomeBase(self):
-    self.info("print: %0.2f%%" % float(self.data['job']['progress']))
+  def updateHomeBase(self, latest, temps):
+    self.info("print: %0.2f%%" % float(latest))
     if self.takePicture():
-      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'], "webcam.jpg")
+      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % float(latest), temps, "webcam.jpg")
     else:
-      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'])
+      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(latest), temps)
 
   def takePicture(self):
     #create our command to do the webcam image grabbing
@@ -472,11 +472,11 @@ class WorkerBee():
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
-          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --title '%s' webcam.jpg" % (
+          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --no-overlay --no-timestamp webcam.jpg" % (
             self.config['webcam']['device'],
-            self.config['webcam']['resolution'],
-            "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
+            self.config['webcam']['resolution']
           )
+          #"%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
         else:
           raise Exception("Webcams are not supported on your OS.")
               
