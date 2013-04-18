@@ -281,6 +281,7 @@ class WorkerBee():
     #notify the mothership of download completion
     self.api.downloadedJob(self.data['job']['id'])
 
+    self.paused = False
     currentPosition = 0
     localUpdate = 0
     lastUpdate = 0
@@ -306,7 +307,7 @@ class WorkerBee():
         self.checkMessages()
         
         #did we get paused?
-        while self.data['status'] == 'paused':
+        while self.paused:
           self.checkMessages()
           time.sleep(0.1)
 
@@ -444,7 +445,7 @@ class WorkerBee():
   def updateHomeBase(self, latest, temps):
     self.info("print: %0.2f%%" % float(latest))
     if self.takePicture():
-      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], latest = "%0.5f" % float(latest), temps = temps)
+      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], progress = "%0.5f" % float(latest), temps = temps)
     else:
       self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(latest), temps)
 
