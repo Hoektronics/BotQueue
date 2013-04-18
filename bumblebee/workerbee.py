@@ -120,6 +120,7 @@ class WorkerBee():
         
         #did we get a shutdown notice?
         if not self.running:
+          self.driver.stop()
           break
       
         #slicing means we need to slice our job.
@@ -141,7 +142,7 @@ class WorkerBee():
         time.sleep(0.1) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
-      self.driver.disconnect()
+      self.driver.stop()
       raise ex
 
     self.debug("Exiting.")
@@ -307,7 +308,7 @@ class WorkerBee():
         self.checkMessages()
         
         #did we get paused?
-        while self.paused:
+        while self.data['status'] == 'paused':
           self.checkMessages()
           time.sleep(0.1)
 
