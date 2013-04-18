@@ -133,7 +133,7 @@ class WorkerBee():
             self.debug("Bot finished @ state %s" % self.data['status'])
 
         #upload a webcam pic every so often.
-        if time.time() - lastWebcamUpdate > 150:
+        if time.time() - lastWebcamUpdate > 60:
           if self.takePicture():
             self.api.webcamUpdate("webcam.jpg", bot_id = self.data['id'])
             lastWebcamUpdate = time.time()
@@ -459,7 +459,7 @@ class WorkerBee():
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
-          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
+          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
             self.config['webcam']['device'],
             self.config['webcam']['resolution']
           )
