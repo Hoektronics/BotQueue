@@ -133,7 +133,7 @@ class WorkerBee():
             self.debug("Bot finished @ state %s" % self.data['status'])
 
         #upload a webcam pic every so often.
-        if time.time() - lastWebcamUpdate > 150:
+        if time.time() - lastWebcamUpdate > 60:
           if self.takePicture():
             self.api.webcamUpdate("webcam.jpg", bot_id = self.data['id'])
             lastWebcamUpdate = time.time()
@@ -281,6 +281,7 @@ class WorkerBee():
     #notify the mothership of download completion
     self.api.downloadedJob(self.data['job']['id'])
 
+    self.paused = False
     currentPosition = 0
     localUpdate = 0
     lastUpdate = 0
@@ -306,7 +307,7 @@ class WorkerBee():
         self.checkMessages()
         
         #did we get paused?
-        while self.data['status'] == 'paused':
+        while self.paused:
           self.checkMessages()
           time.sleep(0.1)
 
@@ -444,7 +445,7 @@ class WorkerBee():
   def updateHomeBase(self, latest, temps):
     self.info("print: %0.2f%%" % float(latest))
     if self.takePicture():
-      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], latest = "%0.5f" % float(latest), temps = temps)
+      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], progress = "%0.5f" % float(latest), temps = temps)
     else:
       self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(latest), temps)
 
@@ -459,7 +460,7 @@ class WorkerBee():
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
-          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
+          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
             self.config['webcam']['device'],
             self.config['webcam']['resolution']
           )
