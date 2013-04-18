@@ -109,6 +109,7 @@ class WorkerBee():
     #sleep for a random time to avoid contention
     time.sleep(random.random())
 
+    lastWebcamUpdate = time.time()
     try:
       #okay, we're off!
       self.running = True
@@ -121,36 +122,21 @@ class WorkerBee():
         if not self.running:
           break
       
-        #idle mode means looking for a new job.
-        # if self.data['status'] == 'idle':
-        #   try:
-        #     if not self.getNewJob():
-        #       time.sleep(10)
-        #   except Exception as ex:
-        #     self.exception(ex)
         #slicing means we need to slice our job.
         if self.data['status'] == 'slicing':
           if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
               self.sliceJob()
-          # else:
-          #   self.getOurInfo()
-          #   time.sleep(10)
         #working means we need to process a job.
         elif self.data['status'] == 'working':
             self.processJob()
             #self.getOurInfo() #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
             self.debug("Bot finished @ state %s" % self.data['status'])
-        # else: #we're either waiting, error, or offline... wait until that changes
-        #   self.info("Waiting in %s mode" % self.data['status'])
-        #   try:
-        #     self.getOurInfo() #see if our job has changed.
-        #   except Exception as e:
-        #     #todo: better error handling here.
-        #     self.exception(e)
-        #   if self.data['status'] == 'idle':
-        #     self.info("Going online.");
-        #   else:
-        #     time.sleep(10) # sleep for a bit to not hog resources
+
+        #upload a webcam pic every so often.
+        if time.time() - lastWebcamUpdate > 150:
+          if self.takePicture():
+            self.api.webcamUpdate("webcam.jpg", bot_id = self.data['id'])
+          
         time.sleep(0.1) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
@@ -457,7 +443,7 @@ class WorkerBee():
   def updateHomeBase(self, latest, temps):
     self.info("print: %0.2f%%" % float(latest))
     if self.takePicture():
-      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % float(latest), temps, "webcam.jpg")
+      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], latest = "%0.5f" % float(latest), temps = temps)
     else:
       self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(latest), temps)
 
@@ -472,7 +458,7 @@ class WorkerBee():
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
-          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --no-overlay --no-timestamp webcam.jpg" % (
+          command = "exec /usr/bin/fswebcam -q --jpeg 75 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
             self.config['webcam']['device'],
             self.config['webcam']['resolution']
           )
