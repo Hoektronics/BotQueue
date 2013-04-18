@@ -45,6 +45,7 @@ class printcore():
         self.clear=0 #clear to send, enabled after responses
         self.online=False #The printer has responded to the initial command and is active
         self.printing=False #is a print currently running, true if printing, false if paused
+        self.paused=False #are we mid-print, but still capable of resuming?
         self.mainqueue=[] 
         self.jobfile=None
         self.filesize = 0
@@ -53,7 +54,6 @@ class printcore():
         self.queueindex=0
         self.lineno=0
         self.resendfrom=-1
-        self.paused=False
         self.sentlines={}
         self.sent=[]
         self.tempcb=None#impl (wholeline)
@@ -247,13 +247,13 @@ class printcore():
         """
         self.log.info("Paused.")
         self.paused=True
-        self.printing=False
+        #self.printing=False
         time.sleep(1)
 
     def stop(self):
         """Stops the print completely.
         """
-        self.log.info("Paused.")
+        self.log.info("Stopped.")
         self.paused=False
         self.printing=False
         time.sleep(1)
@@ -262,14 +262,18 @@ class printcore():
     def resume(self):
         """Resumes a paused print.
         """
-        self.log.info("Resume.")
+        self.log.info("Resuming.")
         self.paused=False
-        self.printing=True
-        Thread(target=self._print).start()
+        time.sleep(1)
+        #self.printing=True
+        #Thread(target=self._print).start()
     
     def send(self,command):
         """Adds a command to the checksummed main command queue if printing, or sends the command immediately if not printing
         """       
+        while self.paused:
+          time.sleep(0.1)
+
         if(self.printing):
             self.mainqueue+=[command]
         else:
@@ -282,6 +286,10 @@ class printcore():
     def send_now(self,command):
         """Sends a command to the printer ahead of the command queue, without a checksum
         """
+        
+        while self.paused:
+          time.sleep(0.1)
+        
         if(self.printing):
             self.priqueue+=[command]
         else:
@@ -298,8 +306,8 @@ class printcore():
             except:
                 pass
         while(self.printing and self.printer and self.online):
-            #print "in printcore thread"
-            #time.sleep(1)
+            while self.paused:
+              time.sleep(0.1)
             self._sendnext()
         self.sent=[]
         if self.endcb is not None:
@@ -365,11 +373,11 @@ class printcore():
         else:
             #okay, we must be done!
             self.printing=False
+            self.printing=False
             self.clear=True
-            if(not self.paused):
-                self.queueindex=0
-                self.lineno=0
-                self._send("M110",-1, True)
+            self.queueindex=0
+            self.lineno=0
+            self._send("M110",-1, True)
         
     def get_percentage(self):
       if self.filesize:
@@ -378,6 +386,10 @@ class printcore():
         return 0
 
     def _send(self, command, lineno=0, calcchecksum=False):
+      
+        while self.paused:
+          time.sleep(0.01)
+          
         if(calcchecksum):
             prefix="N"+str(lineno)+" "+command
             command=prefix+"*"+str(self._checksum(prefix))
