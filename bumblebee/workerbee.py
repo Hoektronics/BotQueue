@@ -73,8 +73,7 @@ class WorkerBee():
       self.error("Error talking to mothership: %s" % result['error'])
       
     #notify the queen bee of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
+    self.sendMessage('bot_update', self.data)
 
   def initializeDriver(self):
     #try:
@@ -110,6 +109,7 @@ class WorkerBee():
     #sleep for a random time to avoid contention
     time.sleep(random.random())
 
+    lastWebcamUpdate = time.time()
     try:
       #okay, we're off!
       self.running = True
@@ -122,36 +122,22 @@ class WorkerBee():
         if not self.running:
           break
       
-        #idle mode means looking for a new job.
-        # if self.data['status'] == 'idle':
-        #   try:
-        #     if not self.getNewJob():
-        #       time.sleep(10)
-        #   except Exception as ex:
-        #     self.exception(ex)
         #slicing means we need to slice our job.
         if self.data['status'] == 'slicing':
           if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
               self.sliceJob()
-          # else:
-          #   self.getOurInfo()
-          #   time.sleep(10)
         #working means we need to process a job.
         elif self.data['status'] == 'working':
             self.processJob()
             #self.getOurInfo() #if there was a problem with the job, we'll find it by pulling in a new bot state and looping again.
             self.debug("Bot finished @ state %s" % self.data['status'])
-        # else: #we're either waiting, error, or offline... wait until that changes
-        #   self.info("Waiting in %s mode" % self.data['status'])
-        #   try:
-        #     self.getOurInfo() #see if our job has changed.
-        #   except Exception as e:
-        #     #todo: better error handling here.
-        #     self.exception(e)
-        #   if self.data['status'] == 'idle':
-        #     self.info("Going online.");
-        #   else:
-        #     time.sleep(10) # sleep for a bit to not hog resources
+
+        #upload a webcam pic every so often.
+        if time.time() - lastWebcamUpdate > 60:
+          if self.takePicture():
+            self.api.webcamUpdate("webcam.jpg", bot_id = self.data['id'])
+            lastWebcamUpdate = time.time()
+          
         time.sleep(0.1) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
@@ -172,8 +158,7 @@ class WorkerBee():
       raise Exception("Error looking up bot info: %s" % result['error'])
 
     #notify the mothership of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
+    self.sendMessage('bot_update', self.data)
 
   #get bot info from the mothership
   def getJobInfo(self):
@@ -235,8 +220,7 @@ class WorkerBee():
       #notify the local mothership of our status.
       if (time.time() - localUpdate > 0.5):
         self.data['job']['progress'] = g.getProgress()
-        msg = Message('job_update', self.data['job'])
-        self.pipe.send(msg)
+        self.sendMessage('job_update', self.data['job'])
         localUpdate = time.time()
         
       #occasionally update home base.
@@ -268,10 +252,8 @@ class WorkerBee():
     self.data = result['data']
     
     #notify the queen bee of our status.
-    msg = Message('bot_update', self.data)
-    self.pipe.send(msg)
-    msg = Message('job_update', self.data['job'])
-    self.pipe.send(msg)
+    self.sendMessage('bot_update', self.data)
+    self.sendMessage('job_update', self.data['job'])
  
   def downloadFile(self, fileinfo):
     myfile = hive.URLFile(fileinfo)
@@ -284,8 +266,7 @@ class WorkerBee():
         #notify the local mothership of our status.
         if (time.time() - localUpdate > 0.5):
           self.data['job']['progress'] = myfile.getProgress()
-          msg = Message('job_update', self.data['job'])
-          self.pipe.send(msg)
+          self.sendMessage('job_update', self.data['job'])
           localUpdate = time.time()
         time.sleep(0.1)
       #okay, we're done... send it back.
@@ -301,8 +282,9 @@ class WorkerBee():
     self.api.downloadedJob(self.data['job']['id'])
 
     currentPosition = 0
-    lastUpdate = time.time()
-    lastTemp = time.time()
+    localUpdate = 0
+    lastUpdate = 0
+    lastTemp = 0
     try:
       self.driver.startPrint(self.jobFile)
       while self.driver.isRunning():
@@ -314,10 +296,11 @@ class WorkerBee():
           temps = self.driver.getTemperature()
       
         #notify the mothership of our status.
-        self.data['job']['progress'] = latest
-        self.data['job']['temperature'] = temps
-        msg = Message('job_update', self.data['job'])
-        self.pipe.send(msg)
+        if (time.time() - localUpdate > 0.5):
+          localUpdate = time.time()
+          self.data['job']['progress'] = latest
+          self.data['job']['temperature'] = temps
+          self.sendMessage('job_update', self.data['job'])
       
         #check for messages like shutdown or stop job.
         self.checkMessages()
@@ -334,7 +317,7 @@ class WorkerBee():
         #occasionally update home base.
         if (time.time() - lastUpdate > 15):
           lastUpdate = time.time()
-          self.updateHomeBase()
+          self.updateHomeBase(latest, temps)
           
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
@@ -360,12 +343,10 @@ class WorkerBee():
             notified = True
 
             #notify the queen bee of our status.
-            msg = Message('bot_update', self.data)
-            self.pipe.send(msg)
+            self.sendMessage('bot_update', self.data)
 
             #notify the queen bee of our status.
-            msg = Message('job_update', self.data['job'])
-            self.pipe.send(msg)
+            self.sendMessage('job_update', self.data['job'])
           else:
             self.error("Error notifying mothership: %s" % result['error'])
             time.sleep(10)
@@ -373,12 +354,6 @@ class WorkerBee():
       self.exception(ex)
       self.errorMode(ex)
 
-  def takePicture(self):
-    try:
-      import cv
-    except ImportError:
-      self.error("OpenCV not installed.")
-  
   def pauseJob(self):
     self.info("Pausing job.")
     self.driver.pause()
@@ -412,6 +387,11 @@ class WorkerBee():
       self.dropJob("Shutting down.")
     self.running = False
 
+  def sendMessage(self, name, data = False):
+    self.checkMessages()
+    msg = Message(name, data)
+    self.pipe.send(msg)
+    
   #loop through our workers and check them all for messages
   def checkMessages(self):
     while self.pipe.poll():
@@ -421,7 +401,7 @@ class WorkerBee():
   #these are the messages we know about.
   def handleMessage(self, message):
 
-    self.debug("Got message %s" % message.name)
+    #self.debug("Got message %s" % message.name)
 
     #mothership gave us new information!
     if message.name == 'updatedata':
@@ -461,62 +441,71 @@ class WorkerBee():
   def exception(self, msg):
     self.log.exception("%s: %s" % (self.config['name'], msg))
  
-  def updateHomeBase(self):
-    self.info("print: %0.2f%%" % float(self.data['job']['progress']))
+  def updateHomeBase(self, latest, temps):
+    self.info("print: %0.2f%%" % float(latest))
     if self.takePicture():
-      self.api.webcamUpdate(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'], "webcam.jpg")
+      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], latest = "%0.5f" % float(latest), temps = temps)
     else:
-      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(self.data['job']['progress']), self.data['job']['temperature'])
- 
+      self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(latest), temps)
+
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
-      command = "exec %s -q --jpeg 75 -d %s -r %s --title '%s' %s" % (
-        "/usr/bin/fswebcam",
-        "/dev/video0",
-        "640x480",
-        "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress'])),
-        "webcam.jpg"
-      )
-      self.info("Webcam Command: %s" % command)
+      if self.config['webcam']:
+        
+        myos = hive.determineOS()
+        if myos == "osx":
+          command = "exec ./imagesnap -q -d '%s' webcam.jpg" % (
+            self.config['webcam']['device']
+          )
+        elif myos == "raspberrypi" or os == "linux":
+          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
+            self.config['webcam']['device'],
+            self.config['webcam']['resolution']
+          )
+          #"%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
+        else:
+          raise Exception("Webcams are not supported on your OS.")
+              
+        self.info("Webcam Command: %s" % command)
 
-      outputLog = ""
-      errorLog = ""
+        outputLog = ""
+        errorLog = ""
       
-      # this starts our thread to slice the model into gcode
-      self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-      self.info("Webcam Capture started.")
-      while self.p.poll() is None:
-        output = self.p.stdout.readline()
-        if output:
-          self.info("Webcam: %s" % output.strip())
-          outputLog = outputLog + output
+        # this starts our thread to slice the model into gcode
+        self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        self.info("Webcam Capture started.")
+        while self.p.poll() is None:
+          output = self.p.stdout.readline()
+          if output:
+            self.info("Webcam: %s" % output.strip())
+            outputLog = outputLog + output
                         
-        time.sleep(0.1)
+          time.sleep(0.1)
         
-      #get any last lines of output
-      output = self.p.stdout.readline()
-      while output:
-        self.debug("Webcam: %s" % output.strip())
-        outputLog = outputLog + output
+        #get any last lines of output
         output = self.p.stdout.readline()
+        while output:
+          self.debug("Webcam: %s" % output.strip())
+          outputLog = outputLog + output
+          output = self.p.stdout.readline()
 
-      #get our errors (if any)
-      error = self.p.stderr.readline()
-      while error:
-        self.error("Webcam: %s" % error.strip())
-        errorLog = errorLog + error
+        #get our errors (if any)
         error = self.p.stderr.readline()
+        while error:
+          self.error("Webcam: %s" % error.strip())
+          errorLog = errorLog + error
+          error = self.p.stderr.readline()
 
-      self.log.info("Webcam: capture complete.")
+        self.info("Webcam: capture complete.")
 
-      #did we get errors?
-      if (errorLog or self.p.returncode > 0):
-        self.error("Errors detected.  Bailing.")
-        return False
-      else:
-        return True
-        
+        #did we get errors?
+        if (errorLog or self.p.returncode > 0):
+          self.error("Errors detected.  Bailing.")
+          return False
+        else:
+          return True
+    #main try/catch block  
     except Exception as ex:
       self.exception(ex)
     

@@ -1,5 +1,6 @@
 import time
 from threading import Thread
+import logging
 
 class bumbledriver(object):
 
@@ -12,8 +13,10 @@ class bumbledriver(object):
     self.filesize = 0
     self.error = False
     self.errorMessage = None
+    self.log = logging.getLogger('botqueue')
 
   def executeFile(self):
+    self.log.debug("Bumbledrive: execute file.")
     pass
 
   def connect(self):
@@ -36,18 +39,25 @@ class bumbledriver(object):
     pass
 
   def startPrint(self, jobfile):
+    self.log.debug("Bumbledrive: startprint")
     if(self.isRunning() or not self.isConnected()):
         return False
 
+    self.log.debug("Bumbledrive: starting thread.")
     self.jobfile = jobfile
     self.printing=True
     Thread(target=self.printThreadEntry).start()
 
   def printThreadEntry(self):
-    self.executeFile()
-    self.finishPrint()
+    try:
+      self.log.debug("Bumbledrive: print thread entry.")
+      self.executeFile()
+      self.finishPrint()
+    except Exception as ex:
+      self.log.exception(ex)
 
   def finishPrint(self):
+    self.log.debug("Bumbledrive: finishing print.")
     self.printing = False
     
   def getPercentage(self):
