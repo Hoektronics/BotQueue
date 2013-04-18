@@ -46,6 +46,10 @@
 			$r['last_seen'] = $this->get('last_seen');
 			$r['error_text'] = $this->get('error_text');
 			
+			$webcam = $this->getWebcamImage();
+			if ($webcam->isHydrated())
+			  $r['webcam'] = $webcam->getAPIData();
+			
 			$job = $this->getCurrentJob();
 			if ($job->isHydrated())
 				$r['job'] = $job->getAPIData();

@@ -57,6 +57,11 @@
 			return $s2c[$status];
 		}
 
+    public function getWebcamImage()
+    {
+      return new S3File($this->get('webcam_image_id'));
+    }
+    
     public function getSourceFile()
     {
 			return new S3File($this->get('source_file_id'));
@@ -112,6 +117,10 @@
 			$d['finished_time'] = $this->get('finished_time');
 			$d['verified_time'] = $this->get('verified_time');
 			$d['progress'] = $this->get('progress');
+			
+			$webcam = $this->getWebcamImage();
+			if ($webcam->isHydrated())
+			  $d['webcam'] = $webcam->getAPIData();
 			
 			return $d;
 		}

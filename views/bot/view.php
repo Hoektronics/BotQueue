@@ -5,6 +5,14 @@
   	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => "This bot is offline with the following error: " . $bot->get('error_text')))?>    
   <? endif ?>
 	<div class="row">
+	  <div class="span6">
+		  <? if ($webcam->isHydrated()): ?>
+		    <h3>Latest Image - <span class="muted"><?=Utility::getTimeAgo($webcam->get('add_date'))?></span></h3>
+		    <img src="<?=$webcam->getRealUrl()?>">
+		  <? else: ?>
+        <img src="/img/kitten-640x480.jpg">
+		  <? endif ?>
+		</div>
 		<div class="span6">
 			<h3>Basic Info</h3>
 			<table class="table table-striped table-bordered table-condensed">
@@ -129,14 +137,6 @@
 					-->
 				</tbody>
 			</table>
-		</div>
-		<div class="span6">
-		  <? if ($webcam->isHydrated()): ?>
-		    <h3>Latest Image - <span class="muted"><?=Utility::getTimeAgo($webcam->get('add_date'))?></span></h3>
-		    <img src="<?=$webcam->getRealUrl()?>">
-		  <? else: ?>
-		    No webcam image. :(
-		  <? endif ?>
 		</div>
 	</div>
 	<div class="row">

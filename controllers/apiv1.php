@@ -18,7 +18,7 @@
 
 	class APIV1Controller extends Controller
 	{
-		public static $api_version = "0.1";
+		public static $api_version = "0.3";
 		
 		public function home()
 		{
@@ -540,38 +540,29 @@
 		
 		public function api_webcamupdate()
 		{
-			$job = new Job($this->args('job_id'));
-			if (!$job->isHydrated())
-				throw new Exception("Job does not exist.");
+		  if ((int)$this->args('job_id'))
+		  {
+  			$job = new Job($this->args('job_id'));
+  			if (!$job->isHydrated())
+  				throw new Exception("Job does not exist.");
+  			$bot = $job->getBot();
+  			if (!$bot->isHydrated())
+  				throw new Exception("Bot does not exist.");
+  			if (!$job->getQueue()->isMine())
+  				throw new Exception("This job is not in your queue.");
+		  }
+		  else if((int)$this->args('bot_id'))
+		  {
+  			$bot = new Bot($this->args('bot_id'));
+  			if (!$bot->isHydrated())
+  				throw new Exception("Bot does not exist.");
+  			$job = new Job();
+		  }
+		  else
+		    throw new Exception("You must pass in either a bot or job id.");
 			
-			$bot = $job->getBot();
-			if (!$bot->isHydrated())
-				throw new Exception("Bot does not exist.");
-				
 			if (!$bot->isMine())
 				throw new Exception("This is not your bot.");
-			
-			if (!$job->getQueue()->isMine())
-				throw new Exception("This job is not in your queue.");
-
-      //did we get temperatures?
-      $temps = JSON::decode($this->args('temperatures'));
-      if ($temps != NULL)
-			{
-			  $jobtemps = JSON::decode($job->get('temperature_data'));
-			  if ($jobtemps == NULL)
-			  {
-			    $jobtemps = array();
-  			  $jobtemps[time()] = $temps;  
-			  }
-			  else
-			  {
-  			  $index = time();
-  			  $jobtemps->$index = $temps;  
-			  }
-			  $job->set('temperature_data', JSON::encode($jobtemps));
-  			$bot->set('temperature_data', $this->args('temperatures'));
-			}
 			
 			if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name']))
 			{
@@ -607,7 +598,12 @@
           throw new Exception("The file is not a valid image.");
         
         //okay, we're good.. do it.
-        $s3 = $bot->getWebcamImage();
+        if ($job->isHydrated())
+          $s3 = $job->getWebcamImage();
+        else
+          $s3 = $bot->getWebcamImage();
+        
+        //new or existing file?
         if ($s3->isHydrated())
         {
           //overwrite the existing file.
@@ -618,21 +614,61 @@
           //create a new file.
           $s3->set('user_id', User::$me->id);
           $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
-          $bot->set('webcam_image_id', $s3->id);
+
+          //if we have a job, save our new image.
+          if ($job->isHydrated())
+            $job->set('webcam_image_id', $s3->id);
         }
+
+        //always pull the latest image in for the bot.
+        $bot->set('webcam_image_id', $s3->id);
       }
       else
         throw new Exception("No file uploaded.");
 
+      //did we get temperatures?
+      if ($this->args('temperatures'))
+      {
+        $temps = JSON::decode($this->args('temperatures'));
+        if ($temps != NULL)
+  			{
+  			  $jobtemps = NULL;  			  
+  			  if ($job->isHydrated())
+  			    $jobtemps = JSON::decode($job->get('temperature_data'));  			  
+  			  if ($jobtemps == NULL)
+  			  {
+  			    $jobtemps = array();
+    			  $jobtemps[time()] = $temps;  
+  			  }
+  			  else
+  			  {
+    			  $index = time();
+    			  $jobtemps->$index = $temps;  
+  			  }
+  			  
+  			  if ($job->isHydrated())
+  			    $job->set('temperature_data', JSON::encode($jobtemps));
+    			$bot->set('temperature_data', $this->args('temperatures'));
+  			}
+      }
+
 			//update our job info.
-			$job->set('progress', (float)$this->args('progress'));
-			$job->save();
+			if ($this->args('progress') && $job->isHydrated())
+			  $job->set('progress', (float)$this->args('progress'));
+
+      //only save the job if its real.
+      if ($job->isHydrated())
+			  $job->save();
 			
       //update our bot info
 			$bot->set('last_seen', date("Y-m-d H:i:s"));
 			$bot->save();
 			
-			return $job->getAPIData();
+			//what kind of data to send back.
+			if ($job->isHydrated())
+			  return $job->getAPIData();
+		  else
+		    return $bot->getAPIData();
 		}
 
 		public function api_jobinfo()

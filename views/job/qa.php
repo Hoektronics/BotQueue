@@ -4,17 +4,26 @@
 
   <h2>Awesome!  The printer <?=$bot->getLink()?> has completed the <?=$job->getLink()?> job.</h3>
 
-  <div class="alert alert-info">
-    <p>
-      Before this printer can start the next job, you need to do a few things:
-      <ol>
-        <li>Remove the print from the machine.</li>
-        <li>Inspect the print for errors or problems.</li>
-        <li>Make sure the machine is ready for printing.</li>
-      </ol>
-    </p>
+  <div class="row">
+    <div class="span6">
+		  <? if ($webcam->isHydrated()): ?>
+		    <img src="<?=$webcam->getRealUrl()?>">
+		  <? else: ?>
+        <img src="/img/kitten-640x480.jpg">
+		  <? endif ?>
+		</div>
+    <div class="span6 alert alert-info">
+      <p>
+        Before this printer can start the next job, you need to do a few things:
+        <ol>
+          <li>Remove the print from the machine.</li>
+          <li>Inspect the print for errors or problems.</li>
+          <li>Make sure the machine is ready for printing.</li>
+        </ol>
+      </p>
+    </div>
   </div>
-  
+
   <div class="row">
     <div class="span6">
       <form method="post" autocomplete="off" action="<?=$job->getUrl()?>/qa/pass">
