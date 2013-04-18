@@ -120,7 +120,6 @@ class WorkerBee():
         
         #did we get a shutdown notice?
         if not self.running:
-          self.driver.stop()
           break
       
         #slicing means we need to slice our job.
@@ -282,7 +281,6 @@ class WorkerBee():
     #notify the mothership of download completion
     self.api.downloadedJob(self.data['job']['id'])
 
-    self.paused = False
     currentPosition = 0
     localUpdate = 0
     lastUpdate = 0
@@ -314,6 +312,7 @@ class WorkerBee():
 
         #should we bail out of here?
         if not self.running or self.data['status'] != 'working':
+          self.stopJob()
           return
 
         #occasionally update home base.
@@ -359,12 +358,10 @@ class WorkerBee():
   def pauseJob(self):
     self.info("Pausing job.")
     self.driver.pause()
-    self.paused = True
 
   def resumeJob(self):
     self.info("Resuming job.")
     self.driver.resume()
-    self.paused = False
 
   def stopJob(self):
     if self.driver and not self.driver.hasError():
@@ -419,7 +416,7 @@ class WorkerBee():
       status = message.data['status']
 
       #did our status change?  if so, make sure to stop our currently running job.
-      if self.data['status'] == 'working' and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
+      if (self.data['status'] == 'working' or self.data['status'] == 'paused') and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
         self.info("Stopping job.")
         self.stopJob()
       self.data = message.data
