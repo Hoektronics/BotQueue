@@ -4,7 +4,6 @@ import tempfile
 import urllib2
 import os
 import subprocess
-import sys
 import hive
 import ginsu
 import botqueueapi
@@ -417,11 +416,11 @@ class WorkerBee():
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
-          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
+          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r %s --title '%s' webcam.jpg" % (
             self.config['webcam']['device'],
-            self.config['webcam']['resolution']
+            self.config['webcam']['resolution'],
+            "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
           )
-          #"%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
         else:
           raise Exception("Webcams are not supported on your OS.")
               
