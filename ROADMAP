@@ -6,10 +6,8 @@ v0.3 Release - Ongoing
 * BUMBLEBEE - add watermark to each image
 * BUMBLEBEE - resize each image to 640x480
 * BUMBLEBEE - save each image at 60% quality (jpeg)
-
 * BUMBLEBEE - compile slic3r and update install script
 * BUMBLEBEE - test raspberry pi install script from scratch
-
 
 v0.3 CHANGELOG
 
@@ -33,6 +31,7 @@ v0.3 CHANGELOG
 * WEB - modify dashboard ajax to preload images and then fade-in new content
 * WEB - add ajax selector for 4 different views: details, big thumbs, med thumbs, small thumbs
 * WEB - add ajax checkbox for turning on/off auto-update.
+* WEB - add ajax call to save dashboard style stuff
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 * BUMBLEBEE - added webcam uploading during idle and printing periods

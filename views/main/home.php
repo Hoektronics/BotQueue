@@ -1,4 +1,5 @@
 <? if (User::isLoggedIn()): ?>
+  <? $style = User::$me->get('dashboard_style') ?>
   <div id="DashtronController">
     <h3 style="display: inline">BotQueue Live Dashboard</h3>
     
@@ -6,10 +7,10 @@
       <input type="checkbox" id="autoload_dashboard" value="1" checked="1">
       <label for="autoload_dashboard" style="display: inline">Auto-refresh?</label>
       <select id="dashboard_style">
-        <option value="large_thumbnails">Large Thumbnails</option>
-        <option value="medium_thumbnails">Medium Thumbnails</option>
-        <option value="small_thumbnails">Small Thumbnails</option>
-        <option value="list">Detailed List</option>
+        <option value="large_thumbnails" <?= ($style == 'large_thumbnails') ? 'selected' : ''?>>Large Thumbnails</option>
+        <option value="medium_thumbnails" <?= ($style == 'medium_thumbnails') ? 'selected' : ''?>>Medium Thumbnails</option>
+        <option value="small_thumbnails" <?= ($style == 'small_thumbnails') ? 'selected' : ''?>>Small Thumbnails</option>
+        <option value="list" <?= ($style == 'list') ? 'selected' : ''?>>Detailed List</option>
       </select>
     </form>
     <div class="clearfix"></div>

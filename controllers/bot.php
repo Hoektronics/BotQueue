@@ -71,7 +71,6 @@
 				$bot->set('firmware', $form->data('firmware'));
 				$bot->set('extruder', $form->data('extruder'));
 				$bot->set('status', 'offline');
-				$bot->set('webcam_hash', sha1(mt_rand()));
 				$bot->save();
 
 				Activity::log("registered the bot " . $bot->getLink() . ".");

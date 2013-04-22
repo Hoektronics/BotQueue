@@ -31,7 +31,7 @@
           		<?=$j->getLink()?>
           		<? if ($j->get('status') == 'taken'): ?>
             		<span class="muted pull-right">
-            		  <? if ($size > 3): ?>
+            		  <? if ($size == 6): ?>
               		  <? $temps = JSON::decode($b->get('temperature_data')) ?>
                     <? if ($temps->extruder): ?>
               		      E: <?=$temps->extruder?>C /
@@ -39,13 +39,11 @@
               		  <? if ($temps->bed): ?>
               		    B: <?=$temps->bed?>C /
               		  <? endif ?>
-              		  <? if ($j->get('status') == 'taken'): ?>
-                			ETA: <?=$j->getEstimatedText()?> /
-                  	  <?= round($j->get('progress'), 2) ?>%
-                  	<? endif ?>
-                  <? else: ?>
-              	    <?= round($j->get('progress'), 2) ?>%
-                  <? endif ?>
+              		<? endif ?>
+              		<? if ($size >= 4): ?>
+              			ETA: <?=$j->getEstimatedText()?> /
+                	<? endif ?>
+              	  <?= round($j->get('progress'), 2) ?>%
             		</span>
           		<? elseif ($j->get('status') == 'qa'): ?>
             		<div class="manage-job pull-right">
