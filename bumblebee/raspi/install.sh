@@ -3,6 +3,12 @@
 #make sure we're on the latest raspbian
 sudo apt-get update -qy
 sudo apt-get upgrade -qy
+sudo apt-get install -qy git-core
+
+#install rpi-update
+sudo wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update
+sudo chmod +x /usr/bin/rpi-update
+sudo /usr/bin/rpi-update
 
 #install slic3r dependencies:
 sudo apt-get install -qy git-core build-essential libgtk2.0-dev libwxgtk2.8-dev libwx-perl libmodule-build-perl libnet-dbus-perl cpanminus libextutils-cbuilder-perl gcc-4.7 g++-4.7 libwx-perl
@@ -22,7 +28,7 @@ git checkout 0.9.9
 sudo perl Build.PL 
 sudo ./Build install
 
-#install simplecv
+#install webcam tools
 sudo apt-get install ipython python-opencv python-scipy python-numpy python-pygame python-setuptools python-pip
 sudo pip install https://github.com/ingenuitas/SimpleCV/zipball/master
 sudo apt-get install fswebcam uvcdynctrl

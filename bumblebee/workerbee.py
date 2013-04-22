@@ -68,12 +68,9 @@ class WorkerBee():
     self.info("Setting bot status as error.")
     result = self.api.updateBotInfo({'bot_id' : self.data['id'], 'status' : 'error', 'error_text' : error})
     if result['status'] == 'success':
-      self.data = result['data']
+      self.changeStatus(result['data'])
     else:
       self.error("Error talking to mothership: %s" % result['error'])
-      
-    #notify the queen bee of our status.
-    self.sendMessage('bot_update', self.data)
 
   def initializeDriver(self):
     #try:
@@ -141,7 +138,7 @@ class WorkerBee():
         time.sleep(0.1) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
-      self.driver.disconnect()
+      self.driver.stop()
       raise ex
 
     self.debug("Exiting.")
@@ -152,13 +149,10 @@ class WorkerBee():
     
     result = self.api.getBotInfo(self.data['id'])
     if (result['status'] == 'success'):
-      self.data = result['data']
+      self.changeStatus(result['data'])
     else:
       self.error("Error looking up bot info: %s" % result['error'])
       raise Exception("Error looking up bot info: %s" % result['error'])
-
-    #notify the mothership of our status.
-    self.sendMessage('bot_update', self.data)
 
   #get bot info from the mothership
   def getJobInfo(self):
@@ -169,34 +163,6 @@ class WorkerBee():
     else:
       self.error("Error looking up job info: %s" % result['error'])
       raise Exception("Error looking up job info: %s" % result['error'])
- 
-  #get a new job to process from the mothership  
-  # def getNewJob(self):
-  #   self.info("Looking for new job.")
-  #   result = self.api.findNewJob(self.data['id'], self.global_config['can_slice'])
-  #   if (result['status'] == 'success'):
-  #     if (len(result['data'])):
-  #       job = result['data']
-  #       jresult = self.api.grabJob(self.data['id'], job['id'], self.global_config['can_slice'])
-  #       if (jresult['status'] == 'success'):
-  #         self.data = jresult['data']
-  # 
-  #         #notify the mothership.
-  #         data = hive.Object()
-  #         data.job = self.data['job']
-  #         data.bot = self.data
-  #         message = Message('job_start', data)
-  #         self.pipe.send(message)
-  # 
-  #         self.info("grabbed job %s" % self.data['job']['name'])
-  #         return True
-  #       else:
-  #         raise Exception("Error grabbing job: %s" % jresult['error'])
-  #     else:
-  #       self.getOurInfo() #see if our status has changed.
-  #   else:
-  #     raise Exception("Error finding new job: %s" % result['error'])
-  #   return False
 
   def sliceJob(self):
     #download our slice file
@@ -249,10 +215,9 @@ class WorkerBee():
     self.checkMessages()
 
     #now pull in our new data.
-    self.data = result['data']
+    self.data = resuself.changeStatus(result['data'])
     
     #notify the queen bee of our status.
-    self.sendMessage('bot_update', self.data)
     self.sendMessage('job_update', self.data['job'])
  
   def downloadFile(self, fileinfo):
@@ -312,6 +277,7 @@ class WorkerBee():
 
         #should we bail out of here?
         if not self.running or self.data['status'] != 'working':
+          self.stopJob()
           return
 
         #occasionally update home base.
@@ -329,27 +295,14 @@ class WorkerBee():
         self.info("Print finished.")
   
         #finish the job online, and mark as completed.
-        notified = False
-        while not notified:
-          result = self.api.completeJob(self.data['job']['id'])
-          if result['status'] == 'success':
-            
-            #check for messages like shutdown or stop job.
-            # self.checkMessages()
-            # if not self.running or self.data['status'] != 'working':
-            #   return
-            
-            self.data = result['data']['bot']
-            notified = True
+        result = self.api.completeJob(self.data['job']['id'])
+        if result['status'] == 'success':
+          self.changeStatus(result['data']['bot'])
 
-            #notify the queen bee of our status.
-            self.sendMessage('bot_update', self.data)
-
-            #notify the queen bee of our status.
-            self.sendMessage('job_update', self.data['job'])
-          else:
-            self.error("Error notifying mothership: %s" % result['error'])
-            time.sleep(10)
+          #notify the queen bee of our status.
+          self.sendMessage('job_update', self.data['job'])
+        else:
+          self.error("Error notifying mothership: %s" % result['error'])
     except Exception as ex:
       self.exception(ex)
       self.errorMode(ex)
@@ -357,12 +310,10 @@ class WorkerBee():
   def pauseJob(self):
     self.info("Pausing job.")
     self.driver.pause()
-    self.paused = True
 
   def resumeJob(self):
     self.info("Resuming job.")
     self.driver.resume()
-    self.paused = False
 
   def stopJob(self):
     if self.driver and not self.driver.hasError():
@@ -386,7 +337,13 @@ class WorkerBee():
     if(self.data['status'] == 'working' and self.data['job']['id']):
       self.dropJob("Shutting down.")
     self.running = False
-
+    
+  def changeStatus(self, data):
+    #check for message sending first because if we get stale info, it might cause issues with our new state.
+    self.checkMessages()
+    self.sendMessage('bot_update', data)
+    self.data = data
+      
   def sendMessage(self, name, data = False):
     self.checkMessages()
     msg = Message(name, data)
@@ -417,7 +374,7 @@ class WorkerBee():
       status = message.data['status']
 
       #did our status change?  if so, make sure to stop our currently running job.
-      if self.data['status'] == 'working' and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
+      if (self.data['status'] == 'working' or self.data['status'] == 'paused') and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
         self.info("Stopping job.")
         self.stopJob()
       self.data = message.data
@@ -444,15 +401,16 @@ class WorkerBee():
   def updateHomeBase(self, latest, temps):
     self.info("print: %0.2f%%" % float(latest))
     if self.takePicture():
-      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], latest = "%0.5f" % float(latest), temps = temps)
+      self.api.webcamUpdate("webcam.jpg", job_id = self.data['job']['id'], progress = "%0.5f" % float(latest), temps = temps)
     else:
       self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % float(latest), temps)
 
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
-      if self.config['webcam']:
-        
+      #do we even have a webcam config setup?
+      if 'webcam' in self.config:
+        #what os are we using
         myos = hive.determineOS()
         if myos == "osx":
           command = "exec ./imagesnap -q -d '%s' webcam.jpg" % (
@@ -508,7 +466,7 @@ class WorkerBee():
     #main try/catch block  
     except Exception as ex:
       self.exception(ex)
-    
+      return False
     
 class Message():
   def __init__(self, name, data = None):
