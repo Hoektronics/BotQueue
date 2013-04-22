@@ -214,7 +214,7 @@ class WorkerBee():
     self.checkMessages()
 
     #now pull in our new data.
-    self.data = self.changeStatus(result['data'])
+    self.changeStatus(result['data'])
     
     #notify the queen bee of our status.
     self.sendMessage('job_update', self.data['job'])
