@@ -22,6 +22,7 @@
 		{
 			$this->setArg('content');
 			$this->setArg('title');
+			$this->setArg('area');
 			$this->setArg('sidebar');
 		}
 

@@ -20,6 +20,8 @@
 	{
 		public function home()
 		{
+		  $this->set('area', 'app');
+		  
 			if (User::isLoggedIn())
 			{
 				$this->set('apps', User::$me->getMyApps()->getAll());
@@ -32,7 +34,8 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle("Register your App");
-			
+			$this->set('area', 'app');
+		  
 			if ($this->args('submit'))
 			{
 				if (!$this->args('name'))
@@ -73,7 +76,8 @@
 		public function edit_app()
 		{
 			$this->assertLoggedIn();
-			
+			$this->set('area', 'app');
+		  
 			try
 			{
 				$app = new OAuthConsumer($this->args('app_id'));
@@ -127,6 +131,7 @@
 		public function delete_app()
 		{
 			$this->assertLoggedIn();
+		  $this->set('area', 'app');
 
 			try
 			{
@@ -158,6 +163,7 @@
 		public function view_app()
 		{
 			$this->assertLoggedIn();
+		  $this->set('area', 'app');
 
 			try
 			{
@@ -181,6 +187,7 @@
 		public function authorize_app()
 		{
 			$this->assertLoggedIn();
+		  $this->set('area', 'app');
 
 			try
 			{
@@ -219,6 +226,7 @@
 		public function revoke_app()
 		{
 			$this->assertLoggedIn();
+		  $this->set('area', 'app');
 
 			try
 			{

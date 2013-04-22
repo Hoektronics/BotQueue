@@ -20,6 +20,10 @@
 	{
 		public function home()
 		{
+		  if (User::isLoggedIn())
+		  {
+		    $this->set('area', 'dashboard');
+		  }
 		}
 		
 		public function dashboard()
@@ -145,7 +149,8 @@
 		public function stats()
 		{
 		  $this->setTitle("Overall BotQueue.com Stats");
-		  
+		  $this->set('area', 'stats');
+	    
 		  //active bots
 		  $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300";
 		  $this->set('total_active_bots', db()->getValue($sql));

@@ -18,8 +18,15 @@
 
 	class HelpController extends Controller
 	{
+	  function home()
+	  {
+	    $this->set('area', 'help');
+	  }
+
 	  function raspberry_pi_installation()
 	  {
+	    $this->set('area', 'help');
+	    
 	    $this->setTitle("Raspberry Pi Installation");
 	  }
 	}

@@ -1,7 +1,6 @@
 v0.3 Release - Ongoing
 
 * WEB - get real default image for bots w/o webcam
-* WEB - fix top navigation to show what page/area you are at
 
 * BUMBLEBEE - compile slic3r and update install script
 * BUMBLEBEE - test raspberry pi install script from scratch
@@ -29,6 +28,7 @@ v0.3 CHANGELOG
 * WEB - add ajax selector for 4 different views: details, big thumbs, med thumbs, small thumbs
 * WEB - add ajax checkbox for turning on/off auto-update.
 * WEB - add ajax call to save dashboard style stuff
+* WEB - fix top navigation to show what page/area you are at
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 * BUMBLEBEE - added webcam uploading during idle and printing periods

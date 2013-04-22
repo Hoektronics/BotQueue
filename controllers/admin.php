@@ -21,6 +21,8 @@
 		public function home()
 		{
 			$this->assertAdmin();
+			$this->set('area', 'admin');
+	    
 		}
 	}
 ?>

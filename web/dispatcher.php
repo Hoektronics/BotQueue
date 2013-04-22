@@ -104,6 +104,7 @@
 	echo Controller::byName("{$mode}Template")->renderView('main', array(
 		'content' => $content,
 		'title' => $main->get('title'),
+		'area' => $main->get('area'),
 		'sidebar' => $main->get('sidebar')
 	));
 ?>

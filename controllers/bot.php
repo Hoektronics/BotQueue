@@ -34,6 +34,7 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Bots");
+	    $this->set('area', 'bots');
 
 			$collection = User::$me->getBots();
       $per_page = 20;
@@ -50,7 +51,8 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle('Register a new Bot');
-			
+			$this->set('area', 'bots');
+	    
 			$bot = new Bot();
 			
 			//load up our form.
@@ -84,6 +86,7 @@
 		public function view()
 		{
 			$this->assertLoggedIn();
+	    $this->set('area', 'bots');
 
 			try
 			{
@@ -173,6 +176,7 @@
 		public function edit()
 		{
 			$this->assertLoggedIn();
+	    $this->set('area', 'bots');
 
 			try
 			{
@@ -424,6 +428,7 @@
 		public function delete()
 		{
 			$this->assertLoggedIn();
+	    $this->set('area', 'bots');
 
 			try
 			{
