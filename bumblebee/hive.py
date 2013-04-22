@@ -9,6 +9,7 @@ import sys
 import hashlib
 import time
 from threading import Thread
+import subprocess
 
 class BeeConfig():
   
@@ -130,6 +131,67 @@ class URLFile():
     urlfile = urllib2.urlopen(request)
 
     return urlfile
+
+class Process():
+  def __init__(self, command):
+    self.info("Webcam Command: %s" % command)
+
+    self.p = None
+    self.outputLog = ""
+    self.errorLog = ""
+
+  def run(self):
+    # this starts our thread to slice the model into gcode
+    self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    while self.p.poll() is None:
+      output = self.p.stdout.readline()
+      if output:
+        self.log.info("Process: %s" % output.strip())
+        self.outputLog = self.outputLog + output
+                    
+      time.sleep(0.1)
+    
+    #get any last lines of output
+    output = self.p.stdout.readline()
+    while output:
+      self.log.info("Process: %s" % output.strip())
+      self.outputLog = self.outputLog + output
+      output = self.p.stdout.readline()
+
+    #get our errors (if any)
+    error = self.p.stderr.readline()
+    while error:
+      self.log.error("Process: %s" % error.strip())
+      self.errorLog = self.errorLog + error
+      error = self.p.stderr.readline()
+
+    self.info("Webcam: capture complete.")
+
+    #did we get errors?
+    if (self.errorLog or self.p.returncode > 0):
+      self.log.error("Errors detected.  Bailing.")
+      return False
+    else:
+      return True
+  
+  def kill(self):
+    if self.p:
+      try:
+        self.log.info("Killing process %d." % self.p.pid)
+        #self.p.terminate()
+        os.kill(self.p.pid, signal.SIGTERM)
+        t = 5 # max wait time in secs
+        while self.p.poll() < 0:
+          if t > 0.5:
+            t -= 0.25
+            time.sleep(0.25)
+          else: # still there, force kill
+            os.kill(self.p.pid, signal.SIGKILL)
+            time.sleep(0.5)
+        self.p.poll() # final try   
+      except OSError as ex:
+        #self.log.info("Kill exception: %s" % ex)
+        pass #successfully killed process
  
 class Object(object):
   pass

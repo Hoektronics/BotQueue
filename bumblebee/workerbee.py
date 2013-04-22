@@ -4,7 +4,6 @@ import tempfile
 import urllib2
 import os
 import subprocess
-import sys
 import hive
 import ginsu
 import botqueueapi
@@ -215,7 +214,7 @@ class WorkerBee():
     self.checkMessages()
 
     #now pull in our new data.
-    self.data = resuself.changeStatus(result['data'])
+    self.changeStatus(result['data'])
     
     #notify the queen bee of our status.
     self.sendMessage('job_update', self.data['job'])
@@ -413,15 +412,14 @@ class WorkerBee():
         #what os are we using
         myos = hive.determineOS()
         if myos == "osx":
-          command = "exec ./imagesnap -q -d '%s' webcam.jpg" % (
+          command = "./imagesnap -q -d '%s' webcam.jpg && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% webcam.jpg 2>/dev/null" % (
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
-          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r %s --no-banner --no-timestamp webcam.jpg" % (
+          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r 640x480 --title '%s' webcam.jpg" % (
             self.config['webcam']['device'],
-            self.config['webcam']['resolution']
+            "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
           )
-          #"%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
         else:
           raise Exception("Webcams are not supported on your OS.")
               
