@@ -3,13 +3,8 @@ v0.3 Release - Ongoing
 * WEB - get real default image for bots w/o webcam
 * WEB - fix top navigation to show what page/area you are at
 
-* BUMBLEBEE - add watermark to each image
-* BUMBLEBEE - resize each image to 640x480
-* BUMBLEBEE - save each image at 60% quality (jpeg)
-
 * BUMBLEBEE - compile slic3r and update install script
 * BUMBLEBEE - test raspberry pi install script from scratch
-
 
 v0.3 CHANGELOG
 
@@ -37,6 +32,9 @@ v0.3 CHANGELOG
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 * BUMBLEBEE - added webcam uploading during idle and printing periods
 * BUMBLEBEE - fix race condition when workerbee is changing the status of the bot
+* BUMBLEBEE - add watermark to each image
+* BUMBLEBEE - resize each image to 640x480
+* BUMBLEBEE - save each image at 60% quality (jpeg)
 
 ------------------------------------------------------------------------------------
 
