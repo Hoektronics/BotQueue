@@ -22,26 +22,26 @@
         loadDashtron();
     });
 
-    // Usage: $(['img1.jpg','img2.jpg']).preloadImages(function(){ ... });
-    // Callback function gets called after all images are preloaded
-    $.fn.preloadImages = function(callback) {
-      checklist = this.length
-      if (checklist > 0)
-      {
-        this.each(function() {
-
-          image = new Image();
-          image.src = this.src;
-          $(image).load(function() {
-            checklist--;
-            console.log($(this).attr('src') + " loaded");
-            if (checklist <= 0) { setTimeout(callback(), 100); }
-          });
-        });
-      }
-      else
-        callback();
-    };
+    // // Usage: $(['img1.jpg','img2.jpg']).preloadImages(function(){ ... });
+    // // Callback function gets called after all images are preloaded
+    // $.fn.preloadImages = function(callback) {
+    //   checklist = this.length
+    //   if (checklist > 0)
+    //   {
+    //     this.each(function() {
+    // 
+    //       image = new Image();
+    //       image.src = this.src;
+    //       $(image).load(function() {
+    //         checklist--;
+    //         console.log($(this).attr('src') + " loaded");
+    //         if (checklist <= 0) { setTimeout(callback(), 1000); }
+    //       });
+    //     });
+    //   }
+    //   else
+    //     callback();
+    // };
     
     function loadDashtron()
     {
@@ -51,7 +51,7 @@
         console.log("loading " + url);
         var jqxhr = $.get(url, function(data) {
           $('#DashtronHidden').html(data);
-          $('#DashtronHidden img.webcam').preloadImages(dashtronShow);
+          $('#DashtronHidden img.webcam').imagesLoaded(dashtronShow);
         })
         .always(function(){setTimeout(loadDashtron, 10000);})
         .fail(function() { console.log("dashtron fail"); });

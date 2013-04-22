@@ -5,7 +5,7 @@
 		<? if ($title): ?>
 			<title><?=strip_tags($title)?> - <?=RR_PROJECT_NAME?></title>
 		<? else: ?>
-			<title><?=RR_PROJECT_NAME?> - Internets + 3D Printing = Win</title>
+			<title><?=RR_PROJECT_NAME?> - Internets + Digital Fabrication = Win</title>
 		<? endif ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -24,6 +24,7 @@
     <!-- Le jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/jquery.imagesloaded.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.selection.js"></script>
 
