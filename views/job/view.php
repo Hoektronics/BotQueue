@@ -11,9 +11,32 @@
   
   <div id="myTabContent" class="tab-content">
   	<div class="row tab-pane fade in active" id="details">
+  	  <div class="span6">
+  		  <? if ($webcam->isHydrated()): ?>
+  		    <img src="<?=$webcam->getRealUrl()?>">
+  		  <? else: ?>
+          <img src="/img/kitten-640x480.jpg">
+  		  <? endif ?>
+  		</div>
   		<div class="span6">
   			<table class="table table-striped table-bordered table-condensed">
   				<tbody>
+  				  <tr>
+  						<th>Manage:</th>
+  						<td>
+  							<? if ($job->get('status') == 'available'): ?>
+  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
+  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/cancel"><i class="icon-eject"></i> cancel</a>
+  							<? endif ?>
+  							<? if ($job->get('status') == 'qa'): ?>
+  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/qa"><i class="icon-check"></i> verify</a>
+  							<? endif ?>
+  							<? if ($job->get('status') != 'taken' && $job->get('status') != 'qa' && $job->get('status') != 'slicing'): ?>
+  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
+  							<? endif ?>
+  							<a class="btn btn-mini" href="/job/create/job:<?=$job->id?>"><i class="icon-repeat"></i> re-run</a>
+  						</td>
+  					</tr>
   					<tr>
   						<th>Status:</th>
   						<td><?=$job->getStatusHTML() ?></td>
@@ -76,28 +99,6 @@
     						<td><?=$job->getEstimatedText()?></td>
     					</tr>
     				<? endif ?>
-  				</tbody>
-  			</table>
-  		</div>
-  		<div class="span6">
-  			<table class="table table-striped table-bordered table-condensed">
-  				<tbody>
-  					<tr>
-  						<th>Manage:</th>
-  						<td>
-  							<? if ($job->get('status') == 'available'): ?>
-  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
-  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/cancel"><i class="icon-eject"></i> cancel</a>
-  							<? endif ?>
-  							<? if ($job->get('status') == 'qa'): ?>
-  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/qa"><i class="icon-check"></i> verify</a>
-  							<? endif ?>
-  							<? if ($job->get('status') != 'taken' && $job->get('status') != 'qa' && $job->get('status') != 'slicing'): ?>
-  								<a class="btn btn-mini" href="<?=$job->getUrl()?>/delete"><i class="icon-remove"></i> delete</a>
-  							<? endif ?>
-  							<a class="btn btn-mini" href="/job/create/job:<?=$job->id?>"><i class="icon-repeat"></i> re-run</a>
-  						</td>
-  					</tr>
   					<tr>
   						<th>Source File:</th>
     					<? if ($source_file->isHydrated()): ?>			
@@ -151,7 +152,7 @@
   					<tr>
   						<th>Creator:</th>
   						<td><?=$creator->getLink()?></td>
-  					</tr>			
+  					</tr>
   				</tbody>
   			</table>
   		</div>

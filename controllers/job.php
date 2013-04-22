@@ -114,6 +114,7 @@
 					$this->set('creator', $job->getUser());
 					$this->set('errors', $job->getErrorLog()->getAll());
 					$this->set('comments', $job->getComments()->getAll());
+					$this->set('webcam', $job->getWebcamImage());
 				}
 			}
 			catch (Exception $e)
@@ -298,6 +299,7 @@
 				$this->set('bot', $bot);
 				$this->set('gcode_file', $job->getFile());
 				$this->set('source_file', $job->getSourceFile());
+				$this->set('webcam', $job->getWebcamImage());
 				
 				$this->setTitle('Verify Job - ' . $job->getName());	
 				

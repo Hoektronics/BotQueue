@@ -1,27 +1,15 @@
 v0.3 Release - Ongoing
 
-* WEB - multi-job prints (eg: .zip file w/ manifest)
-  * pull in all files from thingiverse.com/thing:####
+* WEB - get real default image for bots w/o webcam
+* WEB - fix top navigation to show what page/area you are at
+
+* BUMBLEBEE - add watermark to each image
+* BUMBLEBEE - resize each image to 640x480
+* BUMBLEBEE - save each image at 60% quality (jpeg)
 
 * BUMBLEBEE - compile slic3r and update install script
-* BUMBLEBEE - use OpenCV? to capture webcam images and upload to site.
-  * make sure each image is timestamped.
-  * and watermarked with the host url.
-  * automatically create a timelapse at the end of a successful print - watch your object grow
-    * timelapse interval should be calculated to last an exact time... 10 seconds or so.
-  * to save on space required to hold a ton of images, continuously overwrite the same file.  then just show that to the user.
-    * what interval?  1 minute?
-  * keep all images from webcam on error jobs - forensic viewing of failed jobs.
-    * automatically delete after 1 day.
-  * synchronize temp readings + picture - then synchronize images w/ temperatures on bot view page
-  * send status updates during download.
-* BUMBLEBEE - http://iharder.sourceforge.net/current/macosx/imagesnap/
+* BUMBLEBEE - test raspberry pi install script from scratch
 
-* WEB - show latest webcam image for each bot on the site.
-
-* WEB - when downloading file to slice, status should be "downloading"
-* WEB - change homepage to show live shots from currently printing bots.
-* WEB - show latest webcam image for each bot on its view page.
 
 v0.3 CHANGELOG
 
@@ -41,9 +29,14 @@ v0.3 CHANGELOG
 * WEB - added leaderboard to stats page.
 * WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
 * WEB - add source info for jobs added by url.
+* WEB - added webcam display to dashboard, bot, and job.
+* WEB - modify dashboard ajax to preload images and then fade-in new content
+* WEB - add ajax selector for 4 different views: details, big thumbs, med thumbs, small thumbs
+* WEB - add ajax checkbox for turning on/off auto-update.
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
-
+* BUMBLEBEE - added webcam uploading during idle and printing periods
+* BUMBLEBEE - fix race condition when workerbee is changing the status of the bot
 
 ------------------------------------------------------------------------------------
 
@@ -51,6 +44,9 @@ v0.4 Release
 
 * WEB - Single unified queue view w/ auto-update
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
+
+* WEB - multi-job prints (eg: .zip file w/ manifest)
+  * pull in all files from thingiverse.com/thing:####
 
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.
@@ -62,12 +58,20 @@ v0.4 Release
 * BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
 * BUMBLEBEE - download slicing applications from the web instead of bundling
 
+WEBCAM STUFF
+* automatically create a timelapse at the end of a successful print - watch your object grow
+  * timelapse interval should be calculated to last an exact time... 10 seconds or so.
+* keep all images from webcam on error jobs - forensic viewing of failed jobs.
+  * automatically delete after 1 day.
+* synchronize temp readings + picture - then synchronize images w/ temperatures on bot view page
+* WEB - change main homepage to show live shots from currently printing public bots.
+
 ------------------------------------------------------------------------------------
 
-OMG BOTQUEUE:
-
-
 Long term wants:
+
+* WEB - when downloading file to slice, status should be "downloading"
+* BUMBLEBEE - send status updates during download.
 
 * WEB - filament spool info (it keeps track of how big each machine spool is/when a new one is installed and appoximates how much is left based on volume info in gcode)
 * WEB / BUMBLEBEE - a way to pre-slice jobs AKA "on-deck" functionality

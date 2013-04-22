@@ -58,7 +58,7 @@ div.comment_meta muted {
 
 div.comment_body {
   clear: both;
-  border: 1px solid rgba(0,0,0,.1);
+  border: 1px solid #d4d4d4;
   padding: 15px;
   margin-bottom: 10px;
 }
@@ -75,11 +75,30 @@ form.form-inline div.control-group, form.form-inline div.controls {
 
 div.bot_thumbnail img.webcam {
   background: #ccc;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 
 div.bot_thumbnail {
   position: relative;
   margin-bottom: 5px;
+}
+
+div.bot_thumbnail_stretcher {
+  width: 100%;
+  padding-bottom: 75%;
+}
+
+div.bot_thumbnail_content {
+  border: 1px solid #d4d4d4;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  position: relative;
+}
+
+div.real_bot_thumbnail_content {
+  position: absolute;
+  top: 0;  bottom: 0;  left: 0;  right: 0;
 }
 
 div.bot_thumbnail div.bot_header div.bot_status_button {
@@ -93,7 +112,10 @@ div.bot_thumbnail div.bot_header {
   top: 0px;
   left: 0px;
   width: 100%;
+  height: 31px;
   background-color:rgba(255, 255, 255, 0.75);
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 div.bot_header h3 {
@@ -103,15 +125,52 @@ div.bot_header h3 {
   line-height: normal;
 }
 
-div.bot_thumbnail div.bot_info {
-  position: absolute;
-  margin: 0px;
-  height: 24px;
-  width: 100%;
-  padding: 3px 0px;
-  line-height: normal;
-  bottom: -1px;
-  left: 0px;
-  background: #ddd; 
+div.bot_thumbnail_4 h3 {
+  font-size: 16px;
 }
 
+div.bot_thumbnail_3 h3 {
+  font-size: 14px;
+}
+
+div.bot_thumbnail div.bot_info_container {
+  position: absolute;
+  margin: 0px;
+  width: 100%;
+  padding: 0px;
+  line-height: normal;
+  bottom: 0px;
+  left: 0px;
+  background: #ddd; 
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+div.bot_thumbnail div.bot_info {
+  margin: 4px;
+}
+
+div.bot_thumbnail h3 span.muted {
+  font-size: 80%;
+}
+
+div.bot_thumbnail div.progress {
+  height: 15px;
+  margin: 3px 0px;
+}
+
+div.bot_thumbnail_6 div.bot_info span.muted {
+  font-size: 80%;
+}
+
+div.bot_thumbnail div.bot_info span.muted {
+  font-size: 90%;
+}
+
+div.bot_thumbnail_4 {
+  font-size: 95%;
+}
+
+div.bot_thumbnail_3 {
+  font-size: 85%;
+}

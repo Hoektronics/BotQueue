@@ -46,6 +46,10 @@
 			$r['last_seen'] = $this->get('last_seen');
 			$r['error_text'] = $this->get('error_text');
 			
+			$webcam = $this->getWebcamImage();
+			if ($webcam->isHydrated())
+			  $r['webcam'] = $webcam->getAPIData();
+			
 			$job = $this->getCurrentJob();
 			if ($job->isHydrated())
 				$r['job'] = $job->getAPIData();
@@ -245,6 +249,18 @@
 			$this->set('temperature_data', '');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
+		}
+		
+		public function pause()
+		{
+		  $this->set('status', 'paused');
+		  $this->save();
+		}
+		
+		public function unpause()
+		{
+		  $this->set('status', 'working');
+		  $this->save();
 		}
 
 		public function canComplete($job)
