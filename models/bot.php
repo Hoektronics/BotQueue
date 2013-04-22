@@ -250,6 +250,18 @@
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();
 		}
+		
+		public function pause()
+		{
+		  $this->set('status', 'paused');
+		  $this->save();
+		}
+		
+		public function unpause()
+		{
+		  $this->set('status', 'working');
+		  $this->save();
+		}
 
 		public function canComplete($job)
 		{

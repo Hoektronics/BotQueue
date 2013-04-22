@@ -29,6 +29,7 @@ RewriteRule ^(.*)$	$1 [NC,L]
 #RewriteRule (.*) down.html [NC,L]
 
 #ajax rule!
+RewriteRule ^ajax/main/dashboard/(list|large_thumbnails|medium_thumbnails|small_thumbnails)$		dispatcher.php?mode=ajax&controller=main&view=dashboard&dashboard_style=$1 [NC,L]
 RewriteRule ^ajax/([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$		dispatcher.php?mode=ajax&controller=$1&view=$2 [NC,L]
 
 #random stuff

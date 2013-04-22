@@ -42,6 +42,12 @@
 				$this->set('finished', $finished->getRange(0, 5));
 				$this->set('finished_count', $finished->count());
 				
+        //what style to show?
+				if ($this->args('dashboard_style'))
+				  $this->set('dashboard_style', $this->args('dashboard_style'));
+				else
+				  $this->set('dashboard_style', 'large_thumbnails');
+				
 				//$activities = Activity::getStream();
       	//$this->set('activities', $activities->getRange(0, 10));
 				//$this->set('activity_count', $activities->count());

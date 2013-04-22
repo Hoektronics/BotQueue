@@ -1,16 +1,76 @@
 <? if (User::isLoggedIn()): ?>
+  <div id="DashtronController">
+    <h3 style="display: inline">BotQueue Live Dashboard</h3>
+    
+    <form class="form-inline pull-right muted">
+      <input type="checkbox" id="autoload_dashboard" value="1" checked="1">
+      <label for="autoload_dashboard" style="display: inline">Auto-refresh?</label>
+      <select id="dashboard_style">
+        <option value="large_thumbnails">Large Thumbnails</option>
+        <option value="medium_thumbnails">Medium Thumbnails</option>
+        <option value="small_thumbnails">Small Thumbnails</option>
+        <option value="list">Detailed List</option>
+      </select>
+    </form>
+    <div class="clearfix"></div>
+  </div>
   <div id="Dashtron"><?=Controller::byName('main')->renderView('dashboard')?></div>
+  <div id="DashtronHidden" style="display: none;"></div>
+
   <script>
     $(function() {
         loadDashtron();
     });
 
-    function loadDashtron() {
-       console.log("running");
-       setTimeout(loadDashtron, 10000);
-       $('#Dashtron').load('/ajax/main/dashboard', function() {
-         prepare_jobqueue_drag();
-       });
+    // Usage: $(['img1.jpg','img2.jpg']).preloadImages(function(){ ... });
+    // Callback function gets called after all images are preloaded
+    $.fn.preloadImages = function(callback) {
+      checklist = this.length
+      if (checklist > 0)
+      {
+        this.each(function() {
+
+          image = new Image();
+          image.src = this.src;
+          $(image).load(function() {
+            checklist--;
+            console.log($(this).attr('src') + " loaded");
+            if (checklist <= 0) { setTimeout(callback(), 100); }
+          });
+        });
+      }
+      else
+        callback();
+    };
+    
+    function loadDashtron()
+    {
+      if ($('#autoload_dashboard').is(':checked'))
+      {
+        url = "/ajax/main/dashboard/" + $("#dashboard_style").val();
+        console.log("loading " + url);
+        var jqxhr = $.get(url, function(data) {
+          $('#DashtronHidden').html(data);
+          $('#DashtronHidden img.webcam').preloadImages(dashtronShow);
+        })
+        .always(function(){setTimeout(loadDashtron, 10000);})
+        .fail(function() { console.log("dashtron fail"); });
+      }
+      else
+      {
+        //console.log("live mode disabled.");
+        setTimeout(loadDashtron, 1000);
+      }
+    }
+    
+    function dashtronShow()
+    {
+      console.log("showing dashboard.");
+      $('#Dashtron').html($('#DashtronHidden').html());
+      //$('#Dashtron img.webcam').fadeOut();
+      //$('#Dashtron img.webcam').fadeIn();
+
+      prepare_jobqueue_drag();
     }
   </script>
 <? else: ?>

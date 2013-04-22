@@ -6,12 +6,13 @@
     	  <h3>
     	    <?=$b->getLink()?>
     	    <span class="muted">- <?=$b->getLastSeenHTML()?>
-    	    <? if ($j->isHydrated() && $j->get('status') == 'taken'): ?>
+    	    <? if ($j->isHydrated() && $j->get('status') == 'taken' && $size > 3): ?>
       		  - Runtime: <?=$j->getElapsedText()?>
           <? endif ?>
           </span>
     	  </h3>
       	<?=$b->getStatusHTML()?>
+      	<div class="clearfix"></div>
     	</div>
   	
       <a href="<?=$b->getUrl()?>">
@@ -30,17 +31,21 @@
           		<?=$j->getLink()?>
           		<? if ($j->get('status') == 'taken'): ?>
             		<span class="muted pull-right">
-            		  <? $temps = JSON::decode($b->get('temperature_data')) ?>
-                  <? if ($temps->extruder): ?>
-            		      E: <?=$temps->extruder?>C /
-            		  <? endif ?>
-            		  <? if ($temps->bed): ?>
-            		    B: <?=$temps->bed?>C /
-            		  <? endif ?>
-            		  <? if ($j->get('status') == 'taken'): ?>
-              			ETA: <?=$j->getEstimatedText()?> /
-                	  <?= round($j->get('progress'), 2) ?>%
-                	<? endif ?>
+            		  <? if ($size > 3): ?>
+              		  <? $temps = JSON::decode($b->get('temperature_data')) ?>
+                    <? if ($temps->extruder): ?>
+              		      E: <?=$temps->extruder?>C /
+              		  <? endif ?>
+              		  <? if ($temps->bed): ?>
+              		    B: <?=$temps->bed?>C /
+              		  <? endif ?>
+              		  <? if ($j->get('status') == 'taken'): ?>
+                			ETA: <?=$j->getEstimatedText()?> /
+                  	  <?= round($j->get('progress'), 2) ?>%
+                  	<? endif ?>
+                  <? else: ?>
+              	    <?= round($j->get('progress'), 2) ?>%
+                  <? endif ?>
             		</span>
           		<? elseif ($j->get('status') == 'qa'): ?>
             		<div class="manage-job pull-right">
