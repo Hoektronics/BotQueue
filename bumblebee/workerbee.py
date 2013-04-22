@@ -412,7 +412,7 @@ class WorkerBee():
         #what os are we using
         myos = hive.determineOS()
         if myos == "osx":
-          command = "exec ./imagesnap -q -d '%s' webcam.jpg" % (
+          command = "exec ./imagesnap -q -d '%s' webcam.jpg && exec sips -Z 640 webcam.jpg" % (
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
