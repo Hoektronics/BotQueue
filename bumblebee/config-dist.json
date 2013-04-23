@@ -21,7 +21,10 @@
   		"name": "Reprap Style Printer",
   		"driver" : "printcore",
   		"port" : "/dev/ttyACM0",
-  		"baud" : "115200"
+  		"baud" : "115200",
+  		"webcam": {
+        "device": "/dev/video0"
+      }
   	}
 	]
 }
