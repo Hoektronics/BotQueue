@@ -4,6 +4,7 @@ v0.3 Release - Ongoing
 
 * BUMBLEBEE - compile slic3r and update install script
 * BUMBLEBEE - test raspberry pi install script from scratch
+* BUMBLEBEE - make v0.3 release of BumbleBee
 
 v0.3 CHANGELOG
 
@@ -29,6 +30,7 @@ v0.3 CHANGELOG
 * WEB - add ajax checkbox for turning on/off auto-update.
 * WEB - add ajax call to save dashboard style stuff
 * WEB - fix top navigation to show what page/area you are at
+* WEB - update help instructions to add webcam config info
 
 * BUMBLEBEE - allow pausing and unpausing based on api status change.
 * BUMBLEBEE - added webcam uploading during idle and printing periods

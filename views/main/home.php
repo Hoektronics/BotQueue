@@ -1,7 +1,7 @@
 <? if (User::isLoggedIn()): ?>
   <? $style = User::$me->get('dashboard_style') ?>
   <div id="DashtronController">
-    <h3 style="display: inline">BotQueue Live Dashboard</h3>
+    <h3 style="display: inline">Live Dashboard</h3>
     
     <form class="form-inline pull-right muted">
       <input type="checkbox" id="autoload_dashboard" value="1" checked="1">
