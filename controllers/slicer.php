@@ -22,7 +22,8 @@
 	  public function home()
 	  {
 	    $this->setTitle("Slicer Engines");
-	    
+	    $this->set('area', 'slicers');
+		  
 	    if (User::isAdmin())
 	      $this->set('slicers', SliceEngine::getAllEngines()->getAll());
 	    else
@@ -37,6 +38,7 @@
 	    $this->assertLoggedIn();
 	    
 	    $this->setTitle('Create Slice Engine');
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -89,6 +91,7 @@
 	  public function edit()
 	  {
 	    $this->assertLoggedIn();
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -196,6 +199,8 @@
 	  
 	  public function view()
 	  {
+	    $this->set('area', 'slicers');
+	    
 	    try
 	    {
 	      //load the data and check for errors.
@@ -226,6 +231,7 @@
 	  public function delete()
 	  {
 	    $this->assertLoggedIn();
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -264,6 +270,7 @@
 	  public function config_create()
 	  {
 	    $this->assertLoggedIn();
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -419,6 +426,7 @@
 	  public function config_edit()
 	  {
 	    $this->assertLoggedIn();
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -488,6 +496,7 @@
 	  public function config_view()
 	  {
 	    $this->assertLoggedIn();
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -518,6 +527,7 @@
 	  public function config_delete()
 	  {
 	    $this->assertLoggedIn();
+	    $this->set('area', 'slicers');
 	    
 	    try
 	    {
@@ -565,6 +575,8 @@
 
 	  public function job_view()
 	  {
+	    $this->set('area', 'jobs');
+	    
 	    try
 	    {
 	      //load the data and check for errors.
@@ -592,6 +604,8 @@
 
 	  public function job_update()
 	  {
+	    $this->set('area', 'jobs');
+	    
 	    try
 	    {
 	      //load the data and check for errors.

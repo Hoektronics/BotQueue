@@ -34,6 +34,7 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Bots");
+	    $this->set('area', 'bots');
 
 			$collection = User::$me->getBots();
       $per_page = 20;
@@ -50,7 +51,8 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle('Register a new Bot');
-			
+			$this->set('area', 'bots');
+	    
 			$bot = new Bot();
 			
 			//load up our form.
@@ -71,7 +73,6 @@
 				$bot->set('firmware', $form->data('firmware'));
 				$bot->set('extruder', $form->data('extruder'));
 				$bot->set('status', 'offline');
-				$bot->set('webcam_hash', sha1(mt_rand()));
 				$bot->save();
 
 				Activity::log("registered the bot " . $bot->getLink() . ".");
@@ -85,6 +86,7 @@
 		public function view()
 		{
 			$this->assertLoggedIn();
+	    $this->set('area', 'bots');
 
 			try
 			{
@@ -174,6 +176,7 @@
 		public function edit()
 		{
 			$this->assertLoggedIn();
+	    $this->set('area', 'bots');
 
 			try
 			{
@@ -425,6 +428,7 @@
 		public function delete()
 		{
 			$this->assertLoggedIn();
+	    $this->set('area', 'bots');
 
 			try
 			{

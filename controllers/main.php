@@ -20,6 +20,10 @@
 	{
 		public function home()
 		{
+		  if (User::isLoggedIn())
+		  {
+		    $this->set('area', 'dashboard');
+		  }
 		}
 		
 		public function dashboard()
@@ -44,9 +48,17 @@
 				
         //what style to show?
 				if ($this->args('dashboard_style'))
+				{
 				  $this->set('dashboard_style', $this->args('dashboard_style'));
+				  
+				  if (User::$me->get('dashboard_style') != $this->args('dashboard_style'))
+				  {
+  				  User::$me->set('dashboard_style', $this->args('dashboard_style'));
+  				  User::$me->save();
+				  }
+				}
 				else
-				  $this->set('dashboard_style', 'large_thumbnails');
+				  $this->set('dashboard_style', User::$me->get('dashboard_style'));
 				
 				//$activities = Activity::getStream();
       	//$this->set('activities', $activities->getRange(0, 10));
@@ -137,7 +149,8 @@
 		public function stats()
 		{
 		  $this->setTitle("Overall BotQueue.com Stats");
-		  
+		  $this->set('area', 'stats');
+	    
 		  //active bots
 		  $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300";
 		  $this->set('total_active_bots', db()->getValue($sql));

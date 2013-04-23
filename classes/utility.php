@@ -317,9 +317,9 @@ class Utility
 		
 		if ($datediff < 100) { // seconds
 			if ($datediff == 0) return "none";
-			return "$datediff second".self::pluralizer($datediff>1);
+			return round($datediff) . " second".self::pluralizer($datediff>1);
 		} else if ($min < 100) {
-			return "$min minute".self::pluralizer($min>1);
+			return "$min min".self::pluralizer($min>1);
 		} else if ($hours < 100) {
 			return "$hours hour".self::pluralizer($hours>1);
 		} else if ($days < 10) {

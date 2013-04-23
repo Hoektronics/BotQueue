@@ -82,8 +82,8 @@
         <a class="brand" href="/"><?=RR_PROJECT_NAME?></a>
         <div class="nav-collapse">
           <ul class="nav">
-            <li><a href="/">Dashboard</a></li>
-            <li class="dropdown">
+            <li class="<?= ($area == 'dashboard') ? 'active' : ''?>"><a href="/">Dashboard</a></li>
+            <li class="<?= ($area == 'create') ? 'active' : ''?> dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li><a href="/upload">Create Job</a></li>
@@ -91,15 +91,15 @@
                 <li><a href="/queue/create">Create Queue</a></li>
               </ul>
             </li>
-            <li><a href="/bots">Bots</a></li>
-            <li><a href="/queues">Queues</a></li>
-            <li><a href="/jobs">Jobs</a></li>
-            <li><a href="/apps">App</a></li>
-            <li><a href="/slicers">Slicers</a></li>
-            <li><a href="/stats">Stats</a></li>
-            <li><a href="/help">Help</a></li>
+            <li class="<?= ($area == 'bots') ? 'active' : ''?>"><a href="/bots">Bots</a></li>
+            <li class="<?= ($area == 'queues') ? 'active' : ''?>"><a href="/queues">Queues</a></li>
+            <li class="<?= ($area == 'jobs') ? 'active' : ''?>"><a href="/jobs">Jobs</a></li>
+            <li class="<?= ($area == 'app') ? 'active' : ''?>"><a href="/apps">App</a></li>
+            <li class="<?= ($area == 'slicers') ? 'active' : ''?>"><a href="/slicers">Slicers</a></li>
+            <li class="<?= ($area == 'stats') ? 'active' : ''?>"><a href="/stats">Stats</a></li>
+            <li class="<?= ($area == 'help') ? 'active' : ''?>"><a href="/help">Help</a></li>
             <? if (User::isAdmin()): ?>
-              <li class="dropdown">
+              <li class="<?= ($area == 'admin') ? 'active' : ''?> dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                 </ul>

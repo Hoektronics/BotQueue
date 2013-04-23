@@ -23,6 +23,7 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Jobs");
+			$this->set('area', 'jobs');
 			
 			$available = User::$me->getJobs('available');
 			$this->set('available', $available->getRange(0, 10));
@@ -46,6 +47,7 @@
 			$this->assertLoggedIn();
 			
 			$status = $this->args('status');
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -83,6 +85,7 @@
 		public function view()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -127,6 +130,7 @@
 		public function edit()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -200,6 +204,7 @@
 		public function delete()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -239,6 +244,7 @@
 		public function cancel()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -278,6 +284,7 @@
 		public function qa()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -316,6 +323,7 @@
 		public function qa_pass()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -358,6 +366,7 @@
 		public function qa_fail()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 
 			try
 			{
@@ -487,6 +496,8 @@
 		
 		public function file()
 		{
+			$this->set('area', 'jobs');
+
 			try
 			{
 				//how do we find them?
@@ -575,6 +586,7 @@
 		public function create()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 			
 			if ($this->args('step2'))
 				$this->setTitle('Step 2 of 2: Create Job');
@@ -748,6 +760,7 @@
 		public function file_jobs()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
 			
 			try
 			{

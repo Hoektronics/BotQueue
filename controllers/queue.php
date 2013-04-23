@@ -23,7 +23,9 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle(User::$me->getName() . "'s Queues");
-			$collection = User::$me->getQueues();
+			$this->set('area', 'queues');
+	    
+	    $collection = User::$me->getQueues();
       $per_page = 20;
       $page = $collection->putWithinBounds($this->args('page'), $per_page);
     
@@ -38,6 +40,7 @@
 			$this->assertLoggedIn();
 			
 			$this->setTitle('Create a New Queue');
+			$this->set('area', 'queues');
 			
 			if ($this->args('submit'))
 			{
@@ -74,6 +77,7 @@
 		public function view()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'queues');
 
 			try
 			{
@@ -175,6 +179,7 @@
 		public function listjobs()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'queues');
 			
 			try
 			{
@@ -240,6 +245,7 @@
 		public function edit()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'queues');
 
 			try
 			{
@@ -297,6 +303,7 @@
 		public function delete()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'queues');
 
 			try
 			{
@@ -333,6 +340,7 @@
 		public function flush()
 		{
 			$this->assertLoggedIn();
+			$this->set('area', 'queues');
 
 			try
 			{
