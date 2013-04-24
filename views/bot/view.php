@@ -10,7 +10,7 @@
 		    <h3>Latest Image - <span class="muted"><?=Utility::getTimeAgo($webcam->get('add_date'))?></span></h3>
 		    <img src="<?=$webcam->getRealUrl()?>">
 		  <? else: ?>
-        <img src="/img/kitten-640x480.jpg">
+        <img src="/img/colorbars.gif">
 		  <? endif ?>
 		</div>
 		<div class="span6">

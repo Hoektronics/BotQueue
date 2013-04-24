@@ -19,7 +19,7 @@
         <? if ($webcam->isHydrated()): ?>
           <img class="webcam" src="<?=$webcam->getRealUrl()?>?t=<?=strtotime($webcam->get('add_date'))?>">
         <? else: ?>
-          <img class="webcam" src="/img/kitten-640x480.jpg">
+          <img class="webcam" src="/img/colorbars.gif">
         <? endif ?>
       </a>
 
