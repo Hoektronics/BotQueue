@@ -29,6 +29,3 @@ source $HOME/.profile
 #authorize our app now.
 clear
 screen -dR botqueue bumblebee
-
-#reboot to make everything cool
-sudo reboot
