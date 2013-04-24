@@ -1,0 +1,6 @@
+1. Make a bumblebee release - bumblebee/make_release.sh x.y
+2. Upload bumblebee release to download server.
+3. Make a git tag and push it - git tag -a x.y -m "tagging vX.Y release" && git push --tags
+4. Roll out BotQueue.com production code.
+5. Post new release blog on www.hoektronics.com
+6. Tweet and email about new release
