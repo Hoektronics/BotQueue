@@ -9,7 +9,7 @@
 		  <? if ($webcam->isHydrated()): ?>
 		    <img src="<?=$webcam->getRealUrl()?>">
 		  <? else: ?>
-        <img src="/img/kitten-640x480.jpg">
+        <img src="/img/colorbars.gif">
 		  <? endif ?>
 		</div>
     <div class="span6">
