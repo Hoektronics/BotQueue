@@ -39,6 +39,17 @@
 		  You can exit it by hitting <strong>q</strong> or <strong>Ctrl+c</strong>.  Re-start it by running <strong>python bumblebee.py</strong>.  This is required because it only pulls down the list of bots from the botqueue.com website once, during the startup of the program.
 	  </p>
 	  
+	  <h5>Webcam Support</h5>
+	  <p>
+	    Bumblebee supports USB webcams, and its easy to configure bumblebee to find the right camera.
+	  </p>
+	  <p>
+	    To find your camera location in OSX, you can open photobooth and copy the string from the Camera dropdown menu, or you can open a terminal, navigate to the bumblebee directory and run <b>./imagesnap -l</b> which will give you a list of available cameras.<br/>
+	  </p>
+	  <p>
+	    On Linux, you'll need to install the <b>fswebcam</b> program.  To get a list of your webcams, open a terminal and run <b>ls /dev/video*</b>.  Enter the webcam name in the configuration file as shown below.  If no webcam option is listed, bumblebee will not attempt to take or upload a photo.
+	  </p>
+	  
 		<h5>A typical RepRap configuration with 2 machines might look like this:</h5>
     <div class="alert alert-info">
       <strong>Please note:</strong> the worker name must exactly match the name of the bot you registered on the website, or the client software will not attempt to control the machine.  The reason for this is that you can use multiple machines to control different bots (for example you have 10 machines in one room, and 10 machines in another room, each with their own control computer)
@@ -56,13 +67,19 @@
 		"name": "MendelMax",
 		"driver" : "printcore",
 		"port" : "/dev/tty.usbmodem123",
-		"baud" : "115200"
+		"baud" : "115200",
+		"webcam": {
+      "device": "/dev/video0"
+    }
 	},
 	{
 		"name": "Prusa",
 		"driver" : "printcore",
 		"port" : "/dev/ttyACM0",
-		"baud" : "115200"
+		"baud" : "115200",
+		"webcam": {
+      "device": "/dev/video1"
+    }
 	}
  ]
 }</pre>
