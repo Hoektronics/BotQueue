@@ -1,0 +1,34 @@
+v0.3 - April 24, 2013
+
+* WEB - add ability to make comments on individual jobs
+* WEB - fixed a major security flaw that allowed people to see your jobs
+* WEB - add organization to job view page - tabs?
+* WEB - add canceled status to jobs & remove all calls to delete()
+* WEB - Allow pausing / resuming through website
+* WEB - create job time logging table to better track time spent in jobs (and be able to handle errors, dropped jobs, and canceled jobs)
+* WEB - create script to populate job_clock with times from existing jobs.
+* WEB - create job_clock entry on start of job.
+* WEB - close job clock entry on job drop
+* WEB - close job clock entry on job finish
+* WEB - update main stats page to reflect job_clock times
+* WEB - update bot stats page to reflect job_clock times
+* WEB - update queue stats page to reflect job_clock times
+* WEB - added leaderboard to stats page.
+* WEB - update time displays to include more digits (eg: 1.2 hours vs 1 hour)
+* WEB - add source info for jobs added by url.
+* WEB - added webcam display to dashboard, bot, and job.
+* WEB - modify dashboard ajax to preload images and then fade-in new content
+* WEB - add ajax selector for 4 different views: details, big thumbs, med thumbs, small thumbs
+* WEB - add ajax checkbox for turning on/off auto-update.
+* WEB - add ajax call to save dashboard style stuff
+* WEB - fix top navigation to show what page/area you are at
+* WEB - update help instructions to add webcam config info
+* WEB - get real default image for bots w/o webcam
+
+* BUMBLEBEE - allow pausing and unpausing based on api status change.
+* BUMBLEBEE - added webcam uploading during idle and printing periods
+* BUMBLEBEE - fix race condition when workerbee is changing the status of the bot
+* BUMBLEBEE - add watermark to each image
+* BUMBLEBEE - resize each image to 640x480
+* BUMBLEBEE - save each image at 60% quality (jpeg)
+* BUMBLEBEE - compile slic3r and update install script
