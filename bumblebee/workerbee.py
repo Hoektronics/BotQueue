@@ -293,6 +293,10 @@ class WorkerBee():
       if self.running and self.data['status'] == 'working':
         self.info("Print finished.")
   
+        #send up a final 100% info.
+        self.data['job']['progress'] = 100.0
+        self.updateHomeBase(latest, temps)
+  
         #finish the job online, and mark as completed.
         result = self.api.completeJob(self.data['job']['id'])
         if result['status'] == 'success':
@@ -416,9 +420,13 @@ class WorkerBee():
             self.config['webcam']['device']
           )
         elif myos == "raspberrypi" or os == "linux":
+          if self.data['status'] == 'working':
+            watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
+          else:
+            watermark = "%s :: BotQueue.com" % self.config['name']
           command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r 640x480 --title '%s' webcam.jpg" % (
             self.config['webcam']['device'],
-            "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
+            watermark
           )
         else:
           raise Exception("Webcams are not supported on your OS.")
