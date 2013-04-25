@@ -204,6 +204,15 @@
           $job->save();         
         }
       }
+      
+      $log = new JobClockEntry();
+      $log->set('job_id', $job->id);
+      $log->set('user_id', User::$me->id);
+      $log->set('bot_id', $this->id);
+      $log->set('queue_id', $job->get('queue_id'));
+      $log->set('start_date', date("Y-m-d H:i:s"));
+      $log->set('status', 'working');
+      $log->save();
 			
 			$this->set('job_id', $job->id);
 			$this->set('status', 'working');
@@ -243,6 +252,11 @@
       $job->set('progress', 0);
 			$job->set('temperature_data', '');
 			$job->save();
+
+			$log = $job->getLatestTimeLog();
+      $log->set('end_date', date("Y-m-d H:i:s"));
+      $log->set('status', 'dropped');
+      $log->save();
 			
 			$this->set('job_id', 0);
 			$this->set('status', 'idle');
@@ -280,6 +294,11 @@
 			$job->set('progress', 100);
 			$job->set('finished_time', date('Y-m-d H:i:s'));
 			$job->save();
+			
+			$log = $job->getLatestTimeLog();
+      $log->set('end_date', date("Y-m-d H:i:s"));
+      $log->set('status', 'complete');
+      $log->save();
 			
 			$this->set('status', 'waiting');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
@@ -326,8 +345,11 @@
 			$stats = db()->getArray($sql);
 			
 			$data['total_waittime'] = (int)$stats[0]['wait'];
-			$data['total_runtime'] = (int)$stats[0]['runtime'];
 			$data['total_time'] = (int)$stats[0]['total'];
+			
+			//pull in our runtime stats
+      $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND bot_id = " . db()->escape($this->id);
+			$data['total_runtime'] = (int)db()->getValue($sql);
 			
 			if ($data['total'])
 			{

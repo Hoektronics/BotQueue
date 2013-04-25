@@ -209,7 +209,7 @@
 			$data['total_time'] = (int)$stats[0]['total'];
 
       //pull in our runtime stats
-      $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE queue_id = " . db()->escape($this->id);
+      $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND queue_id = " . db()->escape($this->id);
 			$data['total_runtime'] = (int)db()->getValue($sql);
 
 			if ($data['total'] > 0)
