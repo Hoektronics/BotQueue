@@ -19,7 +19,7 @@
     <!-- Le styles -->
     <link href="/bootstrap/2.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="/bootstrap/2.3.0/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="/css/botqueue.css" rel="stylesheet">
+    <link href="/css/botqueue.css?version=3" rel="stylesheet">
 
     <!-- Le jquery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -136,11 +136,9 @@
 <!-- Content -->
 <section id="content">
   
-  <!--
   <div class="alert alert-info">
-    <strong>Welcome to BotQueue v2.0!</strong> Please check out the <a href="http://www.hoektronics.com/2013/02/16/botqueue-v2-slic3r-integration/">blog entry about the new release</a> for more details.  TL;DR: Slic3r integration.
+    <strong>Welcome to BotQueue v0.3!</strong> Please check out the <a href="http://www.hoektronics.com/2013/04/24/botqueue-v0-3-webcams-pausing-and-more/">blog entry about the new release</a> for more details.  TL;DR: webcams!!!
   </div>
-  -->
   
 	<? if ($title): ?>
 	  <div class="page-header">
