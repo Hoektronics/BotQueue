@@ -419,7 +419,7 @@ class WorkerBee():
           command = "./imagesnap -q -d '%s' webcam.jpg && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% webcam.jpg 2>/dev/null" % (
             self.config['webcam']['device']
           )
-        elif myos == "raspberrypi" or os == "linux":
+        elif myos == "raspberrypi" or myos == "linux":
           if self.data['status'] == 'working':
             watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
           else:

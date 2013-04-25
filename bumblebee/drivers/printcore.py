@@ -163,8 +163,8 @@ class printcore():
                   self.temperatures['extruder'] = matches[0]
                 matches = re.findall('T:(\d+\.\d+) /(\d+\.\d+)', line)
                 if matches:
-                  self.temperatures['extruder'] = matches[0]
-                  self.temperatures['extruder_target'] = matches[1]
+                  self.temperatures['extruder'] = matches[0][0]
+                  self.temperatures['extruder_target'] = matches[0][1]
 
                 #look for our bed temp strings
                 matches = re.findall('B:(\d+\.\d+)', line)
@@ -172,8 +172,8 @@ class printcore():
                   self.temperatures['bed'] = matches[0]
                 matches = re.findall('B:(\d+\.\d+) /(\d+\.\d+)', line)
                 if matches:
-                  self.temperatures['bed'] = matches[0]
-                  self.temperatures['bed_target'] = matches[1]
+                  self.temperatures['bed'] = matches[0][0]
+                  self.temperatures['bed_target'] = matches[0][1]
                   
                 #look for rpm strings
                 matches = re.findall('RPM:(\d+\.\d+)', line)
@@ -181,8 +181,8 @@ class printcore():
                   self.temperatures['rpm'] = matches[0]
                 matches = re.findall('RPM:(\d+\.\d+) /(\d+\.\d+)', line)
                 if matches:
-                  self.temperatures['rpm'] = matches[0]
-                  self.temperatures['rpm_target'] = matches[1]
+                  self.temperatures['rpm'] = matches[0][0]
+                  self.temperatures['rpm_target'] = matches[0][1]
                 
             if(line.startswith('DEBUG_')):
                 continue
