@@ -56,7 +56,7 @@
         <? foreach ($user_leaderboard AS $row): ?>
           <? $rank++ ?>
           <? $user = new User($row['user_id']) ?>
-          <tr>
+          <tr <?= ($user->id == User::$me->id) ? 'class="success"' : ''?>>
             <td><?=$rank?></td>
             <td><?=$user->getName()?></td>
             <td><?=$row['total']?></td>
@@ -78,7 +78,7 @@
         <? foreach ($bot_leaderboard AS $row): ?>
           <? $rank++ ?>
           <? $bot = new Bot($row['bot_id']) ?>
-          <tr>
+          <tr <?= ($bot->get('user_id') == User::$me->id) ? 'class="success"' : ''?>>
             <td><?=$rank?></td>
             <td><?=$bot->getName()?></td>
             <td><?=$bot->getUser()->getName()?></td>

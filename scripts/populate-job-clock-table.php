@@ -21,6 +21,12 @@
       $log->set('status', 'complete');
       $log->save();
     }
+    else if ($row['status'] == 'taken' || $row['status'] == 'slicing')
+    {
+      $log->set('start_date', $row['taken_time']);
+      $log->set('status', 'working');
+      $log->save();
+    }
   }
   
   //finished!!!!
