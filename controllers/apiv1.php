@@ -533,7 +533,10 @@
 			
       //update our bot info
 			$bot->set('last_seen', date("Y-m-d H:i:s"));
-			$bot->save();
+			$bot->set('remote_ip', $_SERVER['REMOTE_ADDR']);
+			if ($this->args('_local_ip'))
+			  $bot->set('local_ip', $this->args('_local_ip'));
+      $bot->save();
 			
 			return $job->getAPIData();
 		}
@@ -662,6 +665,9 @@
 			
       //update our bot info
 			$bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->set('remote_ip', $_SERVER['REMOTE_ADDR']);
+			if ($this->args('_local_ip'))
+			  $bot->set('local_ip', $this->args('_local_ip'));
 			$bot->save();
 			
 			//what kind of data to send back.

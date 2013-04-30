@@ -42,6 +42,16 @@
 			$this->set('failure_count', $failure->count());
 		}
 		
+		public function pretty()
+		{
+		  $this->assertAdmin();
+		  
+		  //$available = User::$me->getJobs('complete', 'finished_time', 'DESC');
+      $sql = "SELECT id, webcam_image_id FROM jobs WHERE webcam_image_id != 0 AND status = 'complete' ORDER BY finished_time DESC";
+      $available = new Collection($sql, array('Job' => 'id', 'S3File' => 'webcam_image_id'));
+			$this->set('jobs', $available->getRange(0, 24));
+		}
+		
 		public function listjobs()
 		{
 			$this->assertLoggedIn();
