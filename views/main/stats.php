@@ -44,47 +44,116 @@
 
 <div class="row">
   <div class="span6">
-    <h1>User Leaderboard</h1>
-    <table class="table table-striped table-bordered table-condensed">
-    	<tbody>
-        <tr>
-          <th style="width: 50px">Rank</th>
-          <th>User</th>
-          <th>Hours</th>
-        </tr>
-        <? $rank=0 ?>
-        <? foreach ($user_leaderboard AS $row): ?>
-          <? $rank++ ?>
-          <? $user = new User($row['user_id']) ?>
-          <tr <?= ($user->id == User::$me->id) ? 'class="success"' : ''?>>
-            <td><?=$rank?></td>
-            <td><?=$user->getName()?></td>
-            <td><?=$row['total']?></td>
-        <? endforeach ?>
-      </tbody>
-    </table>
+    <div class="tabbable"> <!-- Only required for left/right tabs -->
+      <div style="position: relative;">
+        <h1 class="pull-left">User Leaderboard</h1>
+        <ul class="nav nav-pills pull-right" style="margin-bottom: 0px; position: absolute; right: 0px; bottom: 12px;">
+          <li class="active"><a href="#user_alltime" data-toggle="tab">All Time</a></li>
+          <li><a href="#user_lastmonth" data-toggle="tab">Last Month</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane" id="user_lastmonth">
+          <table class="table table-striped table-bordered table-condensed">
+          	<tbody>
+              <tr>
+                <th style="width: 50px">Rank</th>
+                <th>User</th>
+                <th>Hours</th>
+              </tr>
+              <? $rank=0 ?>
+              <? foreach ($user_leaderboard_30 AS $row): ?>
+                <? $rank++ ?>
+                <? $user = new User($row['user_id']) ?>
+                <tr <?= ($user->id == User::$me->id) ? 'class="success"' : ''?>>
+                  <td><?=$rank?></td>
+                  <td><?=$user->getName()?></td>
+                  <td><?=$row['total']?></td>
+              <? endforeach ?>
+            </tbody>
+          </table>
+        </div>
+        <div class="tab-pane active" id="user_alltime">
+          <table class="table table-striped table-bordered table-condensed">
+          	<tbody>
+              <tr>
+                <th style="width: 50px">Rank</th>
+                <th>User</th>
+                <th>Hours</th>
+              </tr>
+              <? $rank=0 ?>
+              <? foreach ($user_leaderboard AS $row): ?>
+                <? $rank++ ?>
+                <? $user = new User($row['user_id']) ?>
+                <tr <?= ($user->id == User::$me->id) ? 'class="success"' : ''?>>
+                  <td><?=$rank?></td>
+                  <td><?=$user->getName()?></td>
+                  <td><?=$row['total']?></td>
+              <? endforeach ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
+  
+  
   <div class="span6">
-    <h1>Bot Leaderboard</h1>
-    <table class="table table-striped table-bordered table-condensed">
-    	<tbody>
-        <tr>
-          <th style="width: 50px">Rank</th>
-          <th>Bot</th>
-          <th>Owner</th>
-          <th>Hours</th>
-        </tr>
-        <? $rank=0 ?>
-        <? foreach ($bot_leaderboard AS $row): ?>
-          <? $rank++ ?>
-          <? $bot = new Bot($row['bot_id']) ?>
-          <tr <?= ($bot->get('user_id') == User::$me->id) ? 'class="success"' : ''?>>
-            <td><?=$rank?></td>
-            <td><?=$bot->getName()?></td>
-            <td><?=$bot->getUser()->getName()?></td>
-            <td><?=$row['total']?></td>
-        <? endforeach ?>
-      </tbody>
-    </table>
+    <div class="tabbable"> <!-- Only required for left/right tabs -->
+      <div style="position: relative;">
+        <h1 class="pull-left">Bot Leaderboard</h1>
+        <ul class="nav nav-pills pull-right" style="margin-bottom: 0px; position: absolute; right: 0px; bottom: 12px;">
+          <li class="active"><a href="#bot_alltime" data-toggle="tab">All Time</a></li>
+          <li><a href="#bot_lastmonth" data-toggle="tab">Last Month</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane" id="bot_lastmonth">
+          <table class="table table-striped table-bordered table-condensed">
+          	<tbody>
+              <tr>
+                <th style="width: 50px">Rank</th>
+                <th>Bot</th>
+                <th>Owner</th>
+                <th>Hours</th>
+              </tr>
+              <? $rank=0 ?>
+              <? foreach ($bot_leaderboard_30 AS $row): ?>
+                <? $rank++ ?>
+                <? $bot = new Bot($row['bot_id']) ?>
+                <tr <?= ($bot->get('user_id') == User::$me->id) ? 'class="success"' : ''?>>
+                  <td><?=$rank?></td>
+                  <td><?=$bot->getName()?></td>
+                  <td><?=$bot->getUser()->getName()?></td>
+                  <td><?=$row['total']?></td>
+              <? endforeach ?>
+            </tbody>
+          </table>
+        </div>
+        <div class="tab-pane active" id="bot_alltime">
+          <table class="table table-striped table-bordered table-condensed">
+          	<tbody>
+              <tr>
+                <th style="width: 50px">Rank</th>
+                <th>Bot</th>
+                <th>Owner</th>
+                <th>Hours</th>
+              </tr>
+              <? $rank=0 ?>
+              <? foreach ($bot_leaderboard AS $row): ?>
+                <? $rank++ ?>
+                <? $bot = new Bot($row['bot_id']) ?>
+                <tr <?= ($bot->get('user_id') == User::$me->id) ? 'class="success"' : ''?>>
+                  <td><?=$rank?></td>
+                  <td><?=$bot->getName()?></td>
+                  <td><?=$bot->getUser()->getName()?></td>
+                  <td><?=$row['total']?></td>
+              <? endforeach ?>
+            </tbody>
+          </table>        </div>
+      </div>
+    </div>
   </div>
 </div>
