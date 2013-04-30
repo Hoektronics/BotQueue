@@ -3,19 +3,23 @@ v0.4 Release - Ongoing
 * WEB - multi-job prints (eg: .zip file w/ manifest)
   * pull in all files from thingiverse.com/thing:####
 
+* WEB - record client name and version when updating bot status.
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.
-* BUMBLEBEE - report local IP address
 * BUMBLEBEE - add contrast and brightness configuration settings to webcam
-* WEB - record local and remote IP when getting bot updates
-* WEB - show IP addresses on bot view page
 
 * WEB - Single unified queue view w/ auto-update
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
-
-* WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
-
 * WEB - add diff of slicer configs to slicejob page (current vs snapshot)
+
+------------------------------------------------------------------------------------
+
+v0.4 - CHANGELOG
+
+* BUMBLEBEE - report local IP address
+* WEB - record local and remote IP when getting bot updates
+* WEB - show IP addresses on bot view page
+* WEB - added 30 day list to leaderboards
 
 ------------------------------------------------------------------------------------
 
@@ -40,6 +44,8 @@ WEBCAM STUFF
 * ffmpeg timelapse from images: http://tatica.org/en/2013/02/15/timelapse/
 * more timelapse commands: http://poohbot.com/2009/09/25/ffmpeg-for-time-lapse-sets-of-images-and-even-archiving/
 * this will likely require a background worker on amazon to generate the videos
+
+* WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
 
 Long term wants:
 
