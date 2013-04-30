@@ -300,6 +300,14 @@
       $log->set('status', 'complete');
       $log->save();
 			
+			//copy our webcam image so that we stop overwriting the last image of the job.
+			$webcam = $this->getWebcamImage();
+			if ($webcam->isHydrated())
+			{
+			  $copy = $webcam->copy();
+			  $this->set('webcam_image_id', $copy->id);
+			}
+			
 			$this->set('status', 'waiting');
 			$this->set('last_seen', date("Y-m-d H:i:s"));
 			$this->save();

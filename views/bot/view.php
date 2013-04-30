@@ -21,6 +21,18 @@
 						<th>Status:</th>
 						<td><?=$bot->getStatusHTML() ?></td>
 					</tr>
+					<? if ($bot->get('remote_ip')): ?>
+  					<tr>
+  						<th>Remote IP:</th>
+  						<td><?=$bot->get('remote_ip') ?></td>
+  					</tr>
+  				<? endif ?>
+					<? if ($bot->get('local_ip')): ?>
+  					<tr>
+  						<th>Local IP:</th>
+  						<td><?=$bot->get('local_ip') ?></td>
+  					</tr>
+  				<? endif ?>
 					<tr>
 						<th>Current Job:</th>
 						<td>

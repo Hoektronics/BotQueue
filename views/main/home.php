@@ -1,7 +1,10 @@
 <? if (User::isLoggedIn()): ?>
   <? $style = User::$me->get('dashboard_style') ?>
   <div id="DashtronController">
-    <h3 style="display: inline">Live Dashboard</h3>
+    <h3 class="pull-left" style="margin: 0px;">Live Dashboard
+      <a class="btn btn-primary" href="/upload">Create Job</a>
+      <a class="btn btn-primary" href="/bot/register">Register Bot</a>
+    </h3>
     
     <form class="form-inline pull-right muted">
       <input type="checkbox" id="autoload_dashboard" value="1" checked="1">

@@ -136,9 +136,11 @@
 <!-- Content -->
 <section id="content">
   
+  <!--
   <div class="alert alert-info">
     <strong>Welcome to BotQueue v0.3!</strong> Please check out the <a href="http://www.hoektronics.com/2013/04/24/botqueue-v0-3-webcams-pausing-and-more/">blog entry about the new release</a> for more details.  TL;DR: webcams!!!
   </div>
+  -->
   
 	<? if ($title): ?>
 	  <div class="page-header">

@@ -11,10 +11,12 @@ v0.4 Release - Ongoing
 * WEB - ability to assign each bot to an app.
 * WEB - online editing of bot configs.
 
+* BUMBLEBEE - headless app authentication support - based on IP
+  * WEB - show all apps requesting access from your current IP.
+  * WEB - if you're on the same IP, high likelihood its your bot
+  * WEB - remote address is pretty tough to fake too.
+* BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
 * BUMBLEBEE - pull list of bots + config from web directly
-* BUMBLEBEE - headless app authentication support
-* BUMBLEBEE - better interactivity from main menu for controlling bots / stopping jobs / etc.
-* BUMBLEBEE - download slicing applications from the web instead of bundling
 
 WEBCAM STUFF
 * automatically create a timelapse at the end of a successful print - watch your object grow
@@ -30,6 +32,7 @@ Long term wants:
 
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.
+* BUMBLEBEE - download slicing applications from the web instead of bundling
 
 * WEB - filament spool info (it keeps track of how big each machine spool is/when a new one is installed and appoximates how much is left based on volume info in gcode)
 * WEB / BUMBLEBEE - a way to pre-slice jobs AKA "on-deck" functionality
