@@ -601,26 +601,28 @@
           throw new Exception("The file is not a valid image.");
         
         //okay, we're good.. do it.
-        if ($job->isHydrated())
-          $s3 = $job->getWebcamImage();
-        else
-          $s3 = $bot->getWebcamImage();
-        
-        //new or existing file?
-        if ($s3->isHydrated())
-        {
-          //overwrite the existing file.
-          $s3->uploadFile($file['tmp_name'], $s3->get('path'));
-        }
-        else
-        {
-          //create a new file.
-          $s3->set('user_id', User::$me->id);
-          $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+        $s3 = new S3File();
+        $s3->set('user_id', User::$me->id);
+        $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
 
-          //if we have a job, save our new image.
-          if ($job->isHydrated())
-            $job->set('webcam_image_id', $s3->id);
+        //if we have a job, save our new image.
+        if ($job->isHydrated())
+        {
+          $job->set('webcam_image_id', $s3->id);
+
+          $ids = json::decode($job->get('webcam_images'));
+          if ($ids == NULL)
+          {
+            $ids = array();
+            $ids[time()] = $s3->id;
+          }
+          else
+          {
+            $index = time();
+            $ids->$index = $s3->id;
+          }
+          
+          $job->set('webcam_images', json::encode($ids));
         }
 
         //always pull the latest image in for the bot.

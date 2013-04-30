@@ -5,7 +5,7 @@
 		<? if ($title): ?>
 			<title><?=strip_tags($title)?> - <?=RR_PROJECT_NAME?></title>
 		<? else: ?>
-			<title><?=RR_PROJECT_NAME?> - Internets + Digital Fabrication = Win</title>
+			<title><?=RR_PROJECT_NAME?>: Internets + Digital Fabrication = Win</title>
 		<? endif ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
