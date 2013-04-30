@@ -1,10 +1,23 @@
 v0.4 Release - Ongoing
 
+* WEB - multi-job prints (eg: .zip file w/ manifest)
+  * pull in all files from thingiverse.com/thing:####
+
+* WEB - when downloading file to slice, status should be "downloading"
+* BUMBLEBEE - send status updates during download.
+* BUMBLEBEE - report local IP address
+* BUMBLEBEE - add contrast and brightness configuration settings to webcam
+* WEB - record local and remote IP when getting bot updates
+* WEB - show IP addresses on bot view page
+
 * WEB - Single unified queue view w/ auto-update
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
 
-* WEB - multi-job prints (eg: .zip file w/ manifest)
-  * pull in all files from thingiverse.com/thing:####
+* WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
+
+* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
+
+------------------------------------------------------------------------------------
 
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.
@@ -24,19 +37,18 @@ WEBCAM STUFF
 * keep all images from webcam on error jobs - forensic viewing of failed jobs.
   * automatically delete after 1 day.
 * synchronize temp readings + picture - then synchronize images w/ temperatures on bot view page
-* WEB - change main homepage to show live shots from currently printing public bots.
-
-------------------------------------------------------------------------------------
+* ffmpeg + x264 install: http://ffmpeg.org/trac/ffmpeg/wiki/UbuntuCompilationGuide
+* potential video player: http://videojs.com/
+* ffmpeg timelapse from images: http://tatica.org/en/2013/02/15/timelapse/
+* more timelapse commands: http://poohbot.com/2009/09/25/ffmpeg-for-time-lapse-sets-of-images-and-even-archiving/
+* this will likely require a background worker on amazon to generate the videos
 
 Long term wants:
 
-* WEB - when downloading file to slice, status should be "downloading"
-* BUMBLEBEE - send status updates during download.
-* BUMBLEBEE - download slicing applications from the web instead of bundling
-
 * WEB - filament spool info (it keeps track of how big each machine spool is/when a new one is installed and appoximates how much is left based on volume info in gcode)
+  * PREREQUISITE: worker bots to parse STL files for stats like volume, bounds, etc.
+  
 * WEB / BUMBLEBEE - a way to pre-slice jobs AKA "on-deck" functionality
-
 
 * API - Websockets server
   * define events to pass to clients
@@ -45,7 +57,6 @@ Long term wants:
   
 * CLIENT - support for websockets for realtime comms
 
-* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
 
 * add filament_volume field to slicejob or job
 

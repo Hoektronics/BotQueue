@@ -18,8 +18,9 @@ class NetworkError(Exception):
 
 class BotQueueAPI():
   
-  version = '2.0'
+  version = '0.4'
   name = 'Bumblebee'
+  localip = None
   
   def __init__(self):
     self.log = logging.getLogger('botqueue')
@@ -32,6 +33,9 @@ class BotQueueAPI():
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']
     self.endpoint_url = self.config['api']['endpoint_url']
+    
+    # this is helpful for raspberry pi and future websockets stuff
+    self.localip = self.getLocalIPAddress()
     
     #pull in our user credentials, or trigger the auth process if they aren't found.
     self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
@@ -53,6 +57,8 @@ class BotQueueAPI():
     parameters['_client_version'] = self.version
     parameters['_client_name'] = self.name
     parameters['_uid'] = self.config['uid']
+    if self.localip:
+      parameters['_local_ip'] = self.localip
     parameters['api_call'] = call
     parameters['api_output'] = 'json'   
   
@@ -230,3 +236,10 @@ class BotQueueAPI():
     
   def updateSliceJob(self, job_id=0, status="", output="", errors="", filename=""):
     return self.apiCall('updateslicejob', {'job_id':job_id, 'status':status, 'output':output, 'errors':errors}, filepath=filename)
+
+  def getLocalIPAddress(self):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8",80))
+    ip = s.getsockname()[0]
+    s.close()
+    return ip

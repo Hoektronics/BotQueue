@@ -318,23 +318,26 @@ class printcore():
         #callback for command sent
         
     def _print(self):
-        #callback for printing started
-        if self.startcb is not None:
-            try:
-                self.startcb()
-            except:
-                pass
-        while(self.printing and self.printer and self.online):
-            while self.paused:
-              time.sleep(0.1)
-            self._sendnext()
-        self.sent=[]
-        if self.endcb is not None:
-            try:
-                self.endcb()
-            except:
-                pass
-        #callback for printing done
+        try:
+            #callback for printing started
+            if self.startcb is not None:
+                try:
+                    self.startcb()
+                except:
+                    pass
+            while(self.printing and self.printer and self.online):
+                while self.paused:
+                  time.sleep(0.1)
+                self._sendnext()
+            self.sent=[]
+            if self.endcb is not None:
+                try:
+                    self.endcb()
+                except:
+                    pass
+            #callback for printing done
+        except Exception as ex:
+            self.log.exception(ex)
         
     def _sendnext(self):
         #are we connected?
