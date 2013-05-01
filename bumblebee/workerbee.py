@@ -16,7 +16,7 @@ class WorkerBee():
   
   data = {}
   
-  def __init__(self, data, pipe):
+  def __init__(self, data, mosi_pipe, miso_pipe):
 
     #find our local config info.
     self.global_config = hive.config.get()
@@ -25,7 +25,8 @@ class WorkerBee():
         self.config = row
     
     #communications with our mother bee!
-    self.pipe = pipe
+    self.mosi_pipe = mosi_pipe
+    self.miso_pipe = miso_pipe
 
     #we need logging!
     self.log = logging.getLogger('botqueue')
@@ -351,13 +352,13 @@ class WorkerBee():
     self.checkMessages()
     self.debug("Sending message")
     msg = Message(name, data)
-    self.pipe.send(msg)
+    self.miso_pipe.send(msg)
     
   #loop through our workers and check them all for messages
   def checkMessages(self):
     self.debug("Checking messages.")
-    while self.pipe.poll():
-      message = self.pipe.recv()
+    while self.mosi_pipe.poll():
+      message = self.mosi_pipe.recv()
       self.handleMessage(message)
 
   #these are the messages we know about.
