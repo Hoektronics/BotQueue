@@ -99,6 +99,12 @@
     						<td><?=$job->getEstimatedText()?></td>
     					</tr>
     				<? endif ?>
+    				<? if ($parent_file->isHydrated()): ?>
+    					<tr>
+    						<th>Parent File:</th>
+  						  <td><?=$parent_file->getLink()?></td>
+    					</tr>
+    				<? endif ?>
   					<tr>
   						<th>Source File:</th>
     					<? if ($source_file->isHydrated()): ?>			

@@ -1,30 +1,14 @@
-v0.4 Release - Ongoing
+v0.4 Release - Online Bot Config!
 
-* WEB - add support for .zip files to file view page
-* WEB - add support for showing parent files to job page
 * WEB - pull in all files from thingiverse.com/thing:#### style urls
 
 * WEB - record client name and version when updating bot status.
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.
-* BUMBLEBEE - add contrast and brightness configuration settings to webcam
 
 * WEB - Single unified queue view w/ auto-update
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
 * WEB - add diff of slicer configs to slicejob page (current vs snapshot)
-
-------------------------------------------------------------------------------------
-
-v0.4 - CHANGELOG
-
-* BUMBLEBEE - report local IP address
-* WEB - record local and remote IP when getting bot updates
-* WEB - show IP addresses on bot view page
-* WEB - added 30 day list to leaderboards
-* WEB - create multi-job prints from an uploaded .zip file
-
-
-------------------------------------------------------------------------------------
 
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.
@@ -37,6 +21,30 @@ v0.4 - CHANGELOG
   * WEB - remote address is pretty tough to fake too.
 * BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
 * BUMBLEBEE - pull list of bots + config from web directly
+* BUMBLEBEE - add contrast and brightness configuration settings to webcam
+
+* BUMBLEBEE - new machine discovery
+  * python - how to list serial ports?
+    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
+      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
+
+------------------------------------------------------------------------------------
+
+v0.4 - CHANGELOG
+
+* BUMBLEBEE - report local IP address
+* WEB - record local and remote IP when getting bot updates
+* WEB - show IP addresses on bot view page
+* WEB - added 30 day list to leaderboards
+* WEB - create multi-job prints from an uploaded .zip file
+* WEB - add support for .zip files to file view page
+* WEB - add support for showing parent files to job page
+
+------------------------------------------------------------------------------------
+
+v0.5 - Timelapses + On-Deck Jobs
 
 WEBCAM STUFF
 * automatically create a timelapse at the end of a successful print - watch your object grow
@@ -50,22 +58,33 @@ WEBCAM STUFF
 * more timelapse commands: http://poohbot.com/2009/09/25/ffmpeg-for-time-lapse-sets-of-images-and-even-archiving/
 * this will likely require a background worker on amazon to generate the videos
 
-* WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
+* Create on-deck system to allow jobs to be pre-sliced by either the pi or by workers in the cloud
+* Modify bumblebee to download on-deck jobs for quick printing after last job has been completed.
 
-Long term wants:
+------------------------------------------------------------------------------------
 
-* WEB - filament spool info (it keeps track of how big each machine spool is/when a new one is installed and appoximates how much is left based on volume info in gcode)
-  * PREREQUISITE: worker bots to parse STL files for stats like volume, bounds, etc.
-  
-* WEB / BUMBLEBEE - a way to pre-slice jobs AKA "on-deck" functionality
+v0.6 - Websockets
 
 * API - Websockets server
   * define events to pass to clients
   * subscribe to bots, jobs, or user?
   * use autobahn or tornado for python side.
   
-* CLIENT - support for websockets for realtime comms
+* CLIENT - support for websockets for realtime comms w/ server
 
+* WEB - websocket client w/ transparent high bandwidth connection to local machines.
+* WEB - control panel for controlling various machine parameters
+
+------------------------------------------------------------------------------------
+
+Long term wants:
+
+* WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
+
+* WEB - filament spool info (it keeps track of how big each machine spool is/when a new one is installed and appoximates how much is left based on volume info in gcode)
+  * PREREQUISITE: worker bots to parse STL files for stats like volume, bounds, etc.
+  
+* WEB / BUMBLEBEE - a way to pre-slice jobs AKA "on-deck" functionality
 
 * add filament_volume field to slicejob or job
 
@@ -85,12 +104,6 @@ Long term wants:
 * WEB - Public queue support
 * WEB - full page statistics for bot / queue with graphs
 
-* BUMBLEBEE - new machine discovery
-  * python - how to list serial ports?
-    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
-      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
 * BUMBLEBEE - s3g python library for MakerBot machines
 * BUMBLEBEE - GUI App?
 	High-level views:

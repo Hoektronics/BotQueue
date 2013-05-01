@@ -291,6 +291,11 @@
 		  return new Collection($sql, array('Job' => 'id'));
 		}
 		
+		public function getParent()
+		{
+		  return new S3File($this->get('parent_id'));
+		}
+		
 		public function getChildren()
 		{
 		  $sql = "
