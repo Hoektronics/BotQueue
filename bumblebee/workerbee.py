@@ -354,6 +354,7 @@ class WorkerBee():
     
   #loop through our workers and check them all for messages
   def checkMessages(self):
+    self.debug("Checking messages.")
     while self.pipe.poll():
       message = self.pipe.recv()
       self.handleMessage(message)

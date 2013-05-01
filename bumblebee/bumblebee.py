@@ -177,6 +177,7 @@ class BumbleBee():
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
+    self.log.debug("Mothership: Checking messages.")
     for link in self.workers:
       while link.pipe.poll():
         message = link.pipe.recv()
