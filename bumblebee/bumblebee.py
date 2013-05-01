@@ -172,6 +172,7 @@ class BumbleBee():
 
   def sendMessage(self, link, name, data = False):
     self.checkMessages()
+    self.log.debug("Mothership: sending message")
     message = workerbee.Message(name, data)
     link.pipe.send(message)
 

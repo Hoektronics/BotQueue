@@ -349,6 +349,7 @@ class WorkerBee():
       
   def sendMessage(self, name, data = False):
     self.checkMessages()
+    self.debug("Sending message")
     msg = Message(name, data)
     self.pipe.send(msg)
     
