@@ -172,11 +172,13 @@ class BumbleBee():
 
   def sendMessage(self, link, name, data = False):
     self.checkMessages()
+    self.log.debug("Mothership: sending message")
     message = workerbee.Message(name, data)
     link.pipe.send(message)
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
+    self.log.debug("Mothership: Checking messages.")
     for link in self.workers:
       while link.pipe.poll():
         message = link.pipe.recv()

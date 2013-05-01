@@ -349,11 +349,13 @@ class WorkerBee():
       
   def sendMessage(self, name, data = False):
     self.checkMessages()
+    self.debug("Sending message")
     msg = Message(name, data)
     self.pipe.send(msg)
     
   #loop through our workers and check them all for messages
   def checkMessages(self):
+    self.debug("Checking messages.")
     while self.pipe.poll():
       message = self.pipe.recv()
       self.handleMessage(message)
