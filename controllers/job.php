@@ -118,7 +118,9 @@
 
 					$this->set('job', $job);
 					$this->set('gcode_file', $job->getFile());
-					$this->set('source_file', $job->getSourceFile());
+					$sf = $job->getSourceFile();
+					$this->set('source_file', $sf);
+					$this->set('parent_file', $sf->getParent());
 					$this->set('slicejob', $job->getSliceJob());
 					$this->set('sliceengine', $this->get('slicejob')->getSliceEngine());
 					$this->set('sliceconfig', $this->get('slicejob')->getSliceConfig());
@@ -524,6 +526,8 @@
 
 				$this->set('file', $file);
 				$this->set('creator', $file->getUser());
+				$this->set('parent_file', $file->getParent());
+				$this->set('kids', $file->getChildren()->getAll());
 				
 				$jobs = $file->getJobs();
 				$this->set('jobs', $jobs->getRange(0, 10));

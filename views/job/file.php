@@ -17,6 +17,12 @@
   					  <td><a href="<?=http_build_url($file->get('source_url'))?>"><?=$data['host']?></a></td>
             </tr>
 					<? endif ?>
+					<? if ($parent_file->isHydrated()): ?>
+  					<tr>
+  						<th>Parent File:</th>
+						  <td><?=$parent_file->getLink()?></td>
+  					</tr>
+  				<? endif ?>
 					<tr>
 						<th>Creator:</th>
 						<td><?=$creator->getLink()?></td>
@@ -43,14 +49,39 @@
 					</tr>
 				</tbody>
 			</table>
-			<h3>
-				Jobs With This File
-				:: 1-<?=min(10, $job_count)?> of <?=$job_count?> :: <a href="<?=$file->getUrl()?>/jobs">see all</a>
-			</h3>
-			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $jobs)); ?>
+			<? if (empty($kids)): ?>
+  			<h3>
+  				Jobs With This File
+  				:: 1-<?=min(10, $job_count)?> of <?=$job_count?> :: <a href="<?=$file->getUrl()?>/jobs">see all</a>
+  			</h3>
+  			<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $jobs)); ?>
+  		<? endif ?>
 		</div>
 		<div class="span6">
-		  <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$file->getUrl()?>/render"></iframe>
+		  <? if (!empty($kids)): ?>
+		    <h3>Contained Files</h3>
+  			<table class="table table-striped table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Size</th>
+              <th>Manage</th>
+            </tr>
+          </thead>
+  				<tbody>
+  				  <? foreach ($kids AS $row): ?>
+  				    <? $kid = $row['S3File'] ?>
+    					<tr>
+                <td><?=$kid->getLink()?></td>
+                <td><?= Utility::filesizeFormat($kid->get('size'))?></td>
+                <td><a class="btn btn-mini" href="/job/create/file:<?=$kid->id?>"><i class="icon-repeat"></i> re-run</a></td>
+    					</tr>
+  				  <? endforeach ?>
+  				</tbody>
+  			</table>
+      <? else: ?>
+		    <iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?=$file->getUrl()?>/render"></iframe>
+      <? endif ?>
 		</div>
 	</div>
 <? endif ?>
