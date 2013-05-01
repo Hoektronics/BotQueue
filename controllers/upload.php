@@ -79,13 +79,17 @@
         $data = Utility::downloadUrl($url);
 
         //does it match?
-        if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $data['realname']))
+        if (!preg_match("/\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
           throw new Exception("The file <a href=\"$url\">{$data[realname]}</a> is not valid for printing.");
           
         $s3 = new S3File();
         $s3->set('user_id', User::$me->id);
         $s3->set('source_url', $url);
         $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+        
+        //is it a zip file?  do some magic on it.
+        if (!preg_match("/\.zip$/i", $data['realname']))
+          $this->_handleZipFile($data['localpath'], $s3);
         
   			Activity::log("uploaded a new file called " . $s3->getLink() . ".");
 
@@ -109,12 +113,20 @@
 			try
 			{
 				//some basic error checking.
-				if (!preg_match('/(gcode|stl|obj|amf)$/i', $this->args('key')))
+				if (!preg_match('/(gcode|stl|obj|amf|zip)$/i', $this->args('key')))
 					throw new Exception("Only .gcode, .stl, .obj, and .amf files are allowed at this time.");
 
 				//make our file.
 				$info = $this->_lookupFileInfo();
 				$file = $this->_createS3File();
+				
+				//is it a zip file?  do some magic on it.
+        if (preg_match("/\.zip$/i", $this->args('key')))
+        {
+          $path = tempnam("/tmp", "BQ");
+          $file->downloadToPath($path);
+          $this->_handleZipFile($path, $file);
+        }
 
 				Activity::log("uploaded a new file called " . $file->getLink() . ".");
 				
@@ -207,6 +219,40 @@
 			$s3->deleteObject($this->args('bucket'), $this->args('key'));
 			
 			return $file;
+		}
+		
+		private function _handleZipFile($path, $file)
+		{
+		  $za = new ZipArchive(); 
+      $za->open($path); 
+
+      for($i = 0; $i<$za->numFiles; $i++)
+      {
+        //look up file info.
+        $filename = $za->getNameIndex($i);
+
+        //okay, is it a supported file?
+				if (preg_match('/(gcode|stl|obj|amf)$/i', $filename))
+				{
+          $temp = tempnam("/tmp", "BQ");
+          copy("zip://".$path."#".$filename, $temp);
+
+          //format for s3
+          $s3_filename = str_replace(" ", "_", $filename);
+    			$s3_filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
+    			$s3_path = "assets/" . S3File::getNiceDir($filename);
+
+          //create our s3 file
+          $s3 = new S3File();
+          $s3->set('parent_id', $file->id);
+          $s3->set('user_id', User::$me->id);
+          $s3->uploadFile($temp, $s3_path);
+          
+          //echo "$filename - $s3_path<br/>";
+				}
+      }
+      
+      //exit;
 		}
 	}
 	

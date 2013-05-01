@@ -17,7 +17,7 @@
   	
       <a href="<?=$b->getUrl()?>">
         <? if ($webcam->isHydrated()): ?>
-          <img class="webcam" src="<?=$webcam->getRealUrl()?>?t=<?=strtotime($webcam->get('add_date'))?>">
+          <img class="webcam" src="<?=$webcam->getRealUrl()?>">
         <? else: ?>
           <img class="webcam" src="/img/colorbars.gif">
         <? endif ?>

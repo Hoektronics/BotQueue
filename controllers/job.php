@@ -597,11 +597,6 @@
 		{
 			$this->assertLoggedIn();
 			$this->set('area', 'jobs');
-			
-			if ($this->args('step2'))
-				$this->setTitle('Step 2 of 2: Create Job');
-			else
-				$this->setTitle('Create new Job');
 				
 			try
 			{
@@ -614,7 +609,6 @@
 						throw new Exception("You do not own this job.");
 					
 					$file = $job->getSourceFile();
-					  
 					$queue_id = $job->get('queue_id');
 				}
 				else
@@ -625,57 +619,105 @@
 				if ($file->get('user_id') != User::$me->id)
 					throw new Exception("You do not have access to this file.");
 
+				$this->setTitle('Create New Job - ' . $file->getLink());
 				$this->set('file', $file);
 
-				//load up our form.
-				$form = $this->_createJobForm($file, $queue_id);
-				if (isset($job))
-					$form->action = "/job/create/job:{$job->id}";
-				else
-					$form->action = "/job/create/file:{$file->id}";
-					
-				//handle our form
-				if ($form->checkSubmitAndValidate($this->args()))
-				{
-					//pull in our quantity
-					$quantity = (int)$form->data('quantity');
-					$quantity = max(1, $quantity);
-					$quantity = min(1000, $quantity);
-					
-					//queue error checking.
-					$queue = new Queue($form->data('queue_id'));
-					if (!$queue->isHydrated())
-						throw new Exception("That queue does not exist.");
-					if (!$queue->canAdd())
-						throw new Exception("You do not have permission to add to that queue.");
-					
-					//okay, we good?
-					if ($file->isGCode())
-					  $jobs = $queue->addGCodeFile($file, $quantity);
-					else if ($file->is3DModel())
-					  $jobs = $queue->add3DModelFile($file, $quantity);
-          else
-            throw new Exception("Oops, I don't know what type of file this is!");
+        $kids = $file->getChildren()->getAll();
+        if (!empty($kids))
+        {
+          $this->set('kids', $kids);
+          $queues = User::$me->getQueues()->getAll();
+    			$this->set('queues', $queues);
+    			
+    			if ($this->args('submit'))
+    			{
+    			  $use = $this->args('use');
+    			  $qty = $this->args('qty');
+    			  $queues = $this->args('queues');
+    			  $priority = $this->args('priority');
+    			   					
+            // echo "<pre>";
+            // var_dump($this->args());
+            // var_dump($qty);
+            // var_dump($queues);
+            // var_dump($priority);
+            // echo "</pre>";
+    			  
+    			  //what ones do we want to actually add?
+    			  foreach ($use AS $id => $value)
+    			  {
+    			    $kid = new S3File($id);
+    			    if (!$kid->isHydrated())
+      					throw new Exception("That file does not exist.");
+      				if ($kid->get('user_id') != User::$me->id)
+      					throw new Exception("You do not have access to this file.");
+      			  
+              $this->_createJobsFromFile($kid, (int)$qty[$id], (int)$queues[$id], (bool)$priority[$id]);
+    			  }
+    			  
+    			  $this->forwardToUrl('/');
+    			}
+        }
+        else
+        {
+          //load up our form.
+  				$form = $this->_createJobForm($file, $queue_id);
+  				if (isset($job))
+  					$form->action = "/job/create/job:{$job->id}";
+  				else
+  					$form->action = "/job/create/file:{$file->id}";
 
-          //priority or not?
-          if ($form->data('priority'))
-            if (!empty($jobs))
-              foreach ($jobs AS $job)
-                $job->pushToTop();
+  				//handle our form
+  				if ($form->checkSubmitAndValidate($this->args()))
+  				{
+            //make our jobs!
+            $this->_createJobsFromFile($file, $form->data('quantity'), $form->data('queue_id'), $form->data('priority'));
 
-          //let them know.
-					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
-						
-					//send us ot the queue!
-					$this->forwardToUrl($queue->getUrl());
-				}
-				
-				$this->set('form', $form);
+            //let them know.
+  					Activity::log("added {$quantity} new " . Utility::pluralizeWord('job', $quantity));
+
+  					//send us to the dashboard!
+  					$this->forwardToUrl("/");
+  				}
+
+  				$this->set('form', $form);
+        }
 			}
 			catch (Exception $e)
 			{
 				$this->set('megaerror', $e->getMessage());
 			}
+		}
+		
+		private function _createJobsFromFile($file, $quantity, $queue_id, $priority)
+		{
+			//pull in our quantity
+			$quantity = (int)$quantity;
+			$quantity = max(1, $quantity);
+			$quantity = min(1000, $quantity);
+
+			//queue error checking.
+			$queue = new Queue($queue_id);
+			if (!$queue->isHydrated())
+				throw new Exception("That queue does not exist.");
+			if (!$queue->canAdd())
+				throw new Exception("You do not have permission to add to that queue.");
+
+			//okay, we good?
+			if ($file->isGCode())
+			  $jobs = $queue->addGCodeFile($file, $quantity);
+			else if ($file->is3DModel())
+			  $jobs = $queue->add3DModelFile($file, $quantity);
+      else
+        throw new Exception("Oops, I don't know what type of file this is!");
+
+      //priority or not?
+      if ($priority)
+        if (!empty($jobs))
+          foreach ($jobs AS $job)
+            $job->pushToTop();
+      
+      return $jobs;
 		}
 		
 		private function _createJobForm($file, $queue_id)

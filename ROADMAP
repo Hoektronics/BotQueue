@@ -1,7 +1,8 @@
 v0.4 Release - Ongoing
 
-* WEB - multi-job prints (eg: .zip file w/ manifest)
-  * pull in all files from thingiverse.com/thing:####
+* WEB - add support for .zip files to file view page
+* WEB - add support for showing parent files to job page
+* WEB - pull in all files from thingiverse.com/thing:#### style urls
 
 * WEB - record client name and version when updating bot status.
 * WEB - when downloading file to slice, status should be "downloading"
@@ -20,6 +21,8 @@ v0.4 - CHANGELOG
 * WEB - record local and remote IP when getting bot updates
 * WEB - show IP addresses on bot view page
 * WEB - added 30 day list to leaderboards
+* WEB - create multi-job prints from an uploaded .zip file
+
 
 ------------------------------------------------------------------------------------
 

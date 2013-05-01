@@ -290,5 +290,17 @@
 		  
 		  return new Collection($sql, array('Job' => 'id'));
 		}
+		
+		public function getChildren()
+		{
+		  $sql = "
+		    SELECT id
+		    FROM s3_files
+		    WHERE parent_id = '" . db()->escape($this->id) . "'
+		    ORDER BY id DESC
+		  ";
+		  
+		  return new Collection($sql, array('S3File' => 'id'));
+		}
 	}
 ?>

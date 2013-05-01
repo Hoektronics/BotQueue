@@ -12,6 +12,7 @@
 		<ul>
 		  <li><strong>.gcode</strong> - will be executed directly with no extra processing.</li>
 		  <li><strong>.stl / .obj / .amf</strong> - will be sliced and executed based on your config.</li>
+		  <li><strong>.zip</strong> - usable files will be extracted and added to your queue.</li>
 		</ul>
 	</div>
 	<div class="span6">
@@ -26,8 +27,8 @@
       <input type="text" class="input-xlarge" name="url" placeholder="URL to load">
       <button type="submit" class="btn btn-primary">Go!</button>
     </form>
-		<ul>
-		  <li>The URL should point to a valid .stl, .obj, or .gcode file.</li>
+		<ul class="muted">
+		  <li>The URL should point to an acceptable filetype.</li>
 		</ul>
 	</div>
 </div>
