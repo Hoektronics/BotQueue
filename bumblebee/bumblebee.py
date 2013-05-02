@@ -249,8 +249,8 @@ class BumbleBee():
           self.workerDataAge[link.bot['id']] = startTime
 
           return True
-        else:
-          raise Exception("Error grabbing job: %s" % jresult['error'])
+        #else:
+        #  raise Exception("Error grabbing job: %s" % jresult['error'])
       # else:
       #   self.getOurInfo() #see if our status has changed.
     else:
