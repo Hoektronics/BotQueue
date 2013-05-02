@@ -29,6 +29,7 @@
     </form>
 		<ul class="muted">
 		  <li>The URL should point to an acceptable filetype.</li>
+		  <li>thingiverse.com/thing:#### format URLs will work too.</li>
 		</ul>
 	</div>
 </div>

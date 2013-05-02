@@ -1,6 +1,9 @@
 v0.4 Release - Online Bot Config!
 
-* WEB - pull in all files from thingiverse.com/thing:#### style urls
+* Add bulk select of queue to bulk add page
+* Add bulk quantity to bulk add page
+* Move priority flag to sidebar on bulk add page
+* Add assertAdmin to thingiverse page
 
 * WEB - record client name and version when updating bot status.
 * WEB - when downloading file to slice, status should be "downloading"
@@ -41,6 +44,7 @@ v0.4 - CHANGELOG
 * WEB - create multi-job prints from an uploaded .zip file
 * WEB - add support for .zip files to file view page
 * WEB - add support for showing parent files to job page
+* WEB - pull in all files from thingiverse.com/thing:#### style urls
 
 ------------------------------------------------------------------------------------
 

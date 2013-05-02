@@ -76,25 +76,87 @@
   		  if (!$url)
   		    throw new Exception("You must pass in the URL parameter!");
 
-        $data = Utility::downloadUrl($url);
-
-        //does it match?
-        if (!preg_match("/\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
-          throw new Exception("The file <a href=\"$url\">{$data[realname]}</a> is not valid for printing.");
+        $matches = array();
+        if (preg_match("/thingiverse.com\/thing:([0-9]+)/i", $url, $matches))
+        {
+          $thing_id = $matches[1];
           
-        $s3 = new S3File();
-        $s3->set('user_id', User::$me->id);
-        $s3->set('source_url', $url);
-        $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
-        
-        //is it a zip file?  do some magic on it.
-        if (!preg_match("/\.zip$/i", $data['realname']))
-          $this->_handleZipFile($data['localpath'], $s3);
-        
-  			Activity::log("uploaded a new file called " . $s3->getLink() . ".");
+          //echo "found: $thing_id<Br/>";
+          
+          $api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, THINGIVERSE_API_ACCESS_TOKEN);
 
-  			//send us to step 2.
- 			  $this->forwardToUrl("/job/create/file:{$s3->id}");
+          //load thingiverse data.
+          $thing = $api->make_call("/things/{$thing_id}");
+          $files = $api->make_call("/things/{$thing_id}/files");
+          
+          //echo "<pre>";
+          //print_r($thing);
+          //print_r($files);
+          //echo "</pre>";
+          
+          //open zip file.
+          $zip_path = tempnam("/tmp", "BQ");
+          $zip = new ZipArchive();
+          if ($zip->open($zip_path, ZIPARCHIVE::CREATE))
+          {
+            //echo "opened $zip_path<br/>";
+            
+            //pull in all our files.
+            foreach ($files AS $row)
+            {
+              if (preg_match("/\.(stl|obj|amf|gcode)$/i", $row->name))
+              {
+                $data = Utility::downloadUrl($row->public_url);
+                //echo "downloaded " . $data['realname'] . " to " . $data['localpath'] . "<br/>";
+                
+                $zip->addFile($data['localpath'], $data['realname']);
+              }
+            }
+            $zip->close();
+          
+            //create zip name.
+            $filename = basename($thing->name . ".zip");
+      			$filename = str_replace(" ", "_", $filename);
+      			$filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
+      			$path = "assets/" . S3File::getNiceDir($filename);
+          
+            //okay, upload it and handle it.
+            $s3 = new S3File();
+            $s3->set('user_id', User::$me->id);
+            $s3->set('source_url', $url);
+            
+            //echo "uploading $zip_path to $path<br/>";
+            
+            $s3->uploadFile($zip_path, $path);
+            $this->_handleZipFile($zip_path, $s3);  
+            
+     			  $this->forwardToUrl("/job/create/file:{$s3->id}");          
+          }
+          else
+            throw new Exception("Unable to open zip {$zip_path} for writing.");
+        }
+        else
+        {
+          $data = Utility::downloadUrl($url);
+
+          //does it match?
+          if (!preg_match("/\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
+            throw new Exception("The file <a href=\"$url\">{$data[realname]}</a> is not valid for printing.");
+
+          $s3 = new S3File();
+          $s3->set('user_id', User::$me->id);
+          $s3->set('source_url', $url);
+          $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+
+          //is it a zip file?  do some magic on it.
+          if (!preg_match("/\.zip$/i", $data['realname']))
+            $this->_handleZipFile($data['localpath'], $s3);
+
+    			Activity::log("uploaded a new file called " . $s3->getLink() . ".");
+
+    			//send us to step 2.
+   			  $this->forwardToUrl("/job/create/file:{$s3->id}");          
+        }
 		  }
 		  catch (Exception $e)
 		  {
