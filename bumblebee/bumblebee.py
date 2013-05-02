@@ -34,10 +34,10 @@ class BumbleBee():
       self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
       hive.config.save(self.config)    
 
-  def loadBot(self, pipe, data):
+  def loadBot(self, mosi_pipe, miso_pipe, data):
     try:
       self.log.info("Loading bot %s" % data['name'])
-      worker = workerbee.WorkerBee(data, pipe)
+      worker = workerbee.WorkerBee(data, mosi_pipe, miso_pipe)
       worker.run();
     except KeyboardInterrupt as e:
       self.log.debug("Bot %s exiting from keyboard interrupt." % data['name'])
@@ -67,15 +67,17 @@ class BumbleBee():
             else:
               self.log.info("Creating worker thread for bot %s" % row['name'])
               #create our thread and start it.
-              parent_conn, child_conn = multiprocessing.Pipe(True)
-              p = multiprocessing.Process(target=self.loadBot, args=(child_conn,row,))
+              master_in, slave_out = multiprocessing.Pipe()
+              slave_in, master_out = multiprocessing.Pipe()
+              p = multiprocessing.Process(target=self.loadBot, args=(master_out, slave_out,row,))
               p.start()
 
               #make our link object to track all this cool stuff.
               link = hive.Object()
               link.bot = row
               link.process = p
-              link.pipe = parent_conn
+              link.miso_pipe = master_in
+              link.mosi_pipe = slave_in
               link.job = None
               self.workers.append(link)
             
@@ -174,14 +176,14 @@ class BumbleBee():
     self.checkMessages()
     self.log.debug("Mothership: sending message")
     message = workerbee.Message(name, data)
-    link.pipe.send(message)
+    link.mosi_pipe.send(message)
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
     self.log.debug("Mothership: Checking messages.")
     for link in self.workers:
-      while link.pipe.poll():
-        message = link.pipe.recv()
+      while link.miso_pipe.poll():
+        message = link.miso_pipe.recv()
         self.handleMessage(link, message)
 
   #these are the messages we know about.
@@ -247,8 +249,8 @@ class BumbleBee():
           self.workerDataAge[link.bot['id']] = startTime
 
           return True
-        else:
-          raise Exception("Error grabbing job: %s" % jresult['error'])
+        #else:
+        #  raise Exception("Error grabbing job: %s" % jresult['error'])
       # else:
       #   self.getOurInfo() #see if our status has changed.
     else:
