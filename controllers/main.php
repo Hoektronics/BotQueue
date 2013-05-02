@@ -30,10 +30,6 @@
 		{
 		  if (User::isLoggedIn())
 			{
-				//$queues = User::$me->getQueues();
-				//$this->set('queues', $queues->getRange(0, 10));
-				//$this->set('queue_count', $queues->count());
-
 				$bots = User::$me->getBots();
 				$this->set('bots', $bots->getRange(0, 10));
 				$this->set('bot_count', $bots->count());
@@ -45,32 +41,25 @@
 				$finished = User::$me->getJobs('complete', 'verified_time', 'DESC');
 				$this->set('finished', $finished->getRange(0, 5));
 				$this->set('finished_count', $finished->count());
-				
-        //what style to show?
-				if ($this->args('dashboard_style'))
-				{
-				  $this->set('dashboard_style', $this->args('dashboard_style'));
 				  
-				  if (User::$me->get('dashboard_style') != $this->args('dashboard_style'))
-				  {
-  				  User::$me->set('dashboard_style', $this->args('dashboard_style'));
-  				  User::$me->save();
-				  }
-				}
-				else
-				  $this->set('dashboard_style', User::$me->get('dashboard_style'));
-				
-				//$activities = Activity::getStream();
-      	//$this->set('activities', $activities->getRange(0, 10));
-				//$this->set('activity_count', $activities->count());
-				
-				//$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
-				
-				//$this->set('action_jobs', Job::getJobsRequiringAction()->getRange(0, 50));
-				//$this->set('action_slicejobs', SliceJob::getJobsRequiringAction()->getRange(0, 50));
+				//what style to show?
+        if ($this->args('dashboard_style'))
+        {
+          if (User::$me->get('dashboard_style') != $this->args('dashboard_style'))
+          {
+            User::$me->set('dashboard_style', $this->args('dashboard_style'));
+            User::$me->save();
+          }
+        }
+        else
+        {
+          User::$me->set('dashboard_style', 'large_thumbnails');
+          User::$me->save();
+        }
+        $this->set('dashboard_style', User::$me->get('dashboard_style'));
 			}
 			else
-			  die('argh');
+			  die('You must be logged in to view this page.');
 		}
 		
 		public function dashboard_list()
