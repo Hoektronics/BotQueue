@@ -30,10 +30,6 @@
 		{
 		  if (User::isLoggedIn())
 			{
-				//$queues = User::$me->getQueues();
-				//$this->set('queues', $queues->getRange(0, 10));
-				//$this->set('queue_count', $queues->count());
-
 				$bots = User::$me->getBots();
 				$this->set('bots', $bots->getRange(0, 10));
 				$this->set('bot_count', $bots->count());
@@ -45,32 +41,25 @@
 				$finished = User::$me->getJobs('complete', 'verified_time', 'DESC');
 				$this->set('finished', $finished->getRange(0, 5));
 				$this->set('finished_count', $finished->count());
-				
-        //what style to show?
-				if ($this->args('dashboard_style'))
-				{
-				  $this->set('dashboard_style', $this->args('dashboard_style'));
 				  
-				  if (User::$me->get('dashboard_style') != $this->args('dashboard_style'))
-				  {
-  				  User::$me->set('dashboard_style', $this->args('dashboard_style'));
-  				  User::$me->save();
-				  }
-				}
-				else
-				  $this->set('dashboard_style', User::$me->get('dashboard_style'));
-				
-				//$activities = Activity::getStream();
-      	//$this->set('activities', $activities->getRange(0, 10));
-				//$this->set('activity_count', $activities->count());
-				
-				//$this->set('errors', User::$me->getErrorLog()->getRange(0, 50));
-				
-				//$this->set('action_jobs', Job::getJobsRequiringAction()->getRange(0, 50));
-				//$this->set('action_slicejobs', SliceJob::getJobsRequiringAction()->getRange(0, 50));
+				//what style to show?
+        if ($this->args('dashboard_style'))
+        {
+          if (User::$me->get('dashboard_style') != $this->args('dashboard_style'))
+          {
+            User::$me->set('dashboard_style', $this->args('dashboard_style'));
+            User::$me->save();
+          }
+        }
+        else
+        {
+          User::$me->set('dashboard_style', 'large_thumbnails');
+          User::$me->save();
+        }
+        $this->set('dashboard_style', User::$me->get('dashboard_style'));
 			}
 			else
-			  die('argh');
+			  die('You must be logged in to view this page.');
 		}
 		
 		public function dashboard_list()
@@ -221,6 +210,51 @@
   		  //total printing hours
   		  $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE  status != 'working' AND user_id = " . (int)User::$me->id;
   		  $this->set('my_total_printing_time', db()->getValue($sql));		    
+		  }
+		}
+		
+		function thingiverse()
+		{
+      $this->assertLoggedIn();
+      
+      if (User::$me->get('thingiverse_token'))
+      {
+        $this->setTitle("Thingiverse + BotQueue = :D");
+        
+        $api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->get('thingiverse_token'));
+
+        $this->set('thing', $api->make_call('/things/82335'));
+        $this->set('files', $api->make_call('/things/82335/files'));
+		    $this->set('my_info', $api->make_call('/users/me'));
+      }
+      else
+      {
+        $this->setTitle("Link Thingiverse to BotQueue");
+      }
+		}
+
+		function thingiverse_callback()
+		{
+		  $this->assertLoggedIn();
+		  
+		  if ($this->args('code'))
+		  {
+		    $api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET);
+		    $token = $api->exchange_token($this->args('code'));
+		    
+		    if ($token)
+		    {
+  		    //save it!
+  		    User::$me->set('thingiverse_token', $token);
+  		    User::$me->save();
+
+          //send us to our thingiverse page.
+          $this->forwardToUrl("/thingiverse");
+		    }
+		    else
+		    {
+		      die("Failed to exchange token.");
+		    }
 		  }
 		}
 	}
