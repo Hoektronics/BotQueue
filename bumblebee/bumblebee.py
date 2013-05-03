@@ -17,7 +17,6 @@ class BumbleBee():
     self.bots = []
     self.workerDataAge = {}
     self.config = hive.config.get()
-    self.version = "0.2"
     
     #check for default info.
     if not 'can_slice' in self.config:
@@ -201,7 +200,7 @@ class BumbleBee():
     #self.log.debug("drawing screen")
     
     self.screen.erase()
-    self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.version, time.asctime()))
+    self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.api.version, time.asctime()))
     self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
     for link in self.workers:
       self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
