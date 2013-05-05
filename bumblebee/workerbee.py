@@ -15,8 +15,9 @@ import shutil
 class WorkerBee():
   
   data = {}
+  sleepTime = 0.5
   
-  def __init__(self, data, mosi_pipe, miso_pipe):
+  def __init__(self, data, mosi_queue, miso_queue):
 
     #find our local config info.
     self.global_config = hive.config.get()
@@ -25,8 +26,8 @@ class WorkerBee():
         self.config = row
     
     #communications with our mother bee!
-    self.mosi_pipe = mosi_pipe
-    self.miso_pipe = miso_pipe
+    self.mosi_queue = mosi_queue
+    self.miso_queue = miso_queue
 
     #we need logging!
     self.log = logging.getLogger('botqueue')
@@ -135,7 +136,7 @@ class WorkerBee():
             self.api.webcamUpdate("webcam.jpg", bot_id = self.data['id'])
             lastWebcamUpdate = time.time()
           
-        time.sleep(0.5) # sleep for a bit to not hog resources
+        time.sleep(self.sleepTime) # sleep for a bit to not hog resources
     except Exception as ex:
       self.exception(ex)
       self.driver.stop()
@@ -194,7 +195,7 @@ class WorkerBee():
         lastUpdate = time.time()
         self.api.updateJobProgress(self.data['job']['id'], "%0.5f" % g.getProgress())
         
-      time.sleep(0.5)
+      time.sleep(self.sleepTime)
       
     #how did it go?
     sushi = g.sliceResult
@@ -233,7 +234,7 @@ class WorkerBee():
           self.data['job']['progress'] = myfile.getProgress()
           self.sendMessage('job_update', self.data['job'])
           localUpdate = time.time()
-        time.sleep(0.5)
+        time.sleep(self.sleepTime)
       #okay, we're done... send it back.
       return myfile
     except Exception as ex:
@@ -273,7 +274,7 @@ class WorkerBee():
         #did we get paused?
         while self.data['status'] == 'paused':
           self.checkMessages()
-          time.sleep(0.5)
+          time.sleep(self.sleepTime)
 
         #should we bail out of here?
         if not self.running or self.data['status'] != 'working':
@@ -288,7 +289,7 @@ class WorkerBee():
         if self.driver.hasError():
           raise Exception(self.driver.getErrorMessage())
           
-        time.sleep(0.5)
+        time.sleep(self.sleepTime)
 
       #did our print finish while running?
       if self.running and self.data['status'] == 'working':
@@ -352,13 +353,13 @@ class WorkerBee():
     self.checkMessages()
     self.debug("Sending message")
     msg = Message(name, data)
-    self.miso_pipe.send(msg)
+    self.miso_queue.put(msg)
     
   #loop through our workers and check them all for messages
   def checkMessages(self):
     self.debug("Checking messages.")
-    while self.mosi_pipe.poll():
-      message = self.mosi_pipe.recv()
+    while not self.mosi_queue.empty():
+      message = self.mosi_queue.get(False)
       self.handleMessage(message)
 
   #these are the messages we know about.
@@ -448,7 +449,7 @@ class WorkerBee():
             self.info("Webcam: %s" % output.strip())
             outputLog = outputLog + output
                         
-          time.sleep(0.5)
+          time.sleep(self.sleepTime)
         
         #get any last lines of output
         output = self.p.stdout.readline()

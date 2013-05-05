@@ -9,6 +9,9 @@ import webbrowser
 import hashlib
 
 class BumbleBee():
+  
+  sleepTime = 0.5
+  
   def __init__(self):
     hive.loadLogger()
     self.log = logging.getLogger('botqueue')
@@ -33,10 +36,10 @@ class BumbleBee():
       self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
       hive.config.save(self.config)    
 
-  def loadBot(self, mosi_pipe, miso_pipe, data):
+  def loadBot(self, mosi_queue, miso_queue, data):
     try:
       self.log.info("Loading bot %s" % data['name'])
-      worker = workerbee.WorkerBee(data, mosi_pipe, miso_pipe)
+      worker = workerbee.WorkerBee(data, mosi_queue, miso_queue)
       worker.run();
     except KeyboardInterrupt as e:
       self.log.debug("Bot %s exiting from keyboard interrupt." % data['name'])
@@ -66,17 +69,19 @@ class BumbleBee():
             else:
               self.log.info("Creating worker thread for bot %s" % row['name'])
               #create our thread and start it.
-              master_in, slave_out = multiprocessing.Pipe()
-              slave_in, master_out = multiprocessing.Pipe()
-              p = multiprocessing.Process(target=self.loadBot, args=(master_out, slave_out,row,))
+              #master_in, slave_out = multiprocessing.Pipe()
+              #slave_in, master_out = multiprocessing.Pipe()
+              mosi_queue = multiprocessing.Queue()
+              miso_queue = multiprocessing.Queue()
+              p = multiprocessing.Process(target=self.loadBot, args=(mosi_queue, miso_queue, row,))
               p.start()
 
               #make our link object to track all this cool stuff.
               link = hive.Object()
               link.bot = row
               link.process = p
-              link.miso_pipe = master_in
-              link.mosi_pipe = slave_in
+              link.miso_queue = miso_queue
+              link.mosi_queue = mosi_queue
               link.job = None
               self.workers.append(link)
             
@@ -142,7 +147,7 @@ class BumbleBee():
           elif key == ord('q'):
             self.handleQuit()
 
-        time.sleep(0.5)
+        time.sleep(self.sleepTime)
     except KeyboardInterrupt:
       self.handleQuit()
     
@@ -175,14 +180,14 @@ class BumbleBee():
     self.checkMessages()
     self.log.debug("Mothership: sending message")
     message = workerbee.Message(name, data)
-    link.mosi_pipe.send(message)
+    link.mosi_queue.put(message)
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
     self.log.debug("Mothership: Checking messages.")
     for link in self.workers:
-      while link.miso_pipe.poll():
-        message = link.miso_pipe.recv()
+      while not link.miso_queue.empty():
+        message = link.miso_queue.get(False)
         self.handleMessage(link, message)
 
   #these are the messages we know about.
