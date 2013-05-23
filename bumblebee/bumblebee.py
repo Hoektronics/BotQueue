@@ -1,12 +1,14 @@
 import botqueueapi
 import workerbee
-import multiprocessing
+import threading
+import Queue
 import time
 import hive
 import logging
 import curses
 import webbrowser
 import hashlib
+import stacktracer
 
 class BumbleBee():
   
@@ -34,7 +36,10 @@ class BumbleBee():
     #create a unique hash that will identify this computers requests
     if not self.config['uid']:
       self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
-      hive.config.save(self.config)    
+      hive.config.save(self.config)   
+      
+    #this is our threading tracker
+    stacktracer.trace_start("trace.html", interval=5, auto=True) # Set auto flag to always update file!
 
   def loadBot(self, mosi_queue, miso_queue, data):
     try:
@@ -71,9 +76,11 @@ class BumbleBee():
               #create our thread and start it.
               #master_in, slave_out = multiprocessing.Pipe()
               #slave_in, master_out = multiprocessing.Pipe()
-              mosi_queue = multiprocessing.Queue()
-              miso_queue = multiprocessing.Queue()
-              p = multiprocessing.Process(target=self.loadBot, args=(mosi_queue, miso_queue, row,))
+              mosi_queue = Queue.Queue()
+              miso_queue = Queue.Queue()
+              p = threading.Thread(target=self.loadBot, args=(mosi_queue, miso_queue, row,))
+              p.name = "Bot-%s" % row['name']
+              p.daemon = True
               p.start()
 
               #make our link object to track all this cool stuff.
@@ -154,7 +161,7 @@ class BumbleBee():
   def handleQuit(self):
     self.quit = True
     self.log.info("Shutting down.")
-
+    
     #tell all our threads to stop
     for link in self.workers:
       self.sendMessage(link, 'shutdown')
@@ -174,21 +181,25 @@ class BumbleBee():
         self.screen.refresh()
         lastUpdate = time.time()
         
+    #stop our thread tracking.
+    stacktracer.trace_stop()
+        
     self.screen.erase()    
 
   def sendMessage(self, link, name, data = False):
     self.checkMessages()
-    self.log.debug("Mothership: sending message")
+    #self.log.debug("Mothership: sending message")
     message = workerbee.Message(name, data)
     link.mosi_queue.put(message)
 
   #loop through our workers and check them all for messages
   def checkMessages(self):
-    self.log.debug("Mothership: Checking messages.")
+    #self.log.debug("Mothership: Checking messages.")
     for link in self.workers:
       while not link.miso_queue.empty():
         message = link.miso_queue.get(False)
         self.handleMessage(link, message)
+        link.miso_queue.task_done()
 
   #these are the messages we know about.
   def handleMessage(self, link, message):

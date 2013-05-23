@@ -42,7 +42,7 @@ class WorkerBee():
     
     #load up our driver
     self.initializeDriver()
-
+    
     #look at our current state to check for problems.
     try:
       self.startupCheckState()
@@ -351,16 +351,17 @@ class WorkerBee():
       
   def sendMessage(self, name, data = False):
     self.checkMessages()
-    self.debug("Sending message")
+    #self.debug("Sending message")
     msg = Message(name, data)
     self.miso_queue.put(msg)
     
   #loop through our workers and check them all for messages
   def checkMessages(self):
-    self.debug("Checking messages.")
+    #self.debug("Checking messages.")
     while not self.mosi_queue.empty():
       message = self.mosi_queue.get(False)
       self.handleMessage(message)
+      self.mosi_queue.task_done()
 
   #these are the messages we know about.
   def handleMessage(self, message):
