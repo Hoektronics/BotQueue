@@ -253,21 +253,21 @@
 		
 		public function delete()
 		{
+      //this should not need to be called - you cannot delete an active job, so this will be handled elsewhere.
 		  //clean up our bot.
-      $bot = $this->getBot();
-			if ($bot->isHydrated())
-			{
-				$bot->set('job_id', 0);
-				$bot->set('status', 'idle');
-				$bot->save();
-			}
+      //       $bot = $this->getBot();
+      // if ($bot->isHydrated())
+      // {
+      //  $bot->set('job_id', 0);
+      //  $bot->set('status', 'idle');
+      //  $bot->save();
+      // }
 			
       $sql = "DELETE FROM error_log WHERE job_id = {$this->id}";
       db()->execute($sql);		  
 
       $sql = "DELETE FROM slice_jobs WHERE job_id = {$this->id}";
       db()->execute($sql);		  
-
 		  
 		  parent::delete();
 		}
