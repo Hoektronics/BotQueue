@@ -601,7 +601,10 @@
           throw new Exception("The file is not a valid image.");
         
         //okay, we're good.. do it.
-        $s3 = new S3File();
+        if ($job->isHydrated())
+          $s3 = new S3File();
+        else
+          $s3 = $bot->getWebcamImage();
         $s3->set('user_id', User::$me->id);
         $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
 
