@@ -45,17 +45,18 @@
 				//what style to show?
         if ($this->args('dashboard_style'))
         {
-          if (User::$me->get('dashboard_style') != $this->args('dashboard_style'))
-          {
-            User::$me->set('dashboard_style', $this->args('dashboard_style'));
-            User::$me->save();
-          }
+          User::$me->set('dashboard_style', $this->args('dashboard_style'));
+          User::$me->save();
         }
-        else
+
+        //do we need to set a default?
+        if (!User::$me->get('dashboard_style'))
         {
           User::$me->set('dashboard_style', 'large_thumbnails');
           User::$me->save();
         }
+        
+        //okay, pull in our dashboard style.
         $this->set('dashboard_style', User::$me->get('dashboard_style'));
 			}
 			else
