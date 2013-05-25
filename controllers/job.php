@@ -294,6 +294,40 @@
 				$this->set('megaerror', $e->getMessage());
 			}			
 		}
+		
+		public function bump()
+		{
+			$this->assertLoggedIn();
+			$this->set('area', 'jobs');
+
+			try
+			{
+				//how do we find them?
+				if ($this->args('id'))
+					$job = new Job($this->args('id'));
+
+				//did we really get someone?
+				if (!$job->isHydrated())
+					throw new Exception("Could not find that job.");
+				if (!$job->canEdit())
+					throw new Exception("You do not have permission to bump this job.");
+        // if ($job->get('status') == 'taken')
+        //  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
+        // if ($job->get('status') == 'slicing')
+        //  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
+
+				$this->set('job', $job);
+				$this->setTitle('Bump Job - ' . $job->getName());
+
+				$job->pushToTop();
+				$this->forwardToUrl("/");
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Bump Job - Error');
+				$this->set('megaerror', $e->getMessage());
+			}			
+		}
 
 		public function qa()
 		{
