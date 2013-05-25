@@ -18,7 +18,7 @@
 
 	class APIV1Controller extends Controller
 	{
-		public static $api_version = "0.3";
+		public static $api_version = "0.4";
 		
 		public function home()
 		{
@@ -442,26 +442,6 @@
 			$data['job'] = $job->getAPIData();
 			$data['bot'] = $bot->getAPIData();
 			
-			return $data;
-		}
-
-
-		public function api_completeslicejob()
-		{
-			$sj = new SliceJob($this->args('slice_job_id'));
-			if (!$sj->isHydrated())
-				throw new Exception("Slice job does not exist.");
-			
-			if ($sj->get('worker_token') != $this->args("_uid"))
-				throw new Exception("You cannot complete this slice job.");
-				
-			//okay, complete the job.
-			$sj->complete();
-
-			Activity::log($sj->getLink() . " slice job completed via the API.");
-			
-			$data = $sj->getAPIData();
-
 			return $data;
 		}
 		
