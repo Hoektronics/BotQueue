@@ -25,6 +25,7 @@
   						<th>Manage:</th>
   						<td>
   							<? if ($job->get('status') == 'available'): ?>
+                  <a class="btn btn-mini" href="<?=$job->getUrl()?>/bump"><i class="icon-arrow-up"></i> bump</a>
   								<a class="btn btn-mini" href="<?=$job->getUrl()?>/edit"><i class="icon-cog"></i> edit</a>
   								<a class="btn btn-mini" href="<?=$job->getUrl()?>/cancel"><i class="icon-eject"></i> cancel</a>
   							<? endif ?>
