@@ -106,7 +106,7 @@ class BotQueueAPI():
         return result
         
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, , httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
+      except (NetworkError, ServerError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
         #raise NetworkError(str(ex))
         self.log.error("Internet connection is down: %s" % ex)
         retries = retries - 1
@@ -163,21 +163,28 @@ class BotQueueAPI():
       print
       print "Go to the following link in your browser: %s" % self.getAuthorizeUrl()
       print 
-      webbrowser.open_new(self.getAuthorizeUrl())
+      #webbrowser.open_new(self.getAuthorizeUrl())
   
-      # After the user has granted access to you, the consumer, the provider will
-      # redirect you to whatever URL you have told them to redirect to. You can 
-      # usually define this in the oauth_callback argument as well.
-      oauth_verifier = raw_input('What is the PIN? ')
+      authorized = False
+      while not authorized:
+        try:
+          # After the user has granted access to you, the consumer, the provider will
+          # redirect you to whatever URL you have told them to redirect to. You can 
+          # usually define this in the oauth_callback argument as well.
+          oauth_verifier = raw_input('What is the PIN? ')
 
-      # Step 3: Once the consumer has redirected the user back to the oauth_callback
-      # URL you can request the access token the user has approved. You use the 
-      # request token to sign this request. After this is done you throw away the
-      # request token and use the access token returned. You should store this 
-      # access token somewhere safe, like a database, for future use.
-      self.convertToken(oauth_verifier)
-      #TODO: fix this to be a forever loop and handle errors.
-    
+          # Step 3: Once the consumer has redirected the user back to the oauth_callback
+          # URL you can request the access token the user has approved. You use the 
+          # request token to sign this request. After this is done you throw away the
+          # request token and use the access token returned. You should store this 
+          # access token somewhere safe, like a database, for future use.
+          self.convertToken(oauth_verifier)
+          authorized = True
+
+        except Exception as ex:
+          print "Invalid authorization code, please try again."
+          self.log.exception(ex);
+
       #record the key in our config
       self.config['app']['token_key'] = self.token.key
       self.config['app']['token_secret'] = self.token.secret
