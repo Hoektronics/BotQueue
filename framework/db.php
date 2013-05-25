@@ -75,10 +75,17 @@ class DatabaseSocket
 
 	public function reconnect()
 	{
+	  ob_start();
 		$this->link = new mysqli($this->host, $this->user, $this->pass, RR_DB_NAME, $this->port);
+    ob_end_clean();
+    
 		if ($this->link->connect_errno) {
-		  die("Failed to connect: " . $this->link->connect_error);
+		  throw new Exception("Failed to connect to database!");
 		}
+		
+		//select the right db.
+  	if (defined('RR_DB_NAME'))
+  		$this->selectDb(RR_DB_NAME);
 	}
 
 	public function error()
