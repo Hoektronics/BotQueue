@@ -434,7 +434,7 @@ class WorkerBee():
             watermark
           )
         else:
-          raise Exception("Webcams are not supported on your OS.")
+          raise Exception("Webcams are not supported on your OS (%s)." % myos)
               
         self.info("Webcam Command: %s" % command)
 

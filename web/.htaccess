@@ -77,6 +77,7 @@ RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&vi
 
 #bot stuff.
 RewriteRule ^bots(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=home&page=$2 [NC,L]
+RewriteRule ^bots/live$									    			dispatcher.php?controller=bot&view=live [NC,L]
 RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]

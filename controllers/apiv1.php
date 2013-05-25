@@ -18,7 +18,7 @@
 
 	class APIV1Controller extends Controller
 	{
-		public static $api_version = "0.3";
+		public static $api_version = "0.4";
 		
 		public function home()
 		{
@@ -444,26 +444,6 @@
 			
 			return $data;
 		}
-
-
-		public function api_completeslicejob()
-		{
-			$sj = new SliceJob($this->args('slice_job_id'));
-			if (!$sj->isHydrated())
-				throw new Exception("Slice job does not exist.");
-			
-			if ($sj->get('worker_token') != $this->args("_uid"))
-				throw new Exception("You cannot complete this slice job.");
-				
-			//okay, complete the job.
-			$sj->complete();
-
-			Activity::log($sj->getLink() . " slice job completed via the API.");
-			
-			$data = $sj->getAPIData();
-
-			return $data;
-		}
 		
 		public function api_downloadedjob()
 		{
@@ -601,7 +581,10 @@
           throw new Exception("The file is not a valid image.");
         
         //okay, we're good.. do it.
-        $s3 = new S3File();
+        if ($job->isHydrated())
+          $s3 = new S3File();
+        else
+          $s3 = $bot->getWebcamImage();
         $s3->set('user_id', User::$me->id);
         $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
 

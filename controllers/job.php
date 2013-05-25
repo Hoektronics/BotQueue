@@ -46,6 +46,8 @@
 		{
 		  $this->assertAdmin();
 		  
+		  $this->setTitle("Latest Completed Jobs");
+		  
 		  //$available = User::$me->getJobs('complete', 'finished_time', 'DESC');
       $sql = "SELECT id, webcam_image_id FROM jobs WHERE webcam_image_id != 0 AND status = 'complete' ORDER BY finished_time DESC";
       $available = new Collection($sql, array('Job' => 'id', 'S3File' => 'webcam_image_id'));
