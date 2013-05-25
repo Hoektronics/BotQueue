@@ -19,7 +19,7 @@
   define("START_TIME", microtime(true));
   
 	include("../extensions/global.php");
-	include(EXTENSIONS_DIR . "session.php");
+	//include(EXTENSIONS_DIR . "session.php");
 
 	//are we in the right place?
 	if ($_SERVER['HTTP_HOST'] != SITE_HOSTNAME)
@@ -33,5 +33,5 @@
 	   exit();
 	}
 
-	Controller::byName('apiv1')->renderView('endpoint');
+  Controller::byName('apiv1')->renderView('endpoint');
 ?>
