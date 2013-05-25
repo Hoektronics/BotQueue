@@ -215,28 +215,31 @@ class BumbleBee():
   def drawMenu(self):
     #self.log.debug("drawing screen")
     
-    self.screen.erase()
-    self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.api.version, time.asctime()))
-    self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
-    for link in self.workers:
-      self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
-      if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
-        self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
-      elif link.bot['status'] == 'error':
-        self.screen.addstr("%s" % link.bot['error_text'])
+    try:
+      self.screen.erase()
+      self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.api.version, time.asctime()))
+      self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
+      for link in self.workers:
+        self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
+        if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
+          self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+        elif link.bot['status'] == 'error':
+          self.screen.addstr("%s" % link.bot['error_text'])
+        else:
+          self.screen.addstr("   --         --         --")
+        self.screen.addstr("\n")
+      self.screen.addstr("\nq = quit program\n")
+
+      #show our network status.
+      self.screen.addstr("\nNetwork Status: ")
+      if self.api.netStatus == True:
+        self.screen.addstr("ONLINE")
       else:
-        self.screen.addstr("   --         --         --")
-      self.screen.addstr("\n")
-    self.screen.addstr("\nq = quit program\n")
+        self.screen.addstr("OFFLINE")
 
-    #show our network status.
-    self.screen.addstr("\nNetwork Status: ")
-    if self.api.netStatus == True:
-      self.screen.addstr("ONLINE")
-    else:
-      self.screen.addstr("OFFLINE")
-
-    self.screen.refresh()
+      self.screen.refresh()
+    except curses.error as ex:
+      self.log.error("Problem drawing screen - to small? %s" % ex)
 
   def isOurBot(self, bot):
     for row in self.config['workers']:
