@@ -239,7 +239,7 @@ class BumbleBee():
 
       self.screen.refresh()
     except curses.error as ex:
-      self.log.error("Problem drawing screen - to small? %s" % ex)
+      self.log.error("Problem drawing screen - too small? %s" % ex)
 
   def isOurBot(self, bot):
     for row in self.config['workers']:
