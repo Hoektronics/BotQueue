@@ -16,6 +16,9 @@ import urllib2
 class NetworkError(Exception):
   pass
 
+class ServerError(Exception):
+  pass
+
 class BotQueueAPI():
   
   version = '0.4'
@@ -96,10 +99,14 @@ class BotQueueAPI():
         respdata = urllib2.urlopen(request).read()
         result = json.loads(respdata)
         self.netStatus = True
+        
+        if result['status'] == 'error' and result['error'] == "Failed to connect to database!":
+          raise ServerError("Database is down.")
+          
         return result
         
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
+      except (NetworkError, , httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
         #raise NetworkError(str(ex))
         self.log.error("Internet connection is down: %s" % ex)
         retries = retries - 1
