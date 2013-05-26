@@ -1,17 +1,20 @@
-import urlparse
-import oauth2 as oauth
 import json
 import hive
-import webbrowser
 import logging
-import httplib
-import httplib2
-import socket
-import hashlib
 import time
-from poster.encode import multipart_encode
-from poster.streaminghttp import register_openers
-import urllib2
+from oauth_hook import OAuthHook
+import socket
+import requests
+
+import urlparse
+#import hashlib
+#import webbrowser
+#import httplib
+#import httplib2
+#import oauth2 as oauth
+#from poster.encode import multipart_encode
+#from poster.streaminghttp import register_openers
+#import urllib3
 
 class NetworkError(Exception):
   pass
@@ -30,9 +33,6 @@ class BotQueueAPI():
     self.config = hive.config.get()
     self.netStatus = False
 
-    # Register the poster module's streaming http handlers with urllib2
-    register_openers()
-
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']
     self.endpoint_url = self.config['api']['endpoint_url']
@@ -40,17 +40,19 @@ class BotQueueAPI():
     # this is helpful for raspberry pi and future websockets stuff
     self.localip = self.getLocalIPAddress()
     
-    #pull in our user credentials, or trigger the auth process if they aren't found.
-    self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
+    # self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
     if self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:
+      self.my_oauth_hook = OAuthHook(consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
       self.authorize()
 
   def setToken(self, token_key, token_secret):
-    self.token = oauth.Token(token_key, token_secret)
-    self.client = oauth.Client(self.consumer, self.token, timeout=30)
-
+    self.token_key = token_key
+    self.token_secret = token_secret
+    self.my_oauth_hook = OAuthHook(access_token = token_key, access_token_secret = token_secret, consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
+    
+    
   def apiCall(self, call, parameters = {}, url = False, method = "POST", retries = 999999, filepath = None):
     #what url to use?
     if (url == False):
@@ -64,49 +66,76 @@ class BotQueueAPI():
       parameters['_local_ip'] = self.localip
     parameters['api_call'] = call
     parameters['api_output'] = 'json'   
-  
+    
     #get our custom request object for file uploads
-    req = oauth.Request.from_consumer_and_token(
-      self.client.consumer,
-      token=self.client.token,
-      http_method="POST",
-      http_url=url,
-      parameters=parameters)
-  
-    #sign our request w/o any of the file variables included
-    req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.client.consumer, self.client.token)
-    compiled_postdata = req.to_postdata()
+    # req = oauth.Request.from_consumer_and_token(
+    #   self.client.consumer,
+    #   token=self.client.token,
+    #   http_method="POST",
+    #   http_url=url,
+    #   parameters=parameters)
+    #   
+    # #sign our request w/o any of the file variables included
+    # req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.client.consumer, self.client.token)
+    # compiled_postdata = req.to_postdata()
     
     #add our file to upload and create the request
-    if filepath:
-      #parse_qs returns values as arrays, so convert back to strings
-      all_upload_params = urlparse.parse_qs(compiled_postdata, keep_blank_values=True)
-      for key, val in all_upload_params.iteritems():
-        all_upload_params[key] = val[0]
-  
-      all_upload_params['file'] = open(filepath, 'rb')
-      datagen, headers = multipart_encode(all_upload_params)
-      request = urllib2.Request(url, datagen, headers)
-    else:
-      request = urllib2.Request(url, compiled_postdata)
-  
+    # if filepath:
+    #   #parse_qs returns values as arrays, so convert back to strings
+    #   all_upload_params = urlparse.parse_qs(compiled_postdata, keep_blank_values=True)
+    #   for key, val in all_upload_params.iteritems():
+    #     all_upload_params[key] = val[0]
+    #   
+    #   all_upload_params['file'] = open(filepath, 'rb')
+    #   datagen, headers = multipart_encode(all_upload_params)
+    #   request = urllib2.Request(url, datagen, headers)
+    # else:
+    #   request = urllib2.Request(url, compiled_postdata)
+
+
     # make the call for as long as it takes.
     while retries > 0:
       respdata = None
       result = None
       try:
         self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
-        respdata = urllib2.urlopen(request).read()
-        result = json.loads(respdata)
-        self.netStatus = True
         
+        #respdata = urllib2.urlopen(request).read()
+        #response = self.http.request('POST', url, )
+        #response = requests.post(url, parameters, hooks={'pre_request': self.my_oauth_hook})
+        
+        #load in our file baby.
+        files = None
+        if filepath is not None:
+          files = {'file': (filepath, open(filepath, 'rb'))}
+          
+        #make our request now.
+        request = requests.Request('POST', url, data=parameters, files=files)
+        request = self.my_oauth_hook(request)
+        prepared = request.prepare()
+        session = requests.session()
+        response = session.send(prepared)
+        result = json.loads(response.content)
+
+        #sweet, our request must have gone through.
+        self.netStatus = True
+
+        #did we get the right http response code?
+        if response.status_code != 200:
+          raise ServerError("Bad response code")
+        
+        #did the api itself return an error?
+        if result['status'] == 'error':
+          self.log.error("API: %s" % result['error'])
+        
+        #is the site database down?
         if result['status'] == 'error' and result['error'] == "Failed to connect to database!":
           raise ServerError("Database is down.")
-          
+                    
         return result
         
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, ServerError, httplib2.ServerNotFoundError, httplib2.SSLHandshakeError, socket.gaierror, socket.error, httplib.BadStatusLine) as ex:
+      except (NetworkError, ServerError) as ex:
         #raise NetworkError(str(ex))
         self.log.error("Internet connection is down: %s" % ex)
         retries = retries - 1
@@ -125,10 +154,9 @@ class BotQueueAPI():
     return False
         
   def requestToken(self):
-    self.client = oauth.Client(self.consumer)
-
     #make our token request call or error
     result = self.apiCall('requesttoken')
+
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
@@ -136,14 +164,11 @@ class BotQueueAPI():
       raise Exception("Error getting token: %s" % result['error'])
 
   def getAuthorizeUrl(self):
-    return self.authorize_url + "?oauth_token=" + self.token.key 
+    return self.authorize_url + "?oauth_token=" + self.token_key 
 
   def convertToken(self, verifier):
-    self.token.set_verifier(verifier)
-    self.client = oauth.Client(self.consumer, self.token)
-
-    #switch our temporary auth token for our 
-    result = self.apiCall('accesstoken')
+    #switch our temporary auth token for our real credentials
+    result = self.apiCall('accesstoken', {'oauth_verifier': verifier})
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
@@ -186,11 +211,12 @@ class BotQueueAPI():
           self.log.exception(ex);
 
       #record the key in our config
-      self.config['app']['token_key'] = self.token.key
-      self.config['app']['token_secret'] = self.token.secret
+      self.config['app']['token_key'] = self.token_key
+      self.config['app']['token_secret'] = self.token_secret
       hive.config.save(self.config)
 
     except Exception as ex:
+      self.log.exception(ex)
       print "There was a problem authorizing the app: %s" % (ex)
       raise RuntimeError("There was a problem authorizing the app: %s" % (ex))
 
