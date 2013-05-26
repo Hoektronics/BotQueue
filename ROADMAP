@@ -1,7 +1,5 @@
 v0.4 Release - Online Bot Config!
 
-* WEB - add 'bump' feature to move a job to the top of the queue
-
 * WEB - record client name and version when updating bot status.
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.

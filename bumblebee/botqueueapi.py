@@ -5,16 +5,7 @@ import time
 from oauth_hook import OAuthHook
 import socket
 import requests
-
 import urlparse
-#import hashlib
-#import webbrowser
-#import httplib
-#import httplib2
-#import oauth2 as oauth
-#from poster.encode import multipart_encode
-#from poster.streaminghttp import register_openers
-#import urllib3
 
 class NetworkError(Exception):
   pass
@@ -66,32 +57,6 @@ class BotQueueAPI():
       parameters['_local_ip'] = self.localip
     parameters['api_call'] = call
     parameters['api_output'] = 'json'   
-    
-    #get our custom request object for file uploads
-    # req = oauth.Request.from_consumer_and_token(
-    #   self.client.consumer,
-    #   token=self.client.token,
-    #   http_method="POST",
-    #   http_url=url,
-    #   parameters=parameters)
-    #   
-    # #sign our request w/o any of the file variables included
-    # req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.client.consumer, self.client.token)
-    # compiled_postdata = req.to_postdata()
-    
-    #add our file to upload and create the request
-    # if filepath:
-    #   #parse_qs returns values as arrays, so convert back to strings
-    #   all_upload_params = urlparse.parse_qs(compiled_postdata, keep_blank_values=True)
-    #   for key, val in all_upload_params.iteritems():
-    #     all_upload_params[key] = val[0]
-    #   
-    #   all_upload_params['file'] = open(filepath, 'rb')
-    #   datagen, headers = multipart_encode(all_upload_params)
-    #   request = urllib2.Request(url, datagen, headers)
-    # else:
-    #   request = urllib2.Request(url, compiled_postdata)
-
 
     # make the call for as long as it takes.
     while retries > 0:
@@ -99,10 +64,6 @@ class BotQueueAPI():
       result = None
       try:
         self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
-        
-        #respdata = urllib2.urlopen(request).read()
-        #response = self.http.request('POST', url, )
-        #response = requests.post(url, parameters, hooks={'pre_request': self.my_oauth_hook})
         
         #load in our file baby.
         files = None
