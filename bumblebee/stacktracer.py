@@ -98,6 +98,6 @@ def trace_stop():
     if _tracer is None:
         raise Exception("Not tracing, cannot stop.")
     else:
-        _trace.stop()
-        _trace = None
+        _tracer.stop()
+        _tracer = None
 ## end of http://code.activestate.com/recipes/577334/ }}}
