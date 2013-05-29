@@ -23,6 +23,7 @@ class BotQueueAPI():
     self.log = logging.getLogger('botqueue')
     self.config = hive.config.get()
     self.netStatus = False
+    self.netErrors = 0
 
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']
