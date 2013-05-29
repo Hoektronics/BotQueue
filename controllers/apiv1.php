@@ -92,6 +92,23 @@
 			exit;
 		}
 		
+		private function _markBotAsSeen($bot)
+		{
+		  $bot->set('last_seen', date("Y-m-d H:i:s"));
+			$bot->set('remote_ip', $_SERVER['REMOTE_ADDR']);
+			if ($this->args('_local_ip'))
+			  $bot->set('local_ip', $this->args('_local_ip'));
+			if ($this->args('_client_version'))
+			  $bot->set('client_version', $this->args('_client_version'));
+			if ($this->args('_client_name'))
+			  $bot->set('client_name', $this->args('_client_name'));
+			if ($this->args('_uid'))
+			  $bot->set('client_uid', $this->args('_uid'));
+      $bot->save();
+      
+      return $bot;
+		}
+		
 		public function api_requesttoken()
 		{
 			//pull in our interface class.
@@ -466,8 +483,7 @@
 			$job->set('progress', 0); // clear our download progress meter.
 			$job->save();
 			
-			$bot->set('last_seen', date("Y-m-d H:i:s"));
-			$bot->save();
+      $bot = $this->_markBotAsSeen($bot);
 			
 			return $job->getAPIData();
 		}
@@ -512,11 +528,7 @@
 			$job->save();
 			
       //update our bot info
-			$bot->set('last_seen', date("Y-m-d H:i:s"));
-			$bot->set('remote_ip', $_SERVER['REMOTE_ADDR']);
-			if ($this->args('_local_ip'))
-			  $bot->set('local_ip', $this->args('_local_ip'));
-      $bot->save();
+      $bot = $this->_markBotAsSeen($bot);
 			
 			return $job->getAPIData();
 		}
@@ -649,12 +661,8 @@
 			  $job->save();
 			
       //update our bot info
-			$bot->set('last_seen', date("Y-m-d H:i:s"));
-			$bot->set('remote_ip', $_SERVER['REMOTE_ADDR']);
-			if ($this->args('_local_ip'))
-			  $bot->set('local_ip', $this->args('_local_ip'));
-			$bot->save();
-			
+      $bot = $this->_markBotAsSeen($bot);
+      
 			//what kind of data to send back.
 			if ($job->isHydrated())
 			  return $job->getAPIData();
@@ -695,8 +703,7 @@
 				throw new Exception("This bot is not yours.");
 			
 			//record our bot as having checked in.
-			$bot->set('last_seen', date("Y-m-d H:i:s"));
-			$bot->save();
+      $bot = $this->_markBotAsSeen($bot);
 			
 			return $bot->getAPIData();
 		}
@@ -720,8 +727,7 @@
 				$data = $job->getAPIData();
 			
 			//record our bot as having checked in.
-			$bot->set('last_seen', date("Y-m-d H:i:s"));
-			$bot->save();
+      $bot = $this->_markBotAsSeen($bot);
 			
 			return $data;			
 		}

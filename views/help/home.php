@@ -1,3 +1,4 @@
+<? $i=1 ?>
 <div class="row">
 	<div class="span8">
 		<h2>How Do I Get Started?</h2>
@@ -10,16 +11,16 @@
 			<li><strong>Mac or Linux preferred.</strong>  Never been tested on Windows.  Likely broken. Testers/Devs wanted.</li>
 		</ul>
 
-		<h4>Step 1: Register an account</h4>
+		<h4>Step <?=$i++?>: Register an account</h4>
 		<p>Visit the <a href="/register">register</a> page and sign up.</p>
 
 
-		<h4>Step 2: Register your Bots</h4>
+		<h4>Step <?=$i++?>: Register your Bots</h4>
 		<p>
 			On the BotQueue.com website, <a href="/bot/register">register a new bot</a>.  Give it a unique name.  If you want to use the integrated Slic3r support, you'll need to choose the slic3r version and upload your config.  From slic3r, click File-&gt;Export Config.  Upload that as your slice config.  Once you do that, you can upload STL files directly to the site and they will be sliced before printing.
 		</p>
 		
-		<h4>Step 3: Download BumbleBee, the client software</h4>
+		<h4>Step <?=$i++?>: Download BumbleBee, the client software</h4>
 		<p>
 		  Download the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git</a>
 		</p>
@@ -27,11 +28,24 @@
 		  If you are running bumblebee on a Raspberry Pi, see these <a href="/help/raspberry-pi-installation">installation instructions</a>.
 		</p>
 
-		<h4>Step 4: Authorize the client software</h4>
+		<h4>Step <?=$i++?>: Install extra libraries</h4>
+		<p>
+		  Open a terminal, and enter the following commands:
+		</p>
+		<h5>Mac / OSX Commands:
+<pre>sudo easy_install Pygments
+sudo easy_install requests
+sudo easy_install requests-oauth</pre>
+    <h5>Linux Commands:
+<pre>sudo pip install Pygments
+sudo pip install requests
+sudo pip install requests-oauth</pre>
+
+		<h4>Step <?=$i++?>: Authorize the client software</h4>
 		<p>From the command line, navigate to the <strong>bumblebee</strong> folder and run this command: <strong>python bumblebee.py</strong></p>
 		<p>It should give you a url where you authorize the app to access your account.  Take the code that page gives you and enter it into the terminal.</p>
 
-		<h4>Step 5: Configure your bots</h4>
+		<h4>Step <?=$i++?>: Configure your bots</h4>
 		<p>
 			  Now, edit the <strong>bumblebee/config.json</strong> file and modify the file with your particular bot information.  After you modify this file, you will need to restart the client software by quitting and re-running it.
 		</p>
@@ -84,17 +98,17 @@
  ]
 }</pre>
 
-		<h4>Step 6: Upload a job to BotQueue</h4>
+		<h4>Step <?=$i++?>: Upload a job to BotQueue</h4>
 		<p>
 			You can <a href="/upload">upload STL or GCode files to the site</a> and then they will be automatically downloaded and sliced.  Warning: If your client software is running, it will automatically download and process jobs.
 		</p>
 
-		<h4>Step 7: Enjoy watching your bot work.</h4>
+		<h4>Step <?=$i++?>: Enjoy watching your bot work.</h4>
 		<p>
 			You now have a network linked 3D printer with a print queue.  It will make you things.  Sit back and enjoy.  I recommend a cold one.
 		</p>
 
-		<h4>Step 8: Removing a print upon completion</h4>
+		<h4>Step <?=$i++?>: Removing a print upon completion</h4>
 		<p>
 			When a job is complete is done, you must go to the Botqueue site to go through the output verification (QA) process. It will request that you remove the print and confirm that the print was successful.  If it is not successful, the bot will go offline and not take any more jobs.  If the print is successful, the bot will look at the queue for new jobs, grab the next available one, and immediately begin printing it.
 		</p>

@@ -14,7 +14,7 @@
   <li>expand_rootfs -> make the partition 100% of the sd card.</li>
   <li>change the password for the pi user</li>
   <li>change the timezone to your current location</li>
-  <li>set overclocking to Turbo or High</li>
+  <li>set overclocking to None</li>
   <li>enable the ssh server</li>
   <li>do not start the desktop on boot</li>
   <li>finish and reboot</li>
