@@ -31,6 +31,9 @@ class BotQueueAPI():
     # this is helpful for raspberry pi and future websockets stuff
     self.localip = self.getLocalIPAddress()
     
+    #create our requests session.
+    self.session = requests.session()
+    
     # self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
     if self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
@@ -68,15 +71,17 @@ class BotQueueAPI():
         #load in our file baby.
         files = None
         if filepath is not None:
+          timeout = 60
           files = {'file': (filepath, open(filepath, 'rb'))}
-          
+        else:
+          timeout = 15
+            
         #make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
         prepared = request.prepare()
-        session = requests.session()
-        response = session.send(prepared)
-        result = json.loads(response.content)
+        response = self.session.send(prepared, timeout=timeout)
+        result = response.json()
 
         #sweet, our request must have gone through.
         self.netStatus = True
@@ -96,17 +101,19 @@ class BotQueueAPI():
         return result
         
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, ServerError) as ex:
+      except (requests.ConnectionError, requests.Timeout) as ex:
         #raise NetworkError(str(ex))
-        self.log.error("Internet connection is down: %s" % ex)
+        self.log.error("%s call failed: internet connection is down" % (call))
         retries = retries - 1
         self.netStatus = False
         time.sleep(10)
+      except ValueError as ex:
+        self.log.error("%s call failed: %s" % (call, ex))
+        self.log.error("JSON: %s" % response.content)
       #unknown exceptions... get a stacktrace for debugging.
       except Exception as ex:
-        self.log.error("Unknown API error: %s" % ex)
-        self.log.error("response: %s" % respdata)
-        self.log.error("content: %s" % result)
+        self.log.error("%s call failed: unknown API error: %s" % (call, ex))
+        self.log.error("exception: %s.%s" % (ex.__class__, ex.__class__.__name__))
         self.log.exception(ex)
         retries = retries - 1
         self.netStatus = False
