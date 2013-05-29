@@ -76,11 +76,10 @@ class BotQueueAPI():
         else:
           timeout = 15
             
-        #make our request now.
+        #prepare and make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
-        prepared = request.prepare()
-        response = self.session.send(prepared, timeout=timeout)
+        response = self.session.send(request.prepare(), timeout=timeout)
         result = response.json()
 
         #sweet, our request must have gone through.
@@ -88,7 +87,7 @@ class BotQueueAPI():
 
         #did we get the right http response code?
         if response.status_code != 200:
-          raise ServerError("Bad response code")
+          raise ServerError("Bad response code (%s)" % response.status_code)
         
         #did the api itself return an error?
         if result['status'] == 'error':
@@ -101,15 +100,13 @@ class BotQueueAPI():
         return result
         
       #these are our known errors that typically mean the network is down.
-      except (requests.ConnectionError, requests.Timeout) as ex:
+      except (requests.ConnectionError, requests.Timeout, ServerError) as ex:
         #raise NetworkError(str(ex))
-        self.log.error("%s call failed: internet connection is down" % (call))
+        self.log.error("%s call failed: internet connection is down: %s" % (call, ex))
         retries = retries - 1
         self.netStatus = False
+        self.netErrors = self.netErrors + 1
         time.sleep(10)
-      except ValueError as ex:
-        self.log.error("%s call failed: %s" % (call, ex))
-        self.log.error("JSON: %s" % response.content)
       #unknown exceptions... get a stacktrace for debugging.
       except Exception as ex:
         self.log.error("%s call failed: unknown API error: %s" % (call, ex))
@@ -117,6 +114,7 @@ class BotQueueAPI():
         self.log.exception(ex)
         retries = retries - 1
         self.netStatus = False
+        self.netErrors = self.netErrors + 1
         time.sleep(10)
     #something bad happened.
     return False
