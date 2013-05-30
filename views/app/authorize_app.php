@@ -14,7 +14,7 @@
 		<div class="span6">
 			<div class="alert alert-block alert-success">
 	  		<h4 class="alert-heading">Approve it:</h4>
-				Please enter the following PIN into the application: <strong><?=$token->get('verifier')?></strong>
+        <?=$approve_form->render()?>
 			</div>
 		</div>
 		<div class="span6">

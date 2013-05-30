@@ -64,7 +64,7 @@
 			
 			if(!$token->isHydrated())
 				return OAUTH_TOKEN_REJECTED;
-			elseif($token->get('type') == 1 && $token->get('verifier') != $provider->verifier)
+			elseif($token->get('type') == 1 && !$token->get('verified'))
 				return OAUTH_VERIFIER_INVALID;
 			else
 			{

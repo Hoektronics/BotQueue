@@ -184,6 +184,32 @@
 			}						
 		}
 		
+		public function _createAuthorizationForm($token, $app)
+		{
+			$form = new Form();
+			$form->action = "/app/authorize";
+			
+			$form->add(new HiddenField(array(
+			 'name' => 'oauth_token',
+			 'value' => $this->args('oauth_token')
+			)));
+			
+			$form->add(new HiddenField(array(
+			 'name' => 'verifier',
+			 'value' => $token->get('verifier')
+			)));
+			
+			$form->add(new TextField(array(
+				'name' => 'name',
+				'label' => 'Name',
+				'help' => 'A nickname for this instance of ' . $app->getName(),
+				'required' => true,
+				'value' => $app->getName(),
+			)));
+			
+			return $form;
+		}
+		
 		public function authorize_app()
 		{
 			$this->assertLoggedIn();
@@ -205,13 +231,40 @@
 
 				$this->setTitle("Authorize App - " . $app->getName());
 
-				//okay, save it!
-				$token->set('user_id', User::$me->id);
-				$token->set('verifier', mt_rand(0, 99999));
-				$token->save();
+				//okay, associate it with our user.
+				if (!$token->get('user_id') )
+				{
+				  $token->set('user_id', User::$me->id);
+  				$token->save();
+				}
+				else if ($token->get('user_id') != User::$me->id)
+				  throw new Exception("Another user has already claimed this token.");
 				
-				Activity::log("installed the app named " . $app->getLink() . ".");
+				//do we have a verifier yet?  
+				if (!$token->get('verifier'))
+				{
+				  $token->set('verifier', sha1(mt_rand()));
+  				$token->save();
+				}
 
+        $form = $this->_createAuthorizationForm($token, $app);
+
+        //did they submit it?
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+				  if ($form->data('verifier') != $token->get('verifier'))
+				    throw new Exception("Invalid verifier.");
+				    
+  				$token->set('name', $form->data('name'));
+  				$token->set('verified', 1);
+  				$token->save();
+
+  				Activity::log("installed the app named " . $app->getLink() . ".");
+  				
+  				$this->forwardToUrl("/");
+				}
+
+        $this->set('approve_form', $form);
 				$this->set('token', $token);
 				$this->set('app', $app);
 			}
