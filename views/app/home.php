@@ -23,6 +23,31 @@
 	</div>
 	<div class="span6">
 		<? if (User::isLoggedIn()): ?>
+		  <? if (!empty($requesting)): ?>
+		    <h2>Apps Requesting Access</h2>
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>App</th>
+							<th>Manage</th>
+						</tr>
+					</thead>
+					<tbody>	
+			  		<? foreach ($requesting AS $row): ?>
+							<? $a = $row['OAuthConsumer'] ?>
+							<? $t = $row['OAuthToken'] ?>
+
+							<tr>
+								<td><?=$a->getLink()?></td>
+								<td>
+ 								  <a href="/app/authorize?oauth_token=<?=$t->get('token')?>" class="btn btn-primary btn-mini">view</a>
+								  <a href="/app/revoke/<?=$t->get('token')?>" class="btn btn-danger btn-mini">deny</a>
+							  </td>
+							</tr>
+						<? endforeach ?>
+					</tbody>
+				</table>	    
+		  <? endif ?>
 			<h2>Users - Your Authorized Apps</h2>
 			<p>
 			These are the apps that you have authorized to have access to your account.  If you use multiple computers, the same app may be listed multiple times below.  If you want to remove an app's access to your account, simply click the revoke link.
@@ -42,7 +67,7 @@
 
 							<tr>
 								<td><?=$a->getLink()?></td>
-								<td><a href="/app/revoke/<?=$t->get('token')?>">revoke</a></td>
+								<td><a href="/app/revoke/<?=$t->get('token')?>" class="btn btn-danger btn-mini">revoke</a></td>
 							</tr>
 						<? endforeach ?>
 					</tbody>

@@ -26,6 +26,7 @@
 			{
 				$this->set('apps', User::$me->getMyApps()->getAll());
 				$this->set('authorized', User::$me->getAuthorizedApps()->getAll());				
+        $this->set('requesting', OAuthToken::getRequestTokensByIP()->getAll());
 			}
 		}
 		

@@ -124,6 +124,7 @@
 			$t->set('consumer_id', $provider->consumer->id);
 			$t->set('token', $token_key);
 			$t->set('token_secret', $token_secret);
+			$t->set('ip_address', $_SERVER['REMOTE_ADDR']);
 			$t->save();
 	
 			$data['oauth_token'] = $token_key;

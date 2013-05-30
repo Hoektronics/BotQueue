@@ -50,5 +50,19 @@
 		{
 			return new OAuthConsumer($this->get('consumer_id'));
 		}
+		
+		public static function getRequestTokensByIP()
+		{
+		  $sql = "
+		    SELECT id, consumer_id
+		    FROM oauth_token
+		    WHERE ip_address = '" . db()->escape($_SERVER['REMOTE_ADDR']) . "'
+		      AND type = 1
+		      AND verified = 0
+		    ORDER BY id DESC
+		  ";
+		  
+		  return new Collection($sql, array('OAuthToken' => 'id', 'OAuthConsumer' => 'consumer_id'));
+		}
 	}
 ?>
