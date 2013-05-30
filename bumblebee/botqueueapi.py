@@ -133,9 +133,9 @@ class BotQueueAPI():
   def getAuthorizeUrl(self):
     return self.authorize_url + "?oauth_token=" + self.token_key 
 
-  def convertToken(self, verifier):
+  def convertToken(self):
     #switch our temporary auth token for our real credentials
-    result = self.apiCall('accesstoken', {'oauth_verifier': verifier})
+    result = self.apiCall('accesstoken')
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
@@ -163,19 +163,20 @@ class BotQueueAPI():
           # After the user has granted access to you, the consumer, the provider will
           # redirect you to whatever URL you have told them to redirect to. You can 
           # usually define this in the oauth_callback argument as well.
-          oauth_verifier = raw_input('What is the PIN? ')
+          #oauth_verifier = raw_input('What is the PIN? ')
 
           # Step 3: Once the consumer has redirected the user back to the oauth_callback
           # URL you can request the access token the user has approved. You use the 
           # request token to sign this request. After this is done you throw away the
           # request token and use the access token returned. You should store this 
           # access token somewhere safe, like a database, for future use.
-          self.convertToken(oauth_verifier)
+          self.convertToken()
           authorized = True
 
+        #we're basically polling the convert function until the user approves it.
+        #throwing the exception is totally normal.
         except Exception as ex:
-          print "Invalid authorization code, please try again."
-          self.log.exception(ex);
+          time.sleep(10)
 
       #record the key in our config
       self.config['app']['token_key'] = self.token_key
