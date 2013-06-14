@@ -488,6 +488,33 @@
 			return $job->getAPIData();
 		}
 		
+		private function _updateTemperatures($temp, $bot, $job)
+		{
+		  $temps = JSON::decode($temp);
+      if ($temps != NULL)
+			{
+			  if ($job->get('temperature_data'))
+        {
+  			  $jobtemps = JSON::decode($job->get('temperature_data'));
+
+          //having some errors with temp recording
+  			  if ($jobtemps != NULL)
+  			  {
+    			  $index = time();
+    			  $jobtemps->$index = $temps;  
+    			  $job->set('temperature_data', JSON::encode($jobtemps));
+  			  }
+			  }
+			  else
+			  {
+			    $jobtemps = array();
+  			  $jobtemps[time()] = $temps;  
+  			  $job->set('temperature_data', JSON::encode($jobtemps));
+			  }
+  			$bot->set('temperature_data', $this->args('temperatures'));
+			}
+		}
+		
 		public function api_updatejobprogress()
 		{
 			$job = new Job($this->args('job_id'));
@@ -505,24 +532,8 @@
 				throw new Exception("This job is not in your queue.");
 
       //did we get temperatures?
-      $temps = JSON::decode($this->args('temperatures'));
-      if ($temps != NULL)
-			{
-			  $jobtemps = JSON::decode($job->get('temperature_data'));
-			  if ($jobtemps == NULL)
-			  {
-			    $jobtemps = array();
-  			  $jobtemps[time()] = $temps;  
-			  }
-			  else
-			  {
-  			  $index = time();
-  			  $jobtemps->$index = $temps;  
-			  }
-			  $job->set('temperature_data', JSON::encode($jobtemps));
-  			$bot->set('temperature_data', $this->args('temperatures'));
-			}
-
+      $this->_updateTemperatures($this->args('temperatures'), $bot, $job);
+      
 			//update our job info.
 			$job->set('progress', (float)$this->args('progress'));
 			$job->save();
@@ -627,30 +638,7 @@
         throw new Exception("No file uploaded.");
 
       //did we get temperatures?
-      if ($this->args('temperatures'))
-      {
-        $temps = JSON::decode($this->args('temperatures'));
-        if ($temps != NULL)
-  			{
-  			  $jobtemps = NULL;  			  
-  			  if ($job->isHydrated())
-  			    $jobtemps = JSON::decode($job->get('temperature_data'));  			  
-  			  if ($jobtemps == NULL)
-  			  {
-  			    $jobtemps = array();
-    			  $jobtemps[time()] = $temps;  
-  			  }
-  			  else
-  			  {
-    			  $index = time();
-    			  $jobtemps->$index = $temps;  
-  			  }
-  			  
-  			  if ($job->isHydrated())
-  			    $job->set('temperature_data', JSON::encode($jobtemps));
-    			$bot->set('temperature_data', $this->args('temperatures'));
-  			}
-      }
+      $this->_updateTemperatures($this->args('temperatures'), $bot, $job);
 
 			//update our job info.
 			if ($this->args('progress') && $job->isHydrated())
