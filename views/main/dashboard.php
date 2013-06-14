@@ -13,6 +13,13 @@
   </div>
 </div>
 -->
+
+<? if ($request_tokens_count): ?>
+  <div class="alert alert-info">
+    <strong><?=$request_tokens_count?> app<?=($request_tokens_count>1)? 's are' : ' is'?> requesting access!</strong>  Head over to the <a href="/apps">apps page</a> to approve or deny this request.
+  </div>
+<? endif ?>
+
 <div class="row">
 	<div class="span12">
 		<? if (!empty($bots)): ?>

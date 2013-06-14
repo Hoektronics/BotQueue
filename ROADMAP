@@ -1,9 +1,16 @@
 v0.4 Release - Online Bot Config!
 
-* BUMBLEBEE - headless app authentication support - based on IP
-  * WEB - show all apps requesting access from your current IP.
-  * WEB - if you're on the same IP, high likelihood its your bot
-  * WEB - remote address is pretty tough to fake too.
+* BUMBLEBEE - new machine discovery
+  * python - how to list serial ports?
+    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
+      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
+* BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
+* BUMBLEBEE - pull list of bots + config from web directly
+* WEB - ability to assign each bot to an app.
+* WEB - online editing of bot configs.
+
 
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.
@@ -12,21 +19,7 @@ v0.4 Release - Online Bot Config!
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
 * WEB - add diff of slicer configs to slicejob page (current vs snapshot)
 
-* WEB - add name info to app registration
-* WEB - Remove access token for a certain app.
-* WEB - ability to assign each bot to an app.
-* WEB - online editing of bot configs.
-
-* BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
-* BUMBLEBEE - pull list of bots + config from web directly
 * BUMBLEBEE - add contrast and brightness configuration settings to webcam
-
-* BUMBLEBEE - new machine discovery
-  * python - how to list serial ports?
-    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
-      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
 
 ------------------------------------------------------------------------------------
 
@@ -42,6 +35,12 @@ v0.4 - CHANGELOG
 * WEB - pull in all files from thingiverse.com/thing:#### style urls
 * WEB - add 'bump' feature to move a job to the top of the queue
 * WEB - record client name and version when updating bot status.
+* BUMBLEBEE - headless app authentication support - based on IP
+  * WEB - show all apps requesting access from your current IP.
+  * WEB - if you're on the same IP, high likelihood its your bot
+  * WEB - remote address is pretty tough to fake too.
+* WEB - add name info to app registration
+* WEB - Remove access token for a certain app.
 
 ------------------------------------------------------------------------------------
 

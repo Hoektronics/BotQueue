@@ -56,6 +56,10 @@
           User::$me->save();
         }
         
+        //are there any apps requesting access?
+        $tokens = OAuthToken::getRequestTokensByIP();
+        $this->set('request_tokens_count', $tokens->count());
+        
         //okay, pull in our dashboard style.
         $this->set('dashboard_style', User::$me->get('dashboard_style'));
 			}

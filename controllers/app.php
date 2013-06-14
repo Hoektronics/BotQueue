@@ -26,6 +26,7 @@
 			{
 				$this->set('apps', User::$me->getMyApps()->getAll());
 				$this->set('authorized', User::$me->getAuthorizedApps()->getAll());				
+        $this->set('requesting', OAuthToken::getRequestTokensByIP()->getAll());
 			}
 		}
 		
@@ -188,6 +189,7 @@
 		{
 			$form = new Form();
 			$form->action = "/app/authorize";
+			$form->submitText = "Approve App";
 			
 			$form->add(new HiddenField(array(
 			 'name' => 'oauth_token',
@@ -202,7 +204,7 @@
 			$form->add(new TextField(array(
 				'name' => 'name',
 				'label' => 'Name',
-				'help' => 'A nickname for this instance of ' . $app->getName(),
+				'help' => 'A nickname for this instance of ' . $app->getName() . " such as the name the computer its running on or the machine its intended to control.",
 				'required' => true,
 				'value' => $app->getName(),
 			)));
