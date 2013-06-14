@@ -20,7 +20,7 @@ sudo apt-get install fswebcam
 sudo apt-get install -qy git-core vim screen python-pip
 git clone git://github.com/Hoektronics/BotQueue.git
 sudo usermod -a -G dialout pi
-sudo pip install pyserial
+sudo pip install pyserial Pygments requests requests-oauth
 sudo /bin/sh -c 'cat /home/pi/BotQueue/bumblebee/raspi/inittab >> /etc/inittab'
 chmod a+x $HOME/BotQueue/bumblebee/raspi/bin/bumblebee
 cat $HOME/BotQueue/bumblebee/raspi/profile >> $HOME/.profile
