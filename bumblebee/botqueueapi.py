@@ -23,6 +23,7 @@ class BotQueueAPI():
     self.log = logging.getLogger('botqueue')
     self.config = hive.config.get()
     self.netStatus = False
+    self.netErrors = 0
 
     #pull in our endpoint urls
     self.authorize_url = self.config['api']['authorize_url']
@@ -30,6 +31,9 @@ class BotQueueAPI():
     
     # this is helpful for raspberry pi and future websockets stuff
     self.localip = self.getLocalIPAddress()
+    
+    #create our requests session.
+    self.session = requests.session()
     
     # self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
     if self.config['app']['token_key']:
@@ -68,22 +72,23 @@ class BotQueueAPI():
         #load in our file baby.
         files = None
         if filepath is not None:
+          timeout = 60
           files = {'file': (filepath, open(filepath, 'rb'))}
-          
-        #make our request now.
+        else:
+          timeout = 15
+            
+        #prepare and make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
-        prepared = request.prepare()
-        session = requests.session()
-        response = session.send(prepared)
-        result = json.loads(response.content)
+        response = self.session.send(request.prepare(), timeout=timeout)
+        result = response.json()
 
         #sweet, our request must have gone through.
         self.netStatus = True
 
         #did we get the right http response code?
         if response.status_code != 200:
-          raise ServerError("Bad response code")
+          raise ServerError("Bad response code (%s)" % response.status_code)
         
         #did the api itself return an error?
         if result['status'] == 'error':
@@ -96,20 +101,21 @@ class BotQueueAPI():
         return result
         
       #these are our known errors that typically mean the network is down.
-      except (NetworkError, ServerError) as ex:
+      except (requests.ConnectionError, requests.Timeout, ServerError) as ex:
         #raise NetworkError(str(ex))
-        self.log.error("Internet connection is down: %s" % ex)
+        self.log.error("%s call failed: internet connection is down: %s" % (call, ex))
         retries = retries - 1
         self.netStatus = False
+        self.netErrors = self.netErrors + 1
         time.sleep(10)
       #unknown exceptions... get a stacktrace for debugging.
       except Exception as ex:
-        self.log.error("Unknown API error: %s" % ex)
-        self.log.error("response: %s" % respdata)
-        self.log.error("content: %s" % result)
+        self.log.error("%s call failed: unknown API error: %s" % (call, ex))
+        self.log.error("exception: %s.%s" % (ex.__class__, ex.__class__.__name__))
         self.log.exception(ex)
         retries = retries - 1
         self.netStatus = False
+        self.netErrors = self.netErrors + 1
         time.sleep(10)
     #something bad happened.
     return False

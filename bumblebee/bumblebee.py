@@ -236,6 +236,7 @@ class BumbleBee():
         self.screen.addstr("ONLINE")
       else:
         self.screen.addstr("OFFLINE")
+      self.screen.addstr(" | Net Errors: %s" % self.api.netErrors)
 
       self.screen.refresh()
     except curses.error as ex:
