@@ -146,7 +146,7 @@ class Slic3r(GenericSlicer):
 
     realPath = os.path.dirname(os.path.realpath(__file__))
     sliceEnginePath = "%s/slicers/%s" % (realPath, self.config['engine']['path'])
-    slicePath = "%s/%s" % (sliceEnginePath osPath)
+    slicePath = "%s/%s" % (sliceEnginePath, osPath)
     self.log.debug("Slicer path: %s" % slicePath)
     if os.path.exists(slicePath) == False:
 	if os.path.exists(sliceEnginePath):
