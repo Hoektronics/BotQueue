@@ -18,10 +18,8 @@ class dummydriver(bumbledriver.bumbledriver):
 
   def executeFile(self):
     try:
-      if float(self.config['delay']) > 0:
-        delay = float(self.config['delay'])
-      else:
-        delay = 0.01
+      delay = float(self.config.get('delay', 0.05))
+      self.config['delay'] = delay
 
       self.currentPosition = 0
       self.jobfile.localFile.seek(0)
