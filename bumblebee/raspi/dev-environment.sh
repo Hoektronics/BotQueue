@@ -2,7 +2,7 @@
 
 #install slic3r dependencies:
 sudo apt-get install -qy git-core build-essential libgtk2.0-dev libwxgtk2.8-dev libwx-perl libmodule-build-perl libnet-dbus-perl cpanminus libextutils-cbuilder-perl gcc-4.7 g++-4.7 libwx-perl libperl-dev
-sudo cpanm AAR/Boost-Geometry-Utils-0.06.tar.gz Math::Clipper Math::ConvexHull Math::ConvexHull::MonotoneChain Math::Geometry::Voronoi Math::PlanePath Moo IO::Scalar Class::XSAccessor Growl::GNTP XML::SAX::ExpatXS cpanm PAR::Packer
+sudo cpanm AAR/Boost-Geometry-Utils-0.14.tar.gz Math::Clipper Math::ConvexHull Math::ConvexHull::MonotoneChain Math::Geometry::Voronoi Math::PlanePath Moo IO::Scalar Class::XSAccessor Growl::GNTP XML::SAX::ExpatXS cpanm PAR::Packer
 
 # install Wx with a fake X framebuffer
 sudo apt-get install -qy xvfb
@@ -13,7 +13,7 @@ sudo killall Xvfb
 #install slic3r
 git clone https://github.com/alexrj/Slic3r.git
 cd Slic3r
-git checkout 0.9.9
+git checkout -b 0.9.10b origin/0.9.10b
 sudo perl Build.PL 
 sudo ./Build install
 
