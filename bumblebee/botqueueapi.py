@@ -72,15 +72,12 @@ class BotQueueAPI():
         #load in our file baby.
         files = None
         if filepath is not None:
-          timeout = 60
           files = {'file': (filepath, open(filepath, 'rb'))}
-        else:
-          timeout = 15
             
         #prepare and make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
-        response = self.session.send(request.prepare(), timeout=timeout)
+        response = self.session.send(request.prepare(), timeout=15)
         result = response.json()
 
         #sweet, our request must have gone through.
