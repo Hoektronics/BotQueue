@@ -40,10 +40,11 @@ class Ginsu():
 
   def slicerFactory(self):
     path = self.sliceJob['slice_config']['engine']['path']
-    if (path == 'slic3r-0.9.8' or path == 'slic3r-0.9.9'):
-      return Slic3r(self.sliceJob['slice_config'], self.sliceFile)
-    else:
-      raise Exception("Unknown slicer path specified: %s" % path)    
+    mySlic3r = Slic3r(self.sliceJob['slice_config'], self.sliceFile)
+    # getSlicerPath is called to verify the engine exists and
+    # is available for this OS
+    mySlic3r.getSlicerPath()
+    return mySlic3r
 
   def slice(self):
     self.log.info("Starting slice.")
@@ -144,8 +145,14 @@ class Slic3r(GenericSlicer):
       raise Exception("Slicing is not supported on your OS.")
 
     realPath = os.path.dirname(os.path.realpath(__file__))
-    slicePath = "%s/slicers/%s/%s" % (realPath, self.config['engine']['path'], osPath)
+    sliceEnginePath = "%s/slicers/%s" % (realPath, self.config['engine']['path'])
+    slicePath = "%s/%s" % (sliceEnginePath, osPath)
     self.log.debug("Slicer path: %s" % slicePath)
+    if os.path.exists(slicePath) == False:
+	if os.path.exists(sliceEnginePath):
+            raise Exception("This engine isn't supported on your OS.")
+        else:
+            raise Exception("The requested engine isn't installed.")
     
     return slicePath
 
