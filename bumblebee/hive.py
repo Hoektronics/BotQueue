@@ -225,7 +225,7 @@ def determineOS():
   if sys.platform.startswith('darwin'):
     return "osx"
   elif sys.platform.startswith('linux'):
-    if os.uname()[1].startswith('raspberrypi'):
+    if os.uname()[4].startswith('arm'):
       return "raspberrypi"
     else:
       return "linux"

@@ -198,7 +198,21 @@
                   },
               		xaxis: { mode: 'time', timeformat: "%h:%M"},
                   yaxis: { ticks: 10 },
-                  selection: { mode: "xy" }
+                  selection: { mode: "xy" },
+                  grid: {
+                    hoverable: true 
+                  },
+                  tooltip: true,
+                  tooltipOpts: {
+                      content:      "%x - %s - <b>%y</b>",
+                      xDateFormat:  "%h:%M",
+                      yDateFormat:  "%h:%M",
+                      shifts: { 
+                          x:          10,
+                          y:          20
+                      },
+                      defaultTheme:   true                 
+                  }
               };
               var tempGraph_<?=$gid?> = $.plot($("#temperature_graph_<?=$gid?>"), tempData, options);
 

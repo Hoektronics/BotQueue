@@ -27,6 +27,7 @@
     <script language="javascript" type="text/javascript" src="/js/jquery.imagesloaded.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.selection.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/jquery.flot.tooltip.min.js"></script>
 
 		<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		 <script type="text/javascript">
