@@ -4,13 +4,17 @@ import time
 import logging
 from threading import Thread
 
+def scanPorts():
+  import serial.tools.list_ports
+  return serial.tools.list_ports.comports()
+
 #todo: this whole thing sucks.  we need a much better way to interface with this.
 class printcoredriver(bumbledriver.bumbledriver):
   def __init__(self, config):
     super(printcoredriver, self).__init__(config)
     self.log = logging.getLogger('botqueue')
     self.printThread = False
-
+    
   def startPrint(self, jobfile):
     self.p = printcore.printcore()
     self.p.loud = False

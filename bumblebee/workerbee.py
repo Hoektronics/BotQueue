@@ -12,6 +12,36 @@ import logging
 import random
 import shutil
 
+def scanBots():
+  driver_names = ['printcoredriver']
+  bots = {}
+  for name in driver_names:
+    module_name = 'drivers.' + name
+    __import__(module_name)
+    found = getattr(drivers, name).scanPorts()
+    if found:
+      bots[name] = found
+  
+  return bots
+
+def scanCameras():
+  cameras = []
+  myos = hive.determineOS()
+  if myos == "osx":
+    command = "./imagesnap -l"
+  elif myos == "raspberrypi" or myos == "linux":
+    command = "uvcdynctrl -l"
+
+  returned = subprocess.check_output(command, shell=True)
+  lines = returned.rstrip().split('\n')
+
+  if myos == "osx":
+    if len(lines) > 1:
+      return lines[1:]
+  #elif myos == "raspberrypi" or myos == "linux":
+    
+  return None
+
 class WorkerBee():
   
   data = {}
@@ -94,10 +124,8 @@ class WorkerBee():
       import drivers.s3gdriver
       return drivers.s3gdriver.s3gdriver(self.config);
     elif (self.config['driver'] == 'printcore'):
-      import drivers.printcoredriver
       return drivers.printcoredriver.printcoredriver(self.config)
     elif (self.config['driver'] == 'dummy'):
-      import drivers.dummydriver
       return drivers.dummydriver.dummydriver(self.config)
     else:
       raise Exception("Unknown driver specified.")

@@ -13,8 +13,13 @@ sudo chmod +x /usr/bin/rpi-update
 sudo /usr/bin/rpi-update
 
 #install webcam tools
-#sudo apt-get install uvcdynctrl
-sudo apt-get install fswebcam 
+sudo apt-get install fswebcam uvcdynctrl
+
+#simplecv
+sudo apt-get -f install python-opencv python-scipy python-numpy python-pip 
+wget https://github.com/ingenuitas/SimpleCV/zipball/master    
+sudo pip install file:///home/pi/master --download-cache /home/pi/tmp
+rm /home/pi/master
 
 #get Botqueue linked up and working on boot.
 sudo apt-get install -qy git-core vim screen python-pip
