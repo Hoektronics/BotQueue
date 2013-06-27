@@ -69,11 +69,18 @@ class BotQueueAPI():
       try:
         self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
         
-        #load in our file baby.
-        files = None
-        if filepath is not None:
+        #single file?
+        if isinstance(filepath, basestring):
           files = {'file': (filepath, open(filepath, 'rb'))}
-            
+        #multiple files?
+        elif isinstance(filepath, dict):
+          files = {}
+          for idx in filepath.keys():
+            val = filepath[idx]
+            files[idx] = (val, open(val, 'rb'))
+        else:
+          files = None
+
         #prepare and make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
@@ -101,22 +108,28 @@ class BotQueueAPI():
       except (requests.ConnectionError, requests.Timeout, ServerError) as ex:
         #raise NetworkError(str(ex))
         self.log.error("%s call failed: internet connection is down: %s" % (call, ex))
+        self.netError()
         retries = retries - 1
-        self.netStatus = False
-        self.netErrors = self.netErrors + 1
-        time.sleep(10)
       #unknown exceptions... get a stacktrace for debugging.
+      except ValueError as ex:
+        self.log.error("%s call failed: bad response: %s" % (call, response.text))
+        self.netError(True)
+        retries = retries - 1
       except Exception as ex:
         self.log.error("%s call failed: unknown API error: %s" % (call, ex))
         self.log.error("exception: %s.%s" % (ex.__class__, ex.__class__.__name__))
         self.log.exception(ex)
+        self.netError()
         retries = retries - 1
-        self.netStatus = False
-        self.netErrors = self.netErrors + 1
-        time.sleep(10)
     #something bad happened.
     return False
-        
+  
+  def netError(self, netStatus = False):
+    self.netStatus = netStatus
+    if not netStatus:
+      self.netErrors = self.netErrors + 1
+    time.sleep(10)
+    
   def requestToken(self):
     #make our token request call or error
     result = self.apiCall('requesttoken')
@@ -229,6 +242,12 @@ class BotQueueAPI():
   
   def listBots(self):
     return self.apiCall('listbots', retries = 1)
+
+  def getMyBots(self):
+    return self.apiCall('getmybots', retries = 1)
+    
+  def sendDeviceScanResults(self, scan_data, camera_files):
+    return self.apiCall('devicescanresults', {'scan_data' : json.dumps(scan_data)}, filepath=camera_files)
     
   def findNewJob(self, bot_id, can_slice):
     return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})

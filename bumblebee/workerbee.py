@@ -12,36 +12,6 @@ import logging
 import random
 import shutil
 
-def scanBots():
-  driver_names = ['printcoredriver']
-  bots = {}
-  for name in driver_names:
-    module_name = 'drivers.' + name
-    __import__(module_name)
-    found = getattr(drivers, name).scanPorts()
-    if found:
-      bots[name] = found
-  
-  return bots
-
-def scanCameras():
-  cameras = []
-  myos = hive.determineOS()
-  if myos == "osx":
-    command = "./imagesnap -l"
-  elif myos == "raspberrypi" or myos == "linux":
-    command = "uvcdynctrl -l"
-
-  returned = subprocess.check_output(command, shell=True)
-  lines = returned.rstrip().split('\n')
-
-  if myos == "osx":
-    if len(lines) > 1:
-      return lines[1:]
-  #elif myos == "raspberrypi" or myos == "linux":
-    
-  return None
-
 class WorkerBee():
   
   data = {}
@@ -447,64 +417,20 @@ class WorkerBee():
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
+      
       #do we even have a webcam config setup?
       if 'webcam' in self.config:
-        #what os are we using
-        myos = hive.determineOS()
-        if myos == "osx":
-          command = "./imagesnap -q -d '%s' webcam.jpg && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% webcam.jpg 2>/dev/null" % (
-            self.config['webcam']['device']
-          )
-        elif myos == "raspberrypi" or myos == "linux":
-          if self.data['status'] == 'working':
-            watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
-          else:
-            watermark = "%s :: BotQueue.com" % self.config['name']
-          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r 640x480 --title '%s' webcam.jpg" % (
-            self.config['webcam']['device'],
-            watermark
-          )
+        if self.data['status'] == 'working':
+          watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
         else:
-          raise Exception("Webcams are not supported on your OS (%s)." % myos)
+          watermark = "%s :: BotQueue.com" % self.config['name']
+        device = self.config['webcam']['device']
               
-        self.info("Webcam Command: %s" % command)
+        return hive.takePicture(device, watermark)
 
-        outputLog = ""
-        errorLog = ""
-      
-        # this starts our thread to slice the model into gcode
-        self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        self.info("Webcam Capture started.")
-        while self.p.poll() is None:
-          output = self.p.stdout.readline()
-          if output:
-            self.info("Webcam: %s" % output.strip())
-            outputLog = outputLog + output
-                        
-          time.sleep(self.sleepTime)
-        
-        #get any last lines of output
-        output = self.p.stdout.readline()
-        while output:
-          self.debug("Webcam: %s" % output.strip())
-          outputLog = outputLog + output
-          output = self.p.stdout.readline()
+      else:
+        return False
 
-        #get our errors (if any)
-        error = self.p.stderr.readline()
-        while error:
-          self.error("Webcam: %s" % error.strip())
-          errorLog = errorLog + error
-          error = self.p.stderr.readline()
-
-        self.info("Webcam: capture complete.")
-
-        #did we get errors?
-        if (errorLog or self.p.returncode > 0):
-          self.error("Errors detected.  Bailing.")
-          return False
-        else:
-          return True
     #main try/catch block  
     except Exception as ex:
       self.exception(ex)
