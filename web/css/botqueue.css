@@ -197,3 +197,29 @@ div.approve-app h4, div.deny-app h4 {
 ul#editTab a {
   padding: 15px;
 }
+
+div.webcam_preview {
+  border: 2px solid #666;
+  margin-bottom: 30px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+div.webcam_preview img {
+  margin-bottom: 1px;
+}
+
+div.webcam_preview.active {
+  border: 2px solid #08C;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+div.webcam_preview.active span.webcam_name {
+  color: #08C;
+}
+
+span.webcam_name {
+  font-weight: bold;
+  padding: 5px;
+}

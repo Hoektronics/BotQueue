@@ -95,6 +95,8 @@
     function set_webcam(ele)
     {
       $('#webcam_device').val($(ele).find('span.webcam_name').html());
+      $('div.webcam_preview').removeClass('active');
+      $(ele).addClass('active');
     }
   </script>
 <? endif ?>
