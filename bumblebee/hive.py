@@ -10,6 +10,7 @@ import hashlib
 import time
 from threading import Thread
 import subprocess
+import drivers
 
 class BeeConfig():
   
@@ -231,7 +232,100 @@ def determineOS():
       return "linux"
   else:
     return "unknown"
- 
+
+def scanBots():
+  driver_names = ['printcoredriver']
+  bots = {}
+  for name in driver_names:
+    module_name = 'drivers.' + name
+    __import__(module_name)
+    found = getattr(drivers, name).scanPorts()
+    if found:
+      bots[name] = found
+
+  return bots
+
+def scanCameras():
+  cameras = []
+  myos = determineOS()
+  if myos == "osx":
+    command = "./imagesnap -l"
+  elif myos == "raspberrypi" or myos == "linux":
+    command = "uvcdynctrl -l"
+
+  returned = subprocess.check_output(command, shell=True)
+  lines = returned.rstrip().split('\n')
+
+  if myos == "osx":
+    if len(lines) > 1:
+      return lines[1:]
+  #elif myos == "raspberrypi" or myos == "linux":
+
+  return None
+
+def takePicture(device, watermark = None, output="webcam.jpg"):
+  log = logging.getLogger('botqueue')
+
+  try:
+    #what os are we using
+    myos = determineOS()
+    if myos == "osx":
+      command = "./imagesnap -q -d '%s' '%s' && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% '%s' 2>/dev/null" % (
+        device,
+        output,
+        output
+      )
+    elif myos == "raspberrypi" or myos == "linux":
+      command = "exec /usr/bin/fswebcam -q --jpeg 60 -d '%s' -r 640x480 --title '%s' '%s'" % (
+        device,
+        watermark,
+        output
+      )
+    else:
+      raise Exception("Webcams are not supported on your OS (%s)." % myos)
+
+    log.info("Webcam Command: %s" % command)
+
+    outputLog = ""
+    errorLog = ""
+
+    # this starts our thread to slice the model into gcode
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    log.info("Webcam Capture started.")
+    while p.poll() is None:
+      output = p.stdout.readline()
+      if output:
+        log.info("Webcam: %s" % output.strip())
+        outputLog = outputLog + output
+
+      time.sleep(0.5)
+
+    #get any last lines of output
+    output = p.stdout.readline()
+    while output:
+      log.debug("Webcam: %s" % output.strip())
+      outputLog = outputLog + output
+      output = p.stdout.readline()
+
+    #get our errors (if any)
+    error = p.stderr.readline()
+    while error:
+      log.error("Webcam: %s" % error.strip())
+      errorLog = errorLog + error
+      error = p.stderr.readline()
+
+    log.info("Webcam: capture complete.")
+
+    #did we get errors?
+    if (errorLog or p.returncode > 0):
+      log.error("Errors detected.  Bailing.")
+      return False
+    else:
+      return True
+  except Exception as ex:
+    log.exception(ex)
+    return False
+
 def loadLogger():
   # create logger with 'spam_application'
   logger = logging.getLogger('botqueue')

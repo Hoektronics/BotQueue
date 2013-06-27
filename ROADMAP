@@ -11,7 +11,6 @@ v0.4 Release - Online Bot Config!
 * WEB - ability to assign each bot to an app.
 * WEB - online editing of bot configs.
 
-
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.
 
@@ -41,6 +40,8 @@ v0.4 - CHANGELOG
   * WEB - remote address is pretty tough to fake too.
 * WEB - add name info to app registration
 * WEB - Remove access token for a certain app.
+* WEB - Implement getmybots api call
+* WEB - Implement botscanresults api call
 
 ------------------------------------------------------------------------------------
 
