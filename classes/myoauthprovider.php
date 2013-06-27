@@ -60,22 +60,22 @@
 		 */
 		public function checkToken($provider)
 		{
-			$token = OAuthToken::findByKey($provider->token);
+			$this->token = OAuthToken::findByKey($provider->token);
 			
-			if(!$token->isHydrated())
+			if(!$this->token->isHydrated())
 				return OAUTH_TOKEN_REJECTED;
-			elseif($token->get('type') == 1 && !$token->get('verified'))
+			elseif($this->token->get('type') == 1 && !$this->token->get('verified'))
 				return OAUTH_VERIFIER_INVALID;
 			else
 			{
-				if($token->get('type') == 2)
+				if($this->token->get('type') == 2)
 				{
 					/* if this is an access token we register the user to the provider for use in our api */
-					$this->user = $token->getUser();
-					User::$me = $token->getUser();
+					$this->user = $this->token->getUser();
+					User::$me = $this->token->getUser();
 				}
 
-				$provider->token_secret = $token->get('token_secret');
+				$provider->token_secret = $this->token->get('token_secret');
 				return OAUTH_OK;
 			}
 		}

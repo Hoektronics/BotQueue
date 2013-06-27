@@ -64,5 +64,17 @@
 		  
 		  return new Collection($sql, array('OAuthToken' => 'id', 'OAuthConsumer' => 'consumer_id'));
 		}
+		
+		public function getBots()
+		{
+			$sql = "
+				SELECT id, queue_id, job_id
+				FROM bots
+				WHERE oauth_token_id = ". db()->escape($this->id) ."
+				ORDER BY name
+			";
+
+			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		}
 	}
 ?>

@@ -68,9 +68,14 @@
 					'updatebot',          //ok
 					'updateslicejob',     //ok
 					'webcamupdate',       //ok
+					'getmybots',
+					'devicescanresults'
 				);
 				if (in_array($c, $calls))
 				{
+				  $this->token = $provider->token;
+				  $this->consumer = $provider->consumer;
+				  
 					$fname = "api_{$c}";
 					$data = $this->$fname();
 				}
@@ -81,6 +86,7 @@
 			}
 			catch(Exception $e)
 			{
+			  error_log(print_r($provider->oauth, true));
 				$result = array('status' => 'error', 'error' => $e->getMessage());
 			}
 
@@ -860,6 +866,82 @@
 			Activity::log($bot->getLink() . " sliced the " . $job->getLink() . " job via the API.");
 			
 			return $job->getBot()->getAPIData();
+		}
+		
+		public function api_getmybots()
+		{
+			$data = array();
+			$bots = $this->token->getBots()->getRange(0, 100);
+			if (!empty($bots))
+				foreach ($bots AS $row)
+					$data[] = $row['Bot']->getAPIData();
+
+			return $data;
+		}
+		
+		public function api_devicescanresults()
+		{
+      $old_scan_data = json::decode($this->token->get('device_data'));
+		  $scan_data = json::decode($this->args('scan_data'));
+
+      //var_dump($scan_data);
+      
+			if (!empty($_FILES))
+			{
+			  //delete any old files if we have them.
+			  if (!empty($old_scan_data->camera_files))
+			  {
+			    foreach ($old_scan_data->camera_files AS $id)
+			    {
+			      $s3 = new S3File($id);
+			      $s3->delete();
+			    }
+			  }
+			  
+			  foreach ($_FILES AS $key => $file)
+			  {
+			    if (is_uploaded_file($file['tmp_name']))
+			    {
+            if ($file['error'] != 0)
+            {
+              if($file['size'] == 0 && $file['error'] == 0)
+                $file['error'] = 5; 
+
+              $upload_errors = array( 
+                UPLOAD_ERR_OK        => "No errors.", 
+                UPLOAD_ERR_INI_SIZE    => "Larger than upload_max_filesize.", 
+                UPLOAD_ERR_FORM_SIZE    => "Larger than form MAX_FILE_SIZE.", 
+                UPLOAD_ERR_PARTIAL    => "Partial upload.", 
+                UPLOAD_ERR_NO_FILE        => "No file.", 
+                UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
+                UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
+                UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
+                UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
+              );
+
+              throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
+            }
+            else
+            {
+              //okay, we're good.. do it.
+              $s3 = new S3File();
+              $s3->set('user_id', User::$me->id);
+              $s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+
+              $scan_data->camera_files[] = $s3->id;
+            }
+			    }
+			  }
+			}
+
+      //var_dump($scan_data);
+      //var_dump($_FILES);
+      
+      $this->token->set('device_data', json::encode($scan_data));
+      $this->token->set('last_seen', date('Y-m-d H:i:s'));
+      $this->token->save();
+      
+      return True;
 		}
 	}
 ?>
