@@ -193,3 +193,7 @@ div.approve-app div.form-actions, div.deny-app div.form-actions {
 div.approve-app h4, div.deny-app h4 {
   margin-bottom: 15px;
 }
+
+ul#editTab a {
+  padding: 15px;
+}

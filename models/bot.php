@@ -55,6 +55,10 @@
 				$r['job'] = $job->getAPIData();
 			else
 			  $r['job'] = array();
+			  
+			//pull in and harmonize our config.
+			$r['driver_config'] = json::decode($this->get('driver_config'));
+			$r['driver_config']->name = $this->getName();
 
 			return $r;
 		}

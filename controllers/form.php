@@ -63,6 +63,11 @@
 			$this->_field();
 		}
 
+		public function rawfield()
+		{
+			$this->_field();
+		}
+
 		public function warningfield()
 		{
 			$this->_field();

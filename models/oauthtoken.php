@@ -41,6 +41,11 @@
 			return !$this->isRequest();
 		}
 		
+		public function isMine()
+		{
+			return User::$me->id == $this->get('user_id');
+		}
+		
 		public function getUser()
 		{
 			return new User($this->get('user_id'));
@@ -75,6 +80,14 @@
 			";
 
 			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		}
+		
+		public function getName()
+		{
+		  if ($this->get('name'))
+		    return $this->get('name');
+		  else
+		    return $this->getConsumer()->getName() . " #" . $this->id;
 		}
 	}
 ?>

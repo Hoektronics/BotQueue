@@ -193,29 +193,70 @@
 				$this->setTitle('Edit Bot - ' . $bot->getName());
 
 				//load up our form.
-				$form = $this->_createBotForm($bot);
-				$form->action = $bot->getUrl() . "/edit";
+				$infoForm = $this->_createInfoForm($bot);
+				$slicingForm = $this->_createSlicingForm($bot);
+				$driverForm = $this->_createDriverForm($bot);
 
 				//handle our form
-				if ($form->checkSubmitAndValidate($this->args()))
+				if ($infoForm->checkSubmitAndValidate($this->args()))
 				{
-					$bot->set('queue_id', $form->data('queue_id'));
-					$bot->set('slice_engine_id', $form->data('slice_engine_id'));
-					$bot->set('slice_config_id', $form->data('slice_config_id'));
-					$bot->set('name', $form->data('name'));
-					$bot->set('manufacturer', $form->data('manufacturer'));
-					$bot->set('model', $form->data('model'));
-					$bot->set('electronics', $form->data('electronics'));
-					$bot->set('firmware', $form->data('firmware'));
-					$bot->set('extruder', $form->data('extruder'));
+					$bot->set('name', $infoForm->data('name'));
+					$bot->set('manufacturer', $infoForm->data('manufacturer'));
+					$bot->set('model', $infoForm->data('model'));
+					$bot->set('electronics', $infoForm->data('electronics'));
+					$bot->set('firmware', $infoForm->data('firmware'));
+					$bot->set('extruder', $infoForm->data('extruder'));
 					$bot->save();
 
-					Activity::log("edited the bot " . $bot->getLink() . ".");
+					Activity::log("edited the information for bot " . $bot->getLink() . ".");
+				
+					$this->forwardToUrl($bot->getUrl());						
+				}
+				else if ($slicingForm->checkSubmitAndValidate($this->args()))
+				{
+				  $bot->set('queue_id', $infoForm->data('queue_id'));
+					$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
+					$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
+					$bot->save();
+
+					Activity::log("edited the slicing info for bot " . $bot->getLink() . ".");
+				
+					$this->forwardToUrl($bot->getUrl());						
+				}
+				else if ($driverForm->checkSubmitAndValidate($this->args()))
+				{
+				  $bot->set('oauth_token_id', $driverForm->data('oauth_token_id'));
+				  $bot->set('driver_name', $driverForm->data('driver_name'));
+				  
+				  //create and save our config
+				  $config = array();
+				  $config['driver'] = $bot->get('driver_name');
+				  if ($bot->get('driver_name') == 'dummy')
+				  {
+				    if ($this->args('delay'))
+				      $config['delay'] = $this->args('delay');
+				  }
+				  elseif ($bot->get('driver_name') == 'printcore')
+				  {
+			      $config['port'] = $this->args('serial_port');
+			      $config['port_id'] = $this->args('port_id');
+			      $config['baud'] = $this->args('baudrate');
+				  }
+				  if ($this->args('webcam_device'))
+				    $config['webcam']['device'] = $this->args('webcam_device');
+
+				  $bot->set('driver_config', json::encode($config));
+					$bot->save();
+
+					Activity::log("edited the driver configuration for bot " . $bot->getLink() . ".");
 				
 					$this->forwardToUrl($bot->getUrl());						
 				}
 				
-				$this->set('form', $form);
+				$this->set('bot', $bot);
+				$this->set('info_form', $infoForm);
+				$this->set('slicing_form', $slicingForm);
+				$this->set('driver_form', $driverForm);
 			}
 			catch (Exception $e)
 			{
@@ -499,47 +540,18 @@
 			}
 		}
 				
-		private function _createBotForm($bot)
+		private function _createInfoForm($bot)
 		{
-			//load up our queues.
-			$queues = User::$me->getQueues()->getAll();
-			foreach ($queues AS $row)
-			{
-				$q = $row['Queue'];
-				$qs[$q->id] = $q->getName();
-			}
+		
+			$form = new Form('info');
+			$form->action = $bot->getUrl() . "/edit";
 
-			//load up our engines.
-	    if (User::isAdmin())
-	      $engines = SliceEngine::getAllEngines()->getAll();
-	    else
-	     $engines = SliceEngine::getPublicEngines()->getAll();
-      $engs[0] = "None";
-			foreach ($engines AS $row)
-			{
-				$e = $row['SliceEngine'];
-				$engs[$e->id] = $e->getName();
-			}
+			$form->add(new DisplayField(array(
+				'name' => 'title',
+				'label' => '',
+				'value' => "<h2>Information / Details</h2>"
+			)));
 
-      //load up our configs
-      $engine = $bot->getSliceEngine();
-      //       if (User::isAdmin())
-      //   $configs = $engine->getAllConfigs()->getAll();
-      // else
-	      $configs = $engine->getMyConfigs()->getAll();
-      if (!empty($configs))
-      {
-  			foreach ($configs AS $row)
-  			{
-  				$c = $row['SliceConfig'];
-  				$cfgs[$c->id] = $c->getName();
-  			}
-      }
-      else
-        $cfgs[0] = "None";
-			
-			$form = new Form();
-			
 			$form->add(new TextField(array(
 				'name' => 'name',
 				'label' => 'Bot Name',
@@ -548,36 +560,6 @@
 				'value' => $bot->get('name')
 			)));
 			
-			$form->add(new SelectField(array(
-				'name' => 'queue_id',
-				'label' => 'Queue',
-				'help' => 'Which queue does this bot pull jobs from?',
-				'required' => true,
-				'value' => $bot->get('queue_id'),
-				'options' => $qs
-			)));
-
-  		$form->add(new SelectField(array(
-  		  'id' => 'slice_engine_dropdown',
-  			'name' => 'slice_engine_id',
-  			'label' => 'Slice Engine',
-  			'help' => 'Which slicing engine does this bot use?',
-  			'required' => false,
-  			'value' => $bot->get('slice_engine_id'),
-  			'options' => $engs,
-  			'onchange' => 'update_slice_config_dropdown(this)'
-  		)));
-
-  		$form->add(new SelectField(array(
-  		  'id' => 'slice_config_dropdown',
-  			'name' => 'slice_config_id',
-  			'label' => 'Slice Configuration',
-  			'help' => 'Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.',
-  			'required' => false,
-  			'value' => $bot->get('slice_config_id'),
-  			'options' => $cfgs
-  		)));
-
 			$form->add(new TextField(array(
 				'name' => 'manufacturer',
 				'label' => 'Manufacturer',
@@ -621,14 +603,92 @@
 			return $form;
 		}
 		
-		public function slice_config_select()
+		private function _createSlicingForm($bot)
 		{
+			//load up our engines.
+	    if (User::isAdmin())
+	      $engines = SliceEngine::getAllEngines()->getAll();
+	    else
+	     $engines = SliceEngine::getPublicEngines()->getAll();
+      $engs[0] = "None";
+			foreach ($engines AS $row)
+			{
+				$e = $row['SliceEngine'];
+				$engs[$e->id] = $e->getName();
+			}
+
       //load up our configs
-      $engine = new SliceEngine($this->args('id'));
+      $engine = $bot->getSliceEngine();
       //       if (User::isAdmin())
       //   $configs = $engine->getAllConfigs()->getAll();
       // else
 	      $configs = $engine->getMyConfigs()->getAll();
+      if (!empty($configs))
+      {
+  			foreach ($configs AS $row)
+  			{
+  				$c = $row['SliceConfig'];
+  				$cfgs[$c->id] = $c->getName();
+  			}
+      }
+      else
+        $cfgs[0] = "None";
+
+			$form = new Form('slicing');
+			$form->action = $bot->getUrl() . "/edit";
+
+			$form->add(new DisplayField(array(
+				'name' => 'title',
+				'label' => '',
+				'value' => "<h2>Slicing Setup</h2>"
+			)));
+			
+			//load up our queues.
+  		$queues = User::$me->getQueues()->getAll();
+  		foreach ($queues AS $row)
+  		{
+  			$q = $row['Queue'];
+  			$qs[$q->id] = $q->getName();
+  		}
+
+			$form->add(new SelectField(array(
+				'name' => 'queue_id',
+				'label' => 'Queue',
+				'help' => 'Which queue does this bot pull jobs from?',
+				'required' => true,
+				'value' => $bot->get('queue_id'),
+				'options' => $qs
+			)));
+
+  		$form->add(new SelectField(array(
+  		  'id' => 'slice_engine_dropdown',
+  			'name' => 'slice_engine_id',
+  			'label' => 'Slice Engine',
+  			'help' => 'Which slicing engine does this bot use?',
+  			'required' => false,
+  			'value' => $bot->get('slice_engine_id'),
+  			'options' => $engs,
+  			'onchange' => 'update_slice_config_dropdown(this)'
+  		)));
+
+  		$form->add(new SelectField(array(
+  		  'id' => 'slice_config_dropdown',
+  			'name' => 'slice_config_id',
+  			'label' => 'Slice Configuration',
+  			'help' => 'Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.',
+  			'required' => false,
+  			'value' => $bot->get('slice_config_id'),
+  			'options' => $cfgs
+  		)));
+
+			return $form;
+		}
+		
+		public function slice_config_select()
+		{
+      //load up our configs
+      $engine = new SliceEngine($this->args('id'));
+      $configs = $engine->getMyConfigs()->getAll();
       if (!empty($configs))
       {
   			foreach ($configs AS $row)
@@ -641,6 +701,142 @@
 				echo '<option value="0">None</option>' . "\n";
 
       exit;
+		}
+		
+		private function _createDriverForm($bot)
+		{
+			//load up our apps.
+			$authorized = User::$me->getAuthorizedApps()->getAll();				
+			foreach ($authorized AS $row)
+			{
+				$e = $row['OAuthToken'];
+				$apps[$e->id] = $e->getName();
+			}
+
+      //load up our drivers
+      $drivers = array(
+        'printcore' => 'RepRap Serial Driver',
+        'dummy' => 'Dummy Driver'
+      );
+
+			$form = new Form('driver');
+			$form->action = $bot->getUrl() . "/edit";
+
+			$form->add(new DisplayField(array(
+				'name' => 'title',
+				'label' => '',
+				'value' => "<h2>Driver Configuration</h2>"
+			)));
+
+  		$form->add(new SelectField(array(
+  		  'id' => 'oauth_token_dropdown',
+  			'name' => 'oauth_token_id',
+  			'label' => 'Computer',
+  			'help' => 'Which computer is this bot connected to? <a href="/apps">Full list in the apps area.</a>',
+  			'required' => true,
+  			'value' => $bot->get('oauth_token_id'),
+  			'options' => $apps,
+  			'onchange' => 'update_driver_form(this)'
+  		)));
+
+  		$form->add(new SelectField(array(
+  			'id' => 'driver_name_dropdown',
+  			'name' => 'driver_name',
+  			'label' => 'Driver Name',
+  			'help' => 'Which driver to use? <a href="/help">More info available in the help area.</a>',
+  			'required' => true,
+  			'value' => $bot->get('driver_name'),
+  			'options' => $drivers,
+  			'onchange' => 'update_driver_form(this)'
+  		)));
+  		
+      // $driver_form = Controller::byName('bot')->renderView('driver_form', array(
+      //   'bot_id' => $bot->id,
+      //   'driver' => $bot->get('driver_name'),
+      //   'token_id' => $bot->get('oauth_token_id')
+      // ));
+  		$form->add(new RawField(array(
+  			'value' => '<div id="driver_edit_area"></div>',
+  		)));
+
+			return $form;
+		}
+		
+		public function driver_form()
+		{
+		  try
+		  {
+		    //load our bot
+		    $bot = new Bot($this->args('id'));
+		    if (!$bot->isHydrated())
+					throw new Exception("Could not find that bot.");
+				if (!$bot->isMine())
+					throw new Exception("You cannot view that bot.");
+				
+				//load our token
+  		  $token = new OAuthToken($this->args('token_id'));
+  			if (!$token->isHydrated())
+  				throw new Exception("Could not find that computer.");
+  			if (!$token->isMine())
+  				throw new Exception("This is not your computer.");
+
+        //what driver form to create?
+  		  $driver = $this->args('driver');
+  		  
+  		  //pass on our info.
+  		  $this->set('bot', $bot);
+  		  $this->set('driver', $driver);
+  		  $this->set('token', $token);
+  		  $devices = json::decode($token->get('device_data'));
+  		  $this->set('devices', $devices);
+
+		    $driver_config = json::decode($bot->get('driver_config'));
+		    $driver_config = json::decode($bot->get('driver_config'));
+  		  
+  		  //if we're using the same driver, pull in old values...
+  		  if ($driver == $bot->get('driver_name'))
+  		  {
+
+  		    $this->set('driver_config', $driver_config);
+  		    
+  		    if (is_object($driver_config))
+  		    {
+    		    $this->set('delay', $driver_config->delay);
+    		    $this->set('serial_port', $driver_config->port);
+    		    $this->set('baudrate', $driver_config->baud);
+  		    }
+  		  }
+  		  else
+  		  {
+  		    $this->set('delay', '0.001');
+  		  }
+
+        //pull in our old webcam values too.
+		    if (is_object($driver_config) && !empty($driver_config->webcam))
+		    {
+  		    $this->set('webcam_device', $driver_config->webcam->device);
+		    }
+		    //did we only get one webcam?
+		    else if (is_object($devices) && !empty($devices->cameras) && count($devices->cameras) == 1)
+		    {
+		      $this->set('webcam_device', $devices->cameras[0]);
+		    }
+  		  
+  		  $this->set('baudrates', array(
+  		    250000,
+          115200,
+          57600,
+          38400,
+          28880,
+          19200,
+          14400,
+          9600
+        ));
+		  }
+			catch (Exception $e)
+			{
+				$this->set('megaerror', $e->getMessage());
+			}
 		}
 
     public function statusbutton()
