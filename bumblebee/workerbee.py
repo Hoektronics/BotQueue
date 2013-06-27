@@ -21,9 +21,13 @@ class WorkerBee():
 
     #find our local config info.
     self.global_config = hive.config.get()
-    for row in self.global_config['workers']:
-      if row['name'] == data['name']:
-        self.config = row
+    if data['driver_config']:
+      self.config = data['driver_config']
+    else:
+      self.log.error("Driver config not found!  Falling back to hardcoded workers.")
+      for row in self.global_config['workers']:
+        if row['name'] == data['name']:
+          self.config = row
     
     #communications with our mother bee!
     self.mosi_queue = mosi_queue
