@@ -80,6 +80,7 @@ RewriteRule ^bots(/page:([0-9]+))?$												dispatcher.php?controller=bot&vie
 RewriteRule ^bots/live$									    			dispatcher.php?controller=bot&view=live [NC,L]
 RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/driverform:(dummy|printcore)/token:([0-9]+)$												dispatcher.php?controller=bot&mode=ajax&view=driver_form&id=$1&driver=$2&token_id=$3 [NC,L]
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
 RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=edit&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
