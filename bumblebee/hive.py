@@ -263,7 +263,7 @@ def scanCameras():
 
   return None
 
-def takePicture(device, watermark = None, output="webcam.jpg"):
+def takePicture(device, watermark = None, output="webcam.jpg", brightness = 50, contrast = 50):
   log = logging.getLogger('botqueue')
 
   try:
@@ -276,10 +276,12 @@ def takePicture(device, watermark = None, output="webcam.jpg"):
         output
       )
     elif myos == "raspberrypi" or myos == "linux":
-      command = "exec /usr/bin/fswebcam -q --jpeg 60 -d '%s' -r 640x480 --title '%s' '%s'" % (
+      command = "exec /usr/bin/fswebcam -q --jpeg 60 -d '%s' -r 640x480 --title '%s' --set brightness=%d%% --set contrast=%d%% '%s'" % (
         device,
         watermark,
-        output
+        output,
+        brightness,
+        contrast,
       )
     else:
       raise Exception("Webcams are not supported on your OS (%s)." % myos)
