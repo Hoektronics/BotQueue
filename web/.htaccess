@@ -125,6 +125,7 @@ RewriteRule ^app:([0-9]+)/edit$							    dispatcher.php?controller=app&view=edi
 RewriteRule ^app:([0-9]+)/delete$						    dispatcher.php?controller=app&view=delete_app&app_id=$1 [NC,L]
 RewriteRule ^app/authorize$											dispatcher.php?controller=app&view=authorize_app [NC,L,QSA]
 RewriteRule ^app/revoke/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=revoke_app&token=$1 [NC,L,QSA]
+RewriteRule ^app/edittoken/([0-9a-fA-F]+)$					dispatcher.php?controller=app&view=edit_token&token=$1 [NC,L,QSA]
 
 #slicer stuff.
 RewriteRule ^slicers$											        dispatcher.php?controller=slicer&view=home [NC,L]

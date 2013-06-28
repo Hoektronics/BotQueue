@@ -62,6 +62,22 @@
     </div>
   </div>
 
+  <div class="control-group ">
+    <label class="control-label" for="webcam_brightness"><strong>Webcam Brightness</strong></label>
+    <div class="controls">
+      <input type="text" class="input-mini" id="webcam_brightness" name="webcam_brightness" value="<?=$webcam_brightness?>">
+      <span class="muted">%</span>
+    </div>
+  </div>
+  
+  <div class="control-group ">
+    <label class="control-label" for="webcam_contrast"><strong>Webcam Contrast</strong></label>
+    <div class="controls">
+      <input type="text" class="input-mini" id="webcam_contrast" name="webcam_contrast" value="<?=$webcam_contrast?>">
+      <span class="muted">%</span>
+    </div>
+  </div>
+  
   <? if (is_object($devices)): ?>
     <? if (!empty($devices->camera_files)): ?>
       <div class="row">

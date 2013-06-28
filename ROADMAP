@@ -1,15 +1,10 @@
 v0.4 Release - Online Bot Config!
 
-* BUMBLEBEE - new machine discovery
-  * python - how to list serial ports?
-    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
-      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
-* BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
-* BUMBLEBEE - pull list of bots + config from web directly
-* WEB - ability to assign each bot to an app.
-* WEB - online editing of bot configs.
+* BUMBLEBEE - add contrast and brightness configuration settings to webcam
+* WEB - add contrast and brightness configuration settings to driver config
+* BUMBLEBEE - stop worker thread when bot is removed from our list.
+* BUMBLEBEE - update worker thread when config changes.
+* WEB - prevent editing of driver unless bot is offline, idle, or error
 
 * WEB - when downloading file to slice, status should be "downloading"
 * BUMBLEBEE - send status updates during download.
@@ -18,7 +13,6 @@ v0.4 Release - Online Bot Config!
   * combine queue page into single list of all open jobs w/ tabs to limit based on job status
 * WEB - add diff of slicer configs to slicejob page (current vs snapshot)
 
-* BUMBLEBEE - add contrast and brightness configuration settings to webcam
 
 ------------------------------------------------------------------------------------
 
@@ -42,6 +36,16 @@ v0.4 - CHANGELOG
 * WEB - Remove access token for a certain app.
 * WEB - Implement getmybots api call
 * WEB - Implement botscanresults api call
+* BUMBLEBEE - new machine discovery
+  * python - how to list serial ports?
+    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
+      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
+	* If new machines are found, it will prompt the user to register them.
+	* Allow user to manually add new machines & configure them (serial port, speed, etc)
+  * BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
+  * BUMBLEBEE - pull list of bots + config from web directly
+  * WEB - ability to assign each bot to an app.
+  * WEB - online editing of bot configs.
 
 ------------------------------------------------------------------------------------
 

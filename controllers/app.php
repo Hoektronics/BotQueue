@@ -276,6 +276,61 @@
 				$this->set('megaerror', $e->getMessage());
 			}	
 		}
+
+		//deletes an access token from an app.
+		public function edit_token()
+		{
+			$this->assertLoggedIn();
+		  $this->set('area', 'app');
+
+			try
+			{
+				$token = OAuthToken::findByKey($this->args('token'));
+				if (!$token->isHydrated())
+					throw new Exception("This app does not exist.");
+				if (!User::$me->isAdmin() && $token->get('user_id') != User::$me->id)
+					throw new Exception("You are not authorized to edit this token.");
+
+				$app = $token->getConsumer();
+				$this->setTitle('Edit App Token - ' . $app->getName());
+        $form = $this->_editAccessTokenForm($token);
+        
+        //did they submit it?
+				if ($form->checkSubmitAndValidate($this->args()))
+				{
+  				$token->set('name', $form->data('name'));
+  				$token->save();
+
+  				$this->forwardToUrl("/apps");
+				}
+        
+        $this->set('form', $form);
+				$this->set('token', $token);
+				$this->set('app', $app);
+			}
+			catch (Exception $e)
+			{
+				$this->setTitle('Error');
+				$this->set('megaerror', $e->getMessage());
+			}				
+		}
+		
+		public function _editAccessTokenForm($token)
+		{
+			$form = new Form();
+			$form->action = "/app/edittoken/" . $token->get('token');
+			$form->submitText = "Rename App Token";
+
+			$form->add(new TextField(array(
+				'name' => 'name',
+				'label' => 'Name',
+				'help' => 'A nickname for this token such as the name the computer its running on or the machine its intended to control.',
+				'required' => true,
+				'value' => $token->getName(),
+			)));
+
+			return $form;
+		}
 		
 		//deletes an access token from an app.
 		public function revoke_app()

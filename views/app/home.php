@@ -57,7 +57,8 @@
 					<thead>
 						<tr>
 							<th>Name</th>
-							<th>Deactivate</th>
+							<th>App</th>
+							<th>Manage</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -66,8 +67,12 @@
 							<? $t = $row['OAuthToken'] ?>
 
 							<tr>
+								<td><?=$t->getName()?></td>
 								<td><?=$a->getLink()?></td>
-								<td><a href="/app/revoke/<?=$t->get('token')?>" class="btn btn-danger btn-mini">revoke</a></td>
+								<td>
+                  <a href="/app/edittoken/<?=$t->get('token')?>" class="btn btn-primary btn-mini">rename</a>
+								  <a href="/app/revoke/<?=$t->get('token')?>" class="btn btn-danger btn-mini">revoke</a>
+								</td>
 							</tr>
 						<? endforeach ?>
 					</tbody>
