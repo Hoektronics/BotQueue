@@ -270,7 +270,7 @@ def takePicture(device, watermark = None, output="webcam.jpg", brightness = 50, 
     #what os are we using
     myos = determineOS()
     if myos == "osx":
-      command = "./imagesnap -q -d '%s' '%s' && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% '%s' 2>/dev/null" % (
+      command = "./imagesnap -q -d '%s' -w 2.0 '%s' && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% '%s' 2>/dev/null" % (
         device,
         output,
         output

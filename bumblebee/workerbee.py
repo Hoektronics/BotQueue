@@ -439,7 +439,7 @@ class WorkerBee():
         if 'contrast' in self.config['webcam']:
           contrast = self.config['webcam']['contrast']
               
-        return hive.takePicture(device, watermark, brightness, contrast)
+        return hive.takePicture(device=device, watermark=watermark, output="webcam.jpg", brightness=brightness, contrast=contrast)
 
       else:
         return False
