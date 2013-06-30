@@ -163,7 +163,7 @@ class BotQueueAPI():
       # redirect. In a web application you would redirect the user to the URL
       # below.
       print
-      print "App verification URL: %s" % self.getAuthorizeUrl()
+      print "Please visit BotQueue.com or simply visit this URL to authenticate Bumblebee: %s" % self.getAuthorizeUrl()
       print 
       #webbrowser.open_new(self.getAuthorizeUrl())
   
