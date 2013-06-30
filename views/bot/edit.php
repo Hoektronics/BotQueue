@@ -23,7 +23,7 @@
       </div>
 
       <div id="bot_configuration" class="tab-pane fade">
-        <? if ($bot->get('status') == 'idle' || $bot->get('status') == 'offline' || $bot->get('status') == 'error' || $bot->get('status') == 'qa'): ?>
+        <? if ($bot->get('status') == 'idle' || $bot->get('status') == 'offline' || $bot->get('status') == 'error' || $bot->get('status') == 'waiting'): ?>
   	      <?= $driver_form->render() ?>
   	    <? else: ?>
   	      <div class="row-fluid">
