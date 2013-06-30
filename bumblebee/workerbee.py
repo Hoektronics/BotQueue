@@ -428,9 +428,18 @@ class WorkerBee():
           watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
         else:
           watermark = "%s :: BotQueue.com" % self.config['name']
+
         device = self.config['webcam']['device']
+
+        brightness = 50
+        if 'brightness' in self.config['webcam']:
+          brightness = self.config['webcam']['brightness']
+
+        contrast = 50
+        if 'contrast' in self.config['webcam']:
+          contrast = self.config['webcam']['contrast']
               
-        return hive.takePicture(device, watermark)
+        return hive.takePicture(device=device, watermark=watermark, output="webcam.jpg", brightness=brightness, contrast=contrast)
 
       else:
         return False
