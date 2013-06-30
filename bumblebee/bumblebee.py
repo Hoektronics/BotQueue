@@ -166,9 +166,9 @@ class BumbleBee():
       lastScreenUpdate = 0
 
       #show an intro screen.
-      # self.screen.erase()
-      # self.screen.addstr("\nBotQueue v%s starting up - loading bot list.\n\n" % self.version)
-      # self.screen.refresh()
+      self.screen.erase()
+      self.screen.addstr("\nBotQueue v%s starting up.\n\n" % self.api.version)
+      self.screen.refresh()
     
       #our main loop until we're done.
       self.quit = False
@@ -176,12 +176,12 @@ class BumbleBee():
 
         #any messages?
         self.checkMessages()
-        if (time.time() - lastScreenUpdate > 1):
-          self.drawMenu()
-          lastScreenUpdate = time.time()
         if (time.time() - lastBotUpdate > 10):
           self.getBots()
           lastBotUpdate = time.time()
+        if (time.time() - lastScreenUpdate > 1):
+          self.drawMenu()
+          lastScreenUpdate = time.time()
 
         #keyboard interface stuff.
         key = self.screen.getch()

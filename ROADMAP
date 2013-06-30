@@ -1,6 +1,5 @@
 v0.4 Release - Online Bot Config!
 
-* BUMBLEBEE - don't show bot list until we've scanned devices.
 * BUMBLEBEE - linux webcam detection.
 * WEB - update help docs with new configuration setup.
 
@@ -42,6 +41,7 @@ v0.4 - CHANGELOG
 * WEB - fixed error with field size for storing temperature logs.
 * BUMBLEBEE - update worker thread when config changes.
 * BUMBLEBEE - stop worker thread when bot is removed from our list.
+* BUMBLEBEE - don't show bot list until we've scanned devices.
 
 ------------------------------------------------------------------------------------
 
