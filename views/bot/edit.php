@@ -23,7 +23,16 @@
       </div>
 
       <div id="bot_configuration" class="tab-pane fade">
-  	    <?= $driver_form->render() ?>
+        <? if ($bot->get('status') == 'idle' || $bot->get('status') == 'offline' || $bot->get('status') == 'error' || $bot->get('status') == 'qa'): ?>
+  	      <?= $driver_form->render() ?>
+  	    <? else: ?>
+  	      <div class="row-fluid">
+        		<div class="alert alert-error">
+        			<a class="close">&times;</a>
+        			<strong>Error</strong> The bot must be in an idle, offline, or waiting state in order to edit the driver config.
+          	</div>
+          </div>
+  	    <? endif ?>
       </div>
     </div>
 	</div>

@@ -1,18 +1,9 @@
 v0.4 Release - Online Bot Config!
 
-* BUMBLEBEE - add contrast and brightness configuration settings to webcam
-* WEB - add contrast and brightness configuration settings to driver config
 * BUMBLEBEE - stop worker thread when bot is removed from our list.
 * BUMBLEBEE - update worker thread when config changes.
-* WEB - prevent editing of driver unless bot is offline, idle, or error
-
-* WEB - when downloading file to slice, status should be "downloading"
-* BUMBLEBEE - send status updates during download.
-
-* WEB - Single unified queue view w/ auto-update
-  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
-* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
-
+* BUMBLEBEE - linux webcam detection.
+* WEB - update help docs with new configuration setup.
 
 ------------------------------------------------------------------------------------
 
@@ -41,11 +32,14 @@ v0.4 - CHANGELOG
     * linux: how to uniquely identify each driver (lsusb -v and iSerial)
       * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
 	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
-  * BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
-  * BUMBLEBEE - pull list of bots + config from web directly
-  * WEB - ability to assign each bot to an app.
-  * WEB - online editing of bot configs.
+* Allow user to manually add new machines & configure them (serial port, speed, etc)
+* BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
+* BUMBLEBEE - pull list of bots + config from web directly
+* WEB - ability to assign each bot to an app.
+* WEB - online editing of bot configs.
+* BUMBLEBEE - add contrast and brightness configuration settings to webcam
+* WEB - add contrast and brightness configuration settings to driver config
+* WEB - prevent editing of driver unless bot is offline, idle, error, or qa
 
 ------------------------------------------------------------------------------------
 
@@ -83,6 +77,12 @@ v0.6 - Websockets
 ------------------------------------------------------------------------------------
 
 Long term wants:
+
+* WEB - when downloading file to slice, status should be "downloading"
+* BUMBLEBEE - send status updates during download.
+* WEB - Single unified queue view w/ auto-update
+  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
+* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
 
 * WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
 
