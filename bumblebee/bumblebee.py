@@ -87,8 +87,14 @@ class BumbleBee():
     #did we get a valid response?
     if bots:
       if (bots['status'] == 'success'):
+        #our list of bots this round
+        latestBots = {}
+
         #loop over each bot and load or update its info
         for row in bots['data']:
+          #mark this one as seen.
+          latestBots[row['id']] = True
+
           #do we already have this bot?
           if row['id'] in self.workers:
             link = self.workers[row['id']]
@@ -124,6 +130,17 @@ class BumbleBee():
           #should we find a new job?
           if link.bot['status'] == 'idle':
             self.getNewJob(link)
+      
+        #check to see if any of our current bots has dropped off the list
+        ids = self.workers.keys()
+        for idx in ids:
+          #if we didnt find it, shut it down and remove the worker.
+          if idx not in latestBots:
+            link = self.workers[idx]
+            self.log.info("Bot %s no longer found, shutting it down." % link.bot['name'])
+            self.sendMessage(link, 'shutdown')
+            del self.workers[idx]
+          
       else:
         self.log.error("Bot list failure: %s" % bots['error'])
 
