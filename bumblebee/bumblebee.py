@@ -20,8 +20,7 @@ class BumbleBee():
     hive.loadLogger()
     self.log = logging.getLogger('botqueue')
     self.api = botqueueapi.BotQueueAPI()
-    self.workers = []
-    self.bots = []
+    self.workers = {}
     self.workerDataAge = {}
     self.config = hive.config.get()
     self.lastScanData = None
@@ -85,11 +84,14 @@ class BumbleBee():
     bots = self.api.getMyBots()
     self.checkMessages() #must come after listbots
 
+    #did we get a valid response?
     if bots:
       if (bots['status'] == 'success'):
+        #loop over each bot and load or update its info
         for row in bots['data']:
-          link = self.getWorker(row['id'])
-          if link:
+          #do we already have this bot?
+          if row['id'] in self.workers:
+            link = self.workers[row['id']]
             if not (row['id'] in self.workerDataAge):
               self.workerDataAge[row['id']] = 0
             if self.workerDataAge[row['id']] < startTime:
@@ -117,20 +119,13 @@ class BumbleBee():
             link.miso_queue = miso_queue
             link.mosi_queue = mosi_queue
             link.job = None
-            self.workers.append(link)
+            self.workers[row['id']] = link
           
           #should we find a new job?
           if link.bot['status'] == 'idle':
-            self.log.debug("Getting new job for bot")
             self.getNewJob(link)
       else:
         self.log.error("Bot list failure: %s" % bots['error'])
-
-  def getWorker(self, id):
-    for link in self.workers:
-      if link.bot['id'] == id:
-        return link
-    return False
 
   def main(self):
     #load up our bots and start processing them.
@@ -188,14 +183,14 @@ class BumbleBee():
     self.log.info("Shutting down.")
     
     #tell all our threads to stop
-    for link in self.workers:
+    for idx, link in self.workers.iteritems():
       self.sendMessage(link, 'shutdown')
 
     #wait for all our threads to stop
     threads = len(self.workers)
     lastUpdate = 0
     while threads > 0:
-      for idx, link in enumerate(self.workers):
+      for idx, link in self.workers.iteritems():
         threads = 0
         if link.process.is_alive():
           threads = threads + 1
@@ -220,7 +215,7 @@ class BumbleBee():
   #loop through our workers and check them all for messages
   def checkMessages(self):
     #self.log.debug("Mothership: Checking messages.")
-    for link in self.workers:
+    for idx, link in self.workers.iteritems():
       while not link.miso_queue.empty():
         message = link.miso_queue.get(False)
         self.handleMessage(link, message)
@@ -244,7 +239,7 @@ class BumbleBee():
       self.screen.erase()
       self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.api.version, time.asctime()))
       self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
-      for link in self.workers:
+      for idx, link in self.workers.iteritems():
         self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
         if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
           self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
@@ -268,7 +263,7 @@ class BumbleBee():
       self.log.error("Problem drawing screen - too small? %s" % ex)
 
   def getNewJob(self, link):
-    self.log.info("Looking for new job.")
+    self.log.info("Bot %s looking for new job." % link.bot['name'])
 
     result = self.api.findNewJob(link.bot['id'], self.config['can_slice'])
     if (result['status'] == 'success'):
