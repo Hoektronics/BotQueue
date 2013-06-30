@@ -11,6 +11,7 @@ import hashlib
 import logging
 import random
 import shutil
+import json
 
 class WorkerBee():
   
@@ -390,6 +391,14 @@ class WorkerBee():
       if (self.data['status'] == 'working' or self.data['status'] == 'paused') and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
         self.info("Stopping job.")
         self.stopJob()
+
+      #did we get a new config?
+      if json.dumps(message.data['driver_config']) != json.dumps(self.config):
+        self.log.info("Driver config has changed, updating.")
+        self.config = message.data['driver_config']
+        if self.driver:
+          self.driver.config = self.config
+      
       self.data = message.data
     #time to die, mr bond!
     elif message.name == 'shutdown':

@@ -328,6 +328,19 @@ def takePicture(device, watermark = None, output="webcam.jpg", brightness = 50, 
     log.exception(ex)
     return False
 
+def jsonNormalize(input):
+  return json.loads(json.dumps(input))
+
+def convertToString(input):
+  if isinstance(input, dict):
+    return {convertToString(key): convertToString(value) for key, value in input.iteritems()}
+  elif isinstance(input, list):
+    return [convertToString(element) for element in input]
+  elif isinstance(input, unicode):
+    return input.encode('utf-8')
+  else:
+    return input
+          
 def loadLogger():
   # create logger with 'spam_application'
   logger = logging.getLogger('botqueue')
