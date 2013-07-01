@@ -287,9 +287,9 @@ def takePicture(device, watermark = None, output="webcam.jpg", brightness = 50, 
       command = "exec /usr/bin/fswebcam -q --jpeg 60 -d '%s' -r 640x480 --title '%s' --set brightness=%s%% --set contrast=%s%% '%s'" % (
         device,
         watermark,
-        output,
         brightness,
         contrast,
+        output
       )
     else:
       raise Exception("Webcams are not supported on your OS (%s)." % myos)
