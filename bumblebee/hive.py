@@ -11,6 +11,7 @@ import time
 from threading import Thread
 import subprocess
 import drivers
+import re
 
 class BeeConfig():
   
