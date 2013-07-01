@@ -13,7 +13,7 @@ sudo chmod +x /usr/bin/rpi-update
 sudo /usr/bin/rpi-update
 
 #install webcam tools
-sudo apt-get install fswebcam uvcdynctrl
+sudo apt-get install fswebcam uvcdynctrl v4l-utils
 
 #simplecv
 sudo apt-get -f install python-opencv python-scipy python-numpy python-pip 
