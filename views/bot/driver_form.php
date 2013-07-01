@@ -95,7 +95,7 @@
       <div class="row">
         <? foreach ($devices->camera_files AS $idx => $file_id): ?>
           <? $s3 = new S3File($file_id); ?>
-          <div class="span3 webcam_preview" onclick="set_webcam(<?=$idx?>)">
+          <div class="span3 webcam_preview" id="webcam_preview_<?=$devices->cameras[$idx]->id?>" onclick="set_webcam(<?=$idx?>)">
             <input type="hidden" id="webcam_id_<?=$idx?>" value="<?=$devices->cameras[$idx]->id?>">
             <input type="hidden" id="webcam_name_<?=$idx?>" value="<?=$devices->cameras[$idx]->name?>">
             <input type="hidden" id="webcam_device_<?=$idx?>" value="<?=$devices->cameras[$idx]->device?>">
@@ -130,7 +130,7 @@
       $('#webcam_name').val($('#webcam_name_' + id).val());
 
       $('div.webcam_preview').removeClass('active');
-      $(ele).addClass('active');
+      $('#webcam_preview_' + id).addClass('active');
     }
   </script>
 <? endif ?>
