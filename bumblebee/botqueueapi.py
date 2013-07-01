@@ -75,8 +75,11 @@ class BotQueueAPI():
         #multiple files?
         elif isinstance(filepath, dict):
           files = {}
-          for idx in filepath.keys():
-            val = filepath[idx]
+          for idx, val in filepath.iteritems():
+            files[idx] = (val, open(val, 'rb'))
+        elif isinstance(filepath, list):
+          files = {}
+          for idx, val in enumerate(filepath):
             files[idx] = (val, open(val, 'rb'))
         else:
           files = None

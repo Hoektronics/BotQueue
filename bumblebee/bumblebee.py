@@ -66,12 +66,12 @@ class BumbleBee():
       self.log.info("Device Scan Results: %s" % data)
 
       #pull in images from the webcams and save them as base64
-      camera_files = {}
+      camera_files = []
       if len(data['cameras']):
-        for camera in data['cameras']:
-          outfile = camera + '.jpg'
-          if hive.takePicture(camera, watermark=None, output=outfile):
-            camera_files[camera] = outfile
+        for idx, camera in enumerate(data['cameras']):
+          outfile = camera['name'] + '.jpg'
+          if hive.takePicture(camera['device'], watermark=None, output=outfile):
+            camera_files.append(outfile)
 
       #now update the main site
       self.api.sendDeviceScanResults(data, camera_files)
