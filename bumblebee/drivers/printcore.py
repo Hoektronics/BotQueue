@@ -157,33 +157,38 @@ class printcore():
                         pass
                 #self.log.debug("RECV: %s" % line.rstrip())
                 
-                #look for our extruder temp strings
-                matches = re.findall('T:(\d+\.?\d*)', line)
-                if matches:
-                  self.temperatures['extruder'] = matches[0]
-                matches = re.findall('T:(\d+\.?\d*) /(\d+\.?\d*)', line)
-                if matches:
-                  self.temperatures['extruder'] = matches[0][0]
-                  self.temperatures['extruder_target'] = matches[0][1]
+                #attempt to parse our temperature.
+                try:
+                  #look for our extruder temp strings
+                  matches = re.findall('T:(\d+\.?\d*)', line)
+                  if matches:
+                    self.temperatures['extruder'] = matches[0]
+                  matches = re.findall('T:(\d+\.?\d*) /(\d+\.?\d*)', line)
+                  if matches:
+                    self.temperatures['extruder'] = matches[0][0]
+                    self.temperatures['extruder_target'] = matches[0][1]
 
-                #look for our bed temp strings
-                matches = re.findall('B:(\d+\.?\d*)', line)
-                if matches:
-                  self.temperatures['bed'] = matches[0]
-                matches = re.findall('B:(\d+\.?\d*) /(\d+\.?\d*)', line)
-                if matches:
-                  self.temperatures['bed'] = matches[0][0]
-                  self.temperatures['bed_target'] = matches[0][1]
+                  #look for our bed temp strings
+                  matches = re.findall('B:(\d+\.?\d*)', line)
+                  if matches:
+                    self.temperatures['bed'] = matches[0]
+                  matches = re.findall('B:(\d+\.?\d*) /(\d+\.?\d*)', line)
+                  if matches:
+                    self.temperatures['bed'] = matches[0][0]
+                    self.temperatures['bed_target'] = matches[0][1]
                   
-                #look for rpm strings
-                matches = re.findall('RPM:(\d+\.?\d*)', line)
-                if matches:
-                  self.temperatures['rpm'] = matches[0]
-                matches = re.findall('RPM:(\d+\.?\d*) /(\d+\.?\d*)', line)
-                if matches:
-                  self.temperatures['rpm'] = matches[0][0]
-                  self.temperatures['rpm_target'] = matches[0][1]
-                
+                  #look for rpm strings
+                  matches = re.findall('RPM:(\d+\.?\d*)', line)
+                  if matches:
+                    self.temperatures['rpm'] = matches[0]
+                  matches = re.findall('RPM:(\d+\.?\d*) /(\d+\.?\d*)', line)
+                  if matches:
+                    self.temperatures['rpm'] = matches[0][0]
+                    self.temperatures['rpm_target'] = matches[0][1]
+                except Exception as ex:
+                  self.log.exception(ex)
+                  self.log.error("Bad Temperature Match: %s" % line)
+                  
             if(line.startswith('DEBUG_')):
                 continue
             if(line.startswith(tuple(self.greetings)) or line.startswith('ok')):
