@@ -11,6 +11,7 @@ import time
 from threading import Thread
 import subprocess
 import drivers
+import re
 
 class BeeConfig():
   
@@ -251,17 +252,24 @@ def scanCameras():
   if myos == "osx":
     command = "./imagesnap -l"
   elif myos == "raspberrypi" or myos == "linux":
-    command = "uvcdynctrl -l"
+    command = "uvcdynctrl -l -v"
 
   returned = subprocess.check_output(command, shell=True)
   lines = returned.rstrip().split('\n')
 
   if myos == "osx":
     if len(lines) > 1:
-      return lines[1:]
-  #elif myos == "raspberrypi" or myos == "linux":
-
-  return None
+      for line in lines[1:]:
+        camera = {"id": line, "name": line, "device": line}
+        cameras.append(camera)
+  elif myos == "raspberrypi" or myos == "linux":
+    for line in lines:
+      matches = re.findall('(video\d+)[ ]+(.*) \[(.+), (.+)\]', line)
+      if matches:
+        camera = {"id": matches[0][3], "name": matches[0][1], "device": "/dev/" + matches[0][0]}
+        cameras.append(camera)
+      
+  return cameras
 
 def takePicture(device, watermark = None, output="webcam.jpg", brightness = 50, contrast = 50):
   log = logging.getLogger('botqueue')
@@ -276,12 +284,12 @@ def takePicture(device, watermark = None, output="webcam.jpg", brightness = 50, 
         output
       )
     elif myos == "raspberrypi" or myos == "linux":
-      command = "exec /usr/bin/fswebcam -q --jpeg 60 -d '%s' -r 640x480 --title '%s' --set brightness=%d%% --set contrast=%d%% '%s'" % (
+      command = "exec /usr/bin/fswebcam -q --jpeg 60 -d '%s' -r 640x480 --title '%s' --set brightness=%s%% --set contrast=%s%% '%s'" % (
         device,
         watermark,
-        output,
         brightness,
         contrast,
+        output
       )
     else:
       raise Exception("Webcams are not supported on your OS (%s)." % myos)

@@ -66,12 +66,12 @@ class BumbleBee():
       self.log.info("Device Scan Results: %s" % data)
 
       #pull in images from the webcams and save them as base64
-      camera_files = {}
+      camera_files = []
       if len(data['cameras']):
-        for camera in data['cameras']:
-          outfile = camera + '.jpg'
-          if hive.takePicture(camera, watermark=None, output=outfile):
-            camera_files[camera] = outfile
+        for idx, camera in enumerate(data['cameras']):
+          outfile = camera['name'] + '.jpg'
+          if hive.takePicture(camera['device'], watermark=None, output=outfile):
+            camera_files.append(outfile)
 
       #now update the main site
       self.api.sendDeviceScanResults(data, camera_files)
@@ -255,16 +255,20 @@ class BumbleBee():
     try:
       self.screen.erase()
       self.screen.addstr("BotQueue v%s Time: %s\n\n" % (self.api.version, time.asctime()))
-      self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
-      for idx, link in self.workers.iteritems():
-        self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
-        if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
-          self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
-        elif link.bot['status'] == 'error':
-          self.screen.addstr("%s" % link.bot['error_text'])
-        else:
-          self.screen.addstr("   --         --         --")
-        self.screen.addstr("\n")
+      
+      if len(self.workers):
+        self.screen.addstr("%6s  %20s  %10s  %8s  %8s  %10s\n" % ("ID", "BOT NAME", "STATUS", "PROGRESS", "JOB ID", "STATUS"))
+        for idx, link in self.workers.iteritems():
+          self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
+          if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
+            self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+          elif link.bot['status'] == 'error':
+            self.screen.addstr("%s" % link.bot['error_text'])
+          else:
+            self.screen.addstr("   --         --         --")
+          self.screen.addstr("\n")
+      else:
+        self.screen.addstr("No bots found.  Add a bot on BotQueue.com and assign it to this app.\n")
       self.screen.addstr("\nq = quit program\n")
 
       #show our network status.

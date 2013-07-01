@@ -75,8 +75,11 @@ class BotQueueAPI():
         #multiple files?
         elif isinstance(filepath, dict):
           files = {}
-          for idx in filepath.keys():
-            val = filepath[idx]
+          for idx, val in filepath.iteritems():
+            files[idx] = (val, open(val, 'rb'))
+        elif isinstance(filepath, list):
+          files = {}
+          for idx, val in enumerate(filepath):
             files[idx] = (val, open(val, 'rb'))
         else:
           files = None
@@ -163,7 +166,7 @@ class BotQueueAPI():
       # redirect. In a web application you would redirect the user to the URL
       # below.
       print
-      print "App verification URL: %s" % self.getAuthorizeUrl()
+      print "Please visit BotQueue.com or simply visit this URL to authenticate Bumblebee: %s" % self.getAuthorizeUrl()
       print 
       #webbrowser.open_new(self.getAuthorizeUrl())
   
