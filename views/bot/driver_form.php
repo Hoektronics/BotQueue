@@ -54,11 +54,23 @@
     </div>
   <? endif ?>
 
+  <input type="hidden" id="webcam_id" name="webcam_id" value="<?=$webcam_id?>">
+
+  <div class="control-group ">
+    Click on an image below to select your webcam or enter it manually.
+  <div>
+
+  <div class="control-group ">
+    <label class="control-label" for="webcam_name"><strong>Webcam Name</strong></label>
+    <div class="controls">
+      <input type="text" class="input-xlarge" id="webcam_name" name="webcam_name" value="<?=$webcam_name?>">
+    </div>
+  </div>
+
   <div class="control-group ">
     <label class="control-label" for="webcam_device"><strong>Webcam Device</strong></label>
     <div class="controls">
       <input type="text" class="input-xlarge" id="webcam_device" name="webcam_device" value="<?=$webcam_device?>">
-      <p class="help-block">Click on an image below to select your webcam or enter it manually.</p>
     </div>
   </div>
 
@@ -83,8 +95,11 @@
       <div class="row">
         <? foreach ($devices->camera_files AS $idx => $file_id): ?>
           <? $s3 = new S3File($file_id); ?>
-          <div class="span3 webcam_preview" onclick="set_webcam(this)">
-            <span class="webcam_name"><?=$devices->cameras[$idx]?></span>
+          <div class="span3 webcam_preview" onclick="set_webcam(<?=$idx?>)">
+            <input type="hidden" id="webcam_id_<?=$idx?>" value="<?=$devices->cameras[$idx]->id?>">
+            <input type="hidden" id="webcam_name_<?=$idx?>" value="<?=$devices->cameras[$idx]->name?>">
+            <input type="hidden" id="webcam_device_<?=$idx?>" value="<?=$devices->cameras[$idx]->device?>">
+            <span class="webcam_name"><?=$devices->cameras[$idx]->name?></span>
             <img src="<?=$s3->getRealUrl()?>">
           </div>
         <? endforeach ?>
@@ -108,9 +123,12 @@
       return false;
     }
     
-    function set_webcam(ele)
+    function set_webcam(id)
     {
-      $('#webcam_device').val($(ele).find('span.webcam_name').html());
+      $('#webcam_id').val($('#webcam_id_' + id).val());
+      $('#webcam_device').val($('#webcam_device_' + id).val());
+      $('#webcam_name').val($('#webcam_name_' + id).val());
+
       $('div.webcam_preview').removeClass('active');
       $(ele).addClass('active');
     }
