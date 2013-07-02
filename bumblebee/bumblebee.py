@@ -19,26 +19,28 @@ class BumbleBee():
   def __init__(self):
     hive.loadLogger()
     self.log = logging.getLogger('botqueue')
-    self.api = botqueueapi.BotQueueAPI()
     self.workers = {}
     self.workerDataAge = {}
     self.config = hive.config.get()
     self.lastScanData = None
     
     #check for default info.
-    if not 'can_slice' in self.config:
-      self.config['can_slice'] = True
-      hive.config.save(self.config)
-
-    #check for default info.
     if not 'app_url' in self.config:
       self.config['app_url'] = "https://www.botqueue.com"
       hive.config.save(self.config)
 
     #create a unique hash that will identify this computers requests
-    if not self.config['uid']:
+    if 'uid' not in self.config or not self.config['uid']:
       self.config['uid'] = hashlib.sha1(str(time.time())).hexdigest()
       hive.config.save(self.config)   
+
+    #slicing options moved to driver config
+    if 'can_slice' in self.config:
+      del self.config['can_slice']
+      hive.config.save(self.config)   
+      
+    #load up our api
+    self.api = botqueueapi.BotQueueAPI()
       
     #this is our threading tracker
     stacktracer.trace_start("trace.html", interval=5, auto=True) # Set auto flag to always update file!
@@ -286,12 +288,12 @@ class BumbleBee():
   def getNewJob(self, link):
     self.log.info("Bot %s looking for new job." % link.bot['name'])
 
-    result = self.api.findNewJob(link.bot['id'], self.config['can_slice'])
+    result = self.api.findNewJob(link.bot['id'], link.bot['driver_config']['can_slice'])
     if (result['status'] == 'success'):
       if (len(result['data'])):
         job = result['data']
         startTime = time.time()
-        jresult = self.api.grabJob(link.bot['id'], job['id'], self.config['can_slice'])
+        jresult = self.api.grabJob(link.bot['id'], job['id'], link.bot['driver_config']['can_slice'])
 
         if (jresult['status'] == 'success'):
           #save it to our link.

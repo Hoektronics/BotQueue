@@ -128,7 +128,7 @@ class WorkerBee():
       
         #slicing means we need to slice our job.
         if self.data['status'] == 'slicing':
-          if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
+          if self.data['job']['slicejob']['status'] == 'slicing' and self.config['can_slice']:
               self.sliceJob()
         #working means we need to process a job.
         elif self.data['status'] == 'working':
