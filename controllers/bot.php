@@ -845,8 +845,8 @@
   		  $devices = json::decode($token->get('device_data'));
   		  $this->set('devices', $devices);
 
-		    $driver_config = json::decode($bot->get('driver_config'));
-		    $driver_config = json::decode($bot->get('driver_config'));
+        //pull in our driver config
+		    $driver_config = $bot->getDriverConfig();
   		  
   		  //if we're using the same driver, pull in old values...
   		  if ($driver == $bot->get('driver_name'))
@@ -880,12 +880,18 @@
 		    {
   		    //did we only get one webcam?
 		      if (is_object($devices) && !empty($devices->cameras) && count($devices->cameras) == 1)
-  		      $this->set('webcam_device', $devices->cameras[0]);
+		      {
+  		      $this->set('webcam_id', $devices->cameras[0]->id);
+  		      $this->set('webcam_name', $devices->cameras[0]->name);
+  		      $this->set('webcam_device', $devices->cameras[0]->device);
+		      }
 
   		    //some default webcam settings.
   		    $this->set('webcam_brightness', 50);
   		    $this->set('webcam_contrast', 50);
 		    }
+		    
+		    $this->set('driver_config', $driver_config);
   		  
   		  $this->set('baudrates', array(
   		    250000,

@@ -223,3 +223,9 @@ span.webcam_name {
   font-weight: bold;
   padding: 5px;
 }
+
+div.webcam_preview.span3 {
+  margin-left: 0px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+}

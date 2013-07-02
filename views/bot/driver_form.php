@@ -6,7 +6,7 @@
       <label class="control-label" for="idelay"><strong>Delay</strong></label>
       <div class="controls">
         <input type="text" class="input-mini" id="idelay" name="delay" value="<?=$delay?>">
-        <span class="muted">(in seconds)</span>
+        <span class="muted">(in seconds between gcode commands)</span>
       </div>
     </div>
   <? elseif ($driver == 'printcore'): ?>
@@ -56,9 +56,28 @@
 
   <input type="hidden" id="webcam_id" name="webcam_id" value="<?=$webcam_id?>">
 
-  <div class="control-group ">
-    Click on an image below to select your webcam or enter it manually.
-  <div>
+  <? if (is_object($devices)): ?>
+    <? if (!empty($devices->camera_files)): ?>
+      <div class="control-group ">
+        <label class="control-label" for="iwebcam">
+          <strong>Webcam Setup</strong><br/>
+          <span class="muted">Click on an image to select your webcam or enter it manually below.</span>
+        </label>
+        <div class="controls">
+          <? foreach ($devices->camera_files AS $idx => $file_id): ?>
+            <? $s3 = new S3File($file_id); ?>
+            <div class="span3 webcam_preview <?= ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : ''?>" id="webcam_preview_<?=$idx?>" onclick="set_webcam(<?=$idx?>)">
+              <input type="hidden" id="webcam_id_<?=$idx?>" value="<?=$devices->cameras[$idx]->id?>">
+              <input type="hidden" id="webcam_name_<?=$idx?>" value="<?=$devices->cameras[$idx]->name?>">
+              <input type="hidden" id="webcam_device_<?=$idx?>" value="<?=$devices->cameras[$idx]->device?>">
+              <span class="webcam_name"><?=$devices->cameras[$idx]->name?></span>
+              <img src="<?=$s3->getRealUrl()?>">
+            </div>
+          <? endforeach ?>
+        </div>
+      </div>
+    <? endif ?>
+  <? endif ?>
 
   <div class="control-group ">
     <label class="control-label" for="webcam_name"><strong>Webcam Name</strong></label>
@@ -89,23 +108,6 @@
       <span class="muted">%</span>
     </div>
   </div>
-  
-  <? if (is_object($devices)): ?>
-    <? if (!empty($devices->camera_files)): ?>
-      <div class="row">
-        <? foreach ($devices->camera_files AS $idx => $file_id): ?>
-          <? $s3 = new S3File($file_id); ?>
-          <div class="span3 webcam_preview" id="webcam_preview_<?=$devices->cameras[$idx]->id?>" onclick="set_webcam(<?=$idx?>)">
-            <input type="hidden" id="webcam_id_<?=$idx?>" value="<?=$devices->cameras[$idx]->id?>">
-            <input type="hidden" id="webcam_name_<?=$idx?>" value="<?=$devices->cameras[$idx]->name?>">
-            <input type="hidden" id="webcam_device_<?=$idx?>" value="<?=$devices->cameras[$idx]->device?>">
-            <span class="webcam_name"><?=$devices->cameras[$idx]->name?></span>
-            <img src="<?=$s3->getRealUrl()?>">
-          </div>
-        <? endforeach ?>
-      </div>
-    <? endif ?>
-  <? endif ?>
   
   <script>
     function set_serialport(ele, idx)
