@@ -17,8 +17,8 @@ class APITest():
       #jobs = self.api.createJobFromJob(50)
       #self.printJobs(jobs)
       
-      # jobs = self.api.createJobFromURL('http://www.thingiverse.com/download:91915')
-      # self.printJobs(jobs)
+      #jobs = self.api.createJobFromURL('http://www.thingiverse.com/download:91915', name="test name", queue_id = 470)
+      #print jobs
 
       #jobs = self.api.createJobFromFile("test.stl")
       #self.printJobs(jobs)
