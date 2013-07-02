@@ -1,6 +1,7 @@
 v0.4 Release - Online Bot Config!
 
-* BUMBLEBEE - linux webcam detection.
+* WEB - anchor to pre-select bot edit tab on edit page
+* WEB - better flow for app approval -> bot registration
 * WEB - fix register bot section.
 * WEB - app token should list bots
 * WEB - bot view page should show app token
@@ -45,6 +46,8 @@ v0.4 - CHANGELOG
 * BUMBLEBEE - update worker thread when config changes.
 * BUMBLEBEE - stop worker thread when bot is removed from our list.
 * BUMBLEBEE - don't show bot list until we've scanned devices.
+* BUMBLEBEE - linux webcam detection.
+* BUMBLEBEE - add name parameter to create job api calls
 
 ------------------------------------------------------------------------------------
 
