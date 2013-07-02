@@ -1,6 +1,11 @@
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
+  <? if (!is_object($devices)): ?>
+		<div class="alert alert-error">
+			<strong>Warning</strong> The client has not reported the results of the device scan yet, wait a moment and reload to see the device scan results for easier configuration of serial ports, webcams, etc.
+		</div>
+  <? endif ?>
   <? if ($driver == 'dummy'): ?>
     <div class="control-group ">
       <label class="control-label" for="idelay"><strong>Delay</strong></label>

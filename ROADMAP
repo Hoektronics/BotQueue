@@ -1,7 +1,5 @@
 v0.4 Release - Online Bot Config!
 
-* WEB - better flow for app approval -> bot registration
-* WEB - anchor to pre-select bot edit tab on edit page
 * WEB - update help docs with new configuration setup.
 
 ------------------------------------------------------------------------------------
@@ -50,6 +48,8 @@ v0.4 - CHANGELOG
 * WEB - fix register bot section.
 * WEB - app token should list bots
 * WEB - bot view page should show app token
+* WEB - better flow for app approval -> bot registration
+* WEB - if no device scan is detected on the driver page, show an error/warning message.
 
 ------------------------------------------------------------------------------------
 
