@@ -57,10 +57,24 @@
 			  $r['job'] = array();
 			  
 			//pull in and harmonize our config.
-			$r['driver_config'] = json::decode($this->get('driver_config'));
-			$r['driver_config']->name = $this->getName();
+			$r['driver_config'] = $this->getDriverConfig();
 
 			return $r;
+		}
+		
+		public function getDriverConfig()
+		{
+		  //load up our config
+		  $config = json::decode($this->get('driver_config'));
+		  if (!is_object($config))
+		    $config = new stdClass;
+		  $config->name = $this->getName();
+
+      //default our slicing value
+      if (!isset($config->can_slice))
+        $config->can_slice = True;
+
+      return $config;
 		}
 
 		public function getStatusHTML()

@@ -217,6 +217,11 @@
 				  $bot->set('queue_id', $slicingForm->data('queue_id'));
 					$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 					$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
+					
+					$config = $bot->getDriverConfig();
+          $config->can_slice = (bool)$slicingForm->data('can_slice');
+          $bot->set('driver_config', json::encode($config));
+				  
 					$bot->save();
 
 					Activity::log("edited the slicing info for bot " . $bot->getLink() . ".");
@@ -229,32 +234,33 @@
 				  $bot->set('driver_name', $driverForm->data('driver_name'));
 				  
 				  //create and save our config
-				  $config = array();
-				  $config['driver'] = $bot->get('driver_name');
+          $config = $bot->getDriverConfig();
+
+				  $config->driver = $bot->get('driver_name');
 				  if ($bot->get('driver_name') == 'dummy')
 				  {
 				    if ($this->args('delay'))
-				      $config['delay'] = $this->args('delay');
+				      $config->delay = $this->args('delay');
 				  }
 				  elseif ($bot->get('driver_name') == 'printcore')
 				  {
-			      $config['port'] = $this->args('serial_port');
-			      $config['port_id'] = $this->args('port_id');
-			      $config['baud'] = $this->args('baudrate');
+			      $config->port = $this->args('serial_port');
+			      $config->port_id = $this->args('port_id');
+			      $config->baud = $this->args('baudrate');
 				  }
 
           //did we get webcam info?
 				  if ($this->args('webcam_device'))
 				  {
-				    $config['webcam']['device'] = $this->args('webcam_device');
+				    $config->webcam->device = $this->args('webcam_device');
             if ($this->args('webcam_id'))
-  				    $config['webcam']['id'] = (int)$this->args('webcam_id');
+  				    $config->webcam->id = (int)$this->args('webcam_id');
             if ($this->args('webcam_name'))
-  				    $config['webcam']['name'] = (int)$this->args('webcam_name');
+  				    $config->webcam->name = (int)$this->args('webcam_name');
             if ($this->args('webcam_brightness'))
-  				    $config['webcam']['brightness'] = (int)$this->args('webcam_brightness');
+  				    $config->webcam->brightness = (int)$this->args('webcam_brightness');
   				  if ($this->args('webcam_contrast'))
-  				    $config['webcam']['contrast'] = (int)$this->args('webcam_contrast');
+  				    $config->webcam->contrast = (int)$this->args('webcam_contrast');
 				  }
 				  
           //save it all to the bot as json.
@@ -664,6 +670,15 @@
   			$qs[$q->id] = $q->getName();
   		}
 
+      $config = $bot->getDriverConfig();
+      
+      $form->add(new CheckboxField(array(
+  			'name' => 'can_slice',
+  			'label' => 'Client Slicing Enabled?',
+  			'help' => 'Is the controlling computer fast enough to slice?',
+  			'value' => $config->can_slice,
+  		)));
+  		
 			$form->add(new SelectField(array(
 				'name' => 'queue_id',
 				'label' => 'Queue',
