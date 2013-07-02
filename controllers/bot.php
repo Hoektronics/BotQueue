@@ -214,7 +214,7 @@
 				}
 				else if ($slicingForm->checkSubmitAndValidate($this->args()))
 				{
-				  $bot->set('queue_id', $infoForm->data('queue_id'));
+				  $bot->set('queue_id', $slicingForm->data('queue_id'));
 					$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 					$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
 					$bot->save();
@@ -245,12 +245,18 @@
 
           //did we get webcam info?
 				  if ($this->args('webcam_device'))
+				  {
 				    $config['webcam']['device'] = $this->args('webcam_device');
-				  if ($this->args('webcam_brightness'))
-				    $config['webcam']['brightness'] = (int)$this->args('webcam_brightness');
-				  if ($this->args('webcam_contrast'))
-				    $config['webcam']['contrast'] = (int)$this->args('webcam_contrast');
-
+            if ($this->args('webcam_id'))
+  				    $config['webcam']['id'] = (int)$this->args('webcam_id');
+            if ($this->args('webcam_name'))
+  				    $config['webcam']['name'] = (int)$this->args('webcam_name');
+            if ($this->args('webcam_brightness'))
+  				    $config['webcam']['brightness'] = (int)$this->args('webcam_brightness');
+  				  if ($this->args('webcam_contrast'))
+  				    $config['webcam']['contrast'] = (int)$this->args('webcam_contrast');
+				  }
+				  
           //save it all to the bot as json.
 				  $bot->set('driver_config', json::encode($config));
 					$bot->save();
@@ -821,6 +827,8 @@
         //pull in our old webcam values too.
 		    if (is_object($driver_config) && !empty($driver_config->webcam))
 		    {
+  		    $this->set('webcam_id', $driver_config->webcam->id);
+  		    $this->set('webcam_name', $driver_config->webcam->name);
   		    $this->set('webcam_device', $driver_config->webcam->device);
   		    $this->set('webcam_brightness', $driver_config->webcam->brightness);
   		    $this->set('webcam_contrast', $driver_config->webcam->contrast);
