@@ -56,31 +56,57 @@
 			$bot = new Bot();
 			
 			//load up our form.
-			$form = $this->_createBotForm($bot);
-			$form->action = "/bot/register";
+			$form = $this->_createBotRegisterForm($bot);
 
 			//handle our form
 			if ($form->checkSubmitAndValidate($this->args()))
 			{
 			  $bot->set('user_id', User::$me->id);
-				$bot->set('queue_id', $form->data('queue_id'));
-        $bot->set('slice_engine_id', $form->data('slice_engine_id'));
-        $bot->set('slice_config_id', $form->data('slice_config_id'));
 				$bot->set('name', $form->data('name'));
 				$bot->set('manufacturer', $form->data('manufacturer'));
 				$bot->set('model', $form->data('model'));
-				$bot->set('electronics', $form->data('electronics'));
-				$bot->set('firmware', $form->data('firmware'));
-				$bot->set('extruder', $form->data('extruder'));
 				$bot->set('status', 'offline');
 				$bot->save();
 
 				Activity::log("registered the bot " . $bot->getLink() . ".");
 			
-				$this->forwardToUrl($bot->getUrl());						
+				$this->forwardToUrl($bot->getUrl() . "/edit");						
 			}
 			
 			$this->set('form', $form);
+		}
+
+		private function _createBotRegisterForm($bot)
+		{
+		
+			$form = new Form('register');
+			$form->action = "/bot/register";
+
+			$form->add(new TextField(array(
+				'name' => 'name',
+				'label' => 'Bot Name',
+				'help' => 'What should humans call your bot?',
+				'required' => true,
+				'value' => $bot->get('name')
+			)));
+			
+			$form->add(new TextField(array(
+				'name' => 'manufacturer',
+				'label' => 'Manufacturer',
+				'help' => 'Which company (or person) built your bot?',
+				'required' => true,
+				'value' => $bot->get('manufacturer')
+			)));
+
+			$form->add(new TextField(array(
+				'name' => 'model',
+				'label' => 'Model',
+				'help' => 'What is the model or name of your bot design?',
+				'required' => true,
+				'value' => $bot->get('model')
+			)));
+					
+			return $form;
 		}
 		
 		public function view()
@@ -269,7 +295,7 @@
 
 					Activity::log("edited the driver configuration for bot " . $bot->getLink() . ".");
 				
-					$this->forwardToUrl($bot->getUrl());						
+					$this->forwardToUrl($bot->getUrl() . "/edit");
 				}
 				
 				$this->set('bot', $bot);
@@ -599,7 +625,7 @@
 				'name' => 'electronics',
 				'label' => 'Electronics',
 				'help' => 'What electronics are you using to control your bot?',
-				'required' => true,
+				'required' => false,
 				'value' => $bot->get('electronics')
 			)));
 
@@ -607,7 +633,7 @@
 				'name' => 'firmware',
 				'label' => 'Firmware',
 				'help' => 'What firmware are you running on your electronics?',
-				'required' => true,
+				'required' => false,
 				'value' => $bot->get('firmware')
 			)));
 
@@ -615,7 +641,7 @@
   			'name' => 'extruder',
   			'label' => 'Extruder',
   			'help' => 'What extruder are you using to print with?',
-  			'required' => true,
+  			'required' => false,
   			'value' => $bot->get('extruder')
   		)));
 					

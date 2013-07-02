@@ -1,10 +1,9 @@
 v0.4 Release - Online Bot Config!
 
-* WEB - anchor to pre-select bot edit tab on edit page
-* WEB - better flow for app approval -> bot registration
-* WEB - fix register bot section.
 * WEB - app token should list bots
 * WEB - bot view page should show app token
+* WEB - better flow for app approval -> bot registration
+* WEB - anchor to pre-select bot edit tab on edit page
 * WEB - update help docs with new configuration setup.
 
 ------------------------------------------------------------------------------------
@@ -48,6 +47,9 @@ v0.4 - CHANGELOG
 * BUMBLEBEE - don't show bot list until we've scanned devices.
 * BUMBLEBEE - linux webcam detection.
 * BUMBLEBEE - add name parameter to create job api calls
+* WEB - allow renaming of jobs
+* BUMBLEBEE/WEB - per-driver can slice configuration via website
+* WEB - fix register bot section.
 
 ------------------------------------------------------------------------------------
 
