@@ -21,7 +21,7 @@
 			<div class="alert alert-block alert-error deny-app">
 			  <h4 class="alert-heading">Deny it:</h4>
 				You can safely ignore this page and no access will be granted. Or you can explicitly deny access below.
-				<form class="form-horizontal" method="POST" action="/app/revoke/<?=$token->get('token')?>">
+				<form class="form-horizontal" method="POST" action="<?=$token->getUrl()?>/revoke">
         	<fieldset>
           	<div class="form-actions">
         			<button type="submit" class="btn btn-primary">Deny App</button>

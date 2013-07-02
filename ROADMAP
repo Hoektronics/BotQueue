@@ -1,6 +1,5 @@
 v0.4 Release - Online Bot Config!
 
-* WEB - app token should list bots
 * WEB - bot view page should show app token
 * WEB - better flow for app approval -> bot registration
 * WEB - anchor to pre-select bot edit tab on edit page
@@ -50,6 +49,7 @@ v0.4 - CHANGELOG
 * WEB - allow renaming of jobs
 * BUMBLEBEE/WEB - per-driver can slice configuration via website
 * WEB - fix register bot section.
+* WEB - app token should list bots
 
 ------------------------------------------------------------------------------------
 

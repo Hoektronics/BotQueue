@@ -9,8 +9,6 @@
 			$this->user = new User($this->get('user_id'));
 		}
 
-		/* static functions */
-		
 		public static function findByKey($key)
 		{
 			$id = db()->getValue("
@@ -20,6 +18,11 @@
 			);
 
 			return new OAuthToken($id);
+		}
+		
+		public function getUrl()
+		{
+		  return "/app/token:{$this->id}";
 		}
 		
 		public function changeToAccessToken()

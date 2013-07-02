@@ -285,7 +285,7 @@
 
 			try
 			{
-				$token = OAuthToken::findByKey($this->args('token'));
+				$token = new OAuthToken($this->args('id'));
 				if (!$token->isHydrated())
 					throw new Exception("This app does not exist.");
 				if (!User::$me->isAdmin() && $token->get('user_id') != User::$me->id)
@@ -303,7 +303,8 @@
 
   				$this->forwardToUrl("/apps");
 				}
-        
+				
+        $this->set('bots', $token->getBots()->getAll());
         $this->set('form', $form);
 				$this->set('token', $token);
 				$this->set('app', $app);
@@ -318,8 +319,8 @@
 		public function _editAccessTokenForm($token)
 		{
 			$form = new Form();
-			$form->action = "/app/edittoken/" . $token->get('token');
-			$form->submitText = "Rename App Token";
+			$form->action = $token->getUrl() . "/edit";
+			$form->submitText = "Manage App Token";
 
 			$form->add(new TextField(array(
 				'name' => 'name',
@@ -340,7 +341,7 @@
 
 			try
 			{
-				$token = OAuthToken::findByKey($this->args('token'));
+				$token = new OAuthToken($this->args('id'));
 				if (!$token->isHydrated())
 					throw new Exception("This app does not exist.");
 				if (!User::$me->isAdmin() && $token->get('user_id') != User::$me->id)

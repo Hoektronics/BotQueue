@@ -41,7 +41,7 @@
 								<td><?=$a->getLink()?></td>
 								<td>
  								  <a href="/app/authorize?oauth_token=<?=$t->get('token')?>" class="btn btn-primary btn-mini">view</a>
-								  <a href="/app/revoke/<?=$t->get('token')?>" class="btn btn-danger btn-mini">deny</a>
+								  <a href="<?=$t->getUrl()?>/revoke" class="btn btn-danger btn-mini">deny</a>
 							  </td>
 							</tr>
 						<? endforeach ?>
@@ -70,8 +70,8 @@
 								<td><?=$t->getName()?></td>
 								<td><?=$a->getLink()?></td>
 								<td>
-                  <a href="/app/edittoken/<?=$t->get('token')?>" class="btn btn-primary btn-mini">rename</a>
-								  <a href="/app/revoke/<?=$t->get('token')?>" class="btn btn-danger btn-mini">revoke</a>
+                  <a href="<?=$t->getUrl()?>/edit" class="btn btn-primary btn-mini">manage</a>
+								  <a href="<?=$t->getUrl()?>/revoke" class="btn btn-danger btn-mini">revoke</a>
 								</td>
 							</tr>
 						<? endforeach ?>
