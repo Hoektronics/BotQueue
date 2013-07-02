@@ -132,6 +132,7 @@
 			$t->set('token', $token_key);
 			$t->set('token_secret', $token_secret);
 			$t->set('ip_address', $_SERVER['REMOTE_ADDR']);
+			$t->set('last_seen', date("Y-m-d H:i:s"));
 			$t->save();
 	
 			$data['oauth_token'] = $token_key;

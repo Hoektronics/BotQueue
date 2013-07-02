@@ -348,14 +348,21 @@
 					throw new Exception("You are not authorized to delete this app.");
 
 				$app = $token->getConsumer();
-				$this->setTitle('Revoke App Permissions - ' . $app->getName());
-
+				
+				if ($token->type == 2)
+				  $this->setTitle('Revoke App Permissions - ' . $app->getName());
+        else
+          $this->setTitle('Deny App - ' . $app->getName());
+        
 				$this->set('token', $token);
 				$this->set('app', $app);
 
 				if ($this->args('submit'))
 				{
-					Activity::log("removed the app named " . $app->getLink() . ".");
+  				if ($token->type == 2)
+					  Activity::log("removed the app named " . $app->getLink() . ".");
+					else
+				    Activity::log("denied the app named " . $app->getLink() . ".");
 
 					$token->delete();
 					$this->forwardToUrl("/apps");

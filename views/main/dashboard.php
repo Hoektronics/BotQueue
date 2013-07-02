@@ -3,20 +3,27 @@
     <strong>It looks like you're new here!</strong>  Head over to the <a href="/help">help page</a> for information on getting up and running.  You're going to like it here.
   </div>
 <? endif ?>
-<!-- >
-<div class="row">
-	<div class="span12">
-    <a class="btn btn-primary btn-mini" href="/upload">New Job</a>
-    <a class="btn btn-primary btn-mini" href="/bot/register">New Bot</a>
-    <a class="btn btn-primary btn-mini" href="/queue/create">New Queue</a>
-    <span class="muted">Auto refresh every 10s - Last Update <?=date("Y-m-d H:i:s")?></span>
-  </div>
-</div>
--->
 
-<? if ($request_tokens_count): ?>
+<? if (count($request_tokens)): ?>
   <div class="alert alert-info">
-    <strong><?=$request_tokens_count?> app<?=($request_tokens_count>1)? 's are' : ' is'?> requesting access!</strong>  Head over to the <a href="/apps">apps page</a> to approve or deny this request.
+    <div class="row">
+      <div class="span3" style="margin-top: 8px; margin-bottom: 8px;">
+        <strong><?=count($request_tokens)?> app<?=(count($request_tokens)>1) ? 's' : ' '?> on your local network <?=(count($request_tokens)>1) ? 'are' : 'is'?> requesting access:</strong>
+      </div>
+      <div class="span8">
+        <div class="row">
+          <? foreach ($request_tokens AS $row): ?>
+            <? $token = $row['OAuthToken'] ?>
+            <? $app = $row['OAuthConsumer'] ?>
+            <div class="span4" style="margin-top: 8px; margin-bottom: 8px;">
+              <?= $app->getLink()?> requested access on <?= Utility::formatDateTime($token->get('last_seen')) ?>
+              <a href="/app/authorize?oauth_token=<?=$token->get('token')?>" class="btn btn-primary btn-mini">view</a>
+      			  <a href="<?=$token->getUrl()?>/revoke" class="btn btn-danger btn-mini">deny</a>
+            </div>
+          <? endforeach ?>
+        </div>
+      </div>
+    </div>
   </div>
 <? endif ?>
 
