@@ -23,7 +23,9 @@ class APITest():
       #jobs = self.api.createJobFromFile("test.stl")
       #self.printJobs(jobs)
 
-      print self.api.listBots()
+      bots = self.api.listBots()
+      for bot in bots['data']:
+        print bot['driver_config']
 
     except KeyboardInterrupt as e:
       pass

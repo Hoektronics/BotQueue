@@ -36,7 +36,7 @@ class BotQueueAPI():
     self.session = requests.session()
     
     # self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
-    if self.config['app']['token_key']:
+    if 'token_key' in self.config['app'] and self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:
       self.my_oauth_hook = OAuthHook(consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
