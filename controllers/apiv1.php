@@ -86,6 +86,7 @@
 			}
 			catch(Exception $e)
 			{
+			  error_log(print_r($this->args(), true));
 			  error_log(print_r($provider->oauth, true));
 				$result = array('status' => 'error', 'error' => $e->getMessage());
 			}
@@ -295,6 +296,17 @@
 
 			Activity::log("created " . count($jobs) . " new " . Utility::pluralizeWord('job', count($jobs)) . " via the API.");
 			
+			//did we get a name?
+			if ($this->args('name'))
+			{
+				foreach($jobs AS $job)
+				{
+				  $job->set('name', $this->args('name'));
+				  $job->save();
+				}
+			}
+			
+			//load our api data.
 			$data = array();
 			if (!empty($jobs))
 				foreach($jobs AS $job)
