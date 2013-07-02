@@ -135,6 +135,7 @@
 				$this->set('engine', $bot->getSliceEngine());
 				$this->set('config', $bot->getSliceConfig());
 				$this->set('webcam', $bot->getWebcamImage());
+				$this->set('app', $bot->getApp());
 
 				$jobs = $bot->getJobs(null, 'user_sort', 'DESC');
 				$this->set('jobs', $jobs->getRange(0, 50));

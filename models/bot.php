@@ -102,6 +102,11 @@
 			return "/bot:" . $this->id;
 		}
 		
+		public function getApp()
+		{
+		  return new OAuthToken($this->get('oauth_token_id'));
+		}
+		
 		public function getCurrentJob()
 		{
 			return new Job($this->get('job_id'));
