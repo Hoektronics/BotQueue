@@ -11,6 +11,7 @@ import hashlib
 import logging
 import random
 import shutil
+import json
 
 class WorkerBee():
   
@@ -21,9 +22,13 @@ class WorkerBee():
 
     #find our local config info.
     self.global_config = hive.config.get()
-    for row in self.global_config['workers']:
-      if row['name'] == data['name']:
-        self.config = row
+    if data['driver_config']:
+      self.config = data['driver_config']
+    else:
+      self.log.error("Driver config not found!  Falling back to hardcoded workers.")
+      for row in self.global_config['workers']:
+        if row['name'] == data['name']:
+          self.config = row
     
     #communications with our mother bee!
     self.mosi_queue = mosi_queue
@@ -90,14 +95,15 @@ class WorkerBee():
       #self.driver.disconnect()
 
   def driverFactory(self):
+
+    module_name = 'drivers.' + self.config['driver'] + 'driver'
+    __import__(module_name)
+
     if (self.config['driver'] == 's3g'):
-      import drivers.s3gdriver
       return drivers.s3gdriver.s3gdriver(self.config);
     elif (self.config['driver'] == 'printcore'):
-      import drivers.printcoredriver
       return drivers.printcoredriver.printcoredriver(self.config)
     elif (self.config['driver'] == 'dummy'):
-      import drivers.dummydriver
       return drivers.dummydriver.dummydriver(self.config)
     else:
       raise Exception("Unknown driver specified.")
@@ -122,7 +128,7 @@ class WorkerBee():
       
         #slicing means we need to slice our job.
         if self.data['status'] == 'slicing':
-          if self.data['job']['slicejob']['status'] == 'slicing' and self.global_config['can_slice']:
+          if self.data['job']['slicejob']['status'] == 'slicing' and self.config['can_slice']:
               self.sliceJob()
         #working means we need to process a job.
         elif self.data['status'] == 'working':
@@ -385,6 +391,14 @@ class WorkerBee():
       if (self.data['status'] == 'working' or self.data['status'] == 'paused') and (status == 'idle' or status == 'offline' or status == 'error' or status == 'maintenance'):
         self.info("Stopping job.")
         self.stopJob()
+
+      #did we get a new config?
+      if json.dumps(message.data['driver_config']) != json.dumps(self.config):
+        self.log.info("Driver config has changed, updating.")
+        self.config = message.data['driver_config']
+        if self.driver:
+          self.driver.config = self.config
+      
       self.data = message.data
     #time to die, mr bond!
     elif message.name == 'shutdown':
@@ -416,64 +430,29 @@ class WorkerBee():
   def takePicture(self):
     #create our command to do the webcam image grabbing
     try:
+      
       #do we even have a webcam config setup?
       if 'webcam' in self.config:
-        #what os are we using
-        myos = hive.determineOS()
-        if myos == "osx":
-          command = "./imagesnap -q -d '%s' webcam.jpg && sips --resampleWidth 640 --padToHeightWidth 480 640 --padColor FFFFFF -s formatOptions 60%% webcam.jpg 2>/dev/null" % (
-            self.config['webcam']['device']
-          )
-        elif myos == "raspberrypi" or myos == "linux":
-          if self.data['status'] == 'working':
-            watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
-          else:
-            watermark = "%s :: BotQueue.com" % self.config['name']
-          command = "exec /usr/bin/fswebcam -q --jpeg 60 -d %s -r 640x480 --title '%s' webcam.jpg" % (
-            self.config['webcam']['device'],
-            watermark
-          )
+        if self.data['status'] == 'working':
+          watermark = "%s :: %0.2f%% :: BotQueue.com" % (self.config['name'], float(self.data['job']['progress']))
         else:
-          raise Exception("Webcams are not supported on your OS (%s)." % myos)
+          watermark = "%s :: BotQueue.com" % self.config['name']
+
+        device = self.config['webcam']['device']
+
+        brightness = 50
+        if 'brightness' in self.config['webcam']:
+          brightness = self.config['webcam']['brightness']
+
+        contrast = 50
+        if 'contrast' in self.config['webcam']:
+          contrast = self.config['webcam']['contrast']
               
-        self.info("Webcam Command: %s" % command)
+        return hive.takePicture(device=device, watermark=watermark, output="webcam.jpg", brightness=brightness, contrast=contrast)
 
-        outputLog = ""
-        errorLog = ""
-      
-        # this starts our thread to slice the model into gcode
-        self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        self.info("Webcam Capture started.")
-        while self.p.poll() is None:
-          output = self.p.stdout.readline()
-          if output:
-            self.info("Webcam: %s" % output.strip())
-            outputLog = outputLog + output
-                        
-          time.sleep(self.sleepTime)
-        
-        #get any last lines of output
-        output = self.p.stdout.readline()
-        while output:
-          self.debug("Webcam: %s" % output.strip())
-          outputLog = outputLog + output
-          output = self.p.stdout.readline()
+      else:
+        return False
 
-        #get our errors (if any)
-        error = self.p.stderr.readline()
-        while error:
-          self.error("Webcam: %s" % error.strip())
-          errorLog = errorLog + error
-          error = self.p.stderr.readline()
-
-        self.info("Webcam: capture complete.")
-
-        #did we get errors?
-        if (errorLog or self.p.returncode > 0):
-          self.error("Errors detected.  Bailing.")
-          return False
-        else:
-          return True
     #main try/catch block  
     except Exception as ex:
       self.exception(ex)

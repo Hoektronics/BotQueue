@@ -175,6 +175,7 @@
 						throw new Exception("That is not a valid queue.");
 
 					$job->set('queue_id', $queue->id);
+					$job->set('name', $form->data('name'));
 					$job->save();
 
 					Activity::log("edited the job " . $job->getLink() . ".");
@@ -202,6 +203,14 @@
 			}
 			
 			$form = new Form();
+
+			$form->add(new TextField(array(
+				'name' => 'name',
+				'label' => 'Job Name',
+				'help' => 'What should we call this job?',
+				'required' => true,
+				'value' => $job->getName()
+			)));
 			
 			$form->add(new SelectField(array(
 				'name' => 'queue_id',

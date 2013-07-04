@@ -1,51 +1,4 @@
-v0.4 Release - Online Bot Config!
-
-* BUMBLEBEE - headless app authentication support - based on IP
-  * WEB - show all apps requesting access from your current IP.
-  * WEB - if you're on the same IP, high likelihood its your bot
-  * WEB - remote address is pretty tough to fake too.
-
-* WEB - when downloading file to slice, status should be "downloading"
-* BUMBLEBEE - send status updates during download.
-
-* WEB - Single unified queue view w/ auto-update
-  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
-* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
-
-* WEB - add name info to app registration
-* WEB - Remove access token for a certain app.
-* WEB - ability to assign each bot to an app.
-* WEB - online editing of bot configs.
-
-* BUMBLEBEE - send list of serial ports and webcams to site for bot configuration.
-* BUMBLEBEE - pull list of bots + config from web directly
-* BUMBLEBEE - add contrast and brightness configuration settings to webcam
-
-* BUMBLEBEE - new machine discovery
-  * python - how to list serial ports?
-    * linux: how to uniquely identify each driver (lsusb -v and iSerial)
-      * http://stackoverflow.com/questions/5421008/how-to-uniquely-identify-two-identical-usb-serial-adapters-in-linux
-	* If new machines are found, it will prompt the user to register them.
-	* Allow user to manually add new machines & configure them (serial port, speed, etc)
-
-------------------------------------------------------------------------------------
-
-v0.4 - CHANGELOG
-
-* BUMBLEBEE - report local IP address
-* WEB - record local and remote IP when getting bot updates
-* WEB - show IP addresses on bot view page
-* WEB - added 30 day list to leaderboards
-* WEB - bulk create multi-job prints from an uploaded .zip file
-* WEB - add support for .zip files to file view page
-* WEB - add support for showing parent files to job page
-* WEB - pull in all files from thingiverse.com/thing:#### style urls
-* WEB - add 'bump' feature to move a job to the top of the queue
-* WEB - record client name and version when updating bot status.
-
-------------------------------------------------------------------------------------
-
-v0.5 - Timelapses + On-Deck Jobs
+v0.5 - Timelapses + On-Deck Jobs - ETA: July 2013
 
 WEBCAM STUFF
 * automatically create a timelapse at the end of a successful print - watch your object grow
@@ -79,6 +32,12 @@ v0.6 - Websockets
 ------------------------------------------------------------------------------------
 
 Long term wants:
+
+* WEB - when downloading file to slice, status should be "downloading"
+* BUMBLEBEE - send status updates during download.
+* WEB - Single unified queue view w/ auto-update
+  * combine queue page into single list of all open jobs w/ tabs to limit based on job status
+* WEB - add diff of slicer configs to slicejob page (current vs snapshot)
 
 * WEB - create page to show live shots from currently printing public bots or just shots from completed jobs
 

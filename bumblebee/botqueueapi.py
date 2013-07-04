@@ -36,7 +36,7 @@ class BotQueueAPI():
     self.session = requests.session()
     
     # self.consumer = oauth.Consumer(self.config['app']['consumer_key'], self.config['app']['consumer_secret'])
-    if self.config['app']['token_key']:
+    if 'token_key' in self.config['app'] and self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:
       self.my_oauth_hook = OAuthHook(consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
@@ -69,18 +69,25 @@ class BotQueueAPI():
       try:
         self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
         
-        #load in our file baby.
-        files = None
-        if filepath is not None:
-          timeout = 60
+        #single file?
+        if isinstance(filepath, basestring):
           files = {'file': (filepath, open(filepath, 'rb'))}
+        #multiple files?
+        elif isinstance(filepath, dict):
+          files = {}
+          for idx, val in filepath.iteritems():
+            files[idx] = (val, open(val, 'rb'))
+        elif isinstance(filepath, list):
+          files = {}
+          for idx, val in enumerate(filepath):
+            files[idx] = (val, open(val, 'rb'))
         else:
-          timeout = 15
-            
+          files = None
+
         #prepare and make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
-        response = self.session.send(request.prepare(), timeout=timeout)
+        response = self.session.send(request.prepare(), timeout=15)
         result = response.json()
 
         #sweet, our request must have gone through.
@@ -104,22 +111,28 @@ class BotQueueAPI():
       except (requests.ConnectionError, requests.Timeout, ServerError) as ex:
         #raise NetworkError(str(ex))
         self.log.error("%s call failed: internet connection is down: %s" % (call, ex))
+        self.netError()
         retries = retries - 1
-        self.netStatus = False
-        self.netErrors = self.netErrors + 1
-        time.sleep(10)
       #unknown exceptions... get a stacktrace for debugging.
+      except ValueError as ex:
+        self.log.error("%s call failed: bad response: %s" % (call, response.text))
+        self.netError(True)
+        retries = retries - 1
       except Exception as ex:
         self.log.error("%s call failed: unknown API error: %s" % (call, ex))
         self.log.error("exception: %s.%s" % (ex.__class__, ex.__class__.__name__))
         self.log.exception(ex)
+        self.netError()
         retries = retries - 1
-        self.netStatus = False
-        self.netErrors = self.netErrors + 1
-        time.sleep(10)
     #something bad happened.
     return False
-        
+  
+  def netError(self, netStatus = False):
+    self.netStatus = netStatus
+    if not netStatus:
+      self.netErrors = self.netErrors + 1
+    time.sleep(10)
+    
   def requestToken(self):
     #make our token request call or error
     result = self.apiCall('requesttoken')
@@ -133,9 +146,9 @@ class BotQueueAPI():
   def getAuthorizeUrl(self):
     return self.authorize_url + "?oauth_token=" + self.token_key 
 
-  def convertToken(self, verifier):
+  def convertToken(self):
     #switch our temporary auth token for our real credentials
-    result = self.apiCall('accesstoken', {'oauth_verifier': verifier})
+    result = self.apiCall('accesstoken')
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
@@ -153,7 +166,7 @@ class BotQueueAPI():
       # redirect. In a web application you would redirect the user to the URL
       # below.
       print
-      print "Go to the following link in your browser: %s" % self.getAuthorizeUrl()
+      print "Please visit BotQueue.com or simply visit this URL to authenticate Bumblebee: %s" % self.getAuthorizeUrl()
       print 
       #webbrowser.open_new(self.getAuthorizeUrl())
   
@@ -163,19 +176,20 @@ class BotQueueAPI():
           # After the user has granted access to you, the consumer, the provider will
           # redirect you to whatever URL you have told them to redirect to. You can 
           # usually define this in the oauth_callback argument as well.
-          oauth_verifier = raw_input('What is the PIN? ')
+          #oauth_verifier = raw_input('What is the PIN? ')
 
           # Step 3: Once the consumer has redirected the user back to the oauth_callback
           # URL you can request the access token the user has approved. You use the 
           # request token to sign this request. After this is done you throw away the
           # request token and use the access token returned. You should store this 
           # access token somewhere safe, like a database, for future use.
-          self.convertToken(oauth_verifier)
+          self.convertToken()
           authorized = True
 
+        #we're basically polling the convert function until the user approves it.
+        #throwing the exception is totally normal.
         except Exception as ex:
-          print "Invalid authorization code, please try again."
-          self.log.exception(ex);
+          time.sleep(10)
 
       #record the key in our config
       self.config['app']['token_key'] = self.token_key
@@ -205,14 +219,26 @@ class BotQueueAPI():
   def failJob(self, job_id):
     return self.apiCall('failjob', {'job_id' : job_id})
 
-  def createJobFromJob(self, job_id, quantity = 1, queue_id = 0):
-    return self.apiCall('createjob', {'job_id' : job_id, 'queue_id' : queue_id, 'quantity': quantity})
+  def createJobFromJob(self, job_id, quantity = 1, queue_id = 0, name = None):
+    params = {'job_id' : job_id, 'queue_id' : queue_id, 'quantity': quantity}
+    if name:
+      params['name'] = name
+      
+    return self.apiCall('createjob', params)
 
-  def createJobFromURL(self, url, quantity = 1, queue_id = 0):
-    return self.apiCall('createjob', {'job_url' : url, 'queue_id' : queue_id, 'quantity': quantity})
+  def createJobFromURL(self, url, quantity = 1, queue_id = 0, name = None):
+    params = {'job_url' : url, 'queue_id' : queue_id, 'quantity': quantity}
+    if name:
+      params['name'] = name
+      
+    return self.apiCall('createjob', params)
 
-  def createJobFromFile(self, filename, quantity = 1, queue_id = 0):
-    return self.apiUploadCall('createjob', {'quantity': quantity, 'queue_id' : queue_id}, filepath=filename)
+  def createJobFromFile(self, filename, quantity = 1, queue_id = 0, name = None):
+    params = {'quantity': quantity, 'queue_id' : queue_id}
+    if name:
+      params['name'] = name
+      
+    return self.apiUploadCall('createjob', params, filepath=filename)
       
   def downloadedJob(self, job_id):
     return self.apiCall('downloadedjob', {'job_id' : job_id})
@@ -231,6 +257,12 @@ class BotQueueAPI():
   
   def listBots(self):
     return self.apiCall('listbots', retries = 1)
+
+  def getMyBots(self):
+    return self.apiCall('getmybots', retries = 1)
+    
+  def sendDeviceScanResults(self, scan_data, camera_files):
+    return self.apiCall('devicescanresults', {'scan_data' : json.dumps(scan_data)}, filepath=camera_files)
     
   def findNewJob(self, bot_id, can_slice):
     return self.apiCall('findnewjob', {'bot_id' : bot_id, 'can_slice' : can_slice})

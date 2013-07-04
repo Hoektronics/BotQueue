@@ -12,7 +12,7 @@
 			</ul>
 		</p>
 		<p>
-			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is <strong>v0.3</strong>.
+			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is <strong>v<? $c = Controller::byName('APIV1'); echo $c::$api_version ?></strong>
 		</p>
 		<p>
 		  For instructions on how to install and configure Bumblebee, please see the <a href="/help">help</a> page.
@@ -23,6 +23,31 @@
 	</div>
 	<div class="span6">
 		<? if (User::isLoggedIn()): ?>
+		  <? if (!empty($requesting)): ?>
+		    <h2>Apps Requesting Access</h2>
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>App</th>
+							<th>Manage</th>
+						</tr>
+					</thead>
+					<tbody>	
+			  		<? foreach ($requesting AS $row): ?>
+							<? $a = $row['OAuthConsumer'] ?>
+							<? $t = $row['OAuthToken'] ?>
+
+							<tr>
+								<td><?=$a->getLink()?></td>
+								<td>
+ 								  <a href="/app/authorize?oauth_token=<?=$t->get('token')?>" class="btn btn-primary btn-mini">view</a>
+								  <a href="<?=$t->getUrl()?>/revoke" class="btn btn-danger btn-mini">deny</a>
+							  </td>
+							</tr>
+						<? endforeach ?>
+					</tbody>
+				</table>	    
+		  <? endif ?>
 			<h2>Users - Your Authorized Apps</h2>
 			<p>
 			These are the apps that you have authorized to have access to your account.  If you use multiple computers, the same app may be listed multiple times below.  If you want to remove an app's access to your account, simply click the revoke link.
@@ -32,7 +57,8 @@
 					<thead>
 						<tr>
 							<th>Name</th>
-							<th>Deactivate</th>
+							<th>App</th>
+							<th>Manage</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -41,8 +67,12 @@
 							<? $t = $row['OAuthToken'] ?>
 
 							<tr>
+								<td><?=$t->getName()?></td>
 								<td><?=$a->getLink()?></td>
-								<td><a href="/app/revoke/<?=$t->get('token')?>">revoke</a></td>
+								<td>
+                  <a href="<?=$t->getUrl()?>/edit" class="btn btn-primary btn-mini">manage</a>
+								  <a href="<?=$t->getUrl()?>/revoke" class="btn btn-danger btn-mini">revoke</a>
+								</td>
 							</tr>
 						<? endforeach ?>
 					</tbody>

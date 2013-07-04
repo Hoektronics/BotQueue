@@ -176,3 +176,73 @@ div.bot_thumbnail_4 {
 div.bot_thumbnail_3 {
   font-size: 85%;
 }
+
+div.approve-app label.control-label {
+  width: 60px;
+}
+
+div.approve-app div.controls {
+  margin-left: 80px;
+}
+
+div.approve-app div.form-actions, div.deny-app div.form-actions {
+  background-color: transparent !important;
+  border-top: 0px !important;
+}
+
+div.approve-app h4, div.deny-app h4 {
+  margin-bottom: 15px;
+}
+
+ul#editTab a {
+  padding: 15px;
+}
+
+div.webcam_preview {
+  border: 2px solid #666;
+  margin-bottom: 30px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+div.webcam_preview img {
+  margin-bottom: 1px;
+}
+
+div.webcam_preview.active {
+  border: 2px solid #08C;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+div.webcam_preview.active span.webcam_name {
+  color: #08C;
+}
+
+span.webcam_name {
+  font-weight: bold;
+  padding: 5px;
+}
+
+div.webcam_preview.span3 {
+  margin-left: 0px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+}
+
+ul.install_tabs {
+  margin-bottom: 0px;
+}
+
+div.install_tabs {
+  padding: 20px 15px;
+  border: 1px solid #ddd;
+  border-top: none;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+
+}

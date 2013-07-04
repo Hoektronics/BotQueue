@@ -318,7 +318,8 @@
       return !$this->hasError;
 		}
 	}
-	
+
+	class RawField extends DisplayField {}
 	class WarningField extends DisplayField {}
 	class ErrorField extends DisplayField {}
 	class SuccessField extends DisplayField {}

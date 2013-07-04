@@ -47,6 +47,17 @@
 						<th>Owner:</th>
 						<td><?=$owner->getLink()?></td>
 					</tr>
+					<? if ($app->isHydrated()): ?>
+  					<tr>
+  						<th>Assigned to:</th>
+  						<td><a href="<?=$app->getUrl()?>/edit"><?=$app->getName()?></a></td>
+  					</tr>
+  				<? else: ?>
+    				<tr>
+  						<th>Assigned to:</th>
+  						<td><span class="text-error">No controlling app found.</span></td>
+  					</tr>
+          <? endif ?>
 					<tr>
 						<th>Queue:</th>
 						<td><?=$queue->getLink()?></td>

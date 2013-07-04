@@ -13,14 +13,19 @@ sudo chmod +x /usr/bin/rpi-update
 sudo /usr/bin/rpi-update
 
 #install webcam tools
-#sudo apt-get install uvcdynctrl
-sudo apt-get install fswebcam 
+sudo apt-get install fswebcam uvcdynctrl v4l-utils
+
+#simplecv
+sudo apt-get -f install python-opencv python-scipy python-numpy python-pip 
+wget https://github.com/ingenuitas/SimpleCV/zipball/master    
+sudo pip install file:///home/pi/master --download-cache /home/pi/tmp
+rm /home/pi/master
 
 #get Botqueue linked up and working on boot.
 sudo apt-get install -qy git-core vim screen python-pip
 git clone git://github.com/Hoektronics/BotQueue.git
 sudo usermod -a -G dialout pi
-sudo pip install pyserial
+sudo pip install pyserial Pygments requests requests-oauth
 sudo /bin/sh -c 'cat /home/pi/BotQueue/bumblebee/raspi/inittab >> /etc/inittab'
 chmod a+x $HOME/BotQueue/bumblebee/raspi/bin/bumblebee
 cat $HOME/BotQueue/bumblebee/raspi/profile >> $HOME/.profile
