@@ -12,100 +12,78 @@
 		</ul>
 
 		<h4>Step <?=$i++?>: Register an account</h4>
-		<p>Visit the <a href="/register">register</a> page and sign up.</p>
+		<p>Super easy - just visit the <a href="/register">register</a> page and sign up.  Totally free.</p>
 
 
-		<h4>Step <?=$i++?>: Register your Bots</h4>
+		<h4>Step <?=$i++?>: Install BumbleBee, the client software</h4>
 		<p>
-			On the BotQueue.com website, <a href="/bot/register">register a new bot</a>.  Give it a unique name.  If you want to use the integrated Slic3r support, you'll need to choose the slic3r version and upload your config.  From slic3r, click File-&gt;Export Config.  Upload that as your slice config.  Once you do that, you can upload STL files directly to the site and they will be sliced before printing.
 		</p>
+
+    <div class="tabbable"> <!-- Only required for left/right tabs -->
+      <ul class="nav nav-tabs install_tabs">
+        <li class="active"><a href="#linux_install" data-toggle="tab">Linux Instructions</a></li>
+        <li><a href="#raspi_install" data-toggle="tab">Raspberry Pi Instructions</a></li>
+        <li><a href="#osx_install" data-toggle="tab">OSX Instructions</a></li>
+        <li><a href="#windows_install" data-toggle="tab">Windows Instructions</a></li>
+      </ul>
+
+      <div class="tab-content install_tabs">
+    		<div class="tab-pane active" id="linux_install">
+    		  <h5>Download Bumblebee</h5>
+    		  <p>
+    		    You can use the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git.</a>
+    		  </p>
+    		  
+      	  <h5>Install These Libraries / Programs:</h5>
+<pre>sudo pip install Pygments pyserial requests requests-oauth
+sudo apt-get install fswebcam uvcdynctrl v4l-utils</pre>
+    		</div>
+
+    		<div class="tab-pane" id="osx_install">
+    		  <h5>Download Bumblebee</h5>
+    		  <p>
+    		    You can use the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git.</a>
+    		  </p>
+
+    			<h5>Install These Libraries:</h5>
+<pre>sudo easy_install pip
+sudo pip install Pygments pyserial requests requests-oauth</pre>
+    		</div>
 		
-		<h4>Step <?=$i++?>: Download BumbleBee, the client software</h4>
-		<p>
-		  Download the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git</a>
-		</p>
-		<p>
-		  If you are running bumblebee on a Raspberry Pi, see these <a href="/help/raspberry-pi-installation">installation instructions</a>.
-		</p>
+    		<div class="tab-pane" id="raspi_install">
+          <?= Controller::byName('help')->renderView('raspberry_pi_installation') ?>
+    		</div>
 
-		<h4>Step <?=$i++?>: Install extra libraries</h4>
-		<p>
-		  Open a terminal, and enter the following commands:
-		</p>
-		<h5>Mac / OSX Commands:
-<pre>sudo easy_install Pygments
-sudo easy_install requests
-sudo easy_install requests-oauth</pre>
-    <h5>Linux Commands:
-<pre>sudo pip install Pygments
-sudo pip install requests
-sudo pip install requests-oauth</pre>
+    		<div class="tab-pane" id="windows_install">
+    		  <span class="text-error">Windows is not currently supported by BotQueue - patches welcome!</span>
+    		</div>
+  		</div>
+		</div>
 
 		<h4>Step <?=$i++?>: Authorize the client software</h4>
-		<p>From the command line, navigate to the <strong>bumblebee</strong> folder and run this command: <strong>python bumblebee.py</strong></p>
-		<p>It should give you a url where you authorize the app to access your account.  Take the code that page gives you and enter it into the terminal.</p>
+		<p>From the command line, navigate to the <strong>Bumblebee</strong> folder and run this command: <strong>python bumblebee.py</strong></p>
+		
+		<p>If you are on the same internet-facing IP (such as on most home networks) then when you visit the main botqueue.com dashboard, it will show you that an app is requesting access.  Accept it and give the app a name that will identify the computer that it is running on.</p>
+				
+		<p>If you are not on the same ip, the script in the terminal will give you a link that you can visit to authorize the app to access your account.</p>
 
-		<h4>Step <?=$i++?>: Configure your bots</h4>
-		<p>
-			  Now, edit the <strong>bumblebee/config.json</strong> file and modify the file with your particular bot information.  After you modify this file, you will need to restart the client software by quitting and re-running it.
-		</p>
-		<p>
-		  You can exit it by hitting <strong>q</strong> or <strong>Ctrl+c</strong>.  Re-start it by running <strong>python bumblebee.py</strong>.  This is required because it only pulls down the list of bots from the botqueue.com website once, during the startup of the program.
-	  </p>
-	  
-	  <h5>Webcam Support</h5>
-	  <p>
-	    Bumblebee supports USB webcams, and its easy to configure bumblebee to find the right camera.
-	  </p>
-	  <p>
-	    To find your camera location in OSX, you can open photobooth and copy the string from the Camera dropdown menu, or you can open a terminal, navigate to the bumblebee directory and run <b>./imagesnap -l</b> which will give you a list of available cameras.<br/>
-	  </p>
-	  <p>
-	    On Linux, you'll need to install the <b>fswebcam</b> program.  To get a list of your webcams, open a terminal and run <b>ls /dev/video*</b>.  Enter the webcam name in the configuration file as shown below.  If no webcam option is listed, bumblebee will not attempt to take or upload a photo.
-	  </p>
-	  
-		<h5>A typical RepRap configuration with 2 machines might look like this:</h5>
+
     <div class="alert alert-info">
-      <strong>Please note:</strong> the worker name must exactly match the name of the bot you registered on the website, or the client software will not attempt to control the machine.  The reason for this is that you can use multiple machines to control different bots (for example you have 10 machines in one room, and 10 machines in another room, each with their own control computer)
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <strong>Important:</strong> the Bumblebee client will scan all of your serial ports and attached cameras.  It will upload one picture from each camera to make selecting the right webcam easy.  After granting access to the app, please wait 1-2 minutes for this scan data to upload to the site.
     </div>
 
-<pre>{
- "app": {
-  "consumer_secret": "ffffffffffffffffffffffffffffffffffffffff", 
-  "consumer_key": "ffffffffffffffffffffffffffffffffffffffff", 
-  "token_secret": "ffffffffffffffffffffffffffffffffffffffff", 
-  "token_key": "ffffffffffffffffffffffffffffffffffffffff"
- }, 
- "workers": [
-	{
-		"name": "MendelMax",
-		"driver" : "printcore",
-		"port" : "/dev/tty.usbmodem123",
-		"baud" : "115200",
-		"webcam": {
-      "device": "/dev/video0"
-    }
-	},
-	{
-		"name": "Prusa",
-		"driver" : "printcore",
-		"port" : "/dev/ttyACM0",
-		"baud" : "115200",
-		"webcam": {
-      "device": "/dev/video1"
-    }
-	}
- ]
-}</pre>
+		<h4>Step <?=$i++?>: Register and Configure your Bots</h4>
+		<p>Once you <a href="/bot/register">register a bot</a>, configure the slicer and driver settings.  Follow the instructions in the bot config area for more details.  No need to touch Bumblebee after you config your bot.  The new config will be automatically downloaded.</p>
+		
+		<h4>Step <?=$i++?>: Bring your Bot Online</h4>
+		<p>
+			Bots default to the offline mode so that you have time to configure it.  From the dashboard, select the 'bring online' option from the bot dropdown.  You now have a network linked 3D printer.  If you want it to stop processing jobs, use the same dropdown to take it offline again.
+		</p>
 
 		<h4>Step <?=$i++?>: Upload a job to BotQueue</h4>
 		<p>
-			You can <a href="/upload">upload STL or GCode files to the site</a> and then they will be automatically downloaded and sliced.  Warning: If your client software is running, it will automatically download and process jobs.
-		</p>
-
-		<h4>Step <?=$i++?>: Enjoy watching your bot work.</h4>
-		<p>
-			You now have a network linked 3D printer with a print queue.  It will make you things.  Sit back and enjoy.  I recommend a cold one.
+			Next, <a href="/upload">upload STL or GCode files to the site.</a> These files will be automatically downloaded and executed by any eligible machines.  If your client software is running, it will automatically download and process uploaded jobs.
 		</p>
 
 		<h4>Step <?=$i++?>: Removing a print upon completion</h4>
@@ -114,11 +92,11 @@ sudo pip install requests-oauth</pre>
 		</p>
 	</div>
 	<div class="span4">
-		<h2>Getting Help</h2>
+		<h2>Getting Further Help</h2>
 		<p>
 			This project is a labor of love by yours truly, <a href="http://www.zachhoeken.com">Zach Hoeken</a>. Both the website and client code are 100% open source.
 		</p>
-		<p>It is also a new project, so it will probably be buggy.  If you are stuck and can't get it working, try some of the places below for help.  If you're a dev and don't mind getting your hands dirty, I would love to take commits and pull requests.
+		<p>It is a relatively new project, but it's mostly stable at this point.  If you are stuck and can't get it working, try some of the places below for help.  If you're a dev and don't mind getting your hands dirty, I'm happy  to take commits and pull requests.
 		</p>
 		<ul>
 			<li><a href="https://groups.google.com/d/forum/botqueue">Google Group  / Mailing List</a></li>
