@@ -504,6 +504,12 @@
     			  $jobtemps->$index = $temps;  
     			  $job->set('temperature_data', JSON::encode($jobtemps));
   			  }
+          // else
+          // {
+          //   $jobtemps = array();
+          //            $jobtemps[time()] = $temps;  
+          //            $job->set('temperature_data', JSON::encode($jobtemps));
+          // }
 			  }
 			  else
 			  {
@@ -511,7 +517,10 @@
   			  $jobtemps[time()] = $temps;  
   			  $job->set('temperature_data', JSON::encode($jobtemps));
 			  }
+			  
   			$bot->set('temperature_data', $this->args('temperatures'));
+  			$bot->save();
+  			$job->save();
 			}
 		}
 		
