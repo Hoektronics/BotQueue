@@ -281,9 +281,9 @@
 				  {
 				    $config->webcam->device = $this->args('webcam_device');
             if ($this->args('webcam_id'))
-  				    $config->webcam->id = (int)$this->args('webcam_id');
+  				    $config->webcam->id = $this->args('webcam_id');
             if ($this->args('webcam_name'))
-  				    $config->webcam->name = (int)$this->args('webcam_name');
+  				    $config->webcam->name = $this->args('webcam_name');
             if ($this->args('webcam_brightness'))
   				    $config->webcam->brightness = (int)$this->args('webcam_brightness');
   				  if ($this->args('webcam_contrast'))
