@@ -12,7 +12,7 @@
 			</ul>
 		</p>
 		<p>
-			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is <strong>v0.3</strong>.
+			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is <strong>v<? $c = Controller::byName('APIV1'); echo $c::$api_version ?></strong>
 		</p>
 		<p>
 		  For instructions on how to install and configure Bumblebee, please see the <a href="/help">help</a> page.
