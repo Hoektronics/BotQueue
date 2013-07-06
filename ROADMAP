@@ -1,13 +1,17 @@
-v0.5 - Timelapses + On-Deck Jobs - ETA: Late July 2013
+v0.5 - Timelapses + On-Deck Jobs - ETA: August 2013
 
 BACKGROUND WORKER
 
+* report OS / uname -a / memory size / cpu speed for each token - include in devices scan.
 * extend botqueue to support generic jobs with json payload
-* job types: slicing, timelapse, 3d rendering, image processing, stl parsing
-* states: available / taken / qa / pass / fail / canceled
+* bot/worker should have configuration to specify what jobs it can process.
+* job types: fabrication, toolpath generation, timelapse creation, 3d rendering, image processing, stl parsing
+* main status: available / taken / qa / pass / fail / canceled
+* sub-status (job specific)
+  * downloading / working / uploading / etc.
 * admin area to keep an eye on jobs status.
 * admin area to view active workers.
-* potentially move print jobs to the unified system?
+* move job-specific execution to separate classes in jobs subfolder
 
 CLOUD SLICING
 
