@@ -254,30 +254,35 @@ class Utility
 
 	public function newformatDate($date)
 	{
-		$time = strtotime($date);
-		return date("F j, Y, G:i", $time);	
-		
+	  if (strtotime($date) < 0)
+		  return 'unknown';
+		else
+		  return date("F j, Y, G:i", strtotime($date));	
 	}
 
 
 	public function formatDate($date)
 	{
-		$time = strtotime($date);
-		
-		//if (abs(time() - $time) > 86400)
-			return date("M j, Y", $time);	
-		//else
-		//	return date("g:i a", $time);	
+	  if (strtotime($date) < 0)
+		  return 'unknown';
+		else
+			return date("M j, Y", strtotime($date));	
 	}
 
 	public function formatDateTime($date)
 	{
-		return date("M j, Y // G:i", strtotime($date));	
+		if (strtotime($date) < 0)
+		  return 'unknown';
+		else
+		  return date("M j, Y // G:i", strtotime($date));	
 	}
 
 	public static function W3CDate($datetime) 
 	{
-	    return date("Y-m-d\TH:i:sP", $datetime);
+		if (strtotime($datetime) < 0)
+		  return 'unknown';
+		else
+      return date("Y-m-d\TH:i:sP", $datetime);
 	}
 	
 	public static function relativeDays($datetime)
@@ -285,6 +290,9 @@ class Utility
 		//calculations
 		$elapsed = time() - strtotime($datetime);
 		$days = floor(abs($elapsed / Cache::TIME_ONE_DAY));
+		
+		if (strtotime($datetime) < 0)
+		  return 'unknown';
 		
 		//special formatting...
 		if ($days == 0)
@@ -342,7 +350,7 @@ class Utility
 	public static function getTimeAgo($datetime)
 	{
 		if (trim($datetime) == "" || trim($datetime) == "0000-00-00 00:00:00")
-			return false;
+			return 'unknown';
 
 		$datediff = strtotime(date("Y-m-d H:i:s")) - strtotime($datetime);
 	
@@ -354,7 +362,9 @@ class Utility
 		
 		//echo "$min $hours $days $months $years "; 
 		
-		if ($datediff < 60) { // seconds
+		if (strtotime($datetime) < 0) {
+		  return 'unknown';
+		} else if ($datediff < 60) { // seconds
 			if ($datediff == 0) return "just now";
 			return "$datediff second".self::pluralizer($datediff>1)." ago";
 		} else if ($min < 60) {
@@ -375,12 +385,15 @@ class Utility
 	public static function relativeTime($datetime)
 	{
 		if (trim($datetime) == "")
-			return false;
+			return 'unknown';
 		
 		$from = strtotime(date("Y-m-d H:i:s"));
 		$to = strtotime($datetime);
 		$datediff = $from - $to;
-	
+
+    if ($to < 0)
+      return 'unknown';
+		
 		$min = 	  round(abs($datediff) / (60));
 		$hours =  round(abs($datediff)  / (60 * 60));
 		$days =   round(abs($datediff)  / (60 * 60 * 24));
@@ -430,7 +443,7 @@ class Utility
 	public static function relativeDate($datetime)
 	{
 		if (trim($datetime) == "")
-			return false;
+			return 'unknown';
 		
 		$from = strtotime(date("Y-m-d"));
 		$to = strtotime($datetime);
@@ -443,6 +456,9 @@ class Utility
 		$years =  round(abs($datediff)  / (60 * 60 * 24 * 365));
 		
     // Utility::log("$datetime datediff = $min $hours $days $months $years "); 
+		
+    if ($to < 0)
+      return 'unknown';
 		
 		if ($datediff >= 0)
 		{
