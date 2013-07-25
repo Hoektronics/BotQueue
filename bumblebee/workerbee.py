@@ -397,8 +397,7 @@ class WorkerBee():
       if json.dumps(message.data['driver_config']) != json.dumps(self.config):
         self.log.info("Driver config has changed, updating.")
         self.config = message.data['driver_config']
-        if self.driver:
-          self.driver.config = self.config
+        self.initializeDriver()
       
       self.data = message.data
     #time to die, mr bond!
