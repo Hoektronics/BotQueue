@@ -167,13 +167,18 @@
 					throw new Exception("Could not find that bot.");
 				if (!$bot->isMine())
 					throw new Exception("You cannot view that bot.");
-				if ($bot->get('status') == 'working' && $this->args('status') == 'offline')
+				if (($bot->get('status') == 'working' || $bot->get('status') == 'slicing') && $this->args('status') == 'offline')
 					throw new Exception("You cannot take a working bot offline through the web interface.  You must stop the job from the client first.");
 				
 				if ($this->args('status') == 'offline')
 					Activity::log("took the bot " . $bot->getLink() . " offline.");
 				else
 					Activity::log("brought the bot " . $bot->getLink() . " online.");
+					
+				//do we need to drop a job?
+				$job = $bot->getCurrentJob();
+				if ($job->isHydrated())
+				  $bot->dropJob($job);
 
         //save it and clear out some junk
         $bot->set('temperature_data', '');
@@ -289,6 +294,8 @@
   				  if ($this->args('webcam_contrast'))
   				    $config->webcam->contrast = (int)$this->args('webcam_contrast');
 				  }
+				  else
+				    unset($config->webcam);
 				  
           //save it all to the bot as json.
 				  $bot->set('driver_config', json::encode($config));
@@ -878,15 +885,10 @@
         //okay, no webcam settings.
 		    else
 		    {
-  		    //did we only get one webcam?
-		      if (is_object($devices) && !empty($devices->cameras) && count($devices->cameras) == 1)
-		      {
-  		      $this->set('webcam_id', $devices->cameras[0]->id);
-  		      $this->set('webcam_name', $devices->cameras[0]->name);
-  		      $this->set('webcam_device', $devices->cameras[0]->device);
-		      }
-
   		    //some default webcam settings.
+  		    $this->set('webcam_id', '');
+  		    $this->set('webcam_name', '');
+  		    $this->set('webcam_device', '');
   		    $this->set('webcam_brightness', 50);
   		    $this->set('webcam_contrast', 50);
 		    }

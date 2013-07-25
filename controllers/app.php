@@ -171,8 +171,6 @@
 				$app = new OAuthConsumer($this->args('app_id'));
 				if (!$app->isHydrated())
 					throw new Exception("This app does not exist.");
-				if (!User::$me->isAdmin() && $app->get('user_id') != User::$me->id)
-					throw new Exception("You are not authorized to view this app.");
 
 				$this->setTitle("View App - " . $app->getName());
 
@@ -344,7 +342,7 @@
 				$token = new OAuthToken($this->args('id'));
 				if (!$token->isHydrated())
 					throw new Exception("This app does not exist.");
-				if (!User::$me->isAdmin() && $token->get('user_id') != User::$me->id)
+				if ($token->type == 2 && $token->get('user_id') != User::$me->id)
 					throw new Exception("You are not authorized to delete this app.");
 
 				$app = $token->getConsumer();

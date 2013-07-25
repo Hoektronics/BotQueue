@@ -30,7 +30,7 @@
 		{
 		  if (User::isLoggedIn())
 			{
-				$bots = User::$me->getBots();
+				$bots = User::$me->getActiveBots();
 				$this->set('bots', $bots->getRange(0, 10));
 				$this->set('bot_count', $bots->count());
 
