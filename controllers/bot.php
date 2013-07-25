@@ -294,6 +294,8 @@
   				  if ($this->args('webcam_contrast'))
   				    $config->webcam->contrast = (int)$this->args('webcam_contrast');
 				  }
+				  else
+				    unset($config->webcam);
 				  
           //save it all to the bot as json.
 				  $bot->set('driver_config', json::encode($config));
@@ -883,15 +885,10 @@
         //okay, no webcam settings.
 		    else
 		    {
-  		    //did we only get one webcam?
-		      if (is_object($devices) && !empty($devices->cameras) && count($devices->cameras) == 1)
-		      {
-  		      $this->set('webcam_id', $devices->cameras[0]->id);
-  		      $this->set('webcam_name', $devices->cameras[0]->name);
-  		      $this->set('webcam_device', $devices->cameras[0]->device);
-		      }
-
   		    //some default webcam settings.
+  		    $this->set('webcam_id', '');
+  		    $this->set('webcam_name', '');
+  		    $this->set('webcam_device', '');
   		    $this->set('webcam_brightness', 50);
   		    $this->set('webcam_contrast', 50);
 		    }

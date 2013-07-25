@@ -69,6 +69,13 @@
           <span class="muted">Click on an image to select your webcam or enter it manually below.</span>
         </label>
         <div class="controls">
+          <div class="span3 webcam_preview <?= (!$webcam_device) ? 'active' : ''?>" id="webcam_preview_foo" onclick="set_webcam('foo')">
+            <input type="hidden" id="webcam_id_foo" value="">
+            <input type="hidden" id="webcam_name_foo" value="">
+            <input type="hidden" id="webcam_device_foo" value="">
+            <span class="webcam_name">No Camera</span>
+            <img src="/img/colorbars.gif">
+          </div>
           <? foreach ($devices->camera_files AS $idx => $file_id): ?>
             <? $s3 = new S3File($file_id); ?>
             <div class="span3 webcam_preview <?= ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : ''?>" id="webcam_preview_<?=$idx?>" onclick="set_webcam(<?=$idx?>)">
