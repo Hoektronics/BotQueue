@@ -141,7 +141,7 @@ class WorkerBee():
           outputName = "bot-%s.jpg" % self.data['id']
           if self.takePicture(outputName):
             self.api.webcamUpdate(outputName, bot_id = self.data['id'])
-            lastWebcamUpdate = time.time()
+          lastWebcamUpdate = time.time()
           
         time.sleep(self.sleepTime) # sleep for a bit to not hog resources
     except Exception as ex:
@@ -397,8 +397,7 @@ class WorkerBee():
       if json.dumps(message.data['driver_config']) != json.dumps(self.config):
         self.log.info("Driver config has changed, updating.")
         self.config = message.data['driver_config']
-        if self.driver:
-          self.driver.config = self.config
+        self.initializeDriver()
       
       self.data = message.data
     #time to die, mr bond!
