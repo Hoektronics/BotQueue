@@ -12,6 +12,9 @@ class NetworkError(Exception):
 
 class ServerError(Exception):
   pass
+  
+class AuthError(Exception):
+  pass
 
 class BotQueueAPI():
   
@@ -39,7 +42,6 @@ class BotQueueAPI():
     if 'token_key' in self.config['app'] and self.config['app']['token_key']:
       self.setToken(self.config['app']['token_key'], self.config['app']['token_secret'])
     else:
-      self.my_oauth_hook = OAuthHook(consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
       self.authorize()
 
   def setToken(self, token_key, token_secret):
@@ -47,8 +49,7 @@ class BotQueueAPI():
     self.token_secret = token_secret
     self.my_oauth_hook = OAuthHook(access_token = token_key, access_token_secret = token_secret, consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
     
-    
-  def apiCall(self, call, parameters = {}, url = False, method = "POST", retries = 999999, filepath = None):
+  def apiCall(self, call, parameters = {}, url = False, method = "POST", retries = 999999, filepath = None, ignoreInvalid = False):
     #what url to use?
     if (url == False):
         url = self.endpoint_url
@@ -100,13 +101,20 @@ class BotQueueAPI():
         #did the api itself return an error?
         if result['status'] == 'error':
           self.log.error("API: %s" % result['error'])
-        
-        #is the site database down?
-        if result['status'] == 'error' and result['error'] == "Failed to connect to database!":
-          raise ServerError("Database is down.")
-                    
+          
+          #is the site database down?
+          if result['error'] == "Failed to connect to database!":
+            raise ServerError("Database is down.")
+          #shit, de-authed?  re-auth!
+          if result['error'] == "Invalid token" and not ignoreInvalid:
+            raise AuthError("Token invalid, re-authorizing.")
+
         return result
         
+      #we need to re-auth, do it.
+      except AuthError as ex:
+        self.log.error(ex)
+        self.authorize()
       #these are our known errors that typically mean the network is down.
       except (requests.ConnectionError, requests.Timeout, ServerError) as ex:
         #raise NetworkError(str(ex))
@@ -135,7 +143,7 @@ class BotQueueAPI():
     
   def requestToken(self):
     #make our token request call or error
-    result = self.apiCall('requesttoken')
+    result = self.apiCall('requesttoken', ignoreInvalid = True)
 
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
@@ -148,7 +156,7 @@ class BotQueueAPI():
 
   def convertToken(self):
     #switch our temporary auth token for our real credentials
-    result = self.apiCall('accesstoken')
+    result = self.apiCall('accesstoken', ignoreInvalid = True)
     if result['status'] == 'success':
       self.setToken(result['data']['oauth_token'], result['data']['oauth_token_secret'])
       return result['data']
@@ -157,6 +165,9 @@ class BotQueueAPI():
 
   def authorize(self):
     try:
+      #Step 0: Initialize to just our consumer key and secret.
+      self.my_oauth_hook = OAuthHook(consumer_key=self.config['app']['consumer_key'], consumer_secret=self.config['app']['consumer_secret'])
+      
       # Step 1: Get a request token. This is a temporary token that is used for 
       # having the user authorize an access token and to sign the request to obtain 
       # said access token.
