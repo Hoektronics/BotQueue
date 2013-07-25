@@ -141,7 +141,7 @@ class WorkerBee():
           outputName = "bot-%s.jpg" % self.data['id']
           if self.takePicture(outputName):
             self.api.webcamUpdate(outputName, bot_id = self.data['id'])
-            lastWebcamUpdate = time.time()
+          lastWebcamUpdate = time.time()
           
         time.sleep(self.sleepTime) # sleep for a bit to not hog resources
     except Exception as ex:

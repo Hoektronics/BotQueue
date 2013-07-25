@@ -72,8 +72,11 @@ class BumbleBee():
       if len(data['cameras']):
         for idx, camera in enumerate(data['cameras']):
           outfile = camera['name'] + '.jpg'
-          if hive.takePicture(camera['device'], watermark=None, output=outfile):
-            camera_files.append(outfile)
+          try:
+            if hive.takePicture(camera['device'], watermark=None, output=outfile):
+              camera_files.append(outfile)
+          except Exception as ex:
+            self.exception(ex)
 
       #now update the main site
       self.api.sendDeviceScanResults(data, camera_files)
