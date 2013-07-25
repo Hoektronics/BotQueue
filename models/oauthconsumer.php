@@ -5,6 +5,17 @@
 		{
 			parent::__construct($id, "oauth_consumer");
 		}
+		
+		public function canEdit()
+		{
+		  if (User::$me->isAdmin())
+		    return true;
+		  
+		  if (User::isLoggedIn() && $this->get('user_id') == User::$me->id)
+		    return true;
+
+			return false;
+		}
 
 		public static function findByKey($key)
 		{

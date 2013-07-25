@@ -14,21 +14,23 @@
 						<td><a href="<?=$app->get('app_url')?>"><?=$app->get('app_url')?></a></td>
 					</tr>
 					<tr>
-						<th>API Key:</th>
-						<td><?=$app->get('consumer_key') ?></td>
-					</tr>
-					<tr>
-						<th>API Secret:</th>
-						<td><?=$app->get('consumer_secret') ?></td>
-					</tr>
-					<tr>
 						<th>Active:</th>
 						<td><?= ($app->get('active') == 1) ? 'yes' : 'no'?></td>
 					</tr>
-					<tr>
-						<th>Manage</th>
-						<td><a href="<?=$app->getUrl()?>/edit">Edit App</a> or <a href="<?=$app->getUrl()?>/delete">Delete App</a></td>
-					</tr>
+          <? if ($app->canEdit()): ?>
+  					<tr>
+  						<th>API Key:</th>
+  						<td><?=$app->get('consumer_key') ?></td>
+  					</tr>
+  					<tr>
+  						<th>API Secret:</th>
+  						<td><?=$app->get('consumer_secret') ?></td>
+  					</tr>
+  					<tr>
+  						<th>Manage</th>
+  						<td><a href="<?=$app->getUrl()?>/edit">Edit App</a> or <a href="<?=$app->getUrl()?>/delete">Delete App</a></td>
+  					</tr>
+  				<? endif ?>
 				<tbody>
 			</table>
 		</div>

@@ -67,6 +67,7 @@
 		    WHERE ip_address = '" . db()->escape($_SERVER['REMOTE_ADDR']) . "'
 		      AND type = 1
 		      AND verified = 0
+		      AND (user_id = 0 || user_id = '" . db()->escape(User::$me->id) .  "')
 		    ORDER BY id DESC
 		  ";
 		  
