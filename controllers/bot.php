@@ -167,13 +167,18 @@
 					throw new Exception("Could not find that bot.");
 				if (!$bot->isMine())
 					throw new Exception("You cannot view that bot.");
-				if ($bot->get('status') == 'working' && $this->args('status') == 'offline')
+				if (($bot->get('status') == 'working' || $bot->get('status') == 'slicing') && $this->args('status') == 'offline')
 					throw new Exception("You cannot take a working bot offline through the web interface.  You must stop the job from the client first.");
 				
 				if ($this->args('status') == 'offline')
 					Activity::log("took the bot " . $bot->getLink() . " offline.");
 				else
 					Activity::log("brought the bot " . $bot->getLink() . " online.");
+					
+				//do we need to drop a job?
+				$job = $bot->getCurrentJob();
+				if ($job->isHydrated())
+				  $bot->dropJob($job);
 
         //save it and clear out some junk
         $bot->set('temperature_data', '');

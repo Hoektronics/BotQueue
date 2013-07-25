@@ -315,6 +315,19 @@
 			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
 		}
 
+		public function getActiveBots()
+		{
+			$sql = "
+				SELECT id, queue_id, job_id
+				FROM bots
+				WHERE user_id = ". db()->escape($this->id) ."
+				  AND last_seen >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+				ORDER BY name
+			";
+
+			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		}
+
 		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
