@@ -123,7 +123,8 @@ class BotQueueAPI():
         retries = retries - 1
       #unknown exceptions... get a stacktrace for debugging.
       except ValueError as ex:
-        self.log.error("%s call failed: bad response: %s" % (call, response.text))
+        self.log.error("%s call failed: value error" % call)
+        self.log.exception(ex)
         self.netError(True)
         retries = retries - 1
       except Exception as ex:
