@@ -22,8 +22,8 @@
     <link href="/css/botqueue.css?version=3" rel="stylesheet">
 
     <!-- Le jquery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+    <script src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jquery-ui-1.10.3/ui/minified/jquery-ui.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/jquery.imagesloaded.min.js"></script>
     <script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.selection.js"></script>
