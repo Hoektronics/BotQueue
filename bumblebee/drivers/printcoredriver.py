@@ -71,8 +71,11 @@ class printcoredriver(bumbledriver.bumbledriver):
     return self.p.online and self.p.printer
 
   def stop(self):
-    self.p.stop()
-    self.disconnect()
+    try:
+      self.p.stop()
+      self.disconnect()
+    except AttributeError as ex:
+      self.log.error(ex)
   
   def getTemperature(self):
     return self.p.get_temperatures()

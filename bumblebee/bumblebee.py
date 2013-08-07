@@ -172,7 +172,7 @@ class BumbleBee():
 
       #show an intro screen.
       self.screen.erase()
-      self.screen.addstr("\nBotQueue v%s starting up.\n\n" % self.api.version)
+      self.screen.addstr("\nBotQueue v%s starting up. Scanning devices, please be patient.\n\n" % self.api.version)
       self.screen.refresh()
     
       #our main loop until we're done.
