@@ -13,9 +13,8 @@ sudo killall Xvfb
 #install slic3r
 git clone https://github.com/alexrj/Slic3r.git
 cd Slic3r
-git checkout -b 0.9.10b origin/0.9.10b
+git checkout 1.0.0RC1
 sudo perl Build.PL 
-sudo ./Build install
 
 #compile slic3r binary:
 pp slic3r.pl -c -o slic3r -M Method::Generate::BuildAll
