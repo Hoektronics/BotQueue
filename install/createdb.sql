@@ -304,6 +304,7 @@ CREATE TABLE `users` (
   `last_active` datetime NOT NULL,
   `registered_on` datetime NOT NULL,
   `dashboard_style` varchar(255) NOT NULL,
+  `thingiverse_token` varchar(255) NOT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `last_active` (`last_active`),
