@@ -5,9 +5,13 @@ import sys
 import tempfile
 import subprocess
 import os
+import stat
 import signal
 import hive
 import re
+import urllib
+import tarfile
+import StringIO
 
 class Ginsu():
   
@@ -147,14 +151,39 @@ class Slic3r(GenericSlicer):
     realPath = os.path.dirname(os.path.realpath(__file__))
     sliceEnginePath = "%s/slicers/%s" % (realPath, self.config['engine']['path'])
     slicePath = "%s/%s" % (sliceEnginePath, osPath)
-    self.log.debug("Slicer path: %s" % slicePath)
     if os.path.exists(slicePath) == False:
-	if os.path.exists(sliceEnginePath):
-            raise Exception("This engine isn't supported on your OS.")
+        if self.downloadSlicer(myos, self.config['engine']['path'], sliceEnginePath) == False:
+	    if os.path.exists(sliceEnginePath):
+                raise Exception("This engine isn't supported on your OS.")
+            else:
+                raise Exception("The requested engine isn't installed.")
         else:
-            raise Exception("The requested engine isn't installed.")
+            # Change permissions
+            st = os.stat(slicePath)
+            os.chmod(slicePath, st.st_mode | stat.S_IEXEC)
     
     return slicePath
+
+  def downloadSlicer(self, myos, engine, enginePath):
+    try:
+        url = "https://github.com/Jnesselr/botqueue-slicers/archive/%s-%s.tar.gz" % (myos, engine)
+        self.log.info("Downloading %s from %s" % (engine, url))
+        tarName = "botqueue-slicers-%s-%s" % (myos, engine)
+        self.log.info("Extracting to %s" % (enginePath))
+        if os.path.exists(enginePath) == False:
+            os.makedirs(enginePath)
+        name, hdrs = urllib.urlretrieve(url, "%s.tar.gz" % (tarName))
+        myTarFile = tarfile.open(name=name)
+        myTarFile.extractall(path=enginePath)
+        myTarFile.close()
+        self.log.debug("Tarfile closed")
+        os.renames("%s/%s" % (enginePath, tarName), "%s/%s" % (enginePath, myos))
+        os.remove("%s.tar.gz" % (tarName))
+        self.log.info("%s installed" % (engine))
+    except Exception as ex:
+        self.log.debug(ex);
+        return False
+    return True
 
   def checkProgress(self, line):
     if self.reg05.search(line):
