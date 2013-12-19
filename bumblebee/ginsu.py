@@ -166,6 +166,10 @@ class Slic3r(GenericSlicer):
 
   def downloadSlicer(self, myos, engine, enginePath):
     try:
+        if(myos == "osx"):
+            dirName = "osx.app"
+        else:
+            dirName = myos
         url = "https://github.com/Jnesselr/botqueue-slicers/archive/%s-%s.tar.gz" % (myos, engine)
         self.log.info("Downloading %s from %s" % (engine, url))
         tarName = "botqueue-slicers-%s-%s" % (myos, engine)
@@ -177,7 +181,7 @@ class Slic3r(GenericSlicer):
         myTarFile.extractall(path=enginePath)
         myTarFile.close()
         self.log.debug("Tarfile closed")
-        os.renames("%s/%s" % (enginePath, tarName), "%s/%s" % (enginePath, myos))
+        os.renames("%s/%s" % (enginePath, tarName), "%s/%s" % (enginePath, dirName))
         os.remove("%s.tar.gz" % (tarName))
         self.log.info("%s installed" % (engine))
     except Exception as ex:
