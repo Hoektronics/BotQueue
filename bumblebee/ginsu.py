@@ -9,7 +9,7 @@ import stat
 import signal
 import hive
 import re
-import urllib
+import urllib2
 import tarfile
 import StringIO
 
@@ -176,7 +176,20 @@ class Slic3r(GenericSlicer):
         self.log.info("Extracting to %s" % (enginePath))
         if os.path.exists(enginePath) == False:
             os.makedirs(enginePath)
-        name, hdrs = urllib.urlretrieve(url, "%s.tar.gz" % (tarName))
+
+	name = "%s.tar.gz" % (tarName)
+        localFile = open(name, 'wb')
+        request = urllib2.Request(url)
+        urlFile = urllib2.urlopen(request)
+        chunk = 4096;
+
+        while 1:
+          data = urlFile.read(chunk)
+          if not data:
+            break
+          localFile.write(data)
+        localFile.close()
+
         myTarFile = tarfile.open(name=name)
         myTarFile.extractall(path=enginePath)
         myTarFile.close()
