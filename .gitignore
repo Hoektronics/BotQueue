@@ -4,6 +4,7 @@
 extensions/config.php
 bumblebee/config.json
 bumblebee/cache*
+bumblebee/slicers*
 botqueue.tmproj
 info.log
 ssl-cert.pem
