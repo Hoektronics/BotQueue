@@ -116,7 +116,7 @@
 		{
 		  return new S3File($this->get('webcam_image_id'));
 		}
-		
+
 		public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 		{
 			if ($status !== null)
@@ -407,6 +407,9 @@
 				$row['Job']->delete();
 			}
 			
+			$sql = "DELETE FROM job_clock WHERE bot_id=".($this->id);
+			db()->execute($sql);
+
 			parent::delete();
 		}
 		
