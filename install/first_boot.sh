@@ -37,8 +37,15 @@ else
   botqueue_dir="`pwd`/.." # We're in the install directory, so one level above
 fi
 
-sudo cp "$botqueue_dir/install/oauth.ini" /etc/php5/apache2/conf.d/oauth.ini
-sudo cp "$botqueue_dir/install/apache.conf" /etc/apache2/sites-available/BotQueue
+cd "$botqueue_dir"
+botqueue_dir=`pwd` #Remove any .. in the path
+sudo cp install/oauth.ini /etc/php5/apache2/conf.d/oauth.ini
+sudo cp install/apache.conf /etc/apache2/sites-available/BotQueue
+$oldPath="/home/ubuntu/BotQueue"
+$oldPath="${oldPath//\//\/}" # Replace / with \/
+$newPath="${botqueue_dir//\//\\/}" # Replace / with \/
+sed -i "s/$oldPath/$newPath/g" /etc/apache2/sites-available/BotQueue
+#TODO: Figure out how to change host name as well as remove serverAlias if not needed
 
 sudo a2ensite BotQueue
 sudo a2enmod rewrite
@@ -48,7 +55,7 @@ sudo /etc/init.d/apache2 restart
 
 #TODO:fix issue with database name not specified
 #TODO:fix issue with root user having a passward
-mysql -u root < "$botqueue_dir/install/createdb.sql"
+mysql -u root < install/createdb.sql
 
 #TODO:Change apache.conf file in sites-available to reflect a possibly different host than http://botqueue.com
 #TODO:Change config.php to reflect host name, database name, user, and password changes here
