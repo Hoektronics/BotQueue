@@ -59,5 +59,6 @@ mysql -u root < install/createdb.sql
 
 #TODO:Change apache.conf file in sites-available to reflect a possibly different host than http://botqueue.com
 #TODO:Change config.php to reflect host name, database name, user, and password changes here
+cp extensions/config-example.php extensions/config.php
 #TODO:Change client config in bumblebee to reflect this hostname
 
