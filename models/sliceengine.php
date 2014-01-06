@@ -58,7 +58,7 @@
 		public static function getAllEngines()
 		{
 		  $sql = "
-		    SELECT id
+		    SELECT id, engine_name, engine_path, engine_description, is_public, default_config_id
 		    FROM slice_engines
 		    ORDER BY engine_name ASC
 		  ";
@@ -77,6 +77,18 @@
 		  
 		  return new Collection($sql, array('SliceEngine' => 'id'));
 		}
+
+    public static function engine_exists($engine_path) {
+      $sql = "
+        SELECT id
+        FROM slice_engines
+        WHERE is_public = 1 and engine_path='". db()->escape($engine_path) ."'
+      ";
+      if(count(db()->getArray($sql)) > 0) {
+        return true;
+      }
+      return false;
+    }
 		
 		public function getAllConfigs()
 		{

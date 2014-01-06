@@ -40,6 +40,11 @@ class Utility
     'USD' => '$'
   );
 
+  public static function capitalize($word) {
+    // Capitalizes the first letter of $word
+    return strtoupper(substr($word, 0, 1)).substr($word, 1);
+  }
+
   public function convertCurrency($amount, $from, $to = "USD") {
     if ($from == $to) {
       $converted_amount = $amount;
@@ -969,6 +974,7 @@ class Utility
     curl_setopt($ch, CURLOPT_WRITEHEADER, $headerFile);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_FILE, $fileTarget);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:24.0) Gecko/20100101 Firefox/24.0');
     curl_exec($ch);
 
     if(!curl_errno($ch))

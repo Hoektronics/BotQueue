@@ -88,6 +88,70 @@
 	    }
 	  }
 
+          public function import()
+          {
+            $this->assertLoggedIn();
+            try {
+            if (!User::isAdmin())
+              throw new Exception("You must be an admin to import slice engines.");
+
+            $this->setTitle('Import Slice Engine');
+            $this->set('area', 'slicers');
+
+            $response = Utility::downloadUrl("https://api.github.com/repos/jnesselr/botqueue-engines/git/refs");
+            $json = json_decode(file_get_contents($response['localpath']), True);
+
+            $engines = array();
+            foreach($json as $ref) {
+              $branch = substr(strrchr($ref['ref'], '/'), 1);
+
+              if($branch !== "master") {
+                $split = explode("-", $branch);
+                $engineName = $split[1];
+                $version = $split[2];
+                $engine_path = $engineName.'-'.$version;
+
+                if(!SliceEngine::engine_exists($engine_path)) { // Do we already have this engine?
+                  $manifestResponse = Utility::downloadUrl("https://raw.github.com/jnesselr/botqueue-engines/".$branch."/manifest.json");
+                  $manifest = json_decode(file_get_contents($manifestResponse['localpath']), True);
+
+                  $engine = new SliceEngine();
+                  $engine->set('engine_name', Utility::capitalize($engineName).' '.$version);
+                  $engine->set('engine_path', $engine_path);
+                  $engine->set('is_featured', false);
+                  $engine->set('is_public', true);
+                  $engine->set('engine_description', Utility::capitalize($engineName).' version '.$version);
+                  $engine->set('add_date', date("Y-m-d H:i:s"));
+                  $engine->save();
+
+                  //now we make it a default config object
+                  $config = new SliceConfig();
+                  $config->set('config_name', 'Default');
+                  $file = Utility::downloadUrl("https://raw.github.com/jnesselr/botqueue-engines/".$branch."/".$manifest['configuration']);
+                  $config->set('config_data', file_get_contents($file['localpath']));
+                  $config->set('engine_id', $engine->id);
+                  //$config->set('user_id', User::$me->id); // Config for everyone?
+                  $config->set('add_date', date("Y-m-d H:i:s"));
+                  $config->set('edit_date', date("Y-m-d H:i:s"));
+                  $config->save();
+
+                  //now record our default id
+                  $engine->set('default_config_id', $config->id);
+                  $engine->save();
+
+                  // Store them in case we want to display them.
+                  $engines[] = $engine;
+                }
+              }
+            }
+            $this->forwardToURL("/slicers");
+            }
+            catch (Exception $e)
+            {
+              $this->set('megaerror', $e->getMessage());
+            }
+          }
+
 	  public function edit()
 	  {
 	    $this->assertLoggedIn();

@@ -3,6 +3,7 @@
 		<? if (User::isAdmin()): ?>
   	  <p>
   	    <a class="btn btn-primary" href="/slicer/create">Create New Slice Engine</a>
+	    <a class="btn btn-primary" href="/slicer/import">Import from github</a>
   	  </p>
   	<? endif ?>
 	  <? if (!empty($slicers)): ?>
