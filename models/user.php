@@ -321,7 +321,6 @@
 				SELECT id, queue_id, job_id
 				FROM bots
 				WHERE user_id = ". db()->escape($this->id) ."
-				  AND last_seen >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
 				ORDER BY name
 			";
 
