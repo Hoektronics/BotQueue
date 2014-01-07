@@ -11,6 +11,8 @@ import hive
 import re
 import urllib2
 import tarfile
+import json
+from pprint import pprint
 import StringIO
 
 class Ginsu():
@@ -91,6 +93,7 @@ class GenericSlicer(object):
 class Slic3r(GenericSlicer):
   def __init__(self, config, slicefile):
     super(Slic3r, self).__init__(config, slicefile)
+    self.slicePath = False
 
     self.p = False  
 
@@ -139,73 +142,77 @@ class Slic3r(GenericSlicer):
     self.log.debug("Output file: %s" % self.outFile.name)
 
   def getSlicerPath(self):
+    #Have we already figured out where we are?
+    if self.slicePath:
+      return self.slicePath;
     #figure out where our path is.
     myos = hive.determineOS()
-    if myos == "osx":
-      osPath = "osx.app/Contents/MacOS/slic3r"
-    elif myos == "raspberrypi":
-      osPath = "raspberrypi/slic3r"
-    elif myos == "linux":
-        osPath = "linux/bin/slic3r"
-    else:
-      raise Exception("Slicing is not supported on your OS.")
+    if myos == "unknown":
+      raise Exception("This engine is not supported on your OS.")
 
     realPath = os.path.dirname(os.path.realpath(__file__))
-    sliceEnginePath = "%s/slicers/%s" % (realPath, self.config['engine']['path'])
-    slicePath = "%s/%s" % (sliceEnginePath, osPath)
-    if os.path.exists(slicePath) == False:
-      if self.downloadSlicer(myos, self.config['engine']['path'], sliceEnginePath) == False:
-        if os.path.exists(sliceEnginePath):
-          raise Exception("This engine isn't supported on your OS.")
-        else:
+    sliceEnginePath = "%s/engines/%s/%s" % (realPath, self.config['engine']['type'], self.config['engine']['path'])
+    if os.path.exists(sliceEnginePath) == False:
+      with Ginsu.downloadLock:
+        if self.downloadSlicer(myos, self.config['engine'], sliceEnginePath) == False:
           raise Exception("The requested engine can't be installed.")
-      else:
-        # Change permissions
-        st = os.stat(slicePath)
-        os.chmod(slicePath, st.st_mode | stat.S_IEXEC)
-
-    return slicePath
-
-  def downloadSlicer(self, myos, engine, enginePath):
-    with Ginsu.downloadLock:
-      try:
-        if(myos == "osx"):
-          dirName = "osx.app"
         else:
-          dirName = myos
-        #Is it already installed?
-        if not os.path.exists("%s/%s" % (enginePath, dirName)):
-          url = "https://github.com/Jnesselr/botqueue-slicers/archive/%s-%s.tar.gz" % (myos, engine)
-          self.log.info("Downloading %s from %s" % (engine, url))
-          tarName = "botqueue-slicers-%s-%s" % (myos, engine)
-          self.log.info("Extracting to %s" % (enginePath))
-          if os.path.exists(enginePath) == False:
-            os.makedirs(enginePath)
+          # Change permissions
+          st = os.stat(self.slicePath)
+          os.chmod(self.slicePath, st.st_mode | stat.S_IEXEC)
 
-          name = "%s.tar.gz" % tarName
-          localFile = open(name, 'wb')
-          request = urllib2.Request(url)
-          urlFile = urllib2.urlopen(request)
-          chunk = 4096
+    return self.slicePath
 
-          while 1:
-            data = urlFile.read(chunk)
-            if not data:
-              break
-            localFile.write(data)
-          localFile.close()
+  def downloadSlicer(self, myos, engine, installPath):
+    try:
+      #Is it already installed?
+      if not os.path.exists(installPath):
+        enginePath = engine['path']
+        url = "https://github.com/Jnesselr/botqueue-engines/archive/%s-%s.tar.gz" % (myos, enginePath)
+        self.log.info("Downloading %s from %s" % (enginePath, url))
+        tarName = "botqueue-engines-%s-%s" % (myos, enginePath)
+        self.log.info("Extracting to %s" % (installPath))
+        if os.path.exists(installPath) == False:
+          os.makedirs(installPath)
 
-          myTarFile = tarfile.open(name=name)
-          myTarFile.extractall(path=enginePath)
-          myTarFile.close()
-          self.log.debug("Tarfile closed")
-          os.renames("%s/%s" % (enginePath, tarName), "%s/%s" % (enginePath, dirName))
-          os.remove("%s.tar.gz" % (tarName))
-          self.log.info("%s installed" % (engine))
+        tarFileName = "%s.tar.gz" % tarName
+        localFile = open(tarFileName, 'wb')
+        request = urllib2.Request(url)
+        urlFile = urllib2.urlopen(request)
+        chunk = 4096
 
-      except Exception as ex:
-        self.log.debug(ex)
-        return False
+        while 1:
+          data = urlFile.read(chunk)
+          if not data:
+            break
+          localFile.write(data)
+        localFile.close()
+
+        myTarFile = tarfile.open(name=tarFileName)
+        myTarFile.extractall(path=installPath)
+        myTarFile.close()
+        self.log.debug("Reading manifest")
+        manifestFile = "%s/%s/manifest.json" % (installPath, tarName)
+        manifest = json.load(open(manifestFile, 'r'))
+        os.remove(manifestFile)
+        dirName = manifest['directory']
+        self.slicePath = "%s/%s/%s" % (installPath, dirName, manifest['path'])
+
+        if(manifest['category'] != engine['type']):
+          raise Exception("%s was type %s not the expected %s" %(enginePath, manifest['category'], engine['type']))
+        os.renames("%s/%s" % (installPath, tarName), "%s/%s" % (installPath, dirName))
+
+        #Double check everything was installed
+        if not os.path.exists(self.slicePath):
+          raise Exception("Something went wrong during installation")
+
+        self.log.info("%s installed" % enginePath)
+
+    except Exception as ex:
+      self.log.debug(ex)
+      return False
+    finally:
+      os.remove(tarFileName)
     return True
 
   def checkProgress(self, line):
