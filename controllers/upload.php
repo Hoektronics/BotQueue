@@ -214,7 +214,7 @@
 				//capture for debug
 				ob_start();
 				
-				var_dump($args);
+				//var_dump($args);
 				var_dump($info);
 				
 				//try it again.
