@@ -289,7 +289,7 @@ class BumbleBee():
       self.log.error("Problem drawing screen - too small? %s" % ex)
 
   def getNewJob(self, link):
-    self.log.info("Bot %s looking for new job." % link.bot['name'])
+    #self.log.info("Bot %s looking for new job." % link.bot['name'])
 
     result = self.api.findNewJob(link.bot['id'], link.bot['driver_config']['can_slice'])
     if (result['status'] == 'success'):

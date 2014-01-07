@@ -68,7 +68,7 @@ class BotQueueAPI():
       respdata = None
       result = None
       try:
-        self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
+        #self.log.debug("Calling %s - %s (%d tries remaining)" % (url, call, retries))
         
         #single file?
         if isinstance(filepath, basestring):
