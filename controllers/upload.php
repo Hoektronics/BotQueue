@@ -176,7 +176,7 @@
 			{
 				//some basic error checking.
 				if (!preg_match('/(gcode|stl|obj|amf|zip)$/i', $this->args('key')))
-					throw new Exception("Only .gcode, .stl, .obj, and .amf files are allowed at this time.");
+					throw new Exception("Only .gcode, .stl, .obj, .amf, and .zip files are allowed at this time.");
 
 				//make our file.
 				$info = $this->_lookupFileInfo();
