@@ -1,6 +1,6 @@
 import time
 import logging
-from threading import Thread
+from threading import Thread, RLock
 import sys
 import tempfile
 import subprocess
@@ -14,7 +14,9 @@ import tarfile
 import StringIO
 
 class Ginsu():
-  
+  # A static lock for when other threads try to download a slicer
+  downloadLock = RLock()
+
   def __init__(self, sliceFile, sliceJob):
     self.log = logging.getLogger('botqueue')
     self.sliceFile = sliceFile
@@ -55,43 +57,43 @@ class Ginsu():
     self.slicer = self.slicerFactory()
 
     self.sliceThread = Thread(target=self.threadEntry).start()
-    
+
   def threadEntry(self):
     self.sliceResult = self.slicer.slice()
-    
+
 class GenericSlicer(object):
   def __init__(self, config, slicefile):
     self.config = config
     self.log = logging.getLogger('botqueue')
-    
+
     self.sliceFile = slicefile
     self.progress = 0
     self.running = True
-    
+
     self.prepareFiles()
 
   def stop(self):
     self.log.debug("Generic slicer stopped.")
     self.running = False
-    
+
   def isRunning(self):
     return self.running
-    
+
   def prepareFiles(self):
     pass
-    
+
   def slice(self):
     pass
-    
+
   def getProgress(self):
     return self.progress
-      
+
 class Slic3r(GenericSlicer):
   def __init__(self, config, slicefile):
     super(Slic3r, self).__init__(config, slicefile)
- 
+
     self.p = False  
- 
+
     #our regexes
     self.reg05 = re.compile('Processing input file')
     self.reg10 = re.compile('Processing triangulated mesh')
@@ -104,7 +106,7 @@ class Slic3r(GenericSlicer):
     self.reg80 = re.compile('Infilling layers')
     self.reg90 = re.compile('Generating skirt')
     self.reg100 = re.compile('Exporting G-code to')
-  
+
   def stop(self):
     self.log.debug("Slic3r slicer stopped.")
     if self.p:
@@ -126,13 +128,13 @@ class Slic3r(GenericSlicer):
         pass #successfully killed process 
       self.log.info("Slicer killed.")
     self.running = False
- 
+
   def prepareFiles(self):
     self.configFile = tempfile.NamedTemporaryFile(delete=False)
     self.configFile.write(self.config['config_data'])
     self.configFile.flush()
     self.log.debug("Config file: %s" % self.configFile.name)
-    
+
     self.outFile = tempfile.NamedTemporaryFile(delete=False)
     self.log.debug("Output file: %s" % self.outFile.name)
 
@@ -152,53 +154,57 @@ class Slic3r(GenericSlicer):
     sliceEnginePath = "%s/slicers/%s" % (realPath, self.config['engine']['path'])
     slicePath = "%s/%s" % (sliceEnginePath, osPath)
     if os.path.exists(slicePath) == False:
-        if self.downloadSlicer(myos, self.config['engine']['path'], sliceEnginePath) == False:
-	    if os.path.exists(sliceEnginePath):
-                raise Exception("This engine isn't supported on your OS.")
-            else:
-                raise Exception("The requested engine isn't installed.")
+      if self.downloadSlicer(myos, self.config['engine']['path'], sliceEnginePath) == False:
+        if os.path.exists(sliceEnginePath):
+          raise Exception("This engine isn't supported on your OS.")
         else:
-            # Change permissions
-            st = os.stat(slicePath)
-            os.chmod(slicePath, st.st_mode | stat.S_IEXEC)
-    
+          raise Exception("The requested engine can't be installed.")
+      else:
+        # Change permissions
+        st = os.stat(slicePath)
+        os.chmod(slicePath, st.st_mode | stat.S_IEXEC)
+
     return slicePath
 
   def downloadSlicer(self, myos, engine, enginePath):
-    try:
+    with Ginsu.downloadLock:
+      try:
         if(myos == "osx"):
-            dirName = "osx.app"
+          dirName = "osx.app"
         else:
-            dirName = myos
-        url = "https://github.com/Jnesselr/botqueue-slicers/archive/%s-%s.tar.gz" % (myos, engine)
-        self.log.info("Downloading %s from %s" % (engine, url))
-        tarName = "botqueue-slicers-%s-%s" % (myos, engine)
-        self.log.info("Extracting to %s" % (enginePath))
-        if os.path.exists(enginePath) == False:
+          dirName = myos
+        #Is it already installed?
+        if not os.path.exists("%s/%s" % (enginePath, dirName)):
+          url = "https://github.com/Jnesselr/botqueue-slicers/archive/%s-%s.tar.gz" % (myos, engine)
+          self.log.info("Downloading %s from %s" % (engine, url))
+          tarName = "botqueue-slicers-%s-%s" % (myos, engine)
+          self.log.info("Extracting to %s" % (enginePath))
+          if os.path.exists(enginePath) == False:
             os.makedirs(enginePath)
 
-	name = "%s.tar.gz" % (tarName)
-        localFile = open(name, 'wb')
-        request = urllib2.Request(url)
-        urlFile = urllib2.urlopen(request)
-        chunk = 4096;
+          name = "%s.tar.gz" % tarName
+          localFile = open(name, 'wb')
+          request = urllib2.Request(url)
+          urlFile = urllib2.urlopen(request)
+          chunk = 4096
 
-        while 1:
-          data = urlFile.read(chunk)
-          if not data:
-            break
-          localFile.write(data)
-        localFile.close()
+          while 1:
+            data = urlFile.read(chunk)
+            if not data:
+              break
+            localFile.write(data)
+          localFile.close()
 
-        myTarFile = tarfile.open(name=name)
-        myTarFile.extractall(path=enginePath)
-        myTarFile.close()
-        self.log.debug("Tarfile closed")
-        os.renames("%s/%s" % (enginePath, tarName), "%s/%s" % (enginePath, dirName))
-        os.remove("%s.tar.gz" % (tarName))
-        self.log.info("%s installed" % (engine))
-    except Exception as ex:
-        self.log.debug(ex);
+          myTarFile = tarfile.open(name=name)
+          myTarFile.extractall(path=enginePath)
+          myTarFile.close()
+          self.log.debug("Tarfile closed")
+          os.renames("%s/%s" % (enginePath, tarName), "%s/%s" % (enginePath, dirName))
+          os.remove("%s.tar.gz" % (tarName))
+          self.log.info("%s installed" % (engine))
+
+      except Exception as ex:
+        self.log.debug(ex)
         return False
     return True
 
@@ -225,7 +231,7 @@ class Slic3r(GenericSlicer):
       self.progress = 90
     elif self.reg100.search(line):
       self.progress = 100
-            
+
   def slice(self):
     #create our command to do the slicing
     try:
@@ -239,7 +245,7 @@ class Slic3r(GenericSlicer):
 
       outputLog = ""
       errorLog = ""
-      
+
       # this starts our thread to slice the model into gcode
       self.p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
       self.log.info("Slic3r started.")
@@ -249,9 +255,9 @@ class Slic3r(GenericSlicer):
           self.log.info("Slic3r: %s" % output.strip())
           outputLog = outputLog + output
           self.checkProgress(output)
-                        
+
         time.sleep(0.1)
-        
+
         #did we get cancelled?
         if not self.running:
           self.log.info("Killing slic3r process.")
@@ -299,10 +305,10 @@ class Slic3r(GenericSlicer):
         self.log.error("Program returned code %s" % self.p.returncode)
       else:
         sushi.status = "complete"
-    
+
       #okay, we're done!
       self.running = False
-      
+
       return sushi
     except Exception as ex:
       self.log.exception(ex)
