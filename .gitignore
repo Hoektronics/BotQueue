@@ -6,7 +6,7 @@ bumblebee/config.json
 bumblebee/cache*
 bumblebee/slicers*
 botqueue.tmproj
-info.log
+bumblebee/*.log
 ssl-cert.pem
 ssl-cert.int
 ssl-cert.key
