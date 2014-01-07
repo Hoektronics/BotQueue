@@ -382,7 +382,7 @@
 			if (!$sj->isHydrated())
 				throw new Exception("Slice job does not exist.");
 
-			if ($sj->get('user_id') != User::$me->id && User::$me->isAdmin())
+			if ($sj->get('user_id') != User::$me->id && !User::$me->isAdmin())
 				throw new Exception("This slice job is not yours to grab.");
 				
 			if (!$sj->get('status') != 'available')
@@ -394,7 +394,7 @@
 			//return the bot data w/ all our info.
 			$data = $sj->getAPIData();
 
-			Activity::log($bot->getLink() . " bot grabbed the " . $job->getLink() . " slice job via the API.");
+			Activity::log($this->args('_uid') . " uid grabbed the " . $sj->getLink() . " slice job via the API.");
 			
 			return $data;
 		}
