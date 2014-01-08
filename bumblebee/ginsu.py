@@ -224,8 +224,7 @@ class Slic3r(GenericSlicer):
       if not data:
         break
       localFile.write(data)
-      localFile.close()
-    return localFile
+    localFile.close()
 
   def checkProgress(self, line):
     if self.reg05.search(line):
