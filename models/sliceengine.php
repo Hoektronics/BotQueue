@@ -40,6 +40,7 @@
       $r['add_date'] = $this->get('add_date');
       if ($deep)
         $r['default_config'] = $this->getDefaultConfig()->getAPIData(false);
+			$r['type'] = 'slicer';
 
 			return $r;
 		}
