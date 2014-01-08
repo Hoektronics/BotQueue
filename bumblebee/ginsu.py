@@ -144,7 +144,7 @@ class Slic3r(GenericSlicer):
   def getSlicerPath(self):
     #Have we already figured out where we are?
     if self.slicePath:
-      return self.slicePath;
+      return self.slicePath
     #figure out where our path is.
     myos = hive.determineOS()
     if myos == "unknown":
@@ -160,6 +160,14 @@ class Slic3r(GenericSlicer):
           # Change permissions
           st = os.stat(self.slicePath)
           os.chmod(self.slicePath, st.st_mode | stat.S_IEXEC)
+    else:
+      url = "https://raw.github.com/jnesselr/botqueue-engines/%s-%s/manifest.json" % (myos, self.config['engine']['path'])
+      manifestFile = "%s-%s-manifest.json"
+      self.download(url, manifestFile)
+      manifest = json.load(open(manifestFile, 'r'))
+      os.remove(manifestFile)
+      dirName = manifest['directory']
+      self.slicePath = "%s/%s/%s" % (sliceEnginePath, dirName, manifest['path'])
 
     return self.slicePath
 
@@ -176,17 +184,7 @@ class Slic3r(GenericSlicer):
           os.makedirs(installPath)
 
         tarFileName = "%s.tar.gz" % tarName
-        localFile = open(tarFileName, 'wb')
-        request = urllib2.Request(url)
-        urlFile = urllib2.urlopen(request)
-        chunk = 4096
-
-        while 1:
-          data = urlFile.read(chunk)
-          if not data:
-            break
-          localFile.write(data)
-        localFile.close()
+        self.download(url, tarFileName)
 
         myTarFile = tarfile.open(name=tarFileName)
         myTarFile.extractall(path=installPath)
@@ -214,6 +212,20 @@ class Slic3r(GenericSlicer):
     finally:
       os.remove(tarFileName)
     return True
+
+  def download(self, url, localFileName):
+    localFile = open(localFileName, 'wb')
+    request = urllib2.Request(url)
+    urlFile = urllib2.urlopen(request)
+    chunk = 4096
+
+    while 1:
+      data = urlFile.read(chunk)
+      if not data:
+        break
+      localFile.write(data)
+      localFile.close()
+    return localFile
 
   def checkProgress(self, line):
     if self.reg05.search(line):
