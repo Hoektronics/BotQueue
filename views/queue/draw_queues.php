@@ -4,6 +4,7 @@
 			<tr>
 				<th>Name</th>
 				<th colspan="2">Available</th>
+        <th colspan="2">Slicing</th>
 				<th colspan="2">Working</th>
 				<th colspan="2">Completed</th>
 				<th colspan="2">Failed</th>
@@ -16,6 +17,7 @@
 				<? $stats = $q->getStats() ?>
 				<?
 					$total['available'] += $stats['available'];
+          $total['slicing'] += $stats['slicing'];
 					$total['taken'] += $stats['taken'];
 					$total['complete'] += $stats['complete'];
 					$total['failure'] += $stats['failure'];
@@ -25,6 +27,8 @@
 					<td><?=$q->getLink()?></td>
 					<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span></td>
 					<td><?= round($stats['available_pct'], 2)?>%</td>
+          <td><span class="label <?=Job::getStatusHTMLClass('slicing')?>"><?= (int)$stats['slicing'] ?></span></td>
+          <td><?= round($stats['slicing_pct'], 2)?>%</td>
 					<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span></td>
 					<td><?= round($stats['taken_pct'], 2)?>%</td>
 					<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span></td>
@@ -39,6 +43,8 @@
 					<th>Total</th>
 					<th><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$total['available'] ?></span></th>
 					<th><?= round(($total['available'] / $total['total'])*100, 2)?>%</th>
+          <th><span class="label <?=Job::getStatusHTMLClass('slicing')?>"><?= (int)$total['slicing'] ?></span></th>
+          <th><?= round(($total['slicing'] / $total['total'])*100, 2)?>%</th>
 					<th><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$total['taken'] ?></span></th>
 					<th><?= round(($total['taken'] / $total['total'])*100, 2)?>%</th>
 					<th><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$total['complete'] ?></span></th>
