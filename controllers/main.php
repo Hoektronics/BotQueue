@@ -158,7 +158,10 @@
 		  
 		  //total printing hours
 		  $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE status != 'working'";
-		  $this->set('total_printing_time', db()->getValue($sql));
+      if(db()->getValue($sql) != "")
+		    $this->set('total_printing_time', db()->getValue($sql));
+      else
+        $this->set('total_printing_time', 0);
 		  
 		  //user leaderboard - all time
 		  $sql = "
@@ -213,7 +216,10 @@
 
   		  //total printing hours
   		  $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE  status != 'working' AND user_id = " . (int)User::$me->id;
-  		  $this->set('my_total_printing_time', db()->getValue($sql));		    
+        if(db()->getValue($sql) != "")
+          $this->set('my_total_printing_time', db()->getValue($sql));
+        else
+          $this->set('my_total_printing_time', 0);
 		  }
 		}
 		
