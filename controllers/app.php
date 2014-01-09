@@ -302,7 +302,7 @@
   				$this->forwardToUrl("/apps");
 				}
 				
-        $this->set('bots', $token->getBots()->getAll());
+        $this->set('bots', $token->getActiveBots()->getAll());
         $this->set('form', $form);
 				$this->set('token', $token);
 				$this->set('app', $app);

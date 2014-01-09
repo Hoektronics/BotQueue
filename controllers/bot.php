@@ -167,6 +167,8 @@
 					throw new Exception("Could not find that bot.");
 				if (!$bot->isMine())
 					throw new Exception("You cannot view that bot.");
+        if ($bot->get('status') == 'retired')
+          throw new Exception("This bot is retired. You can't change it's status");
 				if (($bot->get('status') == 'working' || $bot->get('status') == 'slicing') && $this->args('status') == 'offline')
 					throw new Exception("You cannot take a working bot offline through the web interface.  You must stop the job from the client first.");
 				
@@ -518,6 +520,44 @@
 		
 			return $form;
 		}
+
+    public function retire()
+    {
+      $this->assertLoggedIn();
+      $this->set('area', 'bots');
+
+      try
+      {
+        //how do we find them?
+        if ($this->args('id'))
+          $bot = new Bot($this->args('id'));
+
+        //did we really get someone?
+        if (!$bot->isHydrated())
+          throw new Exception("Could not find that bot.");
+        if ($bot->get('user_id') != User::$me->id)
+          throw new Exception("You do not own this bot.");
+        if ($bot->get('status') != 'offline')
+          throw new Exception("You cannot retire bots that are not offline. Please take the bot offline first.");
+
+        $this->set('bot', $bot);
+        $this->setTitle('Retire Bot - ' . $bot->getName());
+
+        if ($this->args('submit'))
+        {
+          Activity::log("retired the bot <strong>" . $bot->getName() . "</strong>. RIP");
+
+          $bot->retire();
+
+          $this->forwardToUrl("/bots");
+        }
+      }
+      catch (Exception $e)
+      {
+        $this->setTitle('Retire Bot - Error');
+        $this->set('megaerror', $e->getMessage());
+      }
+    }
 
 		public function delete()
 		{

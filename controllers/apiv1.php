@@ -702,7 +702,7 @@
 		public function api_listbots()
 		{
 			$data = array();
-			$bots = User::$me->getBots()->getRange(0, 100);
+			$bots = User::$me->getActiveBots()->getRange(0, 100);
 			if (!empty($bots))
 				foreach ($bots AS $row)
 					$data[] = $row['Bot']->getAPIData();
@@ -893,7 +893,7 @@
 		public function api_getmybots()
 		{
 			$data = array();
-			$bots = $this->token->getBots()->getRange(0, 100);
+			$bots = $this->token->getActiveBots()->getRange(0, 100);
 			if (!empty($bots))
 				foreach ($bots AS $row)
 					$data[] = $row['Bot']->getAPIData();

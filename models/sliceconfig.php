@@ -75,6 +75,19 @@
       
       return new Collection($sql, array('Bot' => 'id'));
     }
+
+    public function getActiveBots()
+    {
+      $sql = "
+        SELECT id
+        FROM bots
+        WHERE slice_config_id = '". db()->escape($this->id) ."'
+        AND status != 'retired'
+        ORDER BY name
+      ";
+
+      return new Collection($sql, array('Bot' => 'id'));
+    }
     
     public function getSliceJobs()
     {

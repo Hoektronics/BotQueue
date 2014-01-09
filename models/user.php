@@ -315,12 +315,26 @@
 			return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
 		}
 
+    public function getRetiredBots()
+    {
+      $sql = "
+				SELECT id, queue_id, job_id
+				FROM bots
+				WHERE user_id = ". db()->escape($this->id) ."
+				AND status == 'retired'
+				ORDER BY name
+			";
+
+      return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+    }
+
 		public function getActiveBots()
 		{
 			$sql = "
 				SELECT id, queue_id, job_id
 				FROM bots
 				WHERE user_id = ". db()->escape($this->id) ."
+				AND status != 'retired'
 				ORDER BY name
 			";
 

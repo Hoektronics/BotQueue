@@ -16,10 +16,15 @@
       <li><a href="<?=$bot->getCurrentJob()->getUrl()?>/qa"><i class="icon-check"></i> verify output</a></li>
     <? elseif ($bot->get('status') == 'idle'): ?>
 		  <li><a href="<?=$bot->getUrl()?>/setstatus/offline"><i class="icon-stop"></i> take offline</a></li>
-    <? else: ?>
+    <? elseif ($bot->get('status') != 'retired'): ?>
 		  <li><a href="<?=$bot->getUrl()?>/setstatus/idle"><i class="icon-play"></i> bring online</a></li>
 		<? endif ?>
-		<li><a href="<?=$bot->getUrl()?>/edit"><i class="icon-cog"></i> edit bot</a></li>
+    <? if ($bot->get('status') != 'retired'): ?>
+		  <li><a href="<?=$bot->getUrl()?>/edit"><i class="icon-cog"></i> edit bot</a></li>
+    <? endif ?>
 		<li><a href="<?=$bot->getUrl()?>/delete"><i class="icon-remove"></i> delete bot</a></li>
+    <? if ($bot->get('status') == 'offline'): ?>
+      <li><a href="<?=$bot->getUrl()?>/retire"><i class="icon-lock"></i> retire bot</a></li>
+    <? endif ?>
   </ul>
 </div>

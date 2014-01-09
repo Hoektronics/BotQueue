@@ -91,6 +91,7 @@
 				'waiting' => 'warning',
 				'error' => 'danger',
 				'offline' => 'inverse',
+        'retired' => 'inverse',
 			);
 			
 			return $s2c[$this->get('status')];
@@ -412,6 +413,12 @@
 
 			parent::delete();
 		}
+
+    public function retire()
+    {
+      $sql = "update bots set status='retired' WHERE id=".($this->id);
+      db()->execute($sql);
+    }
 		
 		public function getSliceEngine()
 		{
