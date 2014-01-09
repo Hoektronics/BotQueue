@@ -21,7 +21,7 @@ CREATE TABLE `bots` (
   `identifier` varchar(255) NOT NULL DEFAULT '',
   `model` varchar(255) NOT NULL,
   `client_version` varchar(255) NOT NULL,
-  `status` enum('idle','slicing','working','waiting','error','maintenance','offline') DEFAULT 'idle',
+  `status` enum('idle','slicing','working','waiting','error','maintenance','offline','retired') DEFAULT 'idle',
   `last_seen` datetime NOT NULL,
   `manufacturer` varchar(255) NOT NULL DEFAULT '',
   `electronics` varchar(255) NOT NULL DEFAULT '',

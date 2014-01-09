@@ -24,7 +24,7 @@ function finish_patch($patchNumber, $description) {
 
 function patch_exists($patchNumber) {
   $patchSQL = "SELECT * from patches
-  where patch_num=".db()->escape($patchNumber);
+  where patch_num>=".db()->escape($patchNumber);
   return (db()->execute($patchSQL) > 0);
 }
 
