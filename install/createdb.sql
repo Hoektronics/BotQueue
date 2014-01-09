@@ -157,9 +157,11 @@ CREATE TABLE `oauth_consumer` (
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `oauth_consumer_nonce` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `consumer_id` int(11) NOT NULL,
-  `timestamp` bigint(20) NOT NULL,
-  `nonce` varchar(255) NOT NULL,
+  `consumer_id` int(11) unsigned default 0,
+  `timestamp` int(11) unsigned default 0,
+  `nonce` int(11) unsigned default 0,
+  index(`timestamp`),
+  index(nonce),
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -313,10 +315,10 @@ CREATE TABLE `users` (
   KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-alter table oauth_consumer_nonce modify consumer_id int(11) unsigned default 0;
-alter table oauth_consumer_nonce modify nonce int(11) unsigned default 0;
-alter table oauth_consumer_nonce modify	 `timestamp` int(11) unsigned default 0;
-alter table oauth_consumer_nonce add index(nonce);
-alter table oauth_consumer_nonce add index(`timestamp`);
-
+CREATE TABLE IF NOT EXISTS `patches` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `patch_num` int(11) unsigned NOT NULL,
+  `description` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `patch_num` (`patch_num`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
