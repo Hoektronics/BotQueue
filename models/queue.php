@@ -176,7 +176,8 @@
 			$sql = "
 				SELECT status, count(status) as cnt
 				FROM jobs
-				WHERE queue_id = ". db()->escape($this->id)."
+				WHERE status != 'canceled' and
+				queue_id = ". db()->escape($this->id)."
 				GROUP BY status
 			";
 
@@ -187,8 +188,11 @@
 				//load up our stats
 				foreach ($stats AS $row)
 				{
-					$data[$row['status']] = $row['cnt'];
-					$data['total'] += $row['cnt'];
+          // Cancelled jobs don't count
+          if($row['status'] != 'canceled') {
+					  $data[$row['status']] = $row['cnt'];
+					  $data['total'] += $row['cnt'];
+          }
 				}
 				
 				//calculate percentages

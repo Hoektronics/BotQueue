@@ -104,7 +104,7 @@ CREATE TABLE `jobs` (
   `file_id` int(11) unsigned NOT NULL DEFAULT '0',
   `slice_job_id` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
-  `status` enum('available','taken','slicing','downloading','qa','complete','failure') NOT NULL DEFAULT 'available',
+  `status` enum('available','taken','slicing','downloading','qa','complete','failure','canceled') NOT NULL DEFAULT 'available',
   `user_sort` int(11) unsigned NOT NULL DEFAULT '0',
   `bot_id` int(11) NOT NULL DEFAULT '0',
   `progress` float NOT NULL DEFAULT '0',
@@ -323,4 +323,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(2, 'Allowing a bot to be retired');
+INSERT INTO patches(patch_num, description) VALUES(3, 'Allowing a job to be canceled');
