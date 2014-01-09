@@ -266,11 +266,12 @@ class BumbleBee():
         for idx, link in self.workers.iteritems():
           self.screen.addstr("%6s  %20s  %10s  " % (link.bot['id'], link.bot['name'], link.bot['status']))
           if (link.bot['status'] == 'working' or link.bot['status'] == 'waiting' or link.bot['status'] == 'slicing') and link.job:
-            self.screen.addstr("  %0.2f%%  %8s  %10s" % (float(link.job['progress']), link.job['id'], link.job['status']))
+            progress_string = "{num:{width}.2f}".format(num = float(link.job['progress']), width=6)
+            self.screen.addstr(" %s%%  %8s  %10s" % (progress_string, link.job['id'], link.job['status']))
           elif link.bot['status'] == 'error':
             self.screen.addstr("%s" % link.bot['error_text'])
           else:
-            self.screen.addstr("   --         --         --")
+            self.screen.addstr("   --         --          --")
           self.screen.addstr("\n")
       else:
         self.screen.addstr("No bots found.  Add a bot on BotQueue.com and assign it to this app.\n")
