@@ -322,3 +322,5 @@ CREATE TABLE IF NOT EXISTS `patches` (
   PRIMARY KEY (`id`),
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO patches(patch_num, description) VALUES(2, 'Allowing a bot to be retired');
