@@ -235,7 +235,7 @@ def determineOS():
     return "unknown"
 
 def scanBots():
-  driver_names = ['printcoredriver']
+  driver_names = ['printcoredriver', 's3gdriver']
   bots = {}
   for name in driver_names:
     module_name = 'drivers.' + name

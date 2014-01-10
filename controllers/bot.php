@@ -70,7 +70,7 @@
 
 				Activity::log("registered the bot " . $bot->getLink() . ".");
 			
-				$this->forwardToUrl($bot->getUrl() . "/edit");						
+				$this->forwardToUrl($bot->getUrl() . "/edit");
 			}
 			
 			$this->set('form', $form);
@@ -243,8 +243,8 @@
 					$bot->save();
 
 					Activity::log("edited the information for bot " . $bot->getLink() . ".");
-				
-					$this->forwardToUrl($bot->getUrl());						
+
+					$this->forwardToUrl($bot->getUrl());
 				}
 				else if ($slicingForm->checkSubmitAndValidate($this->args()))
 				{
@@ -818,7 +818,8 @@
       //load up our drivers
       $drivers = array(
         'printcore' => 'RepRap Serial Driver',
-        'dummy' => 'Dummy Driver'
+        'dummy' => 'Dummy Driver',
+        's3g' => 'Makerbot Driver (Experimental)'
       );
 
 			$form = new Form('driver');

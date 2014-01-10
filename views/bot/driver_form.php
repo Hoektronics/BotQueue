@@ -14,7 +14,7 @@
         <span class="muted">(in seconds between gcode commands)</span>
       </div>
     </div>
-  <? elseif ($driver == 'printcore'): ?>
+  <? elseif ($driver == 'printcore' || $driver == 's3g'): ?>
     <div class="control-group ">
       <label class="control-label" for="iserial_port"><strong>Serial Port</strong></label>
       <div class="controls">
@@ -38,6 +38,8 @@
         <p class="help-block">Name of the serial port to connect to.</p>
       </div>
     </div>
+  <? endif ?>
+  <? if ($driver == 'printcore'): ?>
     <div class="control-group ">
       <label class="control-label" for="ibaudrate"><strong>Baudrate</strong></label>
       <div class="controls">
