@@ -92,6 +92,7 @@
 		public function delete()
 		{
 		  //todo: delete our files?
+      //todo: change our status?
 		  			
 			parent::delete();
 		}
@@ -166,6 +167,7 @@
 		public function pass()
 		{
 		  $this->set('status', 'complete');
+      $this->set('finish_date', date("Y-m-d H:i:s"));
 		  $this->save();
 		  
 		  $job = $this->getJob();
