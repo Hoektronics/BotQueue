@@ -9,9 +9,9 @@ def scanPorts():
     import serial.tools.list_ports
     return serial.tools.list_ports.comports()
   except Exception as ex:
-    self.log = logging.getLogger('botqueue')
-    self.log.error("Printcore cannot scan serial ports.")
-    self.log.exception(ex)
+    log = logging.getLogger('botqueue')
+    log.error("Printcore cannot scan serial ports.")
+    log.exception(ex)
     return None
 
 #todo: this whole thing sucks.  we need a much better way to interface with this.
