@@ -1,3 +1,26 @@
+#Before importing ANYTHING, check if we have what we need
+def packagesInstalled():
+  allInstalled = True
+  if not installed('serial'):
+    allInstalled = False
+    print 'PySerial not installed.'
+  if not installed('requests'):
+    allInstalled = False
+    print 'requests not installed.'
+  return allInstalled
+
+def installed(name):
+  try:
+    __import__(name)
+  except ImportError:
+    return False
+  return True
+
+if not packagesInstalled():
+  print 'Please install the above modules to continue'
+  import sys
+  sys.exit()
+
 import botqueueapi
 import workerbee
 import threading
