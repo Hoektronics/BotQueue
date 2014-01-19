@@ -340,15 +340,19 @@ def jsonNormalize(input):
   return json.loads(json.dumps(input))
 
 def convertToString(input):
+  result = input
   if isinstance(input, dict):
-    return {convertToString(key): convertToString(value) for key, value in input.iteritems()}
+    result = {}
+    for key, value in input.iteritems():
+      result[convertToString(key)] = convertToString(value)
   elif isinstance(input, list):
-    return [convertToString(element) for element in input]
+    result = []
+    for element in input:
+      result.append(convertToString(element))
   elif isinstance(input, unicode):
-    return input.encode('utf-8')
-  else:
-    return input
-          
+    result = input.encode('utf-8')
+  return result
+
 def loadLogger():
   # create logger with 'spam_application'
   logger = logging.getLogger('botqueue')
