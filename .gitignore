@@ -7,6 +7,7 @@ bumblebee/cache*
 bumblebee/engines*
 botqueue.tmproj
 bumblebee/*.log
+bumblebee/*.html
 ssl-cert.pem
 ssl-cert.int
 ssl-cert.key
