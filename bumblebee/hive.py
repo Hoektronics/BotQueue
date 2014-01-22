@@ -83,7 +83,7 @@ class URLFile():
           self.progress = 100
       #okay, should we open it for writing?
       if not os.path.exists(self.localPath):
-        self.localFile = open(self.localPath, "w+")
+        self.localFile = open(self.localPath, "w+b")
     except Exception as ex:
       self.localFile = tempfile.NamedTemporaryFile()
       self.localPath = self.localFile.name
@@ -231,6 +231,8 @@ def determineOS():
       return "raspberrypi"
     else:
       return "linux"
+  elif sys.platform.startswith('win'):
+    return "win"
   else:
     return "unknown"
 
@@ -253,6 +255,8 @@ def scanCameras():
     command = "./imagesnap -l"
   elif myos == "raspberrypi" or myos == "linux":
     command = "uvcdynctrl -l -v"
+  elif myos == "win" or myos == "unkown":
+    return cameras
 
   returned = subprocess.check_output(command, shell=True)
   lines = returned.rstrip().split('\n')
