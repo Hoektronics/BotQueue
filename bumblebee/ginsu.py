@@ -252,13 +252,16 @@ class Slic3r(GenericSlicer):
 
   def slice(self):
     #create our command to do the slicing
+    myos = hive.determineOS()
     try:
-      command = "exec %s --load %s --output %s %s" % (
+      command = "%s --load %s --output %s %s" % (
         self.getSlicerPath(),
         self.configFile.name,
         self.outFile.name,
         self.sliceFile.localPath
       )
+      if(myos != "win"):
+        command = "exec " + command
       self.log.info("Slice Command: %s" % command)
 
       outputLog = ""

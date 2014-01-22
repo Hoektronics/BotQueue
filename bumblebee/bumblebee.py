@@ -1,3 +1,6 @@
+import pydevd
+pydevd.settrace('localhost', port=7220)
+
 #Before importing ANYTHING, check if we have what we need
 def packagesInstalled():
   allInstalled = True
@@ -84,7 +87,7 @@ class BumbleBee():
     data = {}
     data['bots'] = hive.scanBots()
     data['cameras'] = hive.scanCameras()
-    
+	
     scanData = json.dumps(data)
     if scanData != self.lastScanData:
       self.lastScanData = scanData
