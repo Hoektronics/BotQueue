@@ -220,8 +220,10 @@
 						$error = "The passwords did not match.";
 					else if (strlen($this->args('changepass1')) < 8)
 						$error = "The password must be at least 8 characters long.";
+                    else
+                        $error = "";
 
-					if (!$error)
+					if ($error != "")
 					{
 						$user->set('pass_hash', User::hashPass($this->args('changepass1')));
 						//$user->set('force_password_change', 0); //pass updated.
@@ -288,6 +290,8 @@
 				//how do we find them?
 				if ($this->args('id'))
 					$user = new User($this->args('id'));
+                else
+                    throw new Exception("Could not find that user.");
 				
 				//are we cool?
 				if (!$user->isHydrated())
@@ -385,7 +389,7 @@
 				}	
 
 				//okay, we good?
-				if (empty($errors))
+				if (empty($errors) && empty($errorfields))
 				{
 					//woot!
 					$user = new User();
@@ -467,7 +471,7 @@
 					}
 				}
 				
-				if (!empty($errors))
+				if (!empty($errors) && !empty($errorfields))
 				{
 					$this->setArg('username');
 					$this->set('errors', $errors);

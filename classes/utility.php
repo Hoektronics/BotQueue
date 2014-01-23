@@ -16,6 +16,7 @@
     along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
+define('DEFAULT_CURRENCY', "usd");
 class Utility 
 {  
   public static $currencyNames = array(
@@ -83,7 +84,6 @@ class Utility
     $distance_in_minutes = floor(abs($to_time - $from_time) / 60);
     $distance_in_seconds = floor(abs($to_time - $from_time));
 
-    $string = '';
     $parameters = array();
 
     if ($distance_in_minutes <= 1)
@@ -217,11 +217,11 @@ class Utility
 			return null;
 	}
 	
-	public static function generateBarcode($text)
-	{
-		require_once('PEAR/Image/Barcode.php');
-		Image_Barcode::draw($text, 'Code39', 'png');
-	}
+//	public static function generateBarcode($text)
+//	{
+//		require_once('PEAR/Image/Barcode.php');
+//		Image_Barcode::draw($text, 'Code39', 'png');
+//	}
 
 	public static function sanitize($value)
 	{
@@ -287,38 +287,38 @@ class Utility
 		if (strtotime($datetime) < 0)
 		  return 'unknown';
 		else
-      return date("Y-m-d\TH:i:sP", $datetime);
+      return date("Y-m-dTH:i:sP", $datetime);
 	}
 	
-	public static function relativeDays($datetime)
-	{
-		//calculations
-		$elapsed = time() - strtotime($datetime);
-		$days = floor(abs($elapsed / Cache::TIME_ONE_DAY));
-		
-		if (strtotime($datetime) < 0)
-		  return 'unknown';
-		
-		//special formatting...
-		if ($days == 0)
-			return "today";
-		else if ($days == 1)
-		{
-			if ($elapsed < 0)
-				return "tomorrow";
-			else
-				return "yesterday";
-		}
-		else if ($days > 1)
-		{
-			if ($elapsed < 0)
-				return "in $days days";
-			else
-				return "$days days ago";
-		}
-		else
-			return "???";
-	}
+//	public static function relativeDays($datetime)
+//	{
+//		//calculations
+//		$elapsed = time() - strtotime($datetime);
+//		$days = floor(abs($elapsed / Cache::TIME_ONE_DAY));
+//
+//		if (strtotime($datetime) < 0)
+//		  return 'unknown';
+//
+//		//special formatting...
+//		if ($days == 0)
+//			return "today";
+//		else if ($days == 1)
+//		{
+//			if ($elapsed < 0)
+//				return "tomorrow";
+//			else
+//				return "yesterday";
+//		}
+//		else if ($days > 1)
+//		{
+//			if ($elapsed < 0)
+//				return "in $days days";
+//			else
+//				return "$days days ago";
+//		}
+//		else
+//			return "???";
+//	}
 	
 	public static function getElapsed($datediff)
 	{
@@ -342,8 +342,6 @@ class Utility
 		} else {
 			return "$years year".self::pluralizer($years>1);
 		}
-		
-		return false;
 	}	
 	
 	public static function getHours($datediff)
@@ -383,8 +381,6 @@ class Utility
 		} else {
 			return "$years year".self::pluralizer($years>1)." ago";
 		}
-		
-		return false;
 	}
 	
 	public static function relativeTime($datetime)
@@ -441,8 +437,6 @@ class Utility
 				return "in $years year".self::pluralizer($years>1);
 			}
 		}
-		
-		return false;
 	}
 
 	public static function relativeDate($datetime)
@@ -454,8 +448,8 @@ class Utility
 		$to = strtotime($datetime);
 		$datediff = $from - $to;
 	
-		$min = 	  round(abs($datediff) / (60));
-		$hours =  round(abs($datediff)  / (60 * 60));
+		//$min = 	  round(abs($datediff) / (60));
+		//$hours =  round(abs($datediff)  / (60 * 60));
 		$days =   round(abs($datediff)  / (60 * 60 * 24));
 		$months = round(abs($datediff)  / (60 * 60 * 24 * 31));
 		$years =  round(abs($datediff)  / (60 * 60 * 24 * 365));
@@ -479,7 +473,7 @@ class Utility
 		}
 		else
 		{
-			$datediff = abs($datediff);
+			//$datediff = abs($datediff);
 			if ($days == 0)
 				return "today";
 			else if ($days < 31) {
@@ -490,8 +484,6 @@ class Utility
 				return "in $years year".self::pluralizer($years>1);
 			}
 		}
-		
-		return false;
 	}
 	
 	public static function filesizeFormat($bytes, $format = '', $force = '')
@@ -517,49 +509,49 @@ class Utility
 	 * You can pass 'you', 'your', 'yours' and the user object and will use the right gender pronouns 
 	 * according to the currently logged in user.
 	 */
-	public static function convertPronoun($pronoun, $user, $last_word = false) 
-	{
-		if ( !is_object($user) ) return false;
-		
-		$capitalize = strtoupper(substr($pronoun,0,1)) == substr($pronoun,0,1);
-		$pronoun = strtolower($pronoun);
-		$cur_user = VimeoApplication::currentUser();
-		if ($cur_user->id == $user->id) {
-			if ($capitalize) $pronoun = ucfirst($pronoun);
-			return $pronoun;
-		}
-
-		$gender = $user->get('gender');
-		if (!$gender) $gender = 'n';
-		
-		switch($pronoun)
-		{
-			case 'you':
-				$p = $gender == 'm' ? 'he' : 'she';
-				if ($gender == 'n') $p = $user->get('display_name');
-				if ($last_word)  {
-					$p = $gender == 'm' ? 'him' : 'her';
-					if ($gender == 'n') $p = 'them';
-				}
-				break;
-			case 'your':
-				$p = $gender == 'm' ? 'his' : 'her';
-				if ($gender == 'n') $p = 'their';
-				if ($last_word)  {
-					$p = $gender == 'm' ? 'him' : 'her';
-					if ($gender == 'n') $p = 'them';
-				}
-				break;
-			case 'yours':
-				$p = $gender == 'm' ? 'his' : 'hers';
-				if ($gender == 'n') $p = 'their';
-				break;
-		}
-		
-		if ($capitalize) $p = ucfirst($p);
-	
-		return $p;
-	}
+//	public static function convertPronoun($pronoun, $user, $last_word = false)
+//	{
+//		if ( !is_object($user) ) return false;
+//
+//		$capitalize = strtoupper(substr($pronoun,0,1)) == substr($pronoun,0,1);
+//		$pronoun = strtolower($pronoun);
+//		$cur_user = VimeoApplication::currentUser();
+//		if ($cur_user->id == $user->id) {
+//			if ($capitalize) $pronoun = ucfirst($pronoun);
+//			return $pronoun;
+//		}
+//
+//		$gender = $user->get('gender');
+//		if (!$gender) $gender = 'n';
+//
+//		switch($pronoun)
+//		{
+//			case 'you':
+//				$p = $gender == 'm' ? 'he' : 'she';
+//				if ($gender == 'n') $p = $user->get('display_name');
+//				if ($last_word)  {
+//					$p = $gender == 'm' ? 'him' : 'her';
+//					if ($gender == 'n') $p = 'them';
+//				}
+//				break;
+//			case 'your':
+//				$p = $gender == 'm' ? 'his' : 'her';
+//				if ($gender == 'n') $p = 'their';
+//				if ($last_word)  {
+//					$p = $gender == 'm' ? 'him' : 'her';
+//					if ($gender == 'n') $p = 'them';
+//				}
+//				break;
+//			case 'yours':
+//				$p = $gender == 'm' ? 'his' : 'hers';
+//				if ($gender == 'n') $p = 'their';
+//				break;
+//		}
+//
+//		if ($capitalize) $p = ucfirst($p);
+//
+//		return $p;
+//	}
 	
 	public static function pluralizer($bln, $suffix='s')
 	{
@@ -587,26 +579,27 @@ class Utility
 
 	public static function possessive($word)
 	{
-		if (ereg("s$", $word)) 
+		if (preg_match("/s$/", $word))
 			return "{$word}'";
 		else 
 			return "{$word}'s";
 	}
 	
-	public static function userPossessive($user)
-	{
-		if(VimeoApplication::currentUser()->id == $user->id)
-			return "My";
-		else
-			return Utility::possessive($user->get('display_name'));
-	}
-	
-	/**
-	 * turn search query into a list of clean words
-	 *
-	 * @param unknown_type $str
-	 * @return unknown
-	 */
+//	public static function userPossessive($user)
+//	{
+//		if(VimeoApplication::currentUser()->id == $user->id)
+//			return "My";
+//		else
+//			return Utility::possessive($user->get('display_name'));
+//	}
+
+    /**
+     * turn search query into a list of clean words
+     *
+     * @param string $str
+     * @param bool $split_words
+     * @return array
+     */
 	public static function normalizeSearch($str, $split_words = true)
 	{
 		//		if($split_words)
@@ -615,21 +608,22 @@ class Utility
 		
 		$i = 0;
 		foreach ($words as $word) {
-			$words[$i]  = preg_replace("/[^A-Za-z0-9\ @\.]/", "", trim($word));
+			$words[$i]  = preg_replace("/[^A-Za-z0-9\\ @\\.]/", "", trim($word));
 			$i++;
 		}
 		
 		return $words;
 	}
-	
-	/**
-	 * Normalizes search and returns string formatted for sql 
-	 * given an array of fields.
-	 *
-	 * @param string $str
-	 * @param array $fields
-	 * @param boolean $split_words ... set this to False if you want to include spaces	 
-	 */
+
+    /**
+     * Normalizes search and returns string formatted for sql
+     * given an array of fields.
+     *
+     * @param string $str
+     * @param array $fields
+     * @param boolean $split_words ... set this to False if you want to include spaces
+     * @return string
+     */
 	public static function getSearchQuery($str, $fields, $split_words = true)
 	{
 		if ( !is_array($fields) ) $fields[] = $fields;
@@ -640,7 +634,7 @@ class Utility
 		foreach( $fields as $field ) 
 		{
 			foreach ( $words as $word ) { 
-				if( !eregi("^@", $field) ) {
+				if( !preg_match("/^@/i", $field) ) {
 					$query .= " $field LIKE '%$word%' OR ";
 				} else {
 					$query .= " ".substr($field, 1, strlen($field)-1)." = '$word' OR ";
@@ -655,20 +649,21 @@ class Utility
 	{
 	    return str_ireplace($needle, "<span style=\"color:#F75342; border-bottom: 1px dotted #ccc;\">{$needle}</span>", $haystack);
 	}
-	
-	/**
-	 * pass string and length
-	 *
-	 * @param unknown_type $string
-	 * @param unknown_type $length
-	 * @param unknown_type $type
-	 * @return unknown
-	 */
+
+    /**
+     * pass string and length
+     *
+     * @param string $string
+     * @param int $length \
+     * @param string $end_str
+     * @param int $mode
+     * @return string
+     */
 	public static function shortenString($string, $length, $end_str = '&hellip;', $mode = 1) {
 		$i = 1;
 
 		// If it's in all caps, we'll show even less
-		if (!ereg("[a-z]", $string)) $length = ($length * .5);
+		if (!preg_match("/[a-z]/", $string)) $length = ($length * .5);
 		
 		if (strlen($string) > $length + strlen($end_str)) {
 			if ( $mode == 1 ) {
@@ -711,51 +706,55 @@ class Utility
 		}
 
 		//edge cases.
-		if (!strlen($id))
-			return "/";
 		if(strlen($id) <= 2)
 			return "/{$id}/";
 		if (strlen($id) == 3)
 			return "/" . substr($id, 0, 2) . "/";
+        // Everything else
+        return "/";
 	}
 	
 	public static function checkUrl($url)
 	{
 		// SCHEME
-		$urlregex = "^(https?|ftp)\:\/\/";
+		$urlregex = "^(https?|ftp)\\:\\/\\/";
 
 		// USER AND PASS (optional)
-		$urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?";
+		$urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?";
 
 		// HOSTNAME OR IP
-		$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
+		$urlregex .= "[a-z0-9+\$_-]+(\\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
 		//$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // http://x.x = minimum
 		//$urlregex .= "([a-z0-9+\$_-]+\.)*[a-z0-9+\$_-]{2,3}";  // http://x.xx(x) = minimum
 		//use only one of the above
 
 		// PORT (optional)
-		$urlregex .= "(\:[0-9]{2,5})?";
+		$urlregex .= "(\\:[0-9]{2,5})?";
 		// PATH  (optional)
-		$urlregex .= "(\/([.a-z0-9+%\$_-]\.?)+)*\/?";
+		$urlregex .= "(\\/([.a-z0-9+%\$_-]\\.?)+)*\\/?";
 		// GET Query (optional)
-		$urlregex .= "(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?";
+		$urlregex .= "(\\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?";
 		// ANCHOR (optional)
 		$urlregex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?\$";
 
+        $urlregex = '/'.$urlregex.'/i';
 		// check
-		return eregi($urlregex, $url); 	
+		return preg_match($urlregex, $url);
 	}
 	
 	public static function getEmailPrefix($email) 
 	{
-		if ( eregi("^([_a-z0-9-]+((\+)?(\.)?[_a-z0-9-]+)*)@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$", $email, $regs) )
-			return $regs[1];
+		if ( preg_match("/^([_a-z0-9-]+((\\+)?(\\.)?[_a-z0-9-]+)*)@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,3})$/i", $email, $regs) )
+            if(count($regs) >= 2)
+			    return $regs[1];
+        return $email;
 	}
 	
 	public static function prettyCommas($arr) 
 	{
 		$length = count($arr);
-		
+
+        $str = "";
 		for ($i = 0; $i < $length; $i++) 
 		{
 			if ( trim($arr[$i]) != '' ) 
@@ -796,6 +795,7 @@ class Utility
 		$data = explode("\n", $query);
 		if (count($data))
 		{
+            $formatted = array();
 			foreach ($data AS $line)
 			{
 				$line = trim($line);
@@ -819,6 +819,7 @@ class Utility
 	public static function cleanExplode($separator, $str)
 	{
 		if ( $str ) {
+            $new_str = "";
 			$arr = explode($separator, $str);
 			foreach ( $arr as $val ) {
 				if ( !empty($val) ) {
@@ -832,12 +833,12 @@ class Utility
 	
 	public static function getIP()
 	{
-		return (getenv(HTTP_X_FORWARDED_FOR)) ?  getenv(HTTP_X_FORWARDED_FOR) :  getenv(REMOTE_ADDR);
+		return (getenv('HTTP_X_FORWARDED_FOR')) ?  getenv('HTTP_X_FORWARDED_FOR') :  getenv('REMOTE_ADDR');
 	}
 	
 	public function stripAllCaps($string) {
 		//if its in all caps
-		if (!ereg("[a-z]", $string)) {
+		if (!preg_match("/[a-z]/", $string)) {
 			$string = strtolower($string);
 			$string = ucfirst($string);
 		}

@@ -212,6 +212,7 @@
 	
 	function sig_handler($signo)
 	{
+        /* @var $daemon Daemon */
 		global $daemon;
 		
 		$daemon->signalHandler($signo);
@@ -221,7 +222,7 @@
 	{
 		//dont show errors if we're turned off.
 		if (error_reporting() == 0)
-			return;
+			return false;
 			
 		$line = "[$errno] $errstr on line $errline in $errfile";
 		

@@ -1,6 +1,10 @@
 <?php
 	class OAuthConsumer extends Model
 	{
+        private $key;
+        private $secret;
+        private $active;
+
 		public function __construct($id = null)
 		{
 			parent::__construct($id, "oauth_consumer");

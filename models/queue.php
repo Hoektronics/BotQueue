@@ -61,6 +61,8 @@
 		{
 			if ($status !== null)
 				$statusSql = " AND status = '".db()->escape($status)."'";
+            else
+                $statusSql = "";
 				
 			$sql = "
 				SELECT id
@@ -76,13 +78,15 @@
 		{
 			if (!$can_slice)
 				$sliceSql = " AND file_id > 0 ";
+            else
+                $sliceSql = "";
 				
 			$sql = "
 				SELECT id
 				FROM jobs
 				WHERE queue_id = '{$this->id}'
 					AND status = 'available'
-					$sliceSql
+					{$sliceSql}
 				ORDER BY user_sort ASC
 			";
 			$job_id = db()->getValue($sql);
@@ -113,16 +117,29 @@
 		  
 		  return new Collection($sql, array('Bot' => 'id'));
 		}
-		
-		public function addFile($file, $qty = 1)
+
+        /**
+         * @param $file S3File
+         * @param int $qty
+         * @return array
+         * @throws Exception
+         */
+        public function addFile($file, $qty = 1)
 		{
 		  if ($file->isGcode())
 		    return $this->addGCodeFile($file, $qty);
 		  elseif ($file->is3DModel())
 		    return $this->add3DModelFile($file, $qty);
+          else
+            throw new Exception("Unkown file type");
 		}
-		
-		public function addGCodeFile($file, $qty = 1)
+
+        /**
+         * @param $file S3File
+         * @param int $qty
+         * @return array
+         */
+        public function addGCodeFile($file, $qty = 1)
 		{
 			$jobs = array();
 			
@@ -147,7 +164,12 @@
 			return $jobs;
 		}
 
-		public function add3DModelFile($file, $qty = 1)
+        /**
+         * @param $file S3File
+         * @param int $qty
+         * @return array
+         */
+        public function add3DModelFile($file, $qty = 1)
 		{
 			$jobs = array();
 			

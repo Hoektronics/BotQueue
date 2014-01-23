@@ -20,7 +20,8 @@
 	{
 		private $view_name;
 		private $controller_name;
-		private $mode;
+		// Not currently used, but will be in the future
+		// private $mode;
 		private $args;
 		private $data;
 		
@@ -69,6 +70,11 @@
 			);
 		}
 
+		/**
+		 * @param $name string
+		 * @return Controller
+		 * @throws ViewException
+		 */
 		public static function byName($name)
 		{
 			// Get the name of the class to load
@@ -113,11 +119,14 @@
 		{
 			//Note: this function is somewhat unused - $mode is not defined anywhere in this class, so $class always defaults to "View"
 			//Zach wrote this for additional functionality in the future but it is not currently being used
-			$class = ucfirst($mode) . "View";
+			//$class = ucfirst($mode) . "View";
+			$class = "View";
 
 			//The "View" class does exist (see /framework/view.php) so the function returns a new instance of this class
 			if (class_exists($class))
 				return new $class($this->controller_name, $this->view_name);
+			else
+				die("Cannot display the view page");
 		}
 
 	
@@ -157,6 +166,7 @@
 			$this->view_name = $view_name;
 
 			//$this->viewFactory returns a new object of the type View class, setting the appropriate controller and view properties
+			/* @var $view View */
 			$view = $this->viewFactory();
 			
 			//do our dirty work.

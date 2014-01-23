@@ -57,10 +57,10 @@ class Model
 	/**
 	 * Creates a new BaseObject.
 	 *
-	 * @param $data if $data is an integer id, in which case it will load the data from the database.
+	 * @param $data mixed if $data is an integer id, in which case it will load the data from the database.
 	 * If $data is an array, it will load the data from the array to the equivalent properties of the object.
 	 *
-	 * @param $tableName the name of the table to reference.
+	 * @param $tableName string the name of the table to reference.
 	 */
 	public function __construct($data, $tableName)
 	{
@@ -73,7 +73,7 @@ class Model
 
 	/**
 	 * This function translates the object to a string.
-	 * @return the string value for the funtction
+	 * @return string the string value for the funtction
 	**/
 	public function __toString()
 	{
@@ -82,8 +82,8 @@ class Model
 
 	/**
 	 * This function is for getting at the various data internal to the object
-	 * @param $name is the name of the field
-	 * @return the value from the data array or the id
+	 * @param $name string is the name of the field
+	 * @return string the value from the data array or the id
 	 */
 	public function get($name)
 	{
@@ -92,8 +92,8 @@ class Model
 
 	/**
 	 * Function to set data values for the object
-	 * @param $name is the name of the field
-	 * @param $value is the stored value
+	 * @param $name string is the name of the field
+	 * @param $value string is the stored value
 	 */
 	public function set($name, $value)
 	{
@@ -110,13 +110,14 @@ class Model
 	 *
 	 * @todo this will change in v2.2 to load the data from cache or look it up from the db.
 	 *
-	 * @param $data either an id of an object or an array of data that
+	 * @param $data mixed either an id of an object or an array of data that
 	 * represents that object.
 	 */
 	public function load($data)
 	{
 		//did we get an array of data to set?
 		if (is_array($data))
+			/* @var $data array */
 			$this->hydrate($data);
 		//nope, maybe its an id for the database...
 		else if ($data)
@@ -188,6 +189,7 @@ class Model
 	/**
 	 * This function handles saving the object.
 	 *
+	 * @param $force bool
 	 * @return true on success, false on failure.
 	 */
 	public function save($force = false)
@@ -233,7 +235,7 @@ class Model
 	/**
 	* Clean a field's data.  called from clean()
 	*
-	* @param $field the name of the field to clean.
+	* @param $field string the name of the field to clean.
 	*/
 	public function cleanField($field)
 	{
@@ -251,7 +253,7 @@ class Model
 	/**
 	 * This function handles deleting our object.
 	 * 
-	 * @return ture on success, false on failure.
+	 * @return bool ture on success, false on failure.
 	 */
 	public function delete()
 	{
@@ -266,7 +268,8 @@ class Model
 	 * This function gets an associative array of the object's members most
 	 * commonly this will be from a db, but you never know.
 	 *
-	 * @return an associative array of the objects data.
+	 * @param $useDb bool Should we check the database?
+	 * @return array an associative array of the objects data.
 	 */
 	public function getData($useDb = true)
 	{
@@ -294,9 +297,10 @@ class Model
 	/**
 	 * This function sets all the data for the object.
 	 *
-	 * @param $data an associative array of data.  The keys must match up with
+	 * @param $data array an associative array of data.  The keys must match up with
 	 * the object properties.
-	 * @param $ignore the fields to ignore and not set
+	 * @param $ignore bool the fields to ignore and not set
+	 * @return boolean If data was set correctly
 	 */
 	//equivalent object members to that (if they exist)
 	public function setData($data, $ignore = null)
@@ -335,13 +339,13 @@ class Model
 	 */
 	protected function saveData()
 	{
-		return $this->saveDb();
+		$this->saveDb();
 	}
 
 	/**
 	 * This function gets all the member information from a database.
 	 *
-	 * @return an associative array of data or false on failure.
+	 * @return array an associative array of data or false on failure.
 	 */
 	private function getDbData()
 	{
@@ -438,7 +442,8 @@ class Model
 	/**
 	* this function creates our key to use with caching.  no need to override
 	*
-	* @return a key used with CacheBot to cache the object.
+	* @param $id int
+	* @return string a key used with CacheBot to cache the object.
 	*/
 	public function getCacheKey($id = null)
 	{
@@ -454,7 +459,8 @@ class Model
 	* needed. its recommended to extend this to add data that you'd like cached
 	* by the object
 	*
-	* @return an array of data to cache
+	* @param $deep bool
+	* @return array an array of data to cache
 	*/
 	protected function getDataToCache($deep = true)
 	{
@@ -473,7 +479,7 @@ class Model
 	* you'll want to override this one if you added custome data in
 	* getDataToCache() and load it into the object.
 	*
-	* @param $data the data we got from teh cache
+	* @param $data mixed the data we got from the cache
 	*/
 	public function hydrate($data)
 	{
@@ -515,15 +521,15 @@ class Model
 	*/
 	public function setCache()
 	{
-		return CacheBot::set($this->getCacheKey(), $this->getDataToCache(), self::$objectCacheLife);
+		CacheBot::set($this->getCacheKey(), $this->getDataToCache(), self::$objectCacheLife);
 	}
 
 	/**
-	* this funciton deletes our data from teh cache. no need to override
+	* this funciton deletes our data from the cache. no need to override
 	*/
 	public function deleteCache()
 	{
-		return CacheBot::delete($this->getCacheKey());
+		CacheBot::delete($this->getCacheKey());
 	}
 
 	public function getiPhoneLink($text = null)
@@ -580,6 +586,7 @@ class Model
 		$class = get_class($this);
 		
 		//actually copy it.
+		/* @var $obj Model */
 		$obj = new $class();
 		foreach ($this->data AS $key => $value)
 			$obj->set($key, $value);

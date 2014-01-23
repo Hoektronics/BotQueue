@@ -126,7 +126,7 @@
   <script>
     function set_serialport(ele, idx)
     {
-      $('#iserial_port').val($(ele).html())
+      $('#iserial_port').val($(ele).html());
       $('#port_id').val($('#port_id_' + idx).val());
       
       return false;

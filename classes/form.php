@@ -1,327 +1,348 @@
 <?
-  /*
-    This file is part of BotQueue.
 
-    BotQueue is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+/*
+  This file is part of BotQueue.
 
-    BotQueue is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  BotQueue is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
-  */
+  BotQueue is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	class Form
-	{
-		private $fields;
-		private $data;
-		
-		public $name;
-		public $action;
-		public $method = 'POST';
-		public $submitText = "Submit";
-		
-		public function __construct($name = 'form')
-		{
-			$this->name = $name;
-			
-			$this->add(new HiddenField(array(
-				'name' => "{$this->name}_is_submitted",
-				'value' => 1,
-				'required' => true
-			)));
-		}
+  You should have received a copy of the GNU General Public License
+  along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-		public function checkSubmitAndValidate($data)
-		{
-			if ($this->isSubmitted($data))
-				return $this->validate($data);
-			return false;
-		}
-	
-		public function isSubmitted($data)
-		{
-			return (boolean)$data["{$this->name}_is_submitted"];
-		}
-	
-		public function add(FormField $field)
-		{
-			$this->fields[$field->name] = $field;
-		}
-		
-		public function validate($data)
-		{
-			$rval = true;
-		
-			if (!empty($this->fields))
-				foreach ($this->fields AS $field)
-					if (!$field->validate($data))
-						$rval = false;
+class Form
+{
+    private $fields;
 
-			return $rval;
-		}
-		
-		public function hasError()
-		{
-			if (!empty($this->fields))
-				foreach ($this->fields AS $field)
-					if ($field->error)
-						return true;
-			
-			return false;
-		}
-		
-		public function render($template = 'vertical')
-		{
-			return Controller::byName('form')->renderView($template . "_form", array('form' => $this));
-		}
-		
-		public function renderFields()
-		{
-			$html = "";
-			if (!empty($this->fields))
-				foreach ($this->fields AS $field)
-					$html .= $field->render();
+    public $name;
+    public $action;
+    public $method = 'POST';
+    public $submitText = "Submit";
 
-			return $html;
-		}
-		
-		public function data($name = null)
-		{
-		  if ($name === null)
-		  {
+    public function __construct($name = 'form')
+    {
+        $this->name = $name;
+
+        $this->add(new HiddenField(array(
+            'name' => "{$this->name}_is_submitted",
+            'value' => 1,
+            'required' => true
+        )));
+    }
+
+    public function checkSubmitAndValidate($data)
+    {
+        if ($this->isSubmitted($data))
+            return $this->validate($data);
+        return false;
+    }
+
+    public function isSubmitted($data)
+    {
+        return (boolean)$data["{$this->name}_is_submitted"];
+    }
+
+    /**
+     * @param FormField $field
+     */
+    public function add(FormField $field)
+    {
+        $this->fields[$field->name] = $field;
+    }
+
+    public function validate($data)
+    {
+        $rval = true;
+
         if (!empty($this->fields))
-        {
-          $data = array();
-          foreach ($this->fields as $key => $field)
-            $data[$key] = $field->getValue();
-          
-          return $data;
+            foreach ($this->fields AS $field)
+                /* @var $field FormField */
+                if (!$field->validate($data))
+                    $rval = false;
+
+        return $rval;
+    }
+
+    public function hasError()
+    {
+        if (!empty($this->fields))
+            foreach ($this->fields AS $field)
+                if ($field->error)
+                    return true;
+
+        return false;
+    }
+
+    public function render($template = 'vertical')
+    {
+        return Controller::byName('form')->renderView($template . "_form", array('form' => $this));
+    }
+
+    public function renderFields()
+    {
+        $html = "";
+        if (!empty($this->fields))
+            foreach ($this->fields AS $field)
+                /* @var $field FormField */
+                $html .= $field->render();
+
+        return $html;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed|null
+     */
+    public function data($name = null)
+    {
+        if ($name === null) {
+            if (!empty($this->fields)) {
+                $data = array();
+                foreach ($this->fields as $key => $field)
+                    /* @var $field FormField */
+                    $data[$key] = $field->getValue();
+
+                return $data;
+            }
+        } else {
+            if (isset($this->fields[$name]) && $this->fields[$name] instanceOf FormField) {
+                /* @var $field FormField */
+                $field = $this->fields[$name];
+                return $field->getValue();
+            }
         }
-		  }
-		  else
-		  {
-  			if (isset($this->fields[$name]) && $this->fields[$name] instanceOf FormField)
-  				return $this->fields[$name]->getValue();
-		  } 
-		  return null;
-		}
-	}
-	
-	class FormField
-	{
-		private $value;
+        return null;
+    }
+}
 
-		public $id;
-		public $name;
-		public $label;
-		public $help;
-		public $required = false;
-		public $hasError = false;
-		public $errorText;
-		
-		public $validAttributes = array(
-		  'id',
-		  'name',
-		  'onchange',
-		  'onclick',
-		  'ondblclick',
-		  'onmousedown',
-		  'onmousemove',
-		  'onmouseover',
-		  'onmouseout',
-		  'onmouseup',
-		  'onkeydown',
-		  'onkeypress',
-		  'onkeyup',
-		  'onblur',
-		  'onchange',
-		  'onfocus',
-		  'onreset',
-		  'onselect'
-		);
-		
-		public $attributes = array();
-		
-		public function __construct($opts)
-		{
-		  //pull in our name
-			if (isset($opts['name']))
-				$this->name = $opts['name'];
-				
-			//pull in our id
-			if (!isset($opts['id']))
-			  $opts['id'] = "i{$this->name}";
-			$this->id = $opts['id'];
-				
-			if (isset($opts['value']))
-				$this->setValue($opts['value']);
-			if (isset($opts['label']))
-				$this->label = $opts['label'];
-			if (isset($opts['help']))
-				$this->help = $opts['help'];				
-			if (isset($opts['required']))
-				$this->required = (boolean)$opts['required'];				
+class FormField
+{
+    private $value;
 
-      foreach ($this->validAttributes AS $attr)
-      {
-  			if (isset($opts[$attr]))
-  				$this->attributes[$attr] = $opts[$attr];
-      }
-		}
-		
-		public function getAttributes()
-		{
-		  $attribs = array();
-		  if (!empty($this->attributes))
-		    foreach ($this->attributes AS $key => $val)
-		      $attribs[] = "$key=\"$val\"";
-      
-      return implode(" ", $attribs);
-		}
+    public $id;
+    public $name;
+    public $label;
+    public $help;
+    public $required = false;
+    public $hasError = false;
+    public $errorText;
 
-		public function getValue()
-		{
-			return $this->value;
-		}
+    public $validAttributes = array(
+        'id',
+        'name',
+        'onchange',
+        'onclick',
+        'ondblclick',
+        'onmousedown',
+        'onmousemove',
+        'onmouseover',
+        'onmouseout',
+        'onmouseup',
+        'onkeydown',
+        'onkeypress',
+        'onkeyup',
+        'onblur',
+        'onchange',
+        'onfocus',
+        'onreset',
+        'onselect'
+    );
 
-		public function setValue($value)
-		{
-			$this->value = $value;
-		}
+    public $attributes = array();
 
-		public function validate($data)
-		{
-			if ($this->required && !$data[$this->name])
-			{
-				$this->hasError = true;
-				$this->errorText = "The {$this->label} field is required.";
-			}
-			
-			//no error? pull in our data
-			if (!$this->hasError)
-				$this->setValue($data[$this->name]);
+    public function __construct($opts)
+    {
+        //pull in our name
+        if (isset($opts['name']))
+            $this->name = $opts['name'];
 
-			//return false on error, true on success
-			return !$this->hasError;
-		}
-		
-		public function render()
-		{
-			return Controller::byName('form')->renderView(strtolower(get_class($this)), array('field' => $this));
-		}
-	}
-	
-	class HiddenField extends FormField
-	{
-	}
-	
-	class TextField extends FormField
-	{
-	}
+        //pull in our id
+        if (!isset($opts['id']))
+            $opts['id'] = "i{$this->name}";
+        $this->id = $opts['id'];
 
-	class TextareaField extends FormField
-	{
-	  public $width;
-	  
-	  public function __construct($opts)
-		{
-			if (isset($opts['width']))
-				$this->width = $opts['width'];
-			if (!isset($opts['rows']))
-			  $opts['rows'] = 4;
-			  
-			$this->validAttributes[] = 'rows';
-				
-			parent::__construct($opts);
-		}
-	}
+        if (isset($opts['value']))
+            $this->setValue($opts['value']);
+        if (isset($opts['label']))
+            $this->label = $opts['label'];
+        if (isset($opts['help']))
+            $this->help = $opts['help'];
+        if (isset($opts['required']))
+            $this->required = (boolean)$opts['required'];
 
-	class CheckboxField extends FormField
-	{
-	  //checkboxes have only 2 states and are valid no matter what.
-	  public function validate($data)
-		{
-			$this->hasError = false;
-      $this->setValue((int)$data[$this->name]);
-			
-			return true;
-		}
-	}
-		
-	class SelectField extends FormField
-	{
-		public $options;
-		
-		public function __construct($opts)
-		{
-			$this->options = $opts['options'];
-			unset($opts['options']);
-			
-			parent::__construct($opts);
-		}
-	}
-	
-	class DisplayField extends FormField
-	{		
-		public function validate($data)
-		{
-			$this->hasError = false;
+        foreach ($this->validAttributes AS $attr) {
+            if (isset($opts[$attr]))
+                $this->attributes[$attr] = $opts[$attr];
+        }
+    }
 
-			return true;
-		}
-	}
-	
-	class UploadField extends FormField
-	{		
-		public function validate($data)
-		{
-      //upload our file to S3
-      $file = $_FILES[$this->name];
+    public function getAttributes()
+    {
+        $attribs = array();
+        if (!empty($this->attributes))
+            foreach ($this->attributes AS $key => $val)
+                $attribs[] = "$key=\"$val\"";
 
-      //default to no error.
-      $this->hasError = false;        
+        return implode(" ", $attribs);
+    }
 
-      //double check for errors.
-      if($file['size'] == 0 && $file['error'] == 0)
-        $file['error'] = 5; 
+    public function getValue()
+    {
+        return $this->value;
+    }
 
-      //set our value for future reference.
-      $this->setValue($file);
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 
-      //these our are english translations of errors.
-      $upload_errors = array( 
-        UPLOAD_ERR_OK        => "No errors.", 
-        UPLOAD_ERR_INI_SIZE    => "File uploaded larger than allowed.", 
-        UPLOAD_ERR_FORM_SIZE    => "File uploaded larger than allowed..", 
-        UPLOAD_ERR_PARTIAL    => "File upload failed during transfer.", 
-        UPLOAD_ERR_NO_FILE        => "No file uploaded.", 
-        UPLOAD_ERR_NO_TMP_DIR    => "No temporary directory.", 
-        UPLOAD_ERR_CANT_WRITE    => "Can't write to disk.", 
-        UPLOAD_ERR_EXTENSION     => "File upload stopped by extension.", 
-        UPLOAD_ERR_EMPTY        => "File is empty." // add this to avoid an offset 
-      );
+    public function validate($data)
+    {
+        if ($this->required && !$data[$this->name]) {
+            $this->hasError = true;
+            $this->errorText = "The {$this->label} field is required.";
+        }
 
-      //what did we get?
-      if ($file['error'] && $this->required)
-      {
-        $this->hasError = true;
-        $this->errorText = $upload_errors[$file['error']];          
-      }
-        
-      //how'd we do?
-      return !$this->hasError;
-		}
-	}
+        //no error? pull in our data
+        if (!$this->hasError)
+            $this->setValue($data[$this->name]);
 
-	class RawField extends DisplayField {}
-	class WarningField extends DisplayField {}
-	class ErrorField extends DisplayField {}
-	class SuccessField extends DisplayField {}
-	class InformationField extends DisplayField {}
+        //return false on error, true on success
+        return !$this->hasError;
+    }
+
+    public function render()
+    {
+        return Controller::byName('form')->renderView(strtolower(get_class($this)), array('field' => $this));
+    }
+}
+
+class HiddenField extends FormField
+{
+}
+
+class TextField extends FormField
+{
+}
+
+class TextareaField extends FormField
+{
+    public $width;
+
+    public function __construct($opts)
+    {
+        if (isset($opts['width']))
+            $this->width = $opts['width'];
+        if (!isset($opts['rows']))
+            $opts['rows'] = 4;
+
+        $this->validAttributes[] = 'rows';
+
+        parent::__construct($opts);
+    }
+}
+
+class CheckboxField extends FormField
+{
+    //checkboxes have only 2 states and are valid no matter what.
+    public function validate($data)
+    {
+        $this->hasError = false;
+        $this->setValue((int)$data[$this->name]);
+
+        return true;
+    }
+}
+
+class SelectField extends FormField
+{
+    public $options;
+
+    public function __construct($opts)
+    {
+        $this->options = $opts['options'];
+        unset($opts['options']);
+
+        parent::__construct($opts);
+    }
+}
+
+class DisplayField extends FormField
+{
+    public function validate($data)
+    {
+        $this->hasError = false;
+
+        return true;
+    }
+}
+
+class UploadField extends FormField
+{
+    public function validate($data)
+    {
+        //upload our file to S3
+        $file = $_FILES[$this->name];
+
+        //default to no error.
+        $this->hasError = false;
+
+        //double check for errors.
+        if ($file['size'] == 0 && $file['error'] == 0)
+            $file['error'] = 5;
+
+        //set our value for future reference.
+        $this->setValue($file);
+
+        //these our are english translations of errors.
+        $upload_errors = array(
+            UPLOAD_ERR_OK => "No errors.",
+            UPLOAD_ERR_INI_SIZE => "File uploaded larger than allowed.",
+            UPLOAD_ERR_FORM_SIZE => "File uploaded larger than allowed..",
+            UPLOAD_ERR_PARTIAL => "File upload failed during transfer.",
+            UPLOAD_ERR_NO_FILE => "No file uploaded.",
+            UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
+            UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
+            UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
+            UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
+        );
+
+        //what did we get?
+        if ($file['error'] && $this->required) {
+            $this->hasError = true;
+            $this->errorText = $upload_errors[$file['error']];
+        }
+
+        //how'd we do?
+        return !$this->hasError;
+    }
+}
+
+class RawField extends DisplayField
+{
+}
+
+class WarningField extends DisplayField
+{
+}
+
+class ErrorField extends DisplayField
+{
+}
+
+class SuccessField extends DisplayField
+{
+}
+
+class InformationField extends DisplayField
+{
+}
+
 ?>

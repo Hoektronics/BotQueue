@@ -35,11 +35,12 @@ class CacheBot
 {
 	/**
 	* this is our EasyCache object
+	* @var $bot EasyCache
 	*/
 	private static $bot = null;
 
 	/**
-	* we're private so you can instantiate us.
+	* we're private so you can't instantiate us.
 	*/
 	private function __construct()
 	{
@@ -48,7 +49,7 @@ class CacheBot
 	/**
 	* get our cache object!
 	*
-	* @return an EasyCache based object.
+	* @return EasyCache an EasyCache based object.
 	*/
 	public static function getBot()
 	{
@@ -66,7 +67,9 @@ class CacheBot
 	/**
 	* set our cache object.
 	*
-	* @param $bot a class extended form EasyCache that implements basic caching.
+	* @param $bot EasyCache a class extended form EasyCache that implements basic caching.
+	* @param $prefix string
+	* @throws Exception
 	*/
 	public static function setBot($bot, $prefix = '')
 	{
@@ -77,10 +80,11 @@ class CacheBot
 	}
 
 	/**
-	* get data from teh cache... passes it off to the cache object.
+	* get data from the cache... passes it off to the cache object.
 	* here to make use of autoload.
 	*
-	* @param $key the key to get from the cache.
+	* @param $key int the key to get from the cache.
+	* @return Bot
 	*/
 	public static function get($key)
 	{
@@ -88,29 +92,29 @@ class CacheBot
 	}
 	
 	/**
-	* set data in teh cache... passes it off to the cache object.
+	* set data in the cache... passes it off to the cache object.
 	* here to make use of autoload.
 	*
-	* @param $key the key to use to save our data under
-	* @param $data the variable to cache
-	* @param $life the life of the cache in seconds.
+	* @param $key string the key to use to save our data under
+	* @param $data string the variable to cache
+	* @param $life int the life of the cache in seconds.
 	*/
 	public static function set($key, $data, $life = 3600)
 	{
-		return self::$bot->set($key, $data, $life);
+		self::$bot->set($key, $data, $life);
 	}
 
 	/**
-	* delete specific data from teh cache... passes it off to the cache object.
+	* delete specific data from the cache... passes it off to the cache object.
 	* here to make use of autoload.
 	*/
 	public static function delete($key)
 	{
-		return self::$bot->delete($key);
+		self::$bot->delete($key);
 	}
 	
 	/**
-	* delete all the data from teh cache... passes it off to the cache object.
+	* delete all the data from the cache... passes it off to the cache object.
 	* here to make use of autoload.
 	*/
 	public static function flush()
@@ -144,9 +148,9 @@ abstract class EasyCache
 	/**
 	* get data from the cache
 	*
-	* @param $key the key of the data in the cache to get.  can be a string or an array of keys to fetch.
+	* @param $key mixed the key of the data in the cache to get.  can be a string or an array of keys to fetch.
 	*
-	* @return if the data is found, it will return the data as the appropriate
+	* @return mixed if the data is found, it will return the data as the appropriate
 	* object.  if not found, it will return false.  if you passed in an array,
 	* the return will be an array with the same keys, with either data or false
 	* for values, as appropriate.
@@ -156,18 +160,18 @@ abstract class EasyCache
 	/**
 	* set the data to the cache
 	*
-	* @param $key the key to save the data under
-	* @param $data the data to save to cache.  this can be anything, the
+	* @param $key string the key to save the data under
+	* @param $data mixed the data to save to cache.  this can be anything, the
 	* cachebot will automatically run any variable through serialize and
 	* unserialize to make it as seamless as possible.
-	* @param $life the time till it expires in seconds
+	* @param $life int the time till it expires in seconds
 	*/
 	abstract public function set($key, $data, $life = 3600);
 
 	/**
 	* delete data from the cache
 	*
-	* @param $key the key to delete from teh cache
+	* @param $key string the key to delete from the cache
 	*/
 	abstract public function delete($key);
 
@@ -180,8 +184,8 @@ abstract class EasyCache
 	* mark a hit in the cache.  if 'bj_track_cache' is set in the config, it
 	* will also track which keys are hit.
 	*
-	* @param $key the key that you hit
-	* @param $type the type of cache hit:  get, set, delete
+	* @param $key string the key that you hit
+	* @param $type string the type of cache hit:  get, set, delete
 	*/
 	public static function markCacheHit($key, $type = 'get')
 	{
@@ -208,7 +212,7 @@ abstract class EasyCache
   		foreach (self::$keys['keys'] AS $index => $key)
   		{
   			if (is_array($key))
-  				echo "Get Keyset:" . implode(", ", $keys) . "\n";
+  				echo "Get Keyset:" . implode(", ", $key) . "\n";
   			else
   				echo ucfirst(self::$keys['type'][$index]) . ": $key\n";
   		}
@@ -232,7 +236,8 @@ class EasyMemCache extends EasyCache
 	/**
 	* create our object.  where and how long to store it.
 	*
-	* @param $servers a string or array of server addresses in form 'server.name:port'
+	* @param $servers mixed a string or array of server addresses in form 'server.name:port'
+	* @throws Exception
 	*/
 	public function __construct($servers = 'localhost:112211')
 	{
@@ -324,9 +329,8 @@ class EasyFileCache extends EasyCache
 	/**
 	* create our object.  where and how long to store it.
 	*
-	* @param $path the path to store the object.  the hash of the data name
+	* @param $path string the path to store the object.  the hash of the data name
 	* will be appended directly after this.
-	* @param $life the life of the cached data in seconds.
 	*/
 	public function __construct($path = "/tmp/EasyCache/")
 	{
@@ -340,7 +344,8 @@ class EasyFileCache extends EasyCache
 	}
 	
 	/**
-	* @param $name a unique name you assign to the data to identify it.
+	* @param $key mixed a unique name you assign to the data to identify it.
+	* @return mixed
 	*/
 	public function get($key)
 	{
@@ -376,11 +381,11 @@ class EasyFileCache extends EasyCache
 	/**
 	* saves our data to the cache.
 	* 
-	* @param $key the key to identify the data.
-	* @param $data the data to save.
-	* @param $life the time till it expires in seconds
+	* @param $key string the key to identify the data.
+	* @param $data string the data to save.
+	* @param $life int the time till it expires in seconds
 	*
-	* @return the number of bytes written
+	* @return int the number of bytes written
 	*/
 	public function set($key, $data, $life = 3600)
 	{
@@ -392,7 +397,7 @@ class EasyFileCache extends EasyCache
 	/**
 	* deletes our cached data.
 	*
-	* @param $key the key identifying your data.
+	* @param $key string the key identifying your data.
 	*/
 	public function delete($key)
 	{
@@ -408,14 +413,14 @@ class EasyFileCache extends EasyCache
 	{
 		//delete everything on the path.
 		$cmd = "find $this->path -type f | xargs rm";
-		Util::shellExec($cmd);
+		shell_exec($cmd);
 	}
 	
 	/**
 	* determines if the data is still cached or not.  checks for nonexistant as
 	* well as old/stale data.  if its old, it also cleans up.
 	*
-	* @param $key the key you assigned to this data.
+	* @param $key string the key you assigned to this data.
 	* @return bool on using cache or not
 	*/
 	protected function isCached($key)
@@ -440,163 +445,12 @@ class EasyFileCache extends EasyCache
 	/**
 	* get the full path to the cached page file.
 	*
-	* @param $key the key you assigned to the cache file
+	* @param $key string the key you assigned to the cache file
+	* @return string
 	*/
 	protected function getCachePath($key)
 	{
 		return $this->path . sha1($key);
-	}
-}
-
-/**
-* this class caches data to a database!  if you cant access a file system or
-* you want to do everything via db, then this is for you.  i dont use it very
-* much, as i recommend memcache, but you could probably get pretty good
-* performance out of a memory db.  keep in mind this will probably put alot of
-* load on your db server.
-*/
-class EasyDBCache extends EasyCache
-{
-	private $table;
-	
-	/**
-	* create our object.  where and how long to store it.
-	*
-	* @param $table - the name of the table in the database to store the cache.
-	*/
-	public function __construct($table = "easy_cache")
-	{
-		parent::__construct();
-		
-		$this->table = $table;
-	}
-
-	protected function createTable()
-	{
-		db()->execute("
-			CREATE TABLE $this->table
-			(
-				`id` varchar(255) default '' not null,
-				`data` text default '' not null,
-				`expire_date` datetime not null,
-				KEY(id)
-			) ENGINE=InnoDB 
-		");
-	}
-	
-	/**
-	* @param $name a unique name you assign to the data to identify it.
-	*/
-	public function get($key)
-	{
-		self::markCacheHit($key, 'get');
-		
-		//if its an array, then get all the keys
-		if (is_array($key))
-		{
-			//init our array.
-			$rval = array();
-			
-			//make sure we got some.
-			if (count($key))
-			{
-				//init it incase we dont find it.
-				foreach ($key AS $id)
-					$rval[$id] = false;	
-			
-				//do our query
-        $sql = "SELECT ec.*, ec.expire_date <= NOW() AS expired
-					FROM $this->table ec
-					WHERE ec.id IN ('?')";
-        $statement = db()->prepare($sql);
-        $statement->bind_param("s", implode("', '", $key));
-				db()->execute($statement);
-
-				//get them all
-				while ($ar = $statement->get_result()->fetch_assoc())
-				{
-					//what one?
-					$id = $ar['id'];
-					
-					//if we're expired... delete it.
-					if ((int)$ar['expired'])
-						$this->delete($id);
-					//nope, we go it.. save it.
-					else
-						$rval[$id] = unserialize($ar['data']);
-				}
-			}
-
-			//send the array of cached stuff back
-			return $rval;
-		}
-
-		$ar = db()->getRow("
-			SELECT ec.*, ec.expire_date <= NOW() AS expired
-			FROM $this->table ec
-			WHERE id = '$key'
-		");
-
-		if (is_array($ar))
-		{
-			//if we're expired... delete it.
-			if ((int)$ar['expired'])
-				$this->delete($key);
-			else
-				return unserialize($ar['data']);
-		}
-
-		//if we didnt return before, we will now =)
-		return null;
-	}
-
-	/**
-	* saves our data to the cache.
-	* 
-	* @param $key the key to identify the data.
-	* @param $data the data to save.
-	*
-	* @return the number of bytes written
-	*/
-	public function set($key, $data, $life = 3600)
-	{
-		self::markCacheHit($key, 'set');
-		
-		//first delete our old data.
-		$this->delete($key);
-
-		//format our data.
-		$data = db()->safe(serialize($data));
-
-		//insert it!
-		db()->execute("
-			INSERT INTO $this->table
-				(id, data, expire_date)
-			VALUES
-				('$key', '$data', DATE_ADD(NOW(), INTERVAL " . $life . " SECOND))
-		");
-	} 
-
-	/**
-	* deletes our cached data.
-	*
-	* @param $key the key identifying your data.
-	*/
-	public function delete($key)
-	{
-		self::markCacheHit($key, 'delete');
-		
-		db()->execute("
-			DELETE FROM $this->table
-			WHERE id = '$key'
-		");
-	}
-
-	public function flush()
-	{
-		db()->execute("
-			DELETE FROM $this->table
-		");
 	}
 }
 
