@@ -39,8 +39,8 @@
   <script>
     function update_driver_form()
     {
-      token_id = $('#oauth_token_dropdown').find(":selected").val();
-      driver = $('#driver_name_dropdown').find(":selected").val();
+      var token_id = $('#oauth_token_dropdown').find(":selected").val();
+      var driver = $('#driver_name_dropdown').find(":selected").val();
       $('#driver_edit_area').html("<span class='muted'>Loading...</span>");
       $('#driver_edit_area').load('/bot:<?=$bot->id?>/driverform:' + driver + '/token:' + token_id);
     }

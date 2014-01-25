@@ -219,7 +219,7 @@ class BotController extends Controller
 			if ($this->args('id'))
 				$bot = new Bot($this->args('id'));
 			else
-				throw new Exception("This shouldn't happen");
+				throw new Exception("Could not find that bot.");
 
 			//did we really get someone?
 			if (!$bot->isHydrated())
@@ -251,6 +251,10 @@ class BotController extends Controller
 				$bot->set('queue_id', $slicingForm->data('queue_id'));
 				$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 				$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
+
+				// Special case to make sure that config is none if engine is none
+				if ($bot->get('slice_engine_id') == 0)
+					$bot->set('slice_config_id', 0);
 
 				$config = $bot->getDriverConfig();
 				$config->can_slice = (bool)$slicingForm->data('can_slice');
@@ -387,7 +391,7 @@ class BotController extends Controller
 			if ($this->args('id'))
 				$bot = new Bot($this->args('id'));
 			else
-				throw new Exception("This shouldn't happen");
+				throw new Exception("Could not find that bot.");
 
 			//did we really get someone?
 			if (!$bot->isHydrated())
@@ -423,7 +427,7 @@ class BotController extends Controller
 			if ($this->args('id'))
 				$bot = new Bot($this->args('id'));
 			else
-				throw new Exception("This shouldn't happen");
+				throw new Exception("Could not find that bot.");
 
 			//did we really get someone?
 			if (!$bot->isHydrated())
@@ -521,7 +525,7 @@ class BotController extends Controller
 			if ($this->args('id'))
 				$bot = new Bot($this->args('id'));
 			else
-				throw new Exception("This shouldn't happen");
+				throw new Exception("Could not find that bot.");
 
 			//did we really get someone?
 			if (!$bot->isHydrated())
@@ -557,7 +561,7 @@ class BotController extends Controller
 			if ($this->args('id'))
 				$bot = new Bot($this->args('id'));
 			else
-				throw new Exception("This shouldn't happen");
+				throw new Exception("Could not find that bot.");
 
 			//did we really get someone?
 			if (!$bot->isHydrated())
@@ -583,7 +587,7 @@ class BotController extends Controller
 		}
 	}
 
-		public function listjobs()
+	public function listjobs()
 	{
 		$this->assertLoggedIn();
 
@@ -592,7 +596,7 @@ class BotController extends Controller
 			if ($this->args('id'))
 				$bot = new Bot($this->args('id'));
 			else
-				throw new Exception("This shouldn't happen");
+				throw new Exception("Could not find that bot.");
 
 			//did we really get someone?
 			if (!$bot->isHydrated())
@@ -620,7 +624,7 @@ class BotController extends Controller
 	/**
 	 * @param $bot Bot is the selected bot
 	 * @return Form the form we return
-	*/
+	 */
 	private function _createInfoForm($bot)
 	{
 
@@ -800,7 +804,7 @@ class BotController extends Controller
 	/**
 	 * @param $bot Bot is the selected bot
 	 * @return form Form the form we return
-	*/
+	 */
 	private function _createDriverForm($bot)
 	{
 		//load up our apps.
