@@ -252,10 +252,6 @@ class BotController extends Controller
 				$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 				$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
 
-				// Special case to make sure that config is none if engine is none
-				if ($bot->get('slice_engine_id') == 0)
-					$bot->set('slice_config_id', 0);
-
 				$config = $bot->getDriverConfig();
 				$config->can_slice = (bool)$slicingForm->data('can_slice');
 				$bot->set('driver_config', json::encode($config));

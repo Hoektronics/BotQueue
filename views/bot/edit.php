@@ -39,10 +39,11 @@
   <script>
     function update_driver_form()
     {
+	  $(':submit').attr("disabled","disabled");
       var token_id = $('#oauth_token_dropdown').find(":selected").val();
       var driver = $('#driver_name_dropdown').find(":selected").val();
       $('#driver_edit_area').html("<span class='muted'>Loading...</span>");
-      $('#driver_edit_area').load('/bot:<?=$bot->id?>/driverform:' + driver + '/token:' + token_id);
+      $('#driver_edit_area').load('/bot:<?=$bot->id?>/driverform:' + driver + '/token:' + token_id, function(){$(':submit').removeAttr("disabled");});
     }
     
     $(update_driver_form);
