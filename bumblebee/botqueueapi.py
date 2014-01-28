@@ -58,6 +58,8 @@ class BotQueueAPI():
     parameters['_client_version'] = self.version
     parameters['_client_name'] = self.name
     parameters['_uid'] = self.config['uid']
+
+    self.localip = self.getLocalIPAddress()
     if self.localip:
       parameters['_local_ip'] = self.localip
     parameters['api_call'] = call
@@ -289,8 +291,11 @@ class BotQueueAPI():
     return self.apiCall('updateslicejob', {'job_id':job_id, 'status':status, 'output':output, 'errors':errors}, filepath=filename)
 
   def getLocalIPAddress(self):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8",80))
-    ip = s.getsockname()[0]
-    s.close()
+    try:
+      s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      s.connect(("8.8.8.8",80))
+      ip = s.getsockname()[0]
+      s.close()
+    except socket.error as ex:
+      ip = None
     return ip
