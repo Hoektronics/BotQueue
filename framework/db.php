@@ -188,6 +188,7 @@ class DatabaseSocket
 
 	public function getArray($sql, $key = null, $life = null)
 	{
+        $data = array();
 		//check the cache first?
 		if ($key !== null && $life !== null) {
 			$data = CacheBot::get($key);
