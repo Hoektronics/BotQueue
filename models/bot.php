@@ -136,6 +136,24 @@ class Bot extends Model
 		return new Collection($sql, array('Job' => 'id'));
 	}
 
+    public function getJobClocks($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
+    {
+        if ($status !== null)
+            $statusSql = " AND status = '" . db()->escape($status) . "'";
+        else
+            $statusSql = "";
+
+        $sql = "
+				SELECT id
+				FROM job_clock
+				WHERE bot_id = " . db()->escape($this->id) . "
+					{$statusSql}
+				ORDER BY {$sortField} {$sortOrder}
+			";
+        return new Collection($sql, array('JobClockEntry' => 'id'));
+    }
+
+
 	/*
 	 * @return Collection
 	 */
@@ -278,32 +296,15 @@ class Bot extends Model
 	public function dropJob($job)
 	{
 		//if its a sliced job, clear it for a potentially different bot.
-		if ($job->getSliceJob()->isHydrated()) {
-			$job->set('slice_job_id', 0);
-			$job->set('file_id', 0);
-		}
-
-		//clear out our data for the next bot.
-		$job->set('status', 'available');
-		$job->set('bot_id', 0);
-		$job->set('taken_time', 0);
-		$job->set('downloaded_time', 0);
-		$job->set('finished_time', 0);
-		$job->set('verified_time', 0);
-		$job->set('progress', 0);
-		$job->set('temperature_data', '');
-		$job->save();
+        $job->reset();
 
 		$log = $job->getLatestTimeLog();
 		$log->set('end_date', date("Y-m-d H:i:s"));
 		$log->set('status', 'dropped');
 		$log->save();
 
-		$this->set('job_id', 0);
-		$this->set('status', 'idle');
-		$this->set('temperature_data', '');
-		$this->set('last_seen', date("Y-m-d H:i:s"));
-		$this->save();
+        $this->set('last_seen', date("Y-m-d H:i:s"));
+        $this->reset();
 	}
 
 	public function pause()
@@ -427,16 +428,20 @@ class Bot extends Model
 			$job->delete();
 		}
 
-		$sql = "DELETE FROM job_clock WHERE bot_id=" . ($this->id);
-		db()->execute($sql);
+        $job_clocks = $this->getJobClocks()->getAll();
+        foreach ($job_clocks AS $row) {
+            /* @var $job_clock JobClockEntry */
+            $job_clock = $row['JobClockEntry'];
+            $job_clock->delete();
+        }
 
 		parent::delete();
 	}
 
 	public function retire()
 	{
-		$sql = "update bots set status='retired' WHERE id=" . ($this->id);
-		db()->execute($sql);
+        $this->set('status', 'retired');
+        $this->save();
 	}
 
 	public function getSliceEngine()
@@ -486,6 +491,14 @@ class Bot extends Model
 			return "{$minutes} mins ago";
 		return "{$elapsed}s ago";
 	}
+
+    public function reset()
+    {
+        $this->set('job_id', 0);
+        $this->set('status', 'idle');
+        $this->set('temperature_data', '');
+        $this->save();
+    }
 }
 
 ?>

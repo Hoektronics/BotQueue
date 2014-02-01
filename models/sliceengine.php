@@ -19,97 +19,97 @@
 
 class SliceEngine extends Model
 {
-	public function __construct($id = null)
-	{
-		parent::__construct($id, "slice_engines");
-	}
+    public function __construct($id = null)
+    {
+        parent::__construct($id, "slice_engines");
+    }
 
-	/**
-	 * @return string the Name of the engine
-	 */
-	public function getName()
-	{
-		return $this->get('engine_name');
-	}
+    /**
+     * @return string the Name of the engine
+     */
+    public function getName()
+    {
+        return $this->get('engine_name');
+    }
 
-	public function getAPIData($deep = true)
-	{
-		$r = array();
-		$r['id'] = $this->id;
-		$r['name'] = $this->getName();
-		$r['path'] = $this->get('engine_path');
-		$r['description'] = $this->get('engine_description');
-		$r['is_featured'] = $this->get('is_featured');
-		$r['is_public'] = $this->get('is_public');
-		$r['add_date'] = $this->get('add_date');
-		if ($deep)
-			$r['default_config'] = $this->getDefaultConfig()->getAPIData(false);
-		$r['type'] = 'slicer';
+    public function getAPIData($deep = true)
+    {
+        $r = array();
+        $r['id'] = $this->id;
+        $r['name'] = $this->getName();
+        $r['path'] = $this->get('engine_path');
+        $r['description'] = $this->get('engine_description');
+        $r['is_featured'] = $this->get('is_featured');
+        $r['is_public'] = $this->get('is_public');
+        $r['add_date'] = $this->get('add_date');
+        if ($deep)
+            $r['default_config'] = $this->getDefaultConfig()->getAPIData(false);
+        $r['type'] = 'slicer';
 
-		return $r;
-	}
+        return $r;
+    }
 
-	public function getUrl()
-	{
-		return "/slicer:" . $this->id;
-	}
+    public function getUrl()
+    {
+        return "/slicer:" . $this->id;
+    }
 
-	public function getDefaultConfig()
-	{
-		return new SliceConfig($this->get('default_config_id'));
-	}
+    public function getDefaultConfig()
+    {
+        return new SliceConfig($this->get('default_config_id'));
+    }
 
-	public static function getAllEngines()
-	{
-		$sql = "
+    public static function getAllEngines()
+    {
+        $sql = "
 		    SELECT id, engine_name, engine_path, engine_description, is_public, default_config_id
 		    FROM slice_engines
 		    ORDER BY engine_name ASC
 		  ";
 
-		return new Collection($sql, array('SliceEngine' => 'id'));
-	}
+        return new Collection($sql, array('SliceEngine' => 'id'));
+    }
 
-	public static function getPublicEngines()
-	{
-		$sql = "
+    public static function getPublicEngines()
+    {
+        $sql = "
 		    SELECT id
 		    FROM slice_engines
 		    WHERE is_public = 1
 		    ORDER BY engine_name ASC
 		  ";
 
-		return new Collection($sql, array('SliceEngine' => 'id'));
-	}
+        return new Collection($sql, array('SliceEngine' => 'id'));
+    }
 
-	public static function engine_exists($engine_path)
-	{
-		$sql = "
+    public static function engine_exists($engine_path)
+    {
+        $sql = "
         SELECT id
         FROM slice_engines
         WHERE is_public = 1 and engine_path='" . db()->escape($engine_path) . "'
       ";
-		if (count(db()->getArray($sql)) > 0) {
-			return true;
-		}
-		return false;
-	}
+        if (count(db()->getArray($sql)) > 0) {
+            return true;
+        }
+        return false;
+    }
 
-	public function getAllConfigs()
-	{
-		$sql = "
+    public function getAllConfigs()
+    {
+        $sql = "
 		    SELECT id
 		    FROM slice_configs
 		    WHERE engine_id = '" . db()->escape($this->id) . "'
 		    ORDER BY config_name
 		  ";
 
-		return new Collection($sql, array('SliceConfig' => 'id'));
-	}
+        return new Collection($sql, array('SliceConfig' => 'id'));
+    }
 
-	public function getMyConfigs()
-	{
-		$sql = "
+    public function getMyConfigs()
+    {
+        $sql = "
 		    SELECT id
 		    FROM slice_configs
 		    WHERE engine_id = '" . db()->escape($this->id) . "'
@@ -117,21 +117,21 @@ class SliceEngine extends Model
 		    ORDER BY config_name
 		  ";
 
-		return new Collection($sql, array('SliceConfig' => 'id'));
-	}
+        return new Collection($sql, array('SliceConfig' => 'id'));
+    }
 
-	public function delete()
-	{
-		$configs = $this->getAllConfigs()->getAll();
-		if (!empty($configs))
-			foreach ($configs AS $row) {
-				/* @var $sliceConfig SliceConfig */
-				$sliceConfig = $row['SliceConfig'];
-				$sliceConfig->delete();
-			}
+    public function delete()
+    {
+        $configs = $this->getAllConfigs()->getAll();
+        if (!empty($configs))
+            foreach ($configs AS $row) {
+                /* @var $sliceConfig SliceConfig */
+                $sliceConfig = $row['SliceConfig'];
+                $sliceConfig->delete();
+            }
 
-		parent::delete();
-	}
+        parent::delete();
+    }
 }
 
 ?>

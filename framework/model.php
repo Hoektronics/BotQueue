@@ -253,7 +253,7 @@ class Model
 	/**
 	 * This function handles deleting our object.
 	 * 
-	 * @return bool ture on success, false on failure.
+	 * @return bool true on success, false on failure.
 	 */
 	public function delete()
 	{

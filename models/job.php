@@ -147,10 +147,7 @@ class Job extends Model
 	{
 		$bot = $this->getBot();
 		if ($bot->isHydrated()) {
-			$bot->set('job_id', 0);
-			$bot->set('status', 'idle');
-			$bot->set('temperature_data', '');
-			$bot->save();
+            $bot->reset();
 		}
 
 		$this->set('status', 'canceled');
@@ -265,6 +262,25 @@ class Job extends Model
 
 		parent::delete();
 	}
+
+    public function reset()
+    {
+        if ($this->getSliceJob()->isHydrated()) {
+            $this->set('slice_job_id', 0);
+            $this->set('file_id', 0);
+        }
+
+        //clear out our data for the next bot.
+        $this->set('status', 'available');
+        $this->set('bot_id', 0);
+        $this->set('taken_time', 0);
+        $this->set('downloaded_time', 0);
+        $this->set('finished_time', 0);
+        $this->set('verified_time', 0);
+        $this->set('progress', 0);
+        $this->set('temperature_data', '');
+        $this->save();
+    }
 
 }
 

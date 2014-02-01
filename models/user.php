@@ -318,7 +318,7 @@ class User extends Model
 				SELECT id, queue_id, job_id
 				FROM bots
 				WHERE user_id = " . db()->escape($this->id) . "
-				AND status == 'retired'
+				AND status = 'retired'
 				ORDER BY name
 			";
 
