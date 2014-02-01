@@ -21,7 +21,7 @@ CREATE TABLE `bots` (
   `identifier` varchar(255) NOT NULL DEFAULT '',
   `model` varchar(255) NOT NULL,
   `client_version` varchar(255) NOT NULL,
-  `status` enum('idle','slicing','working','waiting','error','maintenance','offline','retired') DEFAULT 'idle',
+  `status` enum('idle','slicing','working','paused','waiting','error','maintenance','offline','retired') DEFAULT 'idle',
   `last_seen` datetime NOT NULL,
   `manufacturer` varchar(255) NOT NULL DEFAULT '',
   `electronics` varchar(255) NOT NULL DEFAULT '',
@@ -323,4 +323,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(3, 'Allowing a job to be canceled');
+INSERT INTO patches(patch_num, description) VALUES(4, 'Allowing a bot to be paused');
