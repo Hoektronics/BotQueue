@@ -90,7 +90,7 @@ class BotQueueAPI():
         #prepare and make our request now.
         request = requests.Request('POST', url, data=parameters, files=files)
         request = self.my_oauth_hook(request)
-        response = self.session.send(request.prepare(), timeout=15)
+        response = self.session.send(request.prepare(), timeout=600)
         result = response.json()
 
         #sweet, our request must have gone through.
@@ -103,6 +103,7 @@ class BotQueueAPI():
         #did the api itself return an error?
         if result['status'] == 'error':
           self.log.error("API: %s" % result['error'])
+          self.log.error(parameters);
           
           #is the site database down?
           if result['error'] == "Failed to connect to database!":
