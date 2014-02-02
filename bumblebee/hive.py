@@ -200,7 +200,7 @@ class Object(object):
 
 def md5sumfile(filename, block_size=2**18):
   md5 = hashlib.md5()
-  f = open(filename, "r")
+  f = open(filename, "rb")
   while True:
     data = f.read(block_size)
     if not data:
