@@ -56,7 +56,9 @@ CREATE TABLE `comments` (
   `content_type` varchar(255) NOT NULL,
   `comment` text NOT NULL,
   `comment_date` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `content_id` (`content_id`),
+  KEY `content_type` (`content_type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -96,6 +98,26 @@ CREATE TABLE `error_log` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `job_clock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `job_id` int(11) NOT NULL,
+  `bot_id` int(11) NOT NULL,
+  `queue_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `status` enum('idle','slicing','working','waiting','error','maintenance','offline'),
+  `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `start_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `end_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `job_id` (`job_id`),
+  KEY `bot_id` (`bot_id`),
+  KEY `queue_id` (`queue_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL DEFAULT '0',
@@ -115,6 +137,8 @@ CREATE TABLE `jobs` (
   `finished_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `slice_complete_time` datetime NOT NULL,
   `verified_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `webcam_image_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `webcam_images` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `queue_id` (`queue_id`),
@@ -124,23 +148,6 @@ CREATE TABLE `jobs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `job_clock` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `job_id` int(11) NOT NULL,
-  `bot_id` int(11) NOT NULL,
-  `queue_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `status` enum('idle','slicing','working','waiting','error','maintenance','offline'),
-  `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `start_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `end_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`),
-  KEY `job_id` (`job_id`),
-  KEY `bot_id` (`bot_id`),
-  KEY `queue_id` (`queue_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE TABLE `oauth_consumer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -160,8 +167,6 @@ CREATE TABLE `oauth_consumer_nonce` (
   `consumer_id` int(11) unsigned default 0,
   `timestamp` int(11) unsigned default 0,
   `nonce` int(11) unsigned default 0,
-  index(`timestamp`),
-  index(nonce),
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -185,7 +190,8 @@ CREATE TABLE `oauth_token` (
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`),
   KEY `user_id` (`user_id`),
-  KEY `type` (`type`)
+  KEY `type` (`type`),
+  KEY `ip_address` (`ip_address`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -211,7 +217,8 @@ CREATE TABLE `s3_files` (
   `user_id` int(11) NOT NULL DEFAULT '0',
   `parent_id` int(11) NOT NULL,
   `source_url` text,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `parent_id` (`parent_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -305,8 +312,8 @@ CREATE TABLE `users` (
   `birthday` date NOT NULL,
   `last_active` datetime NOT NULL,
   `registered_on` datetime NOT NULL,
-  `dashboard_style` varchar(255) NOT NULL,
-  `thingiverse_token` varchar(255) NOT NULL,
+  `dashboard_style` enum('list','large_thumbnails','medium_thumbnails','small_thumbnails') NOT NULL DEFAULT 'large_thumbnails',
+  `thingiverse_token` varchar(40) NOT NULL DEFAULT '',
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `last_active` (`last_active`),
@@ -325,4 +332,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(4, 'Allowing a bot to be paused');
+INSERT INTO patches(patch_num, description) VALUES(5, 'Updating the dev table to BotQueue production"');
