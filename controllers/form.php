@@ -1,101 +1,103 @@
 <?
-  /*
-    This file is part of BotQueue.
 
-    BotQueue is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+/*
+  This file is part of BotQueue.
 
-    BotQueue is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  BotQueue is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
-  */
+  BotQueue is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	class FormController extends Controller
-	{
-		public function vertical_form()
-		{
-			$this->_form();
-		}
+  You should have received a copy of the GNU General Public License
+  along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-		public function horizontal_form()
-		{
-			$this->_form();
-		}
-		
-		public function hiddenfield()
-		{
-			$this->_field();
-		}
+class FormController extends Controller
+{
+    public function vertical_form()
+    {
+        $this->_form();
+    }
 
-		public function textfield()
-		{
-			$this->_field();
-		}
+    public function horizontal_form()
+    {
+        $this->_form();
+    }
 
-		public function textareafield()
-		{
-			$this->_field();
-		}
-		
-		public function checkboxfield()
-		{
-			$this->_field();
-		}
-		
-		public function selectfield()
-		{
-			$this->_field();
-		}
+    public function hiddenfield()
+    {
+        $this->_field();
+    }
 
-		public function uploadfield()
-		{
-			$this->_field();
-		}
+    public function textfield()
+    {
+        $this->_field();
+    }
 
-		public function displayfield()
-		{
-			$this->_field();
-		}
+    public function textareafield()
+    {
+        $this->_field();
+    }
 
-		public function rawfield()
-		{
-			$this->_field();
-		}
+    public function checkboxfield()
+    {
+        $this->_field();
+    }
 
-		public function warningfield()
-		{
-			$this->_field();
-		}
+    public function selectfield()
+    {
+        $this->_field();
+    }
 
-		public function errorfield()
-		{
-			$this->_field();
-		}
+    public function uploadfield()
+    {
+        $this->_field();
+    }
 
-		public function successfield()
-		{
-			$this->_field();
-		}
+    public function displayfield()
+    {
+        $this->_field();
+    }
 
-		public function informationfield()
-		{
-			$this->_field();
-		}
+    public function rawfield()
+    {
+        $this->_field();
+    }
 
-		private function _form()
-		{
-			$this->setArg('form');
-		}
+    public function warningfield()
+    {
+        $this->_field();
+    }
 
-		private function _field()
-		{
-			$this->setArg('field');
-		}
-	}
+    public function errorfield()
+    {
+        $this->_field();
+    }
+
+    public function successfield()
+    {
+        $this->_field();
+    }
+
+    public function informationfield()
+    {
+        $this->_field();
+    }
+
+    private function _form()
+    {
+        $this->setArg('form');
+    }
+
+    private function _field()
+    {
+        $this->setArg('field');
+    }
+}
+
 ?>

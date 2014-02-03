@@ -340,16 +340,11 @@ class User extends Model
 
     public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
     {
-        if ($status !== null)
-            $statusSQL = " AND status = '{$status}'";
-        else
-            $statusSQL = "";
-
         $sql = "
 				SELECT id
 				FROM jobs
 				WHERE user_id = " . db()->escape($this->id) . "
-					{$statusSQL}
+					{$this->getStatusSql($status)}
 				ORDER BY {$sortField} {$sortOrder}
 			";
 

@@ -267,6 +267,10 @@ class S3File extends Model
         return $d;
     }
 
+    public function isKnownType() {
+        return $this->isGCode() || $this->is3DModel();
+    }
+
     public function isGCode()
     {
         return preg_match("/(g|gcode)$/i", $this->get('path'));

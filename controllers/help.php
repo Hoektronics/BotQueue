@@ -1,33 +1,35 @@
 <?
-  /*
-    This file is part of BotQueue.
 
-    BotQueue is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+/*
+  This file is part of BotQueue.
 
-    BotQueue is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  BotQueue is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
-  */
+  BotQueue is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	class HelpController extends Controller
-	{
-	  function home()
-	  {
-	    $this->set('area', 'help');
-	  }
+  You should have received a copy of the GNU General Public License
+  along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-	  function raspberry_pi_installation()
-	  {
-	    $this->set('area', 'help');
-	    
-	    $this->setTitle("Raspberry Pi Installation");
-	  }
-	}
+class HelpController extends Controller
+{
+    function home()
+    {
+        $this->set('area', 'help');
+    }
+
+    function raspberry_pi_installation()
+    {
+        $this->set('area', 'help');
+
+        $this->setTitle("Raspberry Pi Installation");
+    }
+}
+
 ?>

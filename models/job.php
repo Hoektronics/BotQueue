@@ -29,6 +29,14 @@ class Job extends Model
 		return basename($this->get('name'));
 	}
 
+    public function setName($name) {
+        $this->set('name', $name);
+    }
+
+    public function setStatus($status) {
+        $this->set('status', $status);
+    }
+
 	public function getUser()
 	{
 		return new User($this->get('user_id'));
@@ -150,7 +158,7 @@ class Job extends Model
             $bot->reset();
 		}
 
-		$this->set('status', 'canceled');
+		$this->setStatus('canceled');
 		$this->set('bot_id', 0);
 		$this->set('finished_time', date("Y-m-d H:i:s"));
 		$this->save();
@@ -250,7 +258,7 @@ class Job extends Model
 		// if ($bot->isHydrated())
 		// {
 		//  $bot->set('job_id', 0);
-		//  $bot->set('status', 'idle');
+		//  $bot->setStatus('idle');
 		//  $bot->save();
 		// }
 
@@ -271,7 +279,7 @@ class Job extends Model
         }
 
         //clear out our data for the next bot.
-        $this->set('status', 'available');
+        $this->setStatus('available');
         $this->set('bot_id', 0);
         $this->set('taken_time', 0);
         $this->set('downloaded_time', 0);
@@ -280,6 +288,41 @@ class Job extends Model
         $this->set('progress', 0);
         $this->set('temperature_data', '');
         $this->save();
+    }
+
+    /**
+     * @param $queue_id int
+     * @param $file S3File
+     * @return Job
+     */
+    public static function addFileToQueue($queue_id, $file) {
+        $sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+
+        $job = new Job();
+        $job->set('user_id', User::$me->id);
+        $job->set('queue_id', $queue_id);
+        $job->set('source_file_id', $file->id);
+        if($file->isGCode())
+            $job->set('file_id', $file->id);
+        $job->setName($file->get('path'));
+        $job->setStatus('available');
+        $job->set('created_time', date("Y-m-d H:i:s"));
+        $job->set('user_sort', $sort);
+        $job->save();
+
+        return $job;
+    }
+
+    public function complete() {
+        $this->setStatus('qa');
+        $this->set('progress', 100);
+        $this->set('finished_time', date('Y-m-d H:i:s'));
+        $this->save();
+
+        $log = $this->getLatestTimeLog();
+        $log->set('end_date', date("Y-m-d H:i:s"));
+        $log->setStatus('complete');
+        $log->save();
     }
 
 }

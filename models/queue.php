@@ -33,11 +33,6 @@ class Queue extends Model
         return $d;
     }
 
-    public function canAdd()
-    {
-        return $this->isMine();
-    }
-
     public function isMine()
     {
         return (User::$me->id == $this->get('user_id'));
@@ -60,16 +55,11 @@ class Queue extends Model
 
     public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
     {
-        if ($status !== null)
-            $statusSql = " AND status = '" . db()->escape($status) . "'";
-        else
-            $statusSql = "";
-
         $sql = "
 				SELECT id
 				FROM jobs
 				WHERE queue_id = '" . db()->escape($this->id) . "'
-					{$statusSql}
+					{$this->getStatusSql($status)}
 				ORDER BY {$sortField} {$sortOrder}
 			";
         return new Collection($sql, array('Job' => 'id'));
@@ -127,69 +117,17 @@ class Queue extends Model
      */
     public function addFile($file, $qty = 1)
     {
-        if ($file->isGcode())
-            return $this->addGCodeFile($file, $qty);
-        elseif ($file->is3DModel())
-            return $this->add3DModelFile($file, $qty);
+        if ($file->isKnownType()) {
+            $jobs = array();
+
+            for ($i = 0; $i < $qty; $i++) {
+                $jobs[] = Job::addFileToQueue($this->id, $file);
+            }
+
+            return $jobs;
+        }
         else
             throw new Exception("Unkown file type");
-    }
-
-    /**
-     * @param $file S3File
-     * @param int $qty
-     * @return array
-     */
-    public function addGCodeFile($file, $qty = 1)
-    {
-        $jobs = array();
-
-        for ($i = 0; $i < $qty; $i++) {
-            $sort = db()->getValue("SELECT max(id)+1 FROM jobs");
-
-            $job = new Job();
-            $job->set('user_id', User::$me->id);
-            $job->set('queue_id', $this->id);
-            $job->set('source_file_id', $file->id);
-            $job->set('file_id', $file->id);
-            $job->set('name', $file->get('path'));
-            $job->set('status', 'available');
-            $job->set('created_time', date("Y-m-d H:i:s"));
-            $job->set('user_sort', $sort);
-            $job->save();
-
-            $jobs[] = $job;
-        }
-
-        return $jobs;
-    }
-
-    /**
-     * @param $file S3File
-     * @param int $qty
-     * @return array
-     */
-    public function add3DModelFile($file, $qty = 1)
-    {
-        $jobs = array();
-
-        for ($i = 0; $i < $qty; $i++) {
-            $sort = db()->getValue("SELECT max(id)+1 FROM jobs");
-
-            $job = new Job();
-            $job->set('user_id', User::$me->id);
-            $job->set('queue_id', $this->id);
-            $job->set('source_file_id', $file->id);
-            $job->set('name', $file->get('path'));
-            $job->set('status', 'available');
-            $job->set('created_time', date("Y-m-d H:i:s"));
-            $job->set('user_sort', $sort);
-            $job->save();
-
-            $jobs[] = $job;
-        }
-
-        return $jobs;
     }
 
     public function getStats()

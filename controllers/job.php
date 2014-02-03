@@ -169,11 +169,11 @@ class JobController extends Controller
             //handle our form
             if ($form->checkSubmitAndValidate($this->args())) {
                 $queue = new Queue($form->data('queue_id'));
-                if (!$queue->canAdd())
+                if (!$queue->isMine())
                     throw new Exception("That is not a valid queue.");
 
                 $job->set('queue_id', $queue->id);
-                $job->set('name', $form->data('name'));
+                $job->setName($form->data('name'));
                 $job->save();
 
                 Activity::log("edited the job " . $job->getLink() . ".");
@@ -398,10 +398,10 @@ class JobController extends Controller
             $this->set('bot', $bot);
 
             $bot->set('job_id', 0);
-            $bot->set('status', 'idle');
+            $bot->setStatus('idle');
             $bot->save();
 
-            $job->set('status', 'complete');
+            $job->setStatus('complete');
             $job->set('verified_time', date("Y-m-d H:i:s"));
             $job->save();
 
@@ -454,23 +454,23 @@ class JobController extends Controller
 
                 if ($form->data('bot_error')) {
                     $bot->set('job_id', 0);
-                    $bot->set('status', 'error');
+                    $bot->setStatus('error');
                     $bot->set('error_text', $error_text);
                     $bot->save();
 
                     Activity::log("took the bot " . $bot->getLink() . "offline for repairs.");
                 } else {
                     $bot->set('job_id', 0);
-                    $bot->set('status', 'idle');
+                    $bot->setStatus('idle');
                     $bot->save();
                 }
 
                 if ($form->data('job_error')) {
-                    $job->set('status', 'failure');
+                    $job->setStatus('failure');
                     $job->set('verified_time', date("Y-m-d H:i:s"));
                     $job->save();
                 } else {
-                    $job->set('status', 'available');
+                    $job->setStatus('available');
                     $job->set('taken_time', 0);
                     $job->set('downloaded_time', 0);
                     $job->set('finished_time', 0);
@@ -737,16 +737,11 @@ class JobController extends Controller
         $queue = new Queue($queue_id);
         if (!$queue->isHydrated())
             throw new Exception("That queue does not exist.");
-        if (!$queue->canAdd())
+        if (!$queue->isMine())
             throw new Exception("You do not have permission to add to that queue.");
 
         //okay, we good?
-        if ($file->isGCode())
-            $jobs = $queue->addGCodeFile($file, $quantity);
-        else if ($file->is3DModel())
-            $jobs = $queue->add3DModelFile($file, $quantity);
-        else
-            throw new Exception("Oops, I don't know what type of file this is!");
+        $jobs = $queue->addFile($file, $quantity);
 
         //priority or not?
         if ($priority)

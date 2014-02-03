@@ -28,6 +28,10 @@ class SliceJob extends Model
     {
         return "#" . str_pad($this->id, 6, "0", STR_PAD_LEFT);
     }
+    
+    public function setStatus($status) {
+        $this->set('status', $status);
+    }
 
     public function getUrl()
     {
@@ -120,7 +124,7 @@ class SliceJob extends Model
     public function grab($uid)
     {
         if ($this->get('status') == 'available') {
-            $this->set('status', 'slicing');
+            $this->setStatus('slicing');
             $this->set('taken_date', date('Y-m-d H:i:s'));
             $this->set('uid', $uid);
             $this->save();
@@ -132,21 +136,21 @@ class SliceJob extends Model
                 throw new Exception("Unable to lock slice job #{$this->id}");
 
             $bot = $this->getBot();
-            $bot->set('status', 'slicing');
+            $bot->setStatus('slicing');
             $bot->save();
         }
     }
 
     public function fail()
     {
-        $this->set('status', 'failure');
+        $this->setStatus('failure');
         $this->save();
 
         $job = $this->getJob();
         $job->set('downloaded_time', date("Y-m-d H:i:s"));
         $job->set('finished_time', date("Y-m-d H:i:s"));
         $job->set('verified_time', date("Y-m-d H:i:s"));
-        $job->set('status', 'failure');
+        $job->setStatus('failure');
         $job->save();
 
         $bot = $this->getBot();
@@ -164,16 +168,16 @@ class SliceJob extends Model
 
     public function pass()
     {
-        $this->set('status', 'complete');
+        $this->setStatus('complete');
         $this->set('finish_date', date("Y-m-d H:i:s"));
         $this->save();
 
         $job = $this->getJob();
-        $job->set('status', 'taken');
+        $job->setStatus('taken');
         $job->save();
 
         $bot = $this->getBot();
-        $bot->set('status', 'working');
+        $bot->setStatus('working');
         $bot->save();
     }
 

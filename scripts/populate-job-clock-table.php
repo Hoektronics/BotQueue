@@ -18,13 +18,13 @@
     {
       $log->set('start_date', $row['taken_time']);
       $log->set('end_date', $row['finished_time']);
-      $log->set('status', 'complete');
+      $log->setStatus('complete');
       $log->save();
     }
     else if ($row['status'] == 'taken' || $row['status'] == 'slicing')
     {
       $log->set('start_date', $row['taken_time']);
-      $log->set('status', 'working');
+      $log->setStatus('working');
       $log->save();
     }
   }

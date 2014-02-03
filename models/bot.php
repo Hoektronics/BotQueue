@@ -29,6 +29,10 @@ class Bot extends Model
 		return $this->get('name');
 	}
 
+    public function setStatus($status) {
+        $this->set('status', $status);
+    }
+
 	public function getUser()
 	{
 		return new User($this->get('user_id'));
@@ -121,16 +125,11 @@ class Bot extends Model
 
 	public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 	{
-		if ($status !== null)
-			$statusSql = " AND status = '" . db()->escape($status) . "'";
-		else
-			$statusSql = "";
-
 		$sql = "
 				SELECT id
 				FROM jobs
 				WHERE bot_id = " . db()->escape($this->id) . "
-					{$statusSql}
+					{$this->getStatusSql($status)}
 				ORDER BY {$sortField} {$sortOrder}
 			";
 		return new Collection($sql, array('Job' => 'id'));
@@ -138,16 +137,11 @@ class Bot extends Model
 
     public function getJobClocks($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
     {
-        if ($status !== null)
-            $statusSql = " AND status = '" . db()->escape($status) . "'";
-        else
-            $statusSql = "";
-
         $sql = "
 				SELECT id
 				FROM job_clock
 				WHERE bot_id = " . db()->escape($this->id) . "
-					{$statusSql}
+					{$this->getStatusSql($status)}
 				ORDER BY {$sortField} {$sortOrder}
 			";
         return new Collection($sql, array('JobClockEntry' => 'id'));
@@ -209,7 +203,7 @@ class Bot extends Model
 	 */
 	public function grabJob($job, $can_slice = true)
 	{
-		$job->set('status', 'taken');
+		$job->setStatus('taken');
 		$job->set('bot_id', $this->id);
 		$job->set('taken_time', date('Y-m-d H:i:s'));
 		$job->save();
@@ -224,7 +218,7 @@ class Bot extends Model
 			//pull in our config and make sure its legit.
 			$config = $this->getSliceConfig();
 			if (!$config->isHydrated()) {
-				$job->set('status', 'available');
+				$job->setStatus('available');
 				$job->set('bot_id', 0);
 				$job->set('taken_time', 0);
 				$job->save();
@@ -248,11 +242,11 @@ class Bot extends Model
 				$sj->set('slice_config_id', $config->id);
 				$sj->set('slice_config_snapshot', $config->getSnapshot());
 				$sj->set('add_date', date("Y-m-d H:i:s"));
-				$sj->set('status', 'available');
+				$sj->setStatus('available');
 				$sj->save();
 
 				//update our job status.
-				$job->set('status', 'slicing');
+				$job->setStatus('slicing');
 				$job->set('slice_job_id', $sj->id);
 				$job->save();
 			}
@@ -264,11 +258,11 @@ class Bot extends Model
 		$log->set('bot_id', $this->id);
 		$log->set('queue_id', $job->get('queue_id'));
 		$log->set('start_date', date("Y-m-d H:i:s"));
-		$log->set('status', 'working');
+		$log->setStatus('working');
 		$log->save();
 
 		$this->set('job_id', $job->id);
-		$this->set('status', 'working');
+		$this->setStatus('working');
 		$this->set('last_seen', date("Y-m-d H:i:s"));
 		$this->save();
 
@@ -300,7 +294,7 @@ class Bot extends Model
 
 		$log = $job->getLatestTimeLog();
 		$log->set('end_date', date("Y-m-d H:i:s"));
-		$log->set('status', 'dropped');
+		$log->setStatus('dropped');
 		$log->save();
 
         $this->set('last_seen', date("Y-m-d H:i:s"));
@@ -309,13 +303,13 @@ class Bot extends Model
 
 	public function pause()
 	{
-		$this->set('status', 'paused');
+		$this->setStatus('paused');
 		$this->save();
 	}
 
 	public function unpause()
 	{
-		$this->set('status', 'working');
+		$this->setStatus('working');
 		$this->save();
 	}
 
@@ -339,15 +333,7 @@ class Bot extends Model
 	 */
 	public function completeJob($job)
 	{
-		$job->set('status', 'qa');
-		$job->set('progress', 100);
-		$job->set('finished_time', date('Y-m-d H:i:s'));
-		$job->save();
-
-		$log = $job->getLatestTimeLog();
-		$log->set('end_date', date("Y-m-d H:i:s"));
-		$log->set('status', 'complete');
-		$log->save();
+		$job->complete();
 
 		//copy our webcam image so that we stop overwriting the last image of the job.
 		$webcam = $this->getWebcamImage();
@@ -356,7 +342,7 @@ class Bot extends Model
 			$this->set('webcam_image_id', $copy->id);
 		}
 
-		$this->set('status', 'waiting');
+		$this->setStatus('waiting');
 		$this->set('last_seen', date("Y-m-d H:i:s"));
 		$this->save();
 	}
@@ -440,7 +426,7 @@ class Bot extends Model
 
 	public function retire()
 	{
-        $this->set('status', 'retired');
+        $this->setStatus('retired');
         $this->save();
 	}
 
@@ -495,7 +481,7 @@ class Bot extends Model
     public function reset()
     {
         $this->set('job_id', 0);
-        $this->set('status', 'idle');
+        $this->setStatus('idle');
         $this->set('temperature_data', '');
         $this->save();
     }

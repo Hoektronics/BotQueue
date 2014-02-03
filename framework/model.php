@@ -594,5 +594,17 @@ class Model
 		
 		return $obj;
 	}
+
+    /**
+     * @param $status
+     * @return string
+     */
+    public function getStatusSql($status) {
+        if ($status !== null)
+            $statusSql = " AND status = '" . db()->escape($status) . "'";
+        else
+            $statusSql = "";
+        return $statusSql;
+    }
 }
 ?>

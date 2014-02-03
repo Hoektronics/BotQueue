@@ -65,7 +65,7 @@ class BotController extends Controller
 			$bot->set('name', $form->data('name'));
 			$bot->set('manufacturer', $form->data('manufacturer'));
 			$bot->set('model', $form->data('model'));
-			$bot->set('status', 'offline');
+			$bot->setStatus('offline');
 			$bot->save();
 
 			Activity::log("registered the bot " . $bot->getLink() . ".");
@@ -189,7 +189,7 @@ class BotController extends Controller
 			//save it and clear out some junk
 			$bot->set('temperature_data', '');
 			$bot->set('error_text', '');
-			$bot->set('status', $this->args('status'));
+			$bot->setStatus($this->args('status'));
 			$bot->save();
 
 			$this->forwardToUrl("/");
@@ -351,7 +351,7 @@ class BotController extends Controller
 
 				//do we want to go offline?
 				if ($form->data('take_offline')) {
-					$bot->set('status', 'offline');
+					$bot->setStatus('offline');
 					$bot->save();
 				}
 
