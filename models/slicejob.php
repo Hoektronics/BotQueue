@@ -19,174 +19,174 @@
 
 class SliceJob extends Model
 {
-    public function __construct($id = null)
-    {
-        parent::__construct($id, "slice_jobs");
-    }
+	public function __construct($id = null)
+	{
+		parent::__construct($id, "slice_jobs");
+	}
 
-    public function getName()
-    {
-        return "#" . str_pad($this->id, 6, "0", STR_PAD_LEFT);
-    }
-    
-    public function setStatus($status) {
-        $this->set('status', $status);
-    }
+	public function getName()
+	{
+		return "#" . str_pad($this->id, 6, "0", STR_PAD_LEFT);
+	}
 
-    public function getUrl()
-    {
-        return "/slicejob:" . $this->id;
-    }
+	public function setStatus($status) {
+		$this->set('status', $status);
+	}
 
-    public function getAPIData()
-    {
-        $r = array();
-        $r['id'] = $this->id;
-        $r['name'] = $this->getName();
-        $r['input_file'] = $this->getInputFile()->getAPIData();
-        $r['output_file'] = $this->getOutputFile()->getAPIData();
-        $r['output_log'] = $this->get('output_log');
-        $r['slice_config'] = $this->getSliceConfig()->getAPIData();
-        $r['slice_config_snapshot'] = $this->get('slice_config_snapshot');
-        $r['worker_token'] = $this->get('worker_token');
-        $r['worker_name'] = $this->get('worker_name');
-        $r['status'] = $this->get('status');
-        $r['progress'] = $this->get('progress');
-        $r['add_date'] = $this->get('add_date');
-        $r['taken_date'] = $this->get('taken_date');
-        $r['finish_date'] = $this->get('finish_date');
+	public function getUrl()
+	{
+		return "/slicejob:" . $this->id;
+	}
 
-        return $r;
-    }
+	public function getAPIData()
+	{
+		$r = array();
+		$r['id'] = $this->id;
+		$r['name'] = $this->getName();
+		$r['input_file'] = $this->getInputFile()->getAPIData();
+		$r['output_file'] = $this->getOutputFile()->getAPIData();
+		$r['output_log'] = $this->get('output_log');
+		$r['slice_config'] = $this->getSliceConfig()->getAPIData();
+		$r['slice_config_snapshot'] = $this->get('slice_config_snapshot');
+		$r['worker_token'] = $this->get('worker_token');
+		$r['worker_name'] = $this->get('worker_name');
+		$r['status'] = $this->get('status');
+		$r['progress'] = $this->get('progress');
+		$r['add_date'] = $this->get('add_date');
+		$r['taken_date'] = $this->get('taken_date');
+		$r['finish_date'] = $this->get('finish_date');
 
-    public function getUser()
-    {
-        return new User($this->get('user_id'));
-    }
+		return $r;
+	}
 
-    public function getJob()
-    {
-        return new Job($this->get('job_id'));
-    }
+	public function getUser()
+	{
+		return new User($this->get('user_id'));
+	}
 
-    public function getBot()
-    {
-        return $this->getJob()->getBot();
-    }
+	public function getJob()
+	{
+		return new Job($this->get('job_id'));
+	}
 
-    public function getInputFile()
-    {
-        return new S3File($this->get('input_id'));
-    }
+	public function getBot()
+	{
+		return $this->getJob()->getBot();
+	}
 
-    public function getOutputFile()
-    {
-        return new S3File($this->get('output_id'));
-    }
+	public function getInputFile()
+	{
+		return new S3File($this->get('input_id'));
+	}
 
-    public function getSliceConfig()
-    {
-        return new SliceConfig($this->get('slice_config_id'));
-    }
+	public function getOutputFile()
+	{
+		return new S3File($this->get('output_id'));
+	}
 
-    public function getSliceEngine()
-    {
-        return $this->getSliceConfig()->getEngine();
-    }
+	public function getSliceConfig()
+	{
+		return new SliceConfig($this->get('slice_config_id'));
+	}
 
-    public function delete()
-    {
-        //todo: delete our files?
-        //todo: change our status?
+	public function getSliceEngine()
+	{
+		return $this->getSliceConfig()->getEngine();
+	}
 
-        parent::delete();
-    }
+	public function delete()
+	{
+		//todo: delete our files?
+		//todo: change our status?
 
-    public function getStatusHTML()
-    {
-        return "<span class=\"label " . self::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
-    }
+		parent::delete();
+	}
 
-    public static function getStatusHTMLClass($status)
-    {
-        $s2c = array(
-            'available' => '',
-            'slicing' => 'label-info',
-            'pending' => 'label-warning',
-            'complete' => 'label-success',
-            'failure' => 'label-important',
-            'expired' => 'label-inverse'
-        );
+	public function getStatusHTML()
+	{
+		return "<span class=\"label " . self::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
+	}
 
-        return $s2c[$status];
-    }
+	public static function getStatusHTMLClass($status)
+	{
+		$s2c = array(
+			'available' => '',
+			'slicing' => 'label-info',
+			'pending' => 'label-warning',
+			'complete' => 'label-success',
+			'failure' => 'label-important',
+			'expired' => 'label-inverse'
+		);
 
-    public function grab($uid)
-    {
-        if ($this->get('status') == 'available') {
-            $this->setStatus('slicing');
-            $this->set('taken_date', date('Y-m-d H:i:s'));
-            $this->set('uid', $uid);
-            $this->save();
+		return $s2c[$status];
+	}
 
-            usleep(1000 + mt_rand(100, 500));
+	public function grab($uid)
+	{
+		if ($this->get('status') == 'available') {
+			$this->setStatus('slicing');
+			$this->set('taken_date', date('Y-m-d H:i:s'));
+			$this->set('uid', $uid);
+			$this->save();
 
-            $sj = new SliceJob($this->id);
-            if ($sj->get('uid') != $uid)
-                throw new Exception("Unable to lock slice job #{$this->id}");
+			usleep(1000 + mt_rand(100, 500));
 
-            $bot = $this->getBot();
-            $bot->setStatus('slicing');
-            $bot->save();
-        }
-    }
+			$sj = new SliceJob($this->id);
+			if ($sj->get('uid') != $uid)
+				throw new Exception("Unable to lock slice job #{$this->id}");
 
-    public function fail()
-    {
-        $this->setStatus('failure');
-        $this->save();
+			$bot = $this->getBot();
+			$bot->setStatus(BotState::Slicing);
+			$bot->save();
+		}
+	}
 
-        $job = $this->getJob();
-        $job->set('downloaded_time', date("Y-m-d H:i:s"));
-        $job->set('finished_time', date("Y-m-d H:i:s"));
-        $job->set('verified_time', date("Y-m-d H:i:s"));
-        $job->setStatus('failure');
-        $job->save();
+	public function fail()
+	{
+		$this->setStatus('failure');
+		$this->save();
 
-        $bot = $this->getBot();
-        $bot->reset();
+		$job = $this->getJob();
+		$job->set('downloaded_time', date("Y-m-d H:i:s"));
+		$job->set('finished_time', date("Y-m-d H:i:s"));
+		$job->set('verified_time', date("Y-m-d H:i:s"));
+		$job->setStatus('failure');
+		$job->save();
 
-        $log = new ErrorLog();
-        $log->set('user_id', User::$me->id);
-        $log->set('job_id', $job->id);
-        $log->set('bot_id', $bot->id);
-        $log->set('queue_id', $job->get('queue_id'));
-        $log->set('reason', "Model slicing failed.");
-        $log->set('error_date', date("Y-m-d H:i:s"));
-        $log->save();
-    }
+		$bot = $this->getBot();
+		$bot->reset();
 
-    public function pass()
-    {
-        $this->setStatus('complete');
-        $this->set('finish_date', date("Y-m-d H:i:s"));
-        $this->save();
+		$log = new ErrorLog();
+		$log->set('user_id', User::$me->id);
+		$log->set('job_id', $job->id);
+		$log->set('bot_id', $bot->id);
+		$log->set('queue_id', $job->get('queue_id'));
+		$log->set('reason', "Model slicing failed.");
+		$log->set('error_date', date("Y-m-d H:i:s"));
+		$log->save();
+	}
 
-        $job = $this->getJob();
-        $job->setStatus('taken');
-        $job->save();
+	public function pass()
+	{
+		$this->setStatus('complete');
+		$this->set('finish_date', date("Y-m-d H:i:s"));
+		$this->save();
 
-        $bot = $this->getBot();
-        $bot->setStatus('working');
-        $bot->save();
-    }
+		$job = $this->getJob();
+		$job->setStatus('taken');
+		$job->save();
 
-    public static function byConfigAndSource($config_id, $source_id)
-    {
-        $config_id = (int)$config_id;
-        $source_id = (int)$source_id;
+		$bot = $this->getBot();
+		$bot->setStatus(BotState::Working);
+		$bot->save();
+	}
 
-        $sql = "
+	public static function byConfigAndSource($config_id, $source_id)
+	{
+		$config_id = (int)$config_id;
+		$source_id = (int)$source_id;
+
+		$sql = "
 		    SELECT id
 		    FROM slice_jobs
 		    WHERE slice_config_id = " . db()->escape($config_id) . "
@@ -195,22 +195,22 @@ class SliceJob extends Model
 		      AND status = 'complete'
 		  ";
 
-        $id = db()->getValue($sql);
+		$id = db()->getValue($sql);
 
-        return new SliceJob($id);
-    }
+		return new SliceJob($id);
+	}
 
-    public static function getJobsRequiringAction()
-    {
-        $sql = "
+	public static function getJobsRequiringAction()
+	{
+		$sql = "
 		    SELECT id, input_id, job_id
 		    FROM slice_jobs
 		    WHERE status = 'pending'
 		    ORDER BY finish_date ASC
 		  ";
 
-        return new Collection($sql, array('SliceJob' => 'id', 'S3File' => 'input_id', 'Job' => 'job_id'));
-    }
+		return new Collection($sql, array('SliceJob' => 'id', 'S3File' => 'input_id', 'Job' => 'job_id'));
+	}
 }
 
 ?>

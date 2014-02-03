@@ -17,11 +17,13 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
+require_once(MODELS_DIR.'Bot/BotState.php');
 class Bot extends Model
 {
 	public function __construct($id = null)
 	{
 		parent::__construct($id, "bots");
+		$this->setStatus(BotState::Offline);
 	}
 
 	public function getName()
@@ -29,9 +31,109 @@ class Bot extends Model
 		return $this->get('name');
 	}
 
-    public function setStatus($status) {
-        $this->set('status', $status);
-    }
+	public function getStatus() {
+		return $this->get('status');
+	}
+
+	/**
+	 * @param $status string
+	 * @throws InvalidStateChange
+	 */
+	public function setStatus($status) {
+		$invalidStateChange = false;
+
+		if($status == $this->getStatus())
+			return;
+
+		if($this->getStatus() == "") {
+			switch($status) {
+				case BotState::Offline:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Idle) {
+			switch($status) {
+				case BotState::Offline:
+				case BotState::Error:
+				case BotState::Maintenance:
+				case BotState::Working:
+				case BotState::Slicing:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Slicing) {
+			switch($status) {
+				case BotState::Waiting:
+				case BotState::Working:
+				case BotState::Offline:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Working) {
+			switch($status) {
+				case BotState::Slicing:
+				case BotState::Error:
+				case BotState::Idle:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Paused) {
+			switch($status) {
+				case BotState::Working:
+				case BotState::Slicing:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Waiting) {
+			switch($status) {
+				case BotState::Idle:
+				case BotState::Working:
+				case BotState::Error:
+				case BotState::Offline: // todo Fix this
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Error) {
+			switch($status) {
+				case BotState::Idle:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Maintenance) {
+			switch($status) {
+				case BotState::Idle:
+				case BotState::Offline:
+				case BotState::Retired:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Offline) {
+			switch($status) {
+				case BotState::Idle:
+				case BotState::Retired:
+				case BotState::Maintenance:
+					break;
+				default:
+					$invalidStateChange = true;
+			}
+		} else if($this->getStatus() == BotState::Retired) {
+			$invalidStateChange = true;
+		}
+
+		if($invalidStateChange) {
+			throw new InvalidStateChange("Cannot change Bot #".$this->id."'s status from {$this->getStatus()} to {$status}");
+		} else {
+			$this->set('status', $status);
+		}
+	}
 
 	public function getUser()
 	{
@@ -47,7 +149,7 @@ class Bot extends Model
 		$r['name'] = $this->getName();
 		$r['manufacturer'] = $this->get('manufacturer');
 		$r['model'] = $this->get('model');
-		$r['status'] = $this->get('status');
+		$r['status'] = $this->getStatus();
 		$r['last_seen'] = $this->get('last_seen');
 		$r['error_text'] = $this->get('error_text');
 
@@ -99,7 +201,7 @@ class Bot extends Model
 			'retired' => 'inverse',
 		);
 
-		return $s2c[$this->get('status')];
+		return $s2c[$this->getStatus()];
 	}
 
 
@@ -135,17 +237,17 @@ class Bot extends Model
 		return new Collection($sql, array('Job' => 'id'));
 	}
 
-    public function getJobClocks($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
-    {
-        $sql = "
+	public function getJobClocks($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
+	{
+		$sql = "
 				SELECT id
 				FROM job_clock
 				WHERE bot_id = " . db()->escape($this->id) . "
 					{$this->getStatusSql($status)}
 				ORDER BY {$sortField} {$sortOrder}
 			";
-        return new Collection($sql, array('JobClockEntry' => 'id'));
-    }
+		return new Collection($sql, array('JobClockEntry' => 'id'));
+	}
 
 
 	/*
@@ -186,7 +288,7 @@ class Bot extends Model
 		if ($job->get('status') != 'available')
 			return false;
 
-		if ($this->get('status') != 'idle')
+		if ($this->getStatus() != 'idle')
 			return false;
 
 		if ($this->get('job_id'))
@@ -262,7 +364,7 @@ class Bot extends Model
 		$log->save();
 
 		$this->set('job_id', $job->id);
-		$this->setStatus('working');
+		$this->setStatus(BotState::Working);
 		$this->set('last_seen', date("Y-m-d H:i:s"));
 		$this->save();
 
@@ -290,26 +392,26 @@ class Bot extends Model
 	public function dropJob($job)
 	{
 		//if its a sliced job, clear it for a potentially different bot.
-        $job->reset();
+		$job->reset();
 
 		$log = $job->getLatestTimeLog();
 		$log->set('end_date', date("Y-m-d H:i:s"));
 		$log->setStatus('dropped');
 		$log->save();
 
-        $this->set('last_seen', date("Y-m-d H:i:s"));
-        $this->reset();
+		$this->set('last_seen', date("Y-m-d H:i:s"));
+		$this->reset();
 	}
 
 	public function pause()
 	{
-		$this->setStatus('paused');
+		$this->setStatus(BotState::Paused);
 		$this->save();
 	}
 
 	public function unpause()
 	{
-		$this->setStatus('working');
+		$this->setStatus(BotState::Working);
 		$this->save();
 	}
 
@@ -342,7 +444,7 @@ class Bot extends Model
 			$this->set('webcam_image_id', $copy->id);
 		}
 
-		$this->setStatus('waiting');
+		$this->setStatus(BotState::Waiting);
 		$this->set('last_seen', date("Y-m-d H:i:s"));
 		$this->save();
 	}
@@ -414,20 +516,20 @@ class Bot extends Model
 			$job->delete();
 		}
 
-        $job_clocks = $this->getJobClocks()->getAll();
-        foreach ($job_clocks AS $row) {
-            /* @var $job_clock JobClockEntry */
-            $job_clock = $row['JobClockEntry'];
-            $job_clock->delete();
-        }
+		$job_clocks = $this->getJobClocks()->getAll();
+		foreach ($job_clocks AS $row) {
+			/* @var $job_clock JobClockEntry */
+			$job_clock = $row['JobClockEntry'];
+			$job_clock->delete();
+		}
 
 		parent::delete();
 	}
 
 	public function retire()
 	{
-        $this->setStatus('retired');
-        $this->save();
+		$this->setStatus(BotState::Retired);
+		$this->save();
 	}
 
 	public function getSliceEngine()
@@ -478,13 +580,13 @@ class Bot extends Model
 		return "{$elapsed}s ago";
 	}
 
-    public function reset()
-    {
-        $this->set('job_id', 0);
-        $this->setStatus('idle');
-        $this->set('temperature_data', '');
-        $this->save();
-    }
+	public function reset()
+	{
+		$this->set('job_id', 0);
+		$this->setStatus(BotState::Idle);
+		$this->set('temperature_data', '');
+		$this->save();
+	}
 }
 
 ?>

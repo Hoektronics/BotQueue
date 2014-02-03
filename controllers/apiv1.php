@@ -767,7 +767,7 @@ class APIV1Controller extends Controller
 		$bot->set('electronics', $this->args('electronics'));
 		$bot->set('firmware', $this->args('firmware'));
 		$bot->set('extruder', $this->args('extruder'));
-		$bot->setStatus('idle');
+		$bot->setStatus(BotState::Idle);
 		$bot->save();
 
 		Activity::log("registered the new bot " . $bot->getLink() . " via the API.");
@@ -807,7 +807,8 @@ class APIV1Controller extends Controller
 		if ($this->args('extruder'))
 			$bot->set('extruder', $this->args('extruder'));
 		if ($this->args('status'))
-            $bot->setStatus($this->args('status'));
+			//todo Change this to get the status in BotStatus so we know it's valid
+			$bot->setStatus($this->args('status'));
 		if ($this->args('error_text'))
 			$bot->set('error_text', $this->args('error_text'));
 		$bot->save();
@@ -876,7 +877,7 @@ class APIV1Controller extends Controller
 		else if ($this->args('status') == 'failure')
 			$sj->fail();
 		else if ($this->args('status') == 'pending') {
-            $sj->setStatus('pending');
+			$sj->setStatus('pending');
 			$sj->set('finish_date', date("Y-m-d H:i:s"));
 			$sj->save();
 		}

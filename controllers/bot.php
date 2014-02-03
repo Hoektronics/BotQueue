@@ -65,7 +65,7 @@ class BotController extends Controller
 			$bot->set('name', $form->data('name'));
 			$bot->set('manufacturer', $form->data('manufacturer'));
 			$bot->set('model', $form->data('model'));
-			$bot->setStatus('offline');
+			$bot->setStatus(BotState::Offline);
 			$bot->save();
 
 			Activity::log("registered the bot " . $bot->getLink() . ".");
@@ -351,7 +351,7 @@ class BotController extends Controller
 
 				//do we want to go offline?
 				if ($form->data('take_offline')) {
-					$bot->setStatus('offline');
+					$bot->setStatus(BotState::Offline);
 					$bot->save();
 				}
 
