@@ -32,6 +32,10 @@ class User extends Model
         return $this->get('first_name') . " " . $this->get('last_name');
     }
 
+    public function getThingiverseToken() {
+        return $this->get('thingiverse_token');
+    }
+
     public static function authenticate()
     {
         //are we already authenticated?

@@ -84,7 +84,7 @@ class UploadController extends Controller
 
                 // TODO: We need to define a thingiverse api client ID, or get it when the user
                 // authenticates it.
-                $api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, THINGIVERSE_API_ACCESS_TOKEN);
+                $api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());
 
                 //load thingiverse data.
                 $thing = $api->make_call("/things/{$thing_id}");
