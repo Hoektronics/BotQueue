@@ -68,6 +68,8 @@ class Bot extends Model
 				case BotState::Waiting:
 				case BotState::Working:
 				case BotState::Offline:
+				case BotState::Paused:
+				case BotState::Error:
 					break;
 				default:
 					$invalidStateChange = true;
@@ -77,6 +79,10 @@ class Bot extends Model
 				case BotState::Slicing:
 				case BotState::Error:
 				case BotState::Idle:
+				case BotState::Paused:
+				case BotState::Waiting:
+				case BotState::Maintenance:
+				case BotState::Offline:
 					break;
 				default:
 					$invalidStateChange = true;
@@ -85,6 +91,8 @@ class Bot extends Model
 			switch($status) {
 				case BotState::Working:
 				case BotState::Slicing:
+				case BotState::Maintenance:
+				case BotState::Offline:
 					break;
 				default:
 					$invalidStateChange = true;
@@ -102,6 +110,7 @@ class Bot extends Model
 		} else if($this->getStatus() == BotState::Error) {
 			switch($status) {
 				case BotState::Idle:
+				case BotState::Maintenance:
 					break;
 				default:
 					$invalidStateChange = true;
@@ -110,7 +119,6 @@ class Bot extends Model
 			switch($status) {
 				case BotState::Idle:
 				case BotState::Offline:
-				case BotState::Retired:
 					break;
 				default:
 					$invalidStateChange = true;
