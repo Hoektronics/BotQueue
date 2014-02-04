@@ -16,56 +16,14 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-
-//include("extensions/global.php");
-//require(MODELS_DIR.'Bot/BotState.php');
-
+require_once(MODELS_DIR.'Bot/BotState.php');
 class BotTest extends BotQueue_Unit_Test
 {
-	/**
-	 * @var $bot Bot
-	 */
-	protected $bot;
-
 	protected $states;
 	protected $setup;
 
-	/**
-	 * @param $from
-	 * @param $to
-	 * @param $isValid
-	 */
-	public function checkState($from, $to, $isValid)
-	{
-		$bot = new Bot();
-
-		// Setup by transition to the correct state
-		foreach ($this->setup[$from] AS $val) {
-			$bot->setStatus($val);
-		}
-
-		$this->assertEquals($bot->getStatus(), $from);
-
-		$exceptionThrown = false;
-
-		try {
-			$bot->setStatus($to);
-		} catch (InvalidStateChange $ex) {
-			$exceptionThrown = true;
-		}
-
-		if ($isValid)
-			$this->assertEquals($bot->getStatus(), $to);
-		else {
-			$this->assertEquals($bot->getStatus(), $from);
-			if(!$exceptionThrown)
-				$this->fail($from . " to " . $to . " Failed");
-		}
-	}
-
 	protected function setUp()
 	{
-		$this->bot = new Bot();
 		$this->states = array();
 		$this->setup = array();
 
@@ -176,11 +134,6 @@ class BotTest extends BotQueue_Unit_Test
 		$this->states[BotState::Retired][BotState::Retired] = true;
 	}
 
-	public function testDefaultOffline()
-	{
-		$this->assertEquals($this->bot->getStatus(), BotState::Offline);
-	}
-
 	public function testAllStates()
 	{
 		$this->assertFalse(empty($this->setup));
@@ -189,6 +142,40 @@ class BotTest extends BotQueue_Unit_Test
 			foreach ($next AS $to => $isValid) {
 				$this->checkState($from, $to, $isValid);
 			}
+		}
+	}
+
+	/**
+	 * @param $from
+	 * @param $to
+	 * @param $isValid
+	 */
+	public function checkState($from, $to, $isValid)
+	{
+		$bot = new Bot();
+		$bot->setStatus(BotState::Offline);
+
+		// Setup by transition to the correct state
+		foreach ($this->setup[$from] AS $val) {
+			$bot->setStatus($val);
+		}
+
+		$this->assertEquals($bot->getStatus(), $from);
+
+		$exceptionThrown = false;
+
+		try {
+			$bot->setStatus($to);
+		} catch (InvalidStateChange $ex) {
+			$exceptionThrown = true;
+		}
+
+		if ($isValid)
+			$this->assertEquals($bot->getStatus(), $to);
+		else {
+			$this->assertEquals($bot->getStatus(), $from);
+			if(!$exceptionThrown)
+				$this->fail($from . " to " . $to . " Failed");
 		}
 	}
 }
