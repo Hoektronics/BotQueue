@@ -872,69 +872,75 @@ class BotController extends Controller
 			if (!$bot->isMine())
 				throw new Exception("You cannot view that bot.");
 
-			//load our token
-			$token = new OAuthToken($this->args('token_id'));
-			if (!$token->isHydrated())
-				throw new Exception("Could not find that computer.");
-			if (!$token->isMine())
-				throw new Exception("This is not your computer.");
+			if ($this->args('token_id') == 0) {
+				$this->set('nodriver', "No driver was selected");
+			} else {
 
-			//what driver form to create?
-			$driver = $this->args('driver');
+				//load our token
+				$token = new OAuthToken($this->args('token_id'));
 
-			//pass on our info.
-			$this->set('bot', $bot);
-			$this->set('driver', $driver);
-			$this->set('token', $token);
-			$devices = json::decode($token->get('device_data'));
-			$this->set('devices', $devices);
+				if (!$token->isHydrated())
+					throw new Exception("Could not find that computer.");
+				if (!$token->isMine())
+					throw new Exception("This is not your computer.");
 
-			//pull in our driver config
-			$driver_config = $bot->getDriverConfig();
+				//what driver form to create?
+				$driver = $this->args('driver');
 
-			//if we're using the same driver, pull in old values...
-			if ($driver == $bot->get('driver_name')) {
+				//pass on our info.
+				$this->set('bot', $bot);
+				$this->set('driver', $driver);
+				$this->set('token', $token);
+				$devices = json::decode($token->get('device_data'));
+				$this->set('devices', $devices);
+
+				//pull in our driver config
+				$driver_config = $bot->getDriverConfig();
+
+				//if we're using the same driver, pull in old values...
+				if ($driver == $bot->get('driver_name')) {
+
+					$this->set('driver_config', $driver_config);
+
+					if (is_object($driver_config)) {
+						$this->set('delay', $driver_config->delay);
+						$this->set('serial_port', $driver_config->port);
+						$this->set('baudrate', $driver_config->baud);
+					}
+				} else if ($driver == "dummy") {
+					$this->set('delay', '0.001');
+				}
+
+				//pull in our old webcam values too.
+				if (is_object($driver_config) && !empty($driver_config->webcam)) {
+					$this->set('webcam_id', $driver_config->webcam->id);
+					$this->set('webcam_name', $driver_config->webcam->name);
+					$this->set('webcam_device', $driver_config->webcam->device);
+					$this->set('webcam_brightness', $driver_config->webcam->brightness);
+					$this->set('webcam_contrast', $driver_config->webcam->contrast);
+				} //okay, no webcam settings.
+				else {
+					//some default webcam settings.
+					$this->set('webcam_id', '');
+					$this->set('webcam_name', '');
+					$this->set('webcam_device', '');
+					$this->set('webcam_brightness', 50);
+					$this->set('webcam_contrast', 50);
+				}
 
 				$this->set('driver_config', $driver_config);
 
-				if (is_object($driver_config)) {
-					$this->set('delay', $driver_config->delay);
-					$this->set('serial_port', $driver_config->port);
-					$this->set('baudrate', $driver_config->baud);
-				}
-			} else {
-				$this->set('delay', '0.001');
+				$this->set('baudrates', array(
+					250000,
+					115200,
+					57600,
+					38400,
+					28880,
+					19200,
+					14400,
+					9600
+				));
 			}
-
-			//pull in our old webcam values too.
-			if (is_object($driver_config) && !empty($driver_config->webcam)) {
-				$this->set('webcam_id', $driver_config->webcam->id);
-				$this->set('webcam_name', $driver_config->webcam->name);
-				$this->set('webcam_device', $driver_config->webcam->device);
-				$this->set('webcam_brightness', $driver_config->webcam->brightness);
-				$this->set('webcam_contrast', $driver_config->webcam->contrast);
-			} //okay, no webcam settings.
-			else {
-				//some default webcam settings.
-				$this->set('webcam_id', '');
-				$this->set('webcam_name', '');
-				$this->set('webcam_device', '');
-				$this->set('webcam_brightness', 50);
-				$this->set('webcam_contrast', 50);
-			}
-
-			$this->set('driver_config', $driver_config);
-
-			$this->set('baudrates', array(
-				250000,
-				115200,
-				57600,
-				38400,
-				28880,
-				19200,
-				14400,
-				9600
-			));
 		} catch (Exception $e) {
 			$this->set('megaerror', $e->getMessage());
 		}

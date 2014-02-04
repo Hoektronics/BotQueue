@@ -94,9 +94,19 @@ class SlicerController extends Controller
 
             $this->setTitle('Import Slice Engine');
             $this->set('area', 'slicers');
+			
+			$User = "BotQueue";
+			$Repo = "engines";
 
-            $response = Utility::downloadUrl("https://api.github.com/repos/jnesselr/botqueue-engines/git/refs");
+            $response = Utility::downloadUrl("https://api.github.com/repos/{$User}/{$Repo}/git/refs");
+
+			if($response == False)
+				throw new Exception("I'm sorry, I couldn't access github");
             $json = json_decode(file_get_contents($response['localpath']), True);
+
+			if(isset($json['message']) && $json['message'] == "Not Found") {
+				throw new Exception("I'm sorry, but the repo specified doesn't exist");
+			}
 
             $engines = array();
             foreach ($json as $ref) {
@@ -109,7 +119,7 @@ class SlicerController extends Controller
                     $engine_path = $engineName . '-' . $version;
 
                     if (!SliceEngine::engine_exists($engine_path)) { // Do we already have this engine?
-                        $manifestResponse = Utility::downloadUrl("https://raw.github.com/jnesselr/botqueue-engines/" . $branch . "/manifest.json");
+                        $manifestResponse = Utility::downloadUrl("https://raw.github.com/{$User}/{$Repo}/" . $branch . "/manifest.json");
                         $manifest = json_decode(file_get_contents($manifestResponse['localpath']), True);
 
                         $engine = new SliceEngine();
@@ -124,7 +134,7 @@ class SlicerController extends Controller
                         //now we make it a default config object
                         $config = new SliceConfig();
                         $config->set('config_name', 'Default');
-                        $file = Utility::downloadUrl("https://raw.github.com/jnesselr/botqueue-engines/" . $branch . "/" . $manifest['configuration']);
+                        $file = Utility::downloadUrl("https://raw.github.com/{$User}/{$Repo}/" . $branch . "/" . $manifest['configuration']);
                         $config->set('config_data', file_get_contents($file['localpath']));
                         $config->set('engine_id', $engine->id);
                         //$config->set('user_id', User::$me->id); // Config for everyone?
