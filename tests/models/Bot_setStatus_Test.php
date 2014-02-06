@@ -64,7 +64,7 @@ class BotTest extends BotQueue_Unit_Test
 		$this->states[BotState::Slicing][BotState::Waiting] = true;
 		$this->states[BotState::Slicing][BotState::Error] = true;
 		$this->states[BotState::Slicing][BotState::Maintenance] = false;
-		$this->states[BotState::Slicing][BotState::Offline] = true; //TODO: Fix this
+		$this->states[BotState::Slicing][BotState::Offline] = false;
 		$this->states[BotState::Slicing][BotState::Retired] = false;
 		
 		$this->states[BotState::Working] = array();
@@ -97,7 +97,7 @@ class BotTest extends BotQueue_Unit_Test
 		$this->states[BotState::Waiting][BotState::Waiting] = true;
 		$this->states[BotState::Waiting][BotState::Error] = true;
 		$this->states[BotState::Waiting][BotState::Maintenance] = false;
-		$this->states[BotState::Waiting][BotState::Offline] = true; //todo fix this
+		$this->states[BotState::Waiting][BotState::Offline] = false;
 		$this->states[BotState::Waiting][BotState::Retired] = false;
 
 		$this->states[BotState::Error] = array();
