@@ -166,7 +166,12 @@ class Job extends Model
 
 	public function pushToTop()
 	{
-		//find our our current max
+		//Prevent there from being a user_sort value of 0 for now
+		//todo Make this process better
+		$sql = "UPDATE jobs set user_sort=user_sort+1 where user_id= " . (int)$this->get('user_id');
+		db()->execute($sql);
+
+		// Find the minimum value and get the slot before it
 		$sql = "SELECT min(user_sort)-1 FROM jobs WHERE user_id = " . (int)$this->get('user_id');
 		$min = (int)db()->getValue($sql);
 
@@ -297,6 +302,11 @@ class Job extends Model
      */
     public static function addFileToQueue($queue_id, $file) {
         $sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+
+		// Special case for first sort value
+		if($sort == "") {
+			$sort = 1;
+		}
 
         $job = new Job();
         $job->set('user_id', User::$me->id);
