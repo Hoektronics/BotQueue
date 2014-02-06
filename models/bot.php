@@ -554,7 +554,7 @@ class Bot extends Model
 
 		$elapsed = $now - $last;
 
-		if ($last < 0)
+		if ($last <= 0)
 			return "never";
 
 		$months = floor($elapsed / (60 * 60 * 24 * 30));
