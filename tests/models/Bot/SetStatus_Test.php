@@ -17,7 +17,7 @@
   */
 
 require_once(MODELS_DIR.'Bot/BotState.php');
-class BotTest extends BotQueue_Unit_Test
+class SetStatusTest extends BotQueue_Unit_Test
 {
 	protected $states;
 	protected $setup;
