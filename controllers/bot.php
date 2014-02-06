@@ -833,7 +833,7 @@ class BotController extends Controller
 			'name' => 'oauth_token_id',
 			'label' => 'Computer',
 			'help' => 'Which computer is this bot connected to? <a href="/apps">Full list in the apps area.</a>',
-			'required' => true,
+			'required' => false,
 			'value' => $bot->get('oauth_token_id'),
 			'options' => $apps,
 			'onchange' => 'update_driver_form(this)'
