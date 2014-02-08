@@ -70,7 +70,7 @@ class BotController extends Controller
 
 			Activity::log("registered the bot " . $bot->getLink() . ".");
 
-			$this->forwardToUrl($bot->getUrl() . "/edit");
+			$this->forwardToUrl($bot->getUrl() . "/edit/setup:info");
 		}
 
 		$this->set('form', $form);
@@ -231,8 +231,20 @@ class BotController extends Controller
 
 			//load up our form.
 			$infoForm = $this->_createInfoForm($bot);
+			if ($this->args('setup') != '')
+				$infoForm->setSubmitText('Next');
+
 			$slicingForm = $this->_createSlicingForm($bot);
+			if ($this->args('setup') != '')
+				$slicingForm->setSubmitText('Next');
+
 			$driverForm = $this->_createDriverForm($bot);
+
+			if ($this->args('setup') != '') {
+				$this->set('active_form', $this->args('setup'));
+			} else {
+				$this->set('active_form', 'info');
+			}
 
 			//handle our form
 			if ($infoForm->checkSubmitAndValidate($this->args())) {
@@ -246,7 +258,11 @@ class BotController extends Controller
 
 				Activity::log("edited the information for bot " . $bot->getLink() . ".");
 
-				$this->forwardToUrl($bot->getUrl());
+				if ($this->args('setup') == 'info') {
+					$this->forwardToURL($bot->getUrl() . "/edit/setup:slicing");
+				} else {
+					$this->forwardToURL($bot->getUrl());
+				}
 			} else if ($slicingForm->checkSubmitAndValidate($this->args())) {
 				$bot->set('queue_id', $slicingForm->data('queue_id'));
 				$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
@@ -260,7 +276,11 @@ class BotController extends Controller
 
 				Activity::log("edited the slicing info for bot " . $bot->getLink() . ".");
 
-				$this->forwardToUrl($bot->getUrl());
+				if ($this->args('setup') == 'slicing') {
+					$this->forwardToURL($bot->getUrl() . "/edit/setup:driver");
+				} else {
+					$this->forwardToURL($bot->getUrl());
+				}
 			} else if ($driverForm->checkSubmitAndValidate($this->args())) {
 				$bot->set('oauth_token_id', $driverForm->data('oauth_token_id'));
 				$bot->set('driver_name', $driverForm->data('driver_name'));
@@ -298,7 +318,7 @@ class BotController extends Controller
 
 				Activity::log("edited the driver configuration for bot " . $bot->getLink() . ".");
 
-				$this->forwardToUrl($bot->getUrl() . "/edit");
+				$this->forwardToUrl($bot->getUrl());
 			}
 
 			$this->set('bot', $bot);
@@ -625,7 +645,11 @@ class BotController extends Controller
 	{
 
 		$form = new Form('info');
-		$form->action = $bot->getUrl() . "/edit";
+		if ($this->args('setup') == 'info') {
+			$form->action = $bot->getUrl() . "/edit/setup:info";
+		} else {
+			$form->action = $bot->getUrl() . "/edit";
+		}
 
 		$form->add(new DisplayField(array(
 			'name' => 'title',
@@ -721,7 +745,11 @@ class BotController extends Controller
 			$configList[0] = "None";
 
 		$form = new Form('slicing');
-		$form->action = $bot->getUrl() . "/edit";
+		if ($this->args('setup') == 'slicing') {
+			$form->action = $bot->getUrl() . "/edit/setup:slicing";
+		} else {
+			$form->action = $bot->getUrl() . "/edit";
+		}
 
 		$form->add(new DisplayField(array(
 			'name' => 'title',

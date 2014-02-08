@@ -83,6 +83,7 @@ RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id
 RewriteRule ^bot:([0-9]+)/driverform:(dummy|printcore|s3g)/token:([0-9]+)$												dispatcher.php?controller=bot&mode=ajax&view=driver_form&id=$1&driver=$2&token_id=$3 [NC,L]
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
 RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=edit&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/edit/setup:(info|slicing|driver)$												dispatcher.php?controller=bot&view=edit&id=$1&setup=$2 [NC,L]
 RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/dropjob$												dispatcher.php?controller=bot&view=dropjob&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/jobs(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=listjobs&id=$1&page=$3 [NC,L]

@@ -7,22 +7,22 @@
   <div class="row">
     <div class="span3">
       <ul class="nav nav-list" id="editTab">
-        <li class="active"><a href="#bot_details" data-toggle="tab">Information / Details</a></li>
-        <li><a href="#bot_slicing" data-toggle="tab">Slicing Setup</a></li>
-        <li><a href="#bot_configuration" data-toggle="tab">Driver Configuration</a></li>
+        <li<?=($active_form == 'info' ? " class=\"active\"" : '')?>><a href="#bot_details" data-toggle="tab">Information / Details</a></li>
+        <li<?=($active_form == 'slicing' ? " class=\"active\"" : '')?>><a href="#bot_slicing" data-toggle="tab">Slicing Setup</a></li>
+        <li<?=($active_form == 'driver' ? " class=\"active\"" : '')?>><a href="#bot_configuration" data-toggle="tab">Driver Configuration</a></li>
       </ul>
     </div>
 
     <div class="span9 tab-content" id="editTabContent">
-      <div id="bot_details" class="tab-pane fade in active">
+      <div id="bot_details" class="tab-pane fade<?=($active_form == 'info' ? ' active in' : '')?>">
   	    <?= $info_form->render() ?>
   	  </div>
     
-      <div id="bot_slicing" class="tab-pane fade">
+      <div id="bot_slicing" class="tab-pane fade<?=($active_form == 'slicing' ? ' active in' : '')?>">
   	    <?= $slicing_form->render() ?>
       </div>
 
-      <div id="bot_configuration" class="tab-pane fade">
+      <div id="bot_configuration" class="tab-pane fade<?=($active_form == 'driver' ? ' active in' : '')?>">
         <? if ($bot->get('status') == 'idle' || $bot->get('status') == 'offline' || $bot->get('status') == 'error' || $bot->get('status') == 'waiting'): ?>
   	      <?= $driver_form->render() ?>
   	    <? else: ?>
