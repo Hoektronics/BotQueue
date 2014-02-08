@@ -242,7 +242,7 @@ class Bot extends Model
 		return new Collection($sql, array('Job' => 'id'));
 	}
 
-	public function getJobClocks($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
+	public function getJobClocks($status = null, $sortField = 'id', $sortOrder = 'ASC')
 	{
 		$sql = "
 				SELECT id
