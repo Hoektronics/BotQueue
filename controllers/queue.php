@@ -111,7 +111,7 @@ class QueueController extends Controller
             $this->set('failure', $failure->getRange(0, 20));
             $this->set('failure_count', $failure->count());
 
-            $this->set('stats', $q->getStats());
+            $this->set('stats', QueueStats::getStats($q));
 
             $bots = $q->getBots();
             $this->set('bots', $bots->getRange(0, 20));

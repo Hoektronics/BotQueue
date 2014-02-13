@@ -14,7 +14,7 @@
 		<tbody>
 			<? foreach ($queues AS $row): ?>
 				<? $q = $row['Queue'] ?>
-				<? $stats = $q->getStats() ?>
+				<? $stats = QueueStats::getStats($q) ?>
 				<?
 					$total['available'] += $stats['available'];
           $total['slicing'] += $stats['slicing'];

@@ -736,7 +736,7 @@ class APIV1Controller extends Controller
 
 		//load up our data.
 		$data = array();
-		$job = $bot->getQueue()->findNewJob($bot, $can_slice);
+		$job = $bot->getQueue()->findNewJob($can_slice);
 		if ($job->isHydrated())
 			$data = $job->getAPIData();
 

@@ -65,7 +65,7 @@ class Queue extends Model
         return new Collection($sql, array('Job' => 'id'));
     }
 
-    public function findNewJob($bot, $can_slice = true)
+    public function findNewJob($can_slice = true)
     {
         if (!$can_slice)
             $sliceSql = " AND file_id > 0 ";
@@ -128,62 +128,6 @@ class Queue extends Model
         }
         else
             throw new Exception("Unkown file type");
-    }
-
-    public function getStats()
-    {
-        $sql = "
-				SELECT status, count(status) as cnt
-				FROM jobs
-				WHERE status != 'canceled' and
-				queue_id = " . db()->escape($this->id) . "
-				GROUP BY status
-			";
-
-        $data = array();
-        $stats = db()->getArray($sql);
-        if (!empty($stats)) {
-            //load up our stats
-            foreach ($stats AS $row) {
-                // Cancelled jobs don't count
-                if ($row['status'] != 'canceled') {
-                    $data[$row['status']] = $row['cnt'];
-                    $data['total'] += $row['cnt'];
-                }
-            }
-
-            //calculate percentages
-            foreach ($stats AS $row)
-                $data[$row['status'] . '_pct'] = ($row['cnt'] / $data['total']) * 100;
-        }
-
-        //pull in our time based stats.
-        $sql = "
-				SELECT sum(unix_timestamp(taken_time) - unix_timestamp(created_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(finished_time) - unix_timestamp(created_time)) as total
-				FROM jobs
-				WHERE status = 'complete'
-					AND queue_id = " . db()->escape($this->id) . "
-			";
-
-        $stats = db()->getArray($sql);
-        $data['total_waittime'] = (int)$stats[0]['wait'];
-        $data['total_time'] = (int)$stats[0]['total'];
-
-        //pull in our runtime stats
-        $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND queue_id = " . db()->escape($this->id);
-        $data['total_runtime'] = (int)db()->getValue($sql);
-
-        if ($data['total'] > 0) {
-            $data['avg_waittime'] = $data['total_waittime'] / $data['total'];
-            $data['avg_runtime'] = $data['total_runtime'] / $data['total'];
-            $data['avg_time'] = $data['total_time'] / $data['total'];
-        } else {
-            $data['avg_waittime'] = 0;
-            $data['avg_runtime'] = 0;
-            $data['avg_time'] = 0;
-        }
-
-        return $data;
     }
 
     public function getErrorLog()
