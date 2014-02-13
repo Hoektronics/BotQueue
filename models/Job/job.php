@@ -52,20 +52,6 @@ class Job extends Model
 		return "<span class=\"label " . self::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
 	}
 
-	public static function getStatusHTMLClass($status)
-	{
-		$s2c = array(
-			'taken' => 'label-info',
-			'qa' => 'label-warning',
-			'slicing' => 'label-slicing',
-			'complete' => 'label-success',
-			'failure' => 'label-important',
-			'canceled' => 'label-inverse'
-		);
-
-		return $s2c[$status];
-	}
-
 	public function getWebcamImage()
 	{
 		return new S3File($this->get('webcam_image_id'));
@@ -103,7 +89,7 @@ class Job extends Model
 
 	public function getLatestTimeLog()
 	{
-		$sql = "SELECT id FROM job_clock WHERE job_id = {$this->id} AND status = 'working' ORDER BY id DESC";
+		$sql = "SELECT id FROM job_clock WHERE job_id = " . $this->id ." AND status = 'working' ORDER BY id DESC";
 		$id = db()->getValue($sql);
 
 		return new JobClockEntry($id);
@@ -267,10 +253,10 @@ class Job extends Model
 		//  $bot->save();
 		// }
 
-		$sql = "DELETE FROM error_log WHERE job_id = {$this->id}";
+		$sql = "DELETE FROM error_log WHERE job_id = " . $this->id;
 		db()->execute($sql);
 
-		$sql = "DELETE FROM slice_jobs WHERE job_id = {$this->id}";
+		$sql = "DELETE FROM slice_jobs WHERE job_id = " . $this->id;
 		db()->execute($sql);
 
 		parent::delete();

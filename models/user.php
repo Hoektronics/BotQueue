@@ -162,7 +162,7 @@ class User extends Model
         $sql = "
 				SELECT id
 				FROM users
-				WHERE username = '$username'
+				WHERE username = '". $username . "'
 			";
         $id = db()->getValue($sql);
 
@@ -179,8 +179,8 @@ class User extends Model
         $sql = "
 				SELECT id
 				FROM users
-				WHERE username = '$username'
-					AND pass_hash = '$pass_hash'
+				WHERE username = '" . $username . "'
+					AND pass_hash = '" . $pass_hash . "'
 			";
         $id = db()->getValue($sql);
 
@@ -196,7 +196,7 @@ class User extends Model
         $sql = "
 				SELECT id
 				FROM users
-				WHERE email = '$email'
+				WHERE email = '" . $email ."'
 			";
         $id = db()->getValue($sql);
 
@@ -258,18 +258,6 @@ class User extends Model
             'User' => 'user_id',
             'Activity' => 'id'
         ));
-    }
-
-    public function getAllUsers()
-    {
-        $sql = "
-				SELECT id, username, first_name, last_name, email
-				FROM users
-				ORDER BY last_name ASC
-			";
-        $col = new Collection($sql, array("User" => "id"));
-
-        return $col->getMap();
     }
 
     public function getQueues()

@@ -36,7 +36,7 @@
         <div class="bot_info_container">
           <div class="bot_info">
         	  <div class="bot_info_title">
-          	  <?=$j->getStatusHTML()?>
+          	  <?=JobStatus::getStatusHTML($j)?>
           		<?=$j->getLink()?>
           		<? if ($j->get('status') == 'taken'): ?>
             		<span class="muted pull-right">

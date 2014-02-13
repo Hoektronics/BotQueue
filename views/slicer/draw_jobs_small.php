@@ -10,7 +10,7 @@
         <? $job = $row['SliceJob'] ?>
         <tr>
           <td><?=$job->getLink()?></td>
-          <td><?=$job->getStatusHTML()?></td>
+          <td><?=JobStatus::getStatusHTML($job)?></td>
           <? if ($job->get('status') == 'available'): ?>
             <td><?=Utility::relativeTime($job->get('add_date'))?></td>
           <? elseif ($job->get('status') == 'slicing'): ?>

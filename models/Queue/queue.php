@@ -75,7 +75,7 @@ class Queue extends Model
         $sql = "
 				SELECT id
 				FROM jobs
-				WHERE queue_id = '{$this->id}'
+				WHERE queue_id = '" . $this->id . "'
 					AND status = 'available'
 					{$sliceSql}
 				ORDER BY user_sort ASC

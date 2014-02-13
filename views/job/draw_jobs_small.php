@@ -16,7 +16,7 @@
 				<tr>
 					<td><?=$j->id?></td>
 					<td><?=$j->getLink()?></td>
-					<td><?=$j->getStatusHTML()?></td>
+					<td><?=JobStatus::getStatusHTML($j)?></td>
 					<td><?=round($j->get('progress'), 2)?>%</td>
 					<td><?=$j->getElapsedText()?></td>
 				</tr>

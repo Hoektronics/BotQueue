@@ -43,7 +43,7 @@
 					<? else: ?>
 					  <td class="muted">n/a</td>
 					<? endif ?>
-				  <td><?=$j->getStatusHTML()?></td>
+				  <td><?=JobStatus::getStatusHTML($job)?></td>
 				  <td class="muted"><?=$j->getElapsedText()?></td>
 					<td class="muted"><?=$j->getEstimatedText()?></td>
 				  <td style="width:250px">

@@ -54,7 +54,7 @@
 					</tr>
 					<tr>
 						<th>Status:</th>
-						<td><?=$job->getStatusHTML() ?></td>
+						<td><?=JobStatus::getStatusHTML($job) ?></td>
 					</tr>
 					<tr>
 						<th>Slice Engine:</th>
