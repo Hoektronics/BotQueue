@@ -51,18 +51,17 @@ class BotQueue_Loader
 	{
 		$fileName = "/" . strtolower($class) . ".php";
 
-        $di = new RecursiveDirectoryIterator(MODELS_DIR);
-        foreach (new RecursiveIteratorIterator($di) as $name => $file) {
-            if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
-                include($name);
-                return true;
-            }
+        $file = CLASSES_DIR . $fileName;
+        if (is_file($file)) {
+            include($file);
+            return true;
         }
 
-        $di = new RecursiveDirectoryIterator(CLASSES_DIR);
-        foreach (new RecursiveIteratorIterator($di) as $name => $file) {
-            if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
-                include($name);
+        $fileName = "/".$fileName;
+        $di = new RecursiveDirectoryIterator(MODELS_DIR);
+        foreach (new RecursiveIteratorIterator($di) as $path => $file) {
+            if(strcasecmp(substr($path, -strlen($fileName)), $fileName) === 0) {
+                include($path);
                 return true;
             }
         }
