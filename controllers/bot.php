@@ -145,7 +145,7 @@ class BotController extends Controller
 			$jobs = $bot->getJobs(null, 'user_sort', 'DESC');
 			$this->set('jobs', $jobs->getRange(0, 50));
 			$this->set('job_count', $jobs->count());
-			$this->set('stats', $bot->getStats());
+			$this->set('stats', BotStats::getStats($bot));
 			$this->set('owner', $bot->getUser());
 			$this->set('errors', $bot->getErrorLog()->getRange(0, 50));
 		} catch (Exception $e) {

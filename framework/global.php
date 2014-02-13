@@ -23,6 +23,7 @@ array_pop($parts);
 array_pop($parts);
 $base_dir = join('/', $parts);
 
+
 //define some useful constants.
 define('HOME_DIR', $base_dir);
 define('WEB_DIR', $base_dir . '/web/');
@@ -48,19 +49,23 @@ class BotQueue_Loader
 {
 	static public function __autoload($class)
 	{
-		$class = strtolower($class);
+		$fileName = strtolower($class) . ".php";
 
-		$file = MODELS_DIR . "$class.php";
-		if (is_file($file)) {
-			include($file);
-			return true;
-		}
+        $di = new RecursiveDirectoryIterator(MODELS_DIR);
+        foreach (new RecursiveIteratorIterator($di) as $name => $file) {
+            if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
+                include($name);
+                return true;
+            }
+        }
 
-		$file = CLASSES_DIR . "$class.php";
-		if (is_file($file)) {
-			include($file);
-			return true;
-		}
+        $di = new RecursiveDirectoryIterator(CLASSES_DIR);
+        foreach (new RecursiveIteratorIterator($di) as $name => $file) {
+            if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
+                include($name);
+                return true;
+            }
+        }
 
 		return false;
 	}

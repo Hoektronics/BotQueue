@@ -17,7 +17,6 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-require_once(MODELS_DIR.'Bot/BotState.php');
 class Bot extends Model
 {
 	public function __construct($id = null)
@@ -459,58 +458,6 @@ class Bot extends Model
 		return new Queue($this->get('queue_id'));
 	}
 
-	public function getStats()
-	{
-		$sql = "
-				SELECT status, count(status) as cnt
-				FROM jobs
-				WHERE bot_id = " . db()->escape($this->id) . "
-				GROUP BY status
-			";
-
-		$data = array();
-		$stats = db()->getArray($sql);
-		if (!empty($stats)) {
-			//load up our stats
-			foreach ($stats AS $row) {
-				$data[$row['status']] = $row['cnt'];
-				$data['total'] += $row['cnt'];
-			}
-
-			//calculate percentages
-			foreach ($stats AS $row)
-				$data[$row['status'] . '_pct'] = ($row['cnt'] / $data['total']) * 100;
-		}
-
-		//pull in our time based stats.
-		$sql = "
-				SELECT sum(unix_timestamp(verified_time) - unix_timestamp(finished_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(verified_time) - unix_timestamp(taken_time)) as total
-				FROM jobs
-				WHERE status = 'complete'
-					AND bot_id = " . db()->escape($this->id);
-
-		$stats = db()->getArray($sql);
-
-		$data['total_waittime'] = (int)$stats[0]['wait'];
-		$data['total_time'] = (int)$stats[0]['total'];
-
-		//pull in our runtime stats
-		$sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND bot_id = " . db()->escape($this->id);
-		$data['total_runtime'] = (int)db()->getValue($sql);
-
-		if ($data['total']) {
-			$data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
-			$data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
-			$data['avg_time'] = $stats[0]['total'] / $data['total'];
-		} else {
-			$data['avg_waittime'] = 0;
-			$data['avg_runtime'] = 0;
-			$data['avg_time'] = 0;
-		}
-
-		return $data;
-	}
-
 	public function delete()
 	{
 		//delete our jobs.
@@ -547,7 +494,10 @@ class Bot extends Model
 		return new SliceConfig($this->get('slice_config_id'));
 	}
 
-	public function getLastSeenHTML()
+    /**
+     * @return string
+     */
+    public function getLastSeenHTML()
 	{
 		$now = time();
 		$last = strtotime($this->get('last_seen'));
