@@ -127,7 +127,7 @@ class Queue extends Model
             return $jobs;
         }
         else
-            throw new Exception("Unkown file type");
+            throw new Exception("Unknown file type");
     }
 
     public function getErrorLog()

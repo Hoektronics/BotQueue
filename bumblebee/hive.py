@@ -255,7 +255,7 @@ def scanCameras():
     command = "./imagesnap -l"
   elif myos == "raspberrypi" or myos == "linux":
     command = "uvcdynctrl -l -v"
-  elif myos == "win" or myos == "unkown":
+  elif myos == "win" or myos == "unknown":
     return cameras
 
   returned = subprocess.check_output(command, shell=True)
