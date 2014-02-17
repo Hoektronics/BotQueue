@@ -266,6 +266,14 @@ CREATE TABLE `slice_engines` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `engine_os` (
+  `engine_id` int(11) unsigned NOT NULL,
+  `os` enum('osx','linux','win','raspberrypi'),
+  PRIMARY KEY (`engine_id`, `os`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `slice_jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -332,4 +340,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(5, 'Updating the dev table to BotQueue production"');
+INSERT INTO patches(patch_num, description) VALUES(6, 'Creating Engine OS table');
