@@ -114,6 +114,7 @@ class SlicerController extends Controller
 
                 if ($branch !== "master") {
                     $split = explode("-", $branch);
+					$os = $split[0];
                     $engineName = $split[1];
                     $version = $split[2];
                     $engine_path = $engineName . '-' . $version;
@@ -149,6 +150,9 @@ class SlicerController extends Controller
                         // Store them in case we want to display them.
                         $engines[] = $engine;
                     }
+
+					// We may have the engine, but now we need to make sure we know about every version
+					SliceEngine::validOS($engine_path, $os);
                 }
             }
             $this->forwardToURL("/slicers");

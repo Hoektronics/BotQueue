@@ -132,6 +132,19 @@ class SliceEngine extends Model
 
         parent::delete();
     }
+
+	/**
+	 * @param $engine_path
+	 * @param $os
+	 */
+	public static function validOS($engine_path, $os) {
+		$sql = "insert into engine_os
+				select id, '".$os."'
+				from slice_engines
+				where engine_path='".$engine_path."'";
+
+		db()->execute($sql);
+	}
 }
 
 ?>
