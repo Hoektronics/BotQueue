@@ -95,7 +95,7 @@ class SlicerController extends Controller
             $this->setTitle('Import Slice Engine');
             $this->set('area', 'slicers');
 			
-			$User = "BotQueue";
+			$User = "Hoektronics";
 			$Repo = "engines";
 
             $response = Utility::downloadUrl("https://api.github.com/repos/{$User}/{$Repo}/git/refs");

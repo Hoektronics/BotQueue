@@ -176,7 +176,7 @@ class Slic3r(GenericSlicer):
       #Is it already installed?
       if not os.path.exists(installPath):
         enginePath = engine['path']
-        url = "https://github.com/Jnesselr/botqueue-engines/archive/%s-%s.tar.gz" % (myos, enginePath)
+        url = "https://github.com/Hoektronics/engines/archive/%s-%s.tar.gz" % (myos, enginePath)
         self.log.info("Downloading %s from %s" % (enginePath, url))
         tarName = "botqueue-engines-%s-%s" % (myos, enginePath)
         self.log.info("Extracting to %s" % (installPath))
