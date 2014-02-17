@@ -1,3 +1,12 @@
+<?
+/**
+ * @package botqueue_job
+ * @var array $jobs
+ * @var Job $job
+ * @var int $size
+ * @var S3File $webcam
+ */
+?>
 <div class="row">
   <? foreach ($jobs AS $row): ?>
     <? $job = $row['Job'] ?>

@@ -1,3 +1,12 @@
+<?
+/**
+ * @package botqueue_job
+ * @var string $megaerror
+ * @var S3File $file
+ * @var int $width
+ * @var int $height
+ */
+?>
 <html>
   <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>

@@ -1,6 +1,11 @@
-
-
-<button id="displayButton" class="btn btn-primary centered"  onclick="loadRenderer()">Load GCode Viewer<br/>(<?= Utility::filesizeFormat($file->get('size'))?>)</button>
+<?
+/**
+ * @package botqueue_job
+ * @var S3File $file
+ * @var int $width
+ * @var int $height
+ */
+?><button id="displayButton" class="btn btn-primary centered"  onclick="loadRenderer()">Load GCode Viewer<br/>(<?= Utility::filesizeFormat($file->get('size'))?>)</button>
 <div id="renderArea" style="width: <?=$width?>; height: <?=$height?>; display: none;"></div>
 
 <script src="/gcode-viewer/lib/Three.js"></script>

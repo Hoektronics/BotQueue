@@ -1,3 +1,22 @@
+<?
+/**
+ * @package botqueue_job
+ * @var string $megaerror
+ * @var array $comments
+ * @var array $errors
+ * @var S3File $webcam
+ * @var Job $job
+ * @var S3File $parent_file
+ * @var S3File $source_file
+ * @var S3File $gcode_file
+ * @var SliceJob $slicejob
+ * @var SliceEngine $sliceengine
+ * @var SliceConfig $sliceconfig
+ * @var Queue $queue
+ * @var Bot $bot
+ * @var User $creator
+ */
+?>
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
@@ -8,7 +27,7 @@
     <li><a href="#comments" data-toggle="tab">Comments<? if (count($comments) > 0): ?> <span class="badge badge-info"><?=count($comments)?></span><? endif ?></a></li>
     <li><a href="#errors" data-toggle="tab">Error Log<? if (count($errors) > 0): ?> <span class="badge badge-important"><?=count($errors)?></span><? endif ?></a></li>
   </ul>
-  
+
   <div id="myTabContent" class="tab-content">
   	<div class="row tab-pane fade in active" id="details">
   	  <div class="span6">
@@ -108,7 +127,7 @@
     				<? endif ?>
   					<tr>
   						<th>Source File:</th>
-    					<? if ($source_file->isHydrated()): ?>			
+    					<? if ($source_file->isHydrated()): ?>
   						  <td><?=$source_file->getLink()?></td>
   						<? else: ?>
   						  <td class="muted">n/a</td>
@@ -200,18 +219,18 @@
                   yaxis: { ticks: 10 },
                   selection: { mode: "xy" },
                   grid: {
-                    hoverable: true 
+                    hoverable: true
                   },
                   tooltip: true,
                   tooltipOpts: {
                       content:      "%x - %s - <b>%y</b>",
                       xDateFormat:  "%h:%M",
                       yDateFormat:  "%h:%M",
-                      shifts: { 
+                      shifts: {
                           x:          10,
                           y:          20
                       },
-                      defaultTheme:   true                 
+                      defaultTheme:   true
                   }
               };
               var tempGraph_<?=$gid?> = $.plot($("#temperature_graph_<?=$gid?>"), tempData, options);
@@ -227,7 +246,7 @@
             //             grid: { color: "#999" },
             //             selection: { mode: "x" }
             //         };
-            // var overview_<?=$gid?> = $.plot($("#overview_<?=$gid?>"), tempData, overviewOptions);    
+            // var overview_<?=$gid?> = $.plot($("#overview_<?=$gid?>"), tempData, overviewOptions);
 
           	// now connect the two
               $("#temperature_graph_<?=$gid?>").bind("plotselected", function (event, ranges) {
@@ -283,14 +302,14 @@
         <? endif ?>
   		</div>
   	</div>
-	
+
     <div class="row tab-pane fade" id="comments">
   	  <div class="span12 comments">
         <?=Controller::byName('comment')->renderView('draw_all', array('comments' => $comments)) ?>
         <?=Controller::byName('comment')->renderView('add_comment', array('content_type' => 'job', 'content_id' => $job->id)) ?>
   	  </div>
   	</div>
-		
+
   	<div class="row tab-pane fade" id="errors">
   	  <div class="span12">
   	    <?= Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'job'))?>

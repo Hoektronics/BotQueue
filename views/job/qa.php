@@ -1,3 +1,15 @@
+<?
+/**
+ * @package botqueue_job
+ * @var string $megaerror
+ * @var Job $job
+ * @var Bot $bot
+ * @var S3File $webcam
+ * @var Form $form
+ * @var S3File $source_file
+ * @var S3File $gcode_file
+ */
+?>
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
