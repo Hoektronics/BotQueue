@@ -148,7 +148,7 @@ class Utility
 		return $value;
 	}
 
-	public function cleanAndPretty($text)
+	public static function cleanAndPretty($text)
 	{
 		$text = self::sanitize($text);
 		$text = nl2br($text);
@@ -234,7 +234,7 @@ class Utility
 	}
 
 
-	public function formatDate($date)
+	public static function formatDate($date)
 	{
 		if (strtotime($date) < 0)
 			return 'unknown';
@@ -242,7 +242,7 @@ class Utility
 			return date("M j, Y", strtotime($date));
 	}
 
-	public function formatDateTime($date)
+	public static function formatDateTime($date)
 	{
 		if (strtotime($date) < 0)
 			return 'unknown';
@@ -536,7 +536,7 @@ class Utility
 
 	public static function pluralizeIt($word, $count, $suffix = 's')
 	{
-		echo "$count " . self::pluralizeWord($word, $count, $suffix);
+		return "$count " . self::pluralizeWord($word, $count, $suffix);
 	}
 
 	public static function possessive($word)

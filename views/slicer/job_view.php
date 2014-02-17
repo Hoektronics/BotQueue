@@ -2,7 +2,7 @@
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
   <? if ($job->get('status') == 'pending'): ?>
-  <h2>Oh no!  Something went wrong with the slicing process.</h3>
+  <h2>Oh no!  Something went wrong with the slicing process.</h2>
 
   <div class="alert alert-error">
     <p>You should download the <a href="<?=$outputfile->getRealUrl()?>">output file</a> and verify that it is correct or not with the GCode Viewer below.</p>

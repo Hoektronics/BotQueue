@@ -48,12 +48,12 @@
   					</tr>
   					<tr>
   						<th>Created:</th>
-  						<td><?= Utility::formatDatetime($job->get('created_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('created_time'))?>)</span></td>
+  						<td><?= Utility::formatDateTime($job->get('created_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('created_time'))?>)</span></td>
   					</tr>
   					<tr>
   						<th>Grabbed:</th>
   						<? if (strtotime($job->get('taken_time')) > 0): ?>
-  							<td><?= Utility::formatDatetime($job->get('taken_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('taken_time'))?>)</span></td>
+  							<td><?= Utility::formatDateTime($job->get('taken_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('taken_time'))?>)</span></td>
   						<? else: ?>
   							<td><span class="muted">n/a</span></td>
   						<? endif?>
@@ -61,7 +61,7 @@
   					<tr>
   						<th>Sliced:</th>
   						<? if (strtotime($job->get('slice_complete_time')) > 0): ?>
-  							<td><?= Utility::formatDatetime($job->get('slice_complete_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('slice_complete_time'))?>)</span></td>
+  							<td><?= Utility::formatDateTime($job->get('slice_complete_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('slice_complete_time'))?>)</span></td>
   						<? else: ?>
   							<td><span class="muted">n/a</span></td>
   						<? endif?>
@@ -69,7 +69,7 @@
   					<tr>
   						<th>Downloaded:</th>
   						<? if (strtotime($job->get('downloaded_time')) > 0): ?>
-  							<td><?= Utility::formatDatetime($job->get('downloaded_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('downloaded_time'))?>)</span></td>
+  							<td><?= Utility::formatDateTime($job->get('downloaded_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('downloaded_time'))?>)</span></td>
   						<? else: ?>
   							<td><span class="muted">n/a</span></td>
   						<? endif?>
@@ -77,7 +77,7 @@
   					<tr>
   						<th>Print Complete:</th>
   						<? if (strtotime($job->get('finished_time')) > 0): ?>
-  							<td><?= Utility::formatDatetime($job->get('finished_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('finished_time'))?>)</span></td>
+  							<td><?= Utility::formatDateTime($job->get('finished_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('finished_time'))?>)</span></td>
   						<? else: ?>
   							<td><span class="muted">n/a</span></td>
   						<? endif?>
@@ -85,7 +85,7 @@
   					<tr>
   						<th>Finished:</th>
   						<? if (strtotime($job->get('verified_time')) > 0): ?>
-  							<td><?= Utility::formatDatetime($job->get('verified_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('verified_time'))?>)</span></td>
+  							<td><?= Utility::formatDateTime($job->get('verified_time'))?> <span class="muted">(<?=Utility::relativeTime($job->get('verified_time'))?>)</span></td>
   						<? else: ?>
   							<td><span class="muted">n/a</span></td>
   						<? endif?>

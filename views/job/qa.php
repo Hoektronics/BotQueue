@@ -2,7 +2,7 @@
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
 
-  <h2>Awesome!  The printer <?=$bot->getLink()?> has completed the <?=$job->getLink()?> job.</h3>
+  <h2>Awesome!  The printer <?=$bot->getLink()?> has completed the <?=$job->getLink()?> job.</h2>
 
   <div class="row">
     <div class="span6">
