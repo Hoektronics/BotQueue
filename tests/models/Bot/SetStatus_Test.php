@@ -64,7 +64,7 @@ class SetStatusTest extends BotQueue_Unit_Test
 		$this->states[BotState::Slicing][BotState::Waiting] = true;
 		$this->states[BotState::Slicing][BotState::Error] = true;
 		$this->states[BotState::Slicing][BotState::Maintenance] = false;
-		$this->states[BotState::Slicing][BotState::Offline] = false;
+		$this->states[BotState::Slicing][BotState::Offline] = true;
 		$this->states[BotState::Slicing][BotState::Retired] = false;
 		
 		$this->states[BotState::Working] = array();

@@ -67,6 +67,7 @@ class Bot extends Model
 				case BotState::Working:
 				case BotState::Paused:
 				case BotState::Error:
+				case BotState::Offline:
 					break;
 				default:
 					$invalidStateChange = true;
