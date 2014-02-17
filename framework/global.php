@@ -49,7 +49,7 @@ class BotQueue_Loader
 {
 	static public function __autoload($class)
 	{
-		$fileName = strtolower($class) . ".php";
+		$fileName = "/" . strtolower($class) . ".php";
 
         $di = new RecursiveDirectoryIterator(MODELS_DIR);
         foreach (new RecursiveIteratorIterator($di) as $name => $file) {
