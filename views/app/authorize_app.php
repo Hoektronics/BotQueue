@@ -1,3 +1,12 @@
+<?
+/**
+ * @package botqueue_app
+ * @var string $megaerror
+ * @var OAuthConsumer $app
+ * @var OAuthToken $token
+ * @var Form $approve_form
+ */
+?>
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>

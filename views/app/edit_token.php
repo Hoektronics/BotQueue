@@ -1,3 +1,12 @@
+<?
+/**
+ * @package botqueue_app
+ * @var string $megaerror
+ * @var Form $form
+ * @var array $bots
+ * @var Bot $b
+ */
+?>
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>

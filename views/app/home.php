@@ -1,3 +1,12 @@
+<?
+/**
+ * @package botqueue_app
+ * @var array $requesting
+ * @var OAuthConsumer $a
+ * @var OAuthToken $t
+ * @var array $authorized
+ */
+?>
 <div class="row">
 	<div class="span6">
 		<h2>Bumblebee - Official Client App</h2>

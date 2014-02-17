@@ -1,3 +1,12 @@
+<?
+/**
+ * @package botqueue_app
+ * @var array $errorfields
+ * @var array $errors
+ * @var string $name
+ * @var string $app_url
+ */
+?>
 <form class="form-horizontal" method="post" autocomplete="off" action="/app/register">
  <input type="hidden" name="submit" value="1">
  <fieldset>
