@@ -161,7 +161,9 @@ class Slic3r(GenericSlicer):
           st = os.stat(self.slicePath)
           os.chmod(self.slicePath, st.st_mode | stat.S_IEXEC)
     else:
-      url = "https://raw.github.com/jnesselr/botqueue-engines/%s-%s/manifest.json" % (myos, self.config['engine']['path'])
+      user = 'Hoektronics'
+      repo = 'engines'
+      url = "https://raw.github.com/%s/%s/%s-%s/manifest.json" % (user, repo, myos, self.config['engine']['path'])
       manifestFile = "%s-%s-manifest.json"
       self.download(url, manifestFile)
       manifest = json.load(open(manifestFile, 'r'))
@@ -175,8 +177,8 @@ class Slic3r(GenericSlicer):
     try:
       #Is it already installed?
       if not os.path.exists(installPath):
-        enginePath = engine['path']
-        url = "https://github.com/Hoektronics/engines/archive/%s-%s.tar.gz" % (myos, enginePath)
+        enginePath = engine['path'])
+        url = "https://github.com/%s/%s/archive/%s-%s.tar.gz" % (user, repo, myos, enginePath)
         self.log.info("Downloading %s from %s" % (enginePath, url))
         tarName = "botqueue-engines-%s-%s" % (myos, enginePath)
         self.log.info("Extracting to %s" % (installPath))
