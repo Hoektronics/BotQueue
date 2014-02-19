@@ -16,7 +16,6 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-require_once(MODELS_DIR.'Bot/BotState.php');
 class SetStatusTest extends BotQueue_Unit_Test
 {
 	protected $states;
@@ -27,111 +26,16 @@ class SetStatusTest extends BotQueue_Unit_Test
 		$this->states = array();
 		$this->setup = array();
 
-		$this->setup[BotState::Idle] = array();
-		$this->setup[BotState::Idle][] = BotState::Idle;
-		$this->setup[BotState::Slicing][] = BotState::Idle;
-		$this->setup[BotState::Slicing][] = BotState::Slicing;
-		$this->setup[BotState::Working][] = BotState::Idle;
-		$this->setup[BotState::Working][] = BotState::Working;
-		$this->setup[BotState::Paused][] = BotState::Idle;
-		$this->setup[BotState::Paused][] = BotState::Working;
-		$this->setup[BotState::Paused][] = BotState::Paused;
-		$this->setup[BotState::Waiting][] = BotState::Idle;
-		$this->setup[BotState::Waiting][] = BotState::Working;
-		$this->setup[BotState::Waiting][] = BotState::Waiting;
-		$this->setup[BotState::Error][] = BotState::Idle;
-		$this->setup[BotState::Error][] = BotState::Error;
-		$this->setup[BotState::Maintenance][] = BotState::Maintenance;
-		$this->setup[BotState::Offline][] = BotState::Offline;
-		$this->setup[BotState::Retired][] = BotState::Retired;
+		$this->createSetupPaths();
 
-		$this->states[BotState::Idle] = array();
-		$this->states[BotState::Idle][BotState::Idle] = true;
-		$this->states[BotState::Idle][BotState::Slicing] = true;
-		$this->states[BotState::Idle][BotState::Working] = true;
-		$this->states[BotState::Idle][BotState::Paused] = false;
-		$this->states[BotState::Idle][BotState::Waiting] = false;
-		$this->states[BotState::Idle][BotState::Error] = true;
-		$this->states[BotState::Idle][BotState::Maintenance] = true;
-		$this->states[BotState::Idle][BotState::Offline] = true;
-		$this->states[BotState::Idle][BotState::Retired] = false;
-		
-		$this->states[BotState::Slicing] = array();
-		$this->states[BotState::Slicing][BotState::Idle] = false;
-		$this->states[BotState::Slicing][BotState::Slicing] = true;
-		$this->states[BotState::Slicing][BotState::Working] = true;
-		$this->states[BotState::Slicing][BotState::Paused] = true;
-		$this->states[BotState::Slicing][BotState::Waiting] = true;
-		$this->states[BotState::Slicing][BotState::Error] = true;
-		$this->states[BotState::Slicing][BotState::Maintenance] = false;
-		$this->states[BotState::Slicing][BotState::Offline] = true;
-		$this->states[BotState::Slicing][BotState::Retired] = false;
-		
-		$this->states[BotState::Working] = array();
-		$this->states[BotState::Working][BotState::Idle] = true;
-		$this->states[BotState::Working][BotState::Slicing] = true;
-		$this->states[BotState::Working][BotState::Working] = true;
-		$this->states[BotState::Working][BotState::Paused] = true;
-		$this->states[BotState::Working][BotState::Waiting] = true;
-		$this->states[BotState::Working][BotState::Error] = true;
-		$this->states[BotState::Working][BotState::Maintenance] = true;
-		$this->states[BotState::Working][BotState::Offline] = true;
-		$this->states[BotState::Working][BotState::Retired] = false;
-
-		$this->states[BotState::Paused] = array();
-		$this->states[BotState::Paused][BotState::Idle] = false;
-		$this->states[BotState::Paused][BotState::Slicing] = true;
-		$this->states[BotState::Paused][BotState::Working] = true;
-		$this->states[BotState::Paused][BotState::Paused] = true;
-		$this->states[BotState::Paused][BotState::Waiting] = false;
-		$this->states[BotState::Paused][BotState::Error] = false;
-		$this->states[BotState::Paused][BotState::Maintenance] = true;
-		$this->states[BotState::Paused][BotState::Offline] = true;
-		$this->states[BotState::Paused][BotState::Retired] = false;
-
-		$this->states[BotState::Waiting] = array();
-		$this->states[BotState::Waiting][BotState::Idle] = true;
-		$this->states[BotState::Waiting][BotState::Slicing] = false;
-		$this->states[BotState::Waiting][BotState::Working] = true;
-		$this->states[BotState::Waiting][BotState::Paused] = false;
-		$this->states[BotState::Waiting][BotState::Waiting] = true;
-		$this->states[BotState::Waiting][BotState::Error] = true;
-		$this->states[BotState::Waiting][BotState::Maintenance] = false;
-		$this->states[BotState::Waiting][BotState::Offline] = false;
-		$this->states[BotState::Waiting][BotState::Retired] = false;
-
-		$this->states[BotState::Error] = array();
-		$this->states[BotState::Error][BotState::Idle] = true;
-		$this->states[BotState::Error][BotState::Slicing] = false;
-		$this->states[BotState::Error][BotState::Working] = false;
-		$this->states[BotState::Error][BotState::Paused] = false;
-		$this->states[BotState::Error][BotState::Waiting] = false;
-		$this->states[BotState::Error][BotState::Error] = true;
-		$this->states[BotState::Error][BotState::Maintenance] = true;
-		$this->states[BotState::Error][BotState::Offline] = false;
-		$this->states[BotState::Error][BotState::Retired] = false;
-
-		$this->states[BotState::Offline] = array();
-		$this->states[BotState::Offline][BotState::Idle] = true;
-		$this->states[BotState::Offline][BotState::Slicing] = false;
-		$this->states[BotState::Offline][BotState::Working] = false;
-		$this->states[BotState::Offline][BotState::Paused] = false;
-		$this->states[BotState::Offline][BotState::Waiting] = false;
-		$this->states[BotState::Offline][BotState::Error] = false;
-		$this->states[BotState::Offline][BotState::Maintenance] = true;
-		$this->states[BotState::Offline][BotState::Offline] = true;
-		$this->states[BotState::Offline][BotState::Retired] = true;
-
-		$this->states[BotState::Retired] = array();
-		$this->states[BotState::Retired][BotState::Idle] = false;
-		$this->states[BotState::Retired][BotState::Slicing] = false;
-		$this->states[BotState::Retired][BotState::Working] = false;
-		$this->states[BotState::Retired][BotState::Paused] = false;
-		$this->states[BotState::Retired][BotState::Waiting] = false;
-		$this->states[BotState::Retired][BotState::Error] = false;
-		$this->states[BotState::Retired][BotState::Maintenance] = false;
-		$this->states[BotState::Retired][BotState::Offline] = false;
-		$this->states[BotState::Retired][BotState::Retired] = true;
+		$this->createIdleStateChanges();
+		$this->createSlicingStateChanges();
+		$this->createWorkingStateChanges();
+		$this->createPausedStateChanges();
+		$this->createWaitingStateChanges();
+		$this->createErrorStateChanges();
+		$this->createOfflineStateChanges();
+		$this->createRetiredStateChanges();
 	}
 
 	public function testAllStates()
@@ -177,6 +81,139 @@ class SetStatusTest extends BotQueue_Unit_Test
 			if(!$exceptionThrown)
 				$this->fail($from . " to " . $to . " Failed");
 		}
+	}
+
+	protected function createSetupPaths()
+	{
+		$this->setup[BotState::Idle] = array();
+		$this->setup[BotState::Idle][] = BotState::Idle;
+		$this->setup[BotState::Slicing][] = BotState::Idle;
+		$this->setup[BotState::Slicing][] = BotState::Slicing;
+		$this->setup[BotState::Working][] = BotState::Idle;
+		$this->setup[BotState::Working][] = BotState::Working;
+		$this->setup[BotState::Paused][] = BotState::Idle;
+		$this->setup[BotState::Paused][] = BotState::Working;
+		$this->setup[BotState::Paused][] = BotState::Paused;
+		$this->setup[BotState::Waiting][] = BotState::Idle;
+		$this->setup[BotState::Waiting][] = BotState::Working;
+		$this->setup[BotState::Waiting][] = BotState::Waiting;
+		$this->setup[BotState::Error][] = BotState::Idle;
+		$this->setup[BotState::Error][] = BotState::Error;
+		$this->setup[BotState::Maintenance][] = BotState::Maintenance;
+		$this->setup[BotState::Offline][] = BotState::Offline;
+		$this->setup[BotState::Retired][] = BotState::Retired;
+	}
+
+	protected function createIdleStateChanges()
+	{
+		$this->states[BotState::Idle] = array();
+		$this->states[BotState::Idle][BotState::Idle] = true;
+		$this->states[BotState::Idle][BotState::Slicing] = true;
+		$this->states[BotState::Idle][BotState::Working] = true;
+		$this->states[BotState::Idle][BotState::Paused] = false;
+		$this->states[BotState::Idle][BotState::Waiting] = false;
+		$this->states[BotState::Idle][BotState::Error] = true;
+		$this->states[BotState::Idle][BotState::Maintenance] = true;
+		$this->states[BotState::Idle][BotState::Offline] = true;
+		$this->states[BotState::Idle][BotState::Retired] = false;
+	}
+
+	protected function createSlicingStateChanges()
+	{
+		$this->states[BotState::Slicing] = array();
+		$this->states[BotState::Slicing][BotState::Idle] = true;
+		$this->states[BotState::Slicing][BotState::Slicing] = true;
+		$this->states[BotState::Slicing][BotState::Working] = true;
+		$this->states[BotState::Slicing][BotState::Paused] = true;
+		$this->states[BotState::Slicing][BotState::Waiting] = true;
+		$this->states[BotState::Slicing][BotState::Error] = true;
+		$this->states[BotState::Slicing][BotState::Maintenance] = false;
+		$this->states[BotState::Slicing][BotState::Offline] = true;
+		$this->states[BotState::Slicing][BotState::Retired] = false;
+	}
+
+	protected function createWorkingStateChanges()
+	{
+		$this->states[BotState::Working] = array();
+		$this->states[BotState::Working][BotState::Idle] = true;
+		$this->states[BotState::Working][BotState::Slicing] = true;
+		$this->states[BotState::Working][BotState::Working] = true;
+		$this->states[BotState::Working][BotState::Paused] = true;
+		$this->states[BotState::Working][BotState::Waiting] = true;
+		$this->states[BotState::Working][BotState::Error] = true;
+		$this->states[BotState::Working][BotState::Maintenance] = true;
+		$this->states[BotState::Working][BotState::Offline] = true;
+		$this->states[BotState::Working][BotState::Retired] = false;
+	}
+
+	protected function createPausedStateChanges()
+	{
+		$this->states[BotState::Paused] = array();
+		$this->states[BotState::Paused][BotState::Idle] = false;
+		$this->states[BotState::Paused][BotState::Slicing] = true;
+		$this->states[BotState::Paused][BotState::Working] = true;
+		$this->states[BotState::Paused][BotState::Paused] = true;
+		$this->states[BotState::Paused][BotState::Waiting] = false;
+		$this->states[BotState::Paused][BotState::Error] = false;
+		$this->states[BotState::Paused][BotState::Maintenance] = true;
+		$this->states[BotState::Paused][BotState::Offline] = true;
+		$this->states[BotState::Paused][BotState::Retired] = false;
+	}
+
+	protected function createWaitingStateChanges()
+	{
+		$this->states[BotState::Waiting] = array();
+		$this->states[BotState::Waiting][BotState::Idle] = true;
+		$this->states[BotState::Waiting][BotState::Slicing] = false;
+		$this->states[BotState::Waiting][BotState::Working] = true;
+		$this->states[BotState::Waiting][BotState::Paused] = false;
+		$this->states[BotState::Waiting][BotState::Waiting] = true;
+		$this->states[BotState::Waiting][BotState::Error] = true;
+		$this->states[BotState::Waiting][BotState::Maintenance] = false;
+		$this->states[BotState::Waiting][BotState::Offline] = false;
+		$this->states[BotState::Waiting][BotState::Retired] = false;
+	}
+
+	protected function createErrorStateChanges()
+	{
+		$this->states[BotState::Error] = array();
+		$this->states[BotState::Error][BotState::Idle] = true;
+		$this->states[BotState::Error][BotState::Slicing] = false;
+		$this->states[BotState::Error][BotState::Working] = false;
+		$this->states[BotState::Error][BotState::Paused] = false;
+		$this->states[BotState::Error][BotState::Waiting] = false;
+		$this->states[BotState::Error][BotState::Error] = true;
+		$this->states[BotState::Error][BotState::Maintenance] = true;
+		$this->states[BotState::Error][BotState::Offline] = false;
+		$this->states[BotState::Error][BotState::Retired] = false;
+	}
+
+	protected function createOfflineStateChanges()
+	{
+		$this->states[BotState::Offline] = array();
+		$this->states[BotState::Offline][BotState::Idle] = true;
+		$this->states[BotState::Offline][BotState::Slicing] = false;
+		$this->states[BotState::Offline][BotState::Working] = false;
+		$this->states[BotState::Offline][BotState::Paused] = false;
+		$this->states[BotState::Offline][BotState::Waiting] = false;
+		$this->states[BotState::Offline][BotState::Error] = false;
+		$this->states[BotState::Offline][BotState::Maintenance] = true;
+		$this->states[BotState::Offline][BotState::Offline] = true;
+		$this->states[BotState::Offline][BotState::Retired] = true;
+	}
+
+	protected function createRetiredStateChanges()
+	{
+		$this->states[BotState::Retired] = array();
+		$this->states[BotState::Retired][BotState::Idle] = false;
+		$this->states[BotState::Retired][BotState::Slicing] = false;
+		$this->states[BotState::Retired][BotState::Working] = false;
+		$this->states[BotState::Retired][BotState::Paused] = false;
+		$this->states[BotState::Retired][BotState::Waiting] = false;
+		$this->states[BotState::Retired][BotState::Error] = false;
+		$this->states[BotState::Retired][BotState::Maintenance] = false;
+		$this->states[BotState::Retired][BotState::Offline] = false;
+		$this->states[BotState::Retired][BotState::Retired] = true;
 	}
 }
 
