@@ -1,5 +1,5 @@
 <div class="btn-group bot_status_button">
-  <a id="bot_status_button_<?=$bot->id?>" class="btn btn-mini btn-bot-status btn-<?=$bot->getStatusHTMLClass()?> dropdown-toggle" data-toggle="dropdown" href="#">
+  <a id="bot_status_button_<?=$bot->id?>" class="btn btn-mini btn-bot-status btn-<?=BotStatus::getStatusHTMLClass($bot)?> dropdown-toggle" data-toggle="dropdown" href="#">
     <span id="bot_status_txt_<?=$bot->id?>"><?=$bot->getStatus()?></span>
     <span class="caret"></span>
   </a>

@@ -20,7 +20,7 @@
           <? endif ?>
           </span>
     	  </h3>
-      	<?=$b->getStatusHTML()?>
+      	<?=BotStatus::getStatusHTML($b)?>
       	<div class="clearfix"></div>
     	</div>
   	

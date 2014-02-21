@@ -19,7 +19,7 @@
 				<tbody>
 					<tr>
 						<th>Status:</th>
-						<td><?=$bot->getStatusHTML() ?></td>
+						<td><?=BotStatus::getStatusHTML($bot)?></td>
 					</tr>
 					<? if ($bot->get('remote_ip')): ?>
   					<tr>

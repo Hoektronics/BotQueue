@@ -190,27 +190,6 @@ class Bot extends Model
 		return $config;
 	}
 
-	public function getStatusHTML()
-	{
-		return Controller::byName('bot')->renderView('statusbutton', array('bot' => $this));
-	}
-
-	public function getStatusHTMLClass()
-	{
-		$s2c = array(
-			'idle' => 'success',
-			'working' => 'info',
-			'slicing' => 'info',
-			'waiting' => 'warning',
-			'error' => 'danger',
-			'offline' => 'inverse',
-			'retired' => 'inverse',
-		);
-
-		return $s2c[$this->getStatus()];
-	}
-
-
 	public function getUrl()
 	{
 		return "/bot:" . $this->id;

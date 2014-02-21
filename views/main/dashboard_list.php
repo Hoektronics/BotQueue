@@ -30,7 +30,7 @@
 			<? $sj = $j->getSliceJob() ?>
 			<tr>
 				<td><?=$b->getLink()?></td>
-				<td><?=$b->getStatusHTML()?></td>
+				<td><?=BotStatus::getStatusHTML($b)?></td>
 				<td class="muted"><?=BotLastSeen::getHTML($b)?></td>
 				<? if ($j->isHydrated()): ?>
 					<td><?=$j->getLink()?></td>

@@ -10,7 +10,7 @@
         <? $bot = $row['Bot'] ?>
         <tr>
           <td><?=$bot->getLink()?></td>
-          <td><?=$bot->getStatusHTML()?></td>
+          <td><?=BotStatus::getStatusHTML($bot)?></td>
           <td><?=Utility::relativeTime($bot->get('last_seen'))?></td>
         </tr>
       <? endforeach ?>
