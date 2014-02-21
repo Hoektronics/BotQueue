@@ -391,13 +391,14 @@ class SlicerController extends Controller
 
         //load up our engines.
         if (User::isAdmin())
-            $engines = SliceEngine::getAllEngines()->getAll();
+            $availableEngines = SliceEngine::getAllEngines()->getAll();
         else
-            $engines = SliceEngine::getPublicEngines()->getAll();
-        foreach ($engines AS $row) {
+            $availableEngines = SliceEngine::getPublicEngines()->getAll();
+		$engines = array();
+        foreach ($availableEngines AS $row) {
             /* @var $e SliceEngine */
             $e = $row['SliceEngine'];
-            $engs[$e->id] = $e->getName();
+            $engines[$e->id] = $e->getName();
         }
         $form->add(new SelectField(array(
             'name' => 'engine_id',
