@@ -58,7 +58,7 @@ class User extends Model
         else if ($_COOKIE['token'])
             self::loginWithToken($_COOKIE['token']);
 
-        //if that user wasnt found, bail!
+        //if that user wasn't found, bail!
         if (self::$me instanceOf User && !self::$me->isHydrated())
             self::$me = null;
 
