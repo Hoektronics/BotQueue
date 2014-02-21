@@ -1002,7 +1002,7 @@ class BotController extends Controller
 
 		$this->setTitle("Live Bots View");
 
-		$sql = "SELECT id, queue_id, job_id FROM bots WHERE webcam_image_id != 0 AND last_seen > NOW() - 300 ORDER BY last_seen DESC";
+		$sql = "SELECT id, queue_id, job_id FROM bots WHERE webcam_image_id != 0 AND last_seen > NOW() - 3600 ORDER BY last_seen DESC";
 		$bots = new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
 		$this->set('bots', $bots->getRange(0, 24));
 		$this->set('dashboard_style', 'medium_thumbnails');
