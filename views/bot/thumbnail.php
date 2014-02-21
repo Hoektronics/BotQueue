@@ -1,3 +1,12 @@
+<?
+/**
+ * @namespace botqueue_bot
+ * @var int $size
+ * @var Bot $b
+ * @var Job $j
+ * @var S3File $webcam
+ */
+?>
 <div class="span<?=$size?> bot_thumbnail bot_thumbnail_<?=$size?>">
   <div class="bot_thumbnail_content">
     <div class="bot_thumbnail_stretcher"></div>
@@ -5,7 +14,7 @@
     	<div class="bot_header">
     	  <h3>
     	    <?=$b->getLink()?>
-    	    <span class="muted">- <?=$b->getLastSeenHTML()?>
+    	    <span class="muted">- <?= BotLastSeen::getHTML($b) ?>
     	    <? if ($j->isHydrated() && $j->get('status') == 'taken' && $size > 3): ?>
       		  - Runtime: <?=$j->getElapsedText()?>
           <? endif ?>

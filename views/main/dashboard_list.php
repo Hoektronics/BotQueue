@@ -1,3 +1,13 @@
+<?
+/**
+ * @namespace botqueue_main
+ * @var array $bots
+ * @var Bot $b
+ * @var Queue $q
+ * @var Job $j
+ * @var SliceJob $sj
+ */
+?>
 <table class="table table-striped table-bordered table-condensed">
 	<thead>
 		<tr>
@@ -21,7 +31,7 @@
 			<tr>
 				<td><?=$b->getLink()?></td>
 				<td><?=$b->getStatusHTML()?></td>
-				<td class="muted"><?=$b->getLastSeenHTML()?></td>
+				<td class="muted"><?=BotLastSeen::getHTML($b)?></td>
 				<? if ($j->isHydrated()): ?>
 					<td><?=$j->getLink()?></td>
           <? $temps = JSON::decode($b->get('temperature_data')) ?>
