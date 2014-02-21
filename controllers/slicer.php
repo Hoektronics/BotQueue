@@ -341,11 +341,13 @@ class SlicerController extends Controller
             //load the data and check for errors.
             if ($this->args('id')) {
                 $engine = new SliceEngine($this->args('id'));
+
                 if (!$engine->isHydrated())
                     throw new Exception("That slice engine does not exist.");
                 if (!$engine->get('is_public') || !User::isAdmin())
                     throw new Exception("You do not have access to view this slice engine.");
                 $this->setTitle("Create Slice Config - " . $engine->getName());
+
             } else {
                 $this->setTitle("Create Slice Config");
                 $engine = new SliceEngine();
@@ -353,11 +355,20 @@ class SlicerController extends Controller
 
             //setup some objects
             $config = new SliceConfig();
+
+			// If the engine has an id, set the engine_id in the config
+			if ($engine->id) {
+				$config->set('engine_id', $engine->id);
+			}
+
             $form = $this->_createSliceConfigUploadForm($config);
-            if ($engine->id)
+
+            if ($engine->id) {
                 $form->action = $engine->getUrl() . "/createconfig";
-            else
+			} else {
                 $form->action = "/slicer/createconfig";
+			}
+			
             $this->set('form', $form);
 
             //check our form
@@ -502,7 +513,7 @@ class SlicerController extends Controller
             if (!$config->isHydrated())
                 throw new Exception("That slice config does not exist.");
 
-            if (User::$me->id != $config->get('user_id'))
+            if (User::$me->id != $config->get('user_id') && !User::isAdmin())
                 throw new Exception("You cannot edit this slice config.");
 
             $this->setTitle("Edit Slice Config - " . $config->getName());
