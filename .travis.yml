@@ -8,6 +8,11 @@ notifications:
   email:
     - jnesselr@harding.edu
 
+# whitelist
+branches:
+  only:
+    - 0.5X-dev
+
 before_install:
   - sudo apt-get update > /dev/null
 
@@ -31,4 +36,4 @@ before_script:
   - cp extensions/config-travis.php extensions/config.php
 
 script:
-  - phpunit tests
+  - phpunit test
