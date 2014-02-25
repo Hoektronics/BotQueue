@@ -37,6 +37,7 @@ CREATE TABLE `bots` (
   `local_ip` varchar(255) NOT NULL,
   `driver_name` varchar(255) NOT NULL DEFAULT 'printcore',
   `driver_config` text NOT NULL,
+  `webcam_image_id` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `identifier` (`identifier`),
@@ -340,4 +341,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(6, 'Creating Engine OS table');
+INSERT INTO patches(patch_num, description) VALUES(7, 'Adding webcam image to bot temporarily');
