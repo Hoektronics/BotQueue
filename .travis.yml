@@ -36,4 +36,4 @@ before_script:
   - cp extensions/config-travis.php extensions/config.php
 
 script:
-  - phpunit test
+  - phpunit tests
