@@ -106,9 +106,10 @@
 							<li class="<?= ($area == 'help') ? 'active' : '' ?>"><a href="/help">Help</a></li>
 							<? if (User::isAdmin()): ?>
 								<li class="<?= ($area == 'admin') ? 'active' : '' ?> dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b
-											class="caret"></b></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
 									<ul class="dropdown-menu">
+										<li><a href="/admin">Admin Panel</a></li>
+										<li><a href="/bots/live">Live view</a></li>
 									</ul>
 								</li>
 							<? endif ?>
