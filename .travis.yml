@@ -21,8 +21,8 @@ install:
   - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential libpcre3-dev php5-curl libcurl3 php5-dev libcurl4-gnutls-dev libmagic-dev
 
   # Install oauth and pecl_http
-  - sudo pecl install oauth
-  - sudo pecl install pecl_http
+  - printf "\n" | sudo pecl install oauth
+  - printf "\n" | sudo pecl install pecl_http
 
   # Discover some channels
   - sudo pear channel-discover pear.amazonwebservices.com
