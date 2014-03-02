@@ -51,8 +51,11 @@ class BotQueue_Loader
 	{
 		$fileName = "/" . strtolower($class) . ".php";
 
+        error_log("Looking for: ". $fileName);
+
         $di = new RecursiveDirectoryIterator(MODELS_DIR);
         foreach (new RecursiveIteratorIterator($di) as $name => $file) {
+            error_log("Checking: ". $name);
             if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
                 include($name);
                 return true;
@@ -61,6 +64,7 @@ class BotQueue_Loader
 
         $di = new RecursiveDirectoryIterator(CLASSES_DIR);
         foreach (new RecursiveIteratorIterator($di) as $name => $file) {
+            error_log("Checking: ". $name);
             if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
                 include($name);
                 return true;
