@@ -22,6 +22,8 @@ array_pop($parts);
 array_pop($parts);
 $base_dir = join('/', $parts);
 
+print("Base dir: ". $base_dir . "\n");
+
 include($base_dir.'/extensions/global.php');
 
 abstract class BotQueue_Unit_Test extends PHPUnit_Framework_TestCase {
