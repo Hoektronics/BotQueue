@@ -35,8 +35,8 @@
         line-height: 50px;
         top: 50%;
         left: 50%;
-		  margin: -25px 0px 0px -100px;
-		  padding: 0px;
+        margin: -25px 0px 0px -100px;
+        padding: 0px;
         text-align: center;
         z-index: 1000;
       }

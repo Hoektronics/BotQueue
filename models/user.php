@@ -282,10 +282,7 @@ class User extends Model
         $q = new Queue(db()->getValue($sql));
 
         if (!$q->isHydrated()) {
-            $sql = "
-  				SELECT id FROM queues
-  				ORDER BY id LIMIT 1
-  			";
+            $sql = 'SELECT id FROM queues ORDER BY id LIMIT 1';
             $q = new Queue(db()->getValue($sql));
         }
 
