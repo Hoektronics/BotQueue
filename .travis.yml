@@ -18,7 +18,7 @@ before_install:
 
 install:
   # Install the packages we need
-  - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential libpcre3-dev php5-curl libcurl3 php5-dev libcurl4-gnutls-dev libmagic-dev
+  - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential php5-curl php5-dev libmagic-dev
 
   # Install oauth and pecl_http
   - printf "\n" | sudo pecl install oauth
@@ -36,4 +36,4 @@ before_script:
   - cp extensions/config-travis.php extensions/config.php
 
 script:
-  - phpunit tests
+  - phpunit --bootstrap extensions/global.php tests

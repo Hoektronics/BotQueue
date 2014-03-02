@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 	This file is part of BotQueue.
 
@@ -51,11 +51,8 @@ class BotQueue_Loader
 	{
 		$fileName = "/" . strtolower($class) . ".php";
 
-        print("Looking for: ". $fileName . "\n");
-
         $di = new RecursiveDirectoryIterator(MODELS_DIR);
         foreach (new RecursiveIteratorIterator($di) as $name => $file) {
-            print("Checking: ". $name . "\n");
             if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
                 include($name);
                 return true;
@@ -64,7 +61,6 @@ class BotQueue_Loader
 
         $di = new RecursiveDirectoryIterator(CLASSES_DIR);
         foreach (new RecursiveIteratorIterator($di) as $name => $file) {
-            print("Checking: ". $name . "\n");
             if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
                 include($name);
                 return true;

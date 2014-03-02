@@ -1,4 +1,4 @@
-<?
+<?php
   /*
     This file is part of BotQueue.
 
@@ -20,9 +20,6 @@
 	$parts = explode("/", dirname(__FILE__));
 	array_pop($parts);
 	$base_dir = join('/', $parts);
-
-    print("Base dir: ". $base_dir ."\n");
-    print("File exists: ". is_file($base_dir . "/framework/global.php"). "\n");
 
 	include($base_dir . "/framework/global.php");
 	include(EXTENSIONS_DIR . "config.php");

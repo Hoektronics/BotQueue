@@ -16,16 +16,6 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-// Really, we just need to include the global state
-$parts = explode("/", __FILE__);
-array_pop($parts);
-array_pop($parts);
-$base_dir = join('/', $parts);
-
-print("Base dir: ". $base_dir . "\n");
-
-include($base_dir.'/extensions/global.php');
-
 abstract class BotQueue_Unit_Test extends PHPUnit_Framework_TestCase {
 
 } 
