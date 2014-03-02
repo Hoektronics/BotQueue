@@ -1,4 +1,4 @@
-BotQueue
+BotQueue [![Build Status](https://travis-ci.org/Hoektronics/BotQueue.png?branch=0.5X-dev)](https://travis-ci.org/Hoektronics/BotQueue)
 ========
 
 Control your 3D Printer over the Internet.  Out of the box support for slicing, webcams, queue-based job management, temperature logging, API, and much more.  BotQueue works great for controlling a single 3D printer or dozens of printers.  Control your bot from anywhere in the world, even using your cellphone!  Currently supports RepRap style machines, but will expand to others if there is interest.
