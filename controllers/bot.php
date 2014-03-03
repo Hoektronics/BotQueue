@@ -242,8 +242,10 @@ class BotController extends Controller
 
 			if ($this->args('setup') != '') {
 				$this->set('active_form', $this->args('setup'));
+				$this->set('setup_mode', true);
 			} else {
 				$this->set('active_form', 'info');
+				$this->set('setup_mode', false);
 			}
 
 			//handle our form

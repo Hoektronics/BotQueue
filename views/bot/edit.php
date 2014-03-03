@@ -8,13 +8,13 @@
     <div class="span3">
       <ul class="nav nav-list" id="editTab">
         <li<?=($active_form == 'info' ? " class=\"active\"" : '')?>>
-			<a<?=($active_form === null ? " href=\"#bot_details\" data-toggle=\"tab\"" : '')?>>Information / Details</a>
+			<a<?=($setup_mode ? '' : " href=\"#bot_details\" data-toggle=\"tab\"")?>>Information / Details</a>
 		</li>
         <li<?=($active_form == 'slicing' ? " class=\"active\"" : '')?>>
-			<a<?=($active_form === null ? " href=\"#bot_details\" data-toggle=\"tab\"" : '')?>>Slicing Setup</a>
+			<a<?=($setup_mode ? '' : " href=\"#bot_slicing\" data-toggle=\"tab\"")?>>Slicing Setup</a>
 		</li>
         <li<?=($active_form == 'driver' ? " class=\"active\"" : '')?>>
-			<a<?=($active_form === null ? " href=\"#bot_details\" data-toggle=\"tab\"" : '')?>>Driver Configuration</a>
+			<a<?=($setup_mode ? '' : " href=\"#bot_configuration\" data-toggle=\"tab\"")?>>Driver Configuration</a>
 		</li>
       </ul>
     </div>
