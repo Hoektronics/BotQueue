@@ -23,7 +23,8 @@ class AdminController extends Controller
     {
         $this->assertAdmin();
         $this->set('area', 'admin');
-
+		$this->set('active_form', 'status');
+		$this->set('setup_mode', false);
     }
 }
 
