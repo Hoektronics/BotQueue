@@ -106,7 +106,8 @@
 							<li class="<?= ($area == 'help') ? 'active' : '' ?>"><a href="/help">Help</a></li>
 							<? if (User::isAdmin()): ?>
 								<li class="<?= ($area == 'admin') ? 'active' : '' ?> dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b
+											class="caret"></b></a>
 									<ul class="dropdown-menu">
 										<li><a href="/admin">Admin Panel</a></li>
 										<li><a href="/bots/live">Live view</a></li>
@@ -119,17 +120,20 @@
 							<li class="dropdown">
 								<? if (User::isLoggedIn()): ?>
 									<a href="#" class="dropdown-toggle"
-									   data-toggle="dropdown">Hello, <?= User::$me->getName() ?> <b
-											class="caret"></b></a>
+									   data-toggle="dropdown">Hello, <?= User::$me->getName() ?>
+										<b class="caret"></b>
+									</a>
 									<ul class="dropdown-menu">
 										<li><a href="/preferences">Preferences</a></li>
 										<li class="divider"></li>
 										<li><a href="/logout">Log Out</a></li>
 									</ul>
 								<? else: ?>
-							<li><a href="/login"
+							<li>
+								<a href="/login"
 								   style="padding-left: 17px; background: transparent url('/img/lock_icon.png') no-repeat 0px center;">Log
-									in</a></li>
+									in</a>
+							</li>
 							<li><a href="/register">Sign up</a></li>
 							<? endif ?>
 							</li>

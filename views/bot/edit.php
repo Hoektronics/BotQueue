@@ -41,7 +41,7 @@
   	    <? endif ?>
       </div>
     </div>
-	</div>
+  </div>
   <script>
     function update_driver_form()
     {
