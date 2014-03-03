@@ -28,14 +28,12 @@
       <div class="row">
         <div class="span6">
           <div class="alert alert-info">
-            <p>
-              Before this printer can start the next job, you need to do a few things:
+            <p>Before this printer can start the next job, you need to do a few things:</p>
               <ol>
                 <li>Remove the print from the machine.</li>
                 <li>Inspect the print for errors or problems.</li>
                 <li>Make sure the machine is ready for printing.</li>
               </ol>
-            </p>
           </div>
         </div>
         <div class="span6">

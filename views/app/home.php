@@ -27,12 +27,10 @@
 			</li>
 			<li>MakerBot Replicator - experimental / shitty driver that barely works.</li>
 		</ul>
-		<p>
-			It can control the following types of machines:
+		<p>It can control the following types of machines:</p>
 		<ul>
 
 		</ul>
-		</p>
 		<p>
 			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is
 			<strong>v<? $c = Controller::byName('APIV1');

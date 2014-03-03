@@ -12,12 +12,10 @@
   
   <div class="row">
     <div class="span6">
-        <div class="alert alert-success">
-          <input type="hidden" name="submit" value="1">
-          <a class="btn btn-large btn-success" style="float:right;" href="<?=$job->getUrl()?>/pass">PASS</a>
-          <span>If everything is okay, click <strong>Pass</strong>.<br/> The slice job will be marked as good and your bot will run it.</span>
-        </div>
-      </form>
+      <div class="alert alert-success">
+        <a class="btn btn-large btn-success" style="float:right;" href="<?=$job->getUrl()?>/pass">PASS</a>
+        <span>If everything is okay, click <strong>Pass</strong>.<br/> The slice job will be marked as good and your bot will run it.</span>
+      </div>
     </div>
     <div class="span6">
       <div class="alert alert-error">

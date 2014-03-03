@@ -117,8 +117,8 @@
 						</ul>
 						<ul class="nav pull-right">
 							<li class="divider-vertical"></li>
-							<li class="dropdown">
-								<? if (User::isLoggedIn()): ?>
+							<? if (User::isLoggedIn()): ?>
+								<li class="dropdown">
 									<a href="#" class="dropdown-toggle"
 									   data-toggle="dropdown">Hello, <?= User::$me->getName() ?>
 										<b class="caret"></b>
@@ -128,7 +128,8 @@
 										<li class="divider"></li>
 										<li><a href="/logout">Log Out</a></li>
 									</ul>
-								<? else: ?>
+								</li>
+							<? else: ?>
 							<li>
 								<a href="/login"
 								   style="padding-left: 17px; background: transparent url('/img/lock_icon.png') no-repeat 0px center;">Log
@@ -136,7 +137,6 @@
 							</li>
 							<li><a href="/register">Sign up</a></li>
 							<? endif ?>
-							</li>
 						</ul>
 						<!--
 			  <form class="navbar-search pull-right" action="">

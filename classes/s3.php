@@ -173,15 +173,15 @@ class S3
   private static $__signingKeyResource = false;
 
 
-  /**
-   * Constructor - if you're not using the class statically
-   *
-   * @param string $accessKey Access key
-   * @param string $secretKey Secret key
-   * @param boolean $useSSL Enable SSL
-   * @param string $endpoint Amazon URI
-   * @return void
-   */
+	/**
+	 * Constructor - if you're not using the class statically
+	 *
+	 * @param string $accessKey Access key
+	 * @param string $secretKey Secret key
+	 * @param boolean $useSSL Enable SSL
+	 * @param string $endpoint Amazon URI
+	 * @return \S3
+	 */
   public function __construct($accessKey = null, $secretKey = null, $useSSL = false, $endpoint = 's3.amazonaws.com')
   {
     if ($accessKey !== null && $secretKey !== null)
@@ -256,15 +256,15 @@ class S3
   }
 
 
-  /**
-   * Set proxy information
-   *
-   * @param string $host Proxy hostname and port (localhost:1234)
-   * @param string $user Proxy username
-   * @param string $pass Proxy password
-   * @param constant $type CURL proxy type
-   * @return void
-   */
+	/**
+	 * Set proxy information
+	 *
+	 * @param string $host Proxy hostname and port (localhost:1234)
+	 * @param string $user Proxy username
+	 * @param string $pass Proxy password
+	 * @param int $type CURL proxy type
+	 * @return void
+	 */
   public static function setProxy($host, $user = null, $pass = null, $type = CURLPROXY_SOCKS5)
   {
     self::$proxy = array('host' => $host, 'type' => $type, 'user' => $user, 'pass' => $pass);
@@ -283,16 +283,16 @@ class S3
   }
 
 
-  /**
-   * Set AWS time correction offset (use carefully)
-   *
-   * This can be used when an inaccurate system time is generating
-   * invalid request signatures.  It should only be used as a last
-   * resort when the system time cannot be changed.
-   *
-   * @param string $offset Time offset (set to zero to use AWS server time)
-   * @return void
-   */
+	/**
+	 * Set AWS time correction offset (use carefully)
+	 *
+	 * This can be used when an inaccurate system time is generating
+	 * invalid request signatures.  It should only be used as a last
+	 * resort when the system time cannot be changed.
+	 *
+	 * @param int|string $offset Time offset (set to zero to use AWS server time)
+	 * @return void
+	 */
   public static function setTimeCorrectionOffset($offset = 0)
   {
     if ($offset == 0)
@@ -337,16 +337,17 @@ class S3
   }
 
 
-  /**
-   * Internal error handler
-   *
-   * @internal Internal error handler
-   * @param string $message Error message
-   * @param string $file Filename
-   * @param integer $line Line number
-   * @param integer $code Error code
-   * @return void
-   */
+	/**
+	 * Internal error handler
+	 *
+	 * @internal Internal error handler
+	 * @param string $message Error message
+	 * @param string $file Filename
+	 * @param integer $line Line number
+	 * @param integer $code Error code
+	 * @throws S3Exception
+	 * @return void
+	 */
   private static function __triggerError($message, $file, $line, $code = 0)
   {
     if (self::$useExceptions)
@@ -487,14 +488,14 @@ class S3
   }
 
 
-  /**
-   * Put a bucket
-   *
-   * @param string $bucket Bucket name
-   * @param constant $acl ACL flag
-   * @param string $location Set as "EU" to create buckets hosted in Europe
-   * @return boolean
-   */
+	/**
+	 * Put a bucket
+	 *
+	 * @param string $bucket Bucket name
+	 * @param string $acl ACL flag
+	 * @param bool|string $location Set as "EU" to create buckets hosted in Europe
+	 * @return boolean
+	 */
   public static function putBucket($bucket, $acl = self::ACL_PRIVATE, $location = false)
   {
     $rest = new S3Request('PUT', $bucket, '', self::$endpoint);
@@ -566,14 +567,14 @@ class S3
   }
 
 
-  /**
-   * Create input array info for putObject() with a resource
-   *
-   * @param string $resource Input resource to read from
-   * @param integer $bufferSize Input byte size
-   * @param string $md5sum MD5 hash to send (optional)
-   * @return array | false
-   */
+	/**
+	 * Create input array info for putObject() with a resource
+	 *
+	 * @param string $resource Input resource to read from
+	 * @param bool|int $bufferSize Input byte size
+	 * @param string $md5sum MD5 hash to send (optional)
+	 * @return array | false
+	 */
   public static function inputResource(&$resource, $bufferSize = false, $md5sum = '')
   {
     if (!is_resource($resource) || (int)$bufferSize < 0)
@@ -599,19 +600,19 @@ class S3
   }
 
 
-  /**
-   * Put an object
-   *
-   * @param mixed $input Input data
-   * @param string $bucket Bucket name
-   * @param string $uri Object URI
-   * @param constant $acl ACL constant
-   * @param array $metaHeaders Array of x-amz-meta-* headers
-   * @param array $requestHeaders Array of request headers or content type as a string
-   * @param constant $storageClass Storage class constant
-   * @param constant $serverSideEncryption Server-side encryption
-   * @return boolean
-   */
+	/**
+	 * Put an object
+	 *
+	 * @param mixed $input Input data
+	 * @param string $bucket Bucket name
+	 * @param string $uri Object URI
+	 * @param string $acl ACL constant
+	 * @param array $metaHeaders Array of x-amz-meta-* headers
+	 * @param array $requestHeaders Array of request headers or content type as a string
+	 * @param string $storageClass Storage class constant
+	 * @param string $serverSideEncryption Server-side encryption
+	 * @return boolean
+	 */
   public static function putObject($input, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $requestHeaders = array(), $storageClass = self::STORAGE_CLASS_STANDARD, $serverSideEncryption = self::SSE_NONE)
   {
     if ($input === false) return false;
@@ -687,34 +688,34 @@ class S3
   }
 
 
-  /**
-   * Put an object from a file (legacy function)
-   *
-   * @param string $file Input file path
-   * @param string $bucket Bucket name
-   * @param string $uri Object URI
-   * @param constant $acl ACL constant
-   * @param array $metaHeaders Array of x-amz-meta-* headers
-   * @param string $contentType Content type
-   * @return boolean
-   */
+	/**
+	 * Put an object from a file (legacy function)
+	 *
+	 * @param string $file Input file path
+	 * @param string $bucket Bucket name
+	 * @param string $uri Object URI
+	 * @param string $acl ACL constant
+	 * @param array $metaHeaders Array of x-amz-meta-* headers
+	 * @param string $contentType Content type
+	 * @return boolean
+	 */
   public static function putObjectFile($file, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $contentType = null)
   {
     return self::putObject(self::inputFile($file), $bucket, $uri, $acl, $metaHeaders, $contentType);
   }
 
 
-  /**
-   * Put an object from a string (legacy function)
-   *
-   * @param string $string Input data
-   * @param string $bucket Bucket name
-   * @param string $uri Object URI
-   * @param constant $acl ACL constant
-   * @param array $metaHeaders Array of x-amz-meta-* headers
-   * @param string $contentType Content type
-   * @return boolean
-   */
+	/**
+	 * Put an object from a string (legacy function)
+	 *
+	 * @param string $string Input data
+	 * @param string $bucket Bucket name
+	 * @param string $uri Object URI
+	 * @param string $acl ACL constant
+	 * @param array $metaHeaders Array of x-amz-meta-* headers
+	 * @param string $contentType Content type
+	 * @return boolean
+	 */
   public static function putObjectString($string, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $contentType = 'text/plain')
   {
     return self::putObject($string, $bucket, $uri, $acl, $metaHeaders, $contentType);
@@ -780,19 +781,19 @@ class S3
   }
 
 
-  /**
-   * Copy an object
-   *
-   * @param string $srcBucket Source bucket name
-   * @param string $srcUri Source object URI
-   * @param string $bucket Destination bucket name
-   * @param string $uri Destination object URI
-   * @param constant $acl ACL constant
-   * @param array $metaHeaders Optional array of x-amz-meta-* headers
-   * @param array $requestHeaders Optional array of request headers (content type, disposition, etc.)
-   * @param constant $storageClass Storage class constant
-   * @return mixed | false
-   */
+	/**
+	 * Copy an object
+	 *
+	 * @param string $srcBucket Source bucket name
+	 * @param string $srcUri Source object URI
+	 * @param string $bucket Destination bucket name
+	 * @param string $uri Destination object URI
+	 * @param string $acl ACL constant
+	 * @param array $metaHeaders Optional array of x-amz-meta-* headers
+	 * @param array $requestHeaders Optional array of request headers (content type, disposition, etc.)
+	 * @param string $storageClass Storage class constant
+	 * @return mixed | false
+	 */
   public static function copyObject($srcBucket, $srcUri, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $requestHeaders = array(), $storageClass = self::STORAGE_CLASS_STANDARD)
   {
     $rest = new S3Request('PUT', $bucket, $uri, self::$endpoint);
@@ -1204,20 +1205,20 @@ class S3
   }
 
 
-  /**
-   * Get upload POST parameters for form uploads
-   *
-   * @param string $bucket Bucket name
-   * @param string $uriPrefix Object URI prefix
-   * @param constant $acl ACL constant
-   * @param integer $lifetime Lifetime in seconds
-   * @param integer $maxFileSize Maximum filesize in bytes (default 5MB)
-   * @param string $successRedirect Redirect URL or 200 / 201 status code
-   * @param array $amzHeaders Array of x-amz-meta-* headers
-   * @param array $headers Array of request headers or content type as a string
-   * @param boolean $flashVars Includes additional "Filename" variable posted by Flash
-   * @return object
-   */
+	/**
+	 * Get upload POST parameters for form uploads
+	 *
+	 * @param string $bucket Bucket name
+	 * @param string $uriPrefix Object URI prefix
+	 * @param string $acl ACL constant
+	 * @param integer $lifetime Lifetime in seconds
+	 * @param integer $maxFileSize Maximum filesize in bytes (default 5MB)
+	 * @param string $successRedirect Redirect URL or 200 / 201 status code
+	 * @param array $amzHeaders Array of x-amz-meta-* headers
+	 * @param array $headers Array of request headers or content type as a string
+	 * @param boolean $flashVars Includes additional "Filename" variable posted by Flash
+	 * @return object
+	 */
   public static function getHttpUploadPostParams($bucket, $uriPrefix = '', $acl = self::ACL_PRIVATE, $lifetime = 3600,
                                                  $maxFileSize = 5242880, $successRedirect = "201", $amzHeaders = array(), $headers = array(), $flashVars = false)
   {
@@ -1573,14 +1574,14 @@ class S3
   }
 
 
-  /**
-   * Get a InvalidationBatch DOMDocument
-   *
-   * @internal Used to create XML in invalidateDistribution()
-   * @param array $paths Paths to objects to invalidateDistribution
-   * @param int $callerReference
-   * @return string
-   */
+	/**
+	 * Get a InvalidationBatch DOMDocument
+	 *
+	 * @internal Used to create XML in invalidateDistribution()
+	 * @param array $paths Paths to objects to invalidateDistribution
+	 * @param int|string $callerReference
+	 * @return string
+	 */
   private static function __getCloudFrontInvalidationBatchXML($paths, $callerReference = '0')
   {
     $dom = new DOMDocument('1.0', 'UTF-8');
@@ -2022,7 +2023,6 @@ final class S3Request
       else
       {
         $this->headers['Host'] = $this->endpoint;
-        $this->uri = $this->uri;
         if ($this->bucket !== '') $this->uri = '/'.$this->bucket.$this->uri;
         $this->bucket = '';
         $this->resource = $this->uri;
