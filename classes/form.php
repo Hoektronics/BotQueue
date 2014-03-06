@@ -216,8 +216,16 @@ class FormField
 		}
 
 		//no error? pull in our data
-		if (!$this->hasError)
-			$this->setValue($data[$this->name]);
+		if (!$this->hasError) {
+			// sanitize our data to prevent XSS
+			$sanitized_name = filter_var($data[$this->name], FILTER_SANITIZE_STRING);
+			if($sanitized_name === $data[$this->name]) {
+				$this->setValue($data[$this->name]);
+			} else {
+				$this->hasError = true;
+				$this->errorText = "Sorry, no HTML in this field, please";
+			}
+		}
 
 		//return false on error, true on success
 		return !$this->hasError;
