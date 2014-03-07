@@ -120,11 +120,16 @@ class Job extends Model
 		return $d;
 	}
 
-	public function canView()
+	public function isMine()
 	{
 		if ($this->get('user_id') == User::$me->id)
 			return true;
 		return false;
+	}
+
+	public function canView()
+	{
+		return $this->isMine();
 	}
 
 	public function canEdit()

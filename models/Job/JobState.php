@@ -16,14 +16,13 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-class BotState {
-	const Idle = 'idle';
+class JobState {
+	const Available = 'available';
+	const Taken = 'taken';
 	const Slicing = 'slicing';
-	const Working = 'working';
-	const Paused = 'paused';
-	const Waiting = 'waiting';
-	const Error = 'error';
-	const Maintenance = 'maintenance';
-	const Offline = 'offline';
-	const Retired = 'retired';
+	const Downloading = 'downloading';
+	const QA = 'qa';
+	const Complete = 'complete';
+	const Failure = 'failure';
+	const Canceled = 'canceled';
 }

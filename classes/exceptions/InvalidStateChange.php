@@ -16,14 +16,15 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-class BotState {
-	const Idle = 'idle';
-	const Slicing = 'slicing';
-	const Working = 'working';
-	const Paused = 'paused';
-	const Waiting = 'waiting';
-	const Error = 'error';
-	const Maintenance = 'maintenance';
-	const Offline = 'offline';
-	const Retired = 'retired';
+class InvalidStateChange extends Exception {
+	/**
+	 * Class constructor
+	 *
+	 * @param string $message Exception message
+	 * @param int $code
+	 */
+	function __construct($message, $code = 0)
+	{
+		parent::__construct($message, $code);
+	}
 }

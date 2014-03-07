@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -63,18 +63,18 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			if ($status == 'available')
+			if ($status == JobState::Failure)
 				$this->setTitle(User::$me->getName() . "'s Available Jobs");
-			else if ($status == 'taken')
+			else if ($status == JobState::Taken)
 				$this->setTitle(User::$me->getName() . "'s Working Jobs");
-			else if ($status == 'complete')
+			else if ($status == JobState::Complete)
 				$this->setTitle(User::$me->getName() . "'s Finished Jobs");
-			else if ($status == 'failure')
+			else if ($status == JobState::Failure)
 				$this->setTitle(User::$me->getName() . "'s Failed Jobs");
 			else
 				throw new Exception("That is not a valid status!");
 
-			if ($status == 'complete')
+			if ($status == JobState::Complete)
 				$collection = User::$me->getJobs($status, 'finished_time', 'DESC');
 			else
 				$collection = User::$me->getJobs($status);
@@ -98,17 +98,12 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
 			//did we really get someone?
+			$this->ensureJobExists($job);
 			if (!$job->canView())
 				throw new Exception("You do not have permission to view this job.");
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
 
 			$this->setTitle('View Job - ' . $job->getName());
 
@@ -145,11 +140,7 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
 			//did we really get someone?
 			if (!$job->isHydrated())
@@ -237,9 +228,7 @@ class JobController extends Controller
 			else
 				throw new Exception("Could not find that job");
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
+			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to delete this job.");
 			if ($job->get('status') == 'taken')
@@ -270,14 +259,9 @@ class JobController extends Controller
 
 		try {
 			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
+			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to cancel this job.");
 			// if ($job->get('status') == 'taken')
@@ -307,21 +291,12 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
+			$this->ensureJobExists($job);
+
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to bump this job.");
-			// if ($job->get('status') == 'taken')
-			//  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
-			// if ($job->get('status') == 'slicing')
-			//  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
 
 			$this->set('job', $job);
 			$this->setTitle('Bump Job - ' . $job->getName());
@@ -340,15 +315,9 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
+			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to edit this job.");
 			if ($job->get('status') != 'qa')
@@ -378,18 +347,13 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
+			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to edit this job.");
-			if ($job->get('status') != 'qa')
+
+			if ($job->get('status') != JobState::QA)
 				throw new Exception("You cannot do QA on this job.");
 
 			$bot = $job->getBot();
@@ -420,18 +384,12 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			//how do we find them?
-			if ($this->args('id'))
-				$job = new Job($this->args('id'));
-			else
-				throw new Exception("Could not find that job");
+			$job = $this->getJobByID($this->args('id'));
 
-			//did we really get someone?
-			if (!$job->isHydrated())
-				throw new Exception("Could not find that job.");
+			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to edit this job.");
-			if ($job->get('status') != 'qa')
+			if ($job->get('status') != JobState::QA)
 				throw new Exception("You cannot do QA on this job.");
 
 			$this->setTitle("Fail Job - " . $job->getName());
@@ -466,11 +424,11 @@ class JobController extends Controller
 				}
 
 				if ($form->data('job_error')) {
-					$job->setStatus('failure');
+					$job->setStatus(JobState::Failure);
 					$job->set('verified_time', date("Y-m-d H:i:s"));
 					$job->save();
 				} else {
-					$job->setStatus('available');
+					$job->setStatus(JobState::Available);
 					$job->set('taken_time', 0);
 					$job->set('downloaded_time', 0);
 					$job->set('finished_time', 0);
@@ -636,9 +594,9 @@ class JobController extends Controller
 		try {
 			if ($this->args('job_id')) {
 				$job = new Job($this->args('job_id'));
-				if (!$job->isHydrated())
-					throw new Exception("That job does not exist.");
-				if ($job->get('user_id') != User::$me->id)
+				$this->ensureJobExists($job);
+
+				if (!$job->isMine())
 					throw new Exception("You do not own this job.");
 
 				$file = $job->getSourceFile();
@@ -874,6 +832,34 @@ class JobController extends Controller
 		} catch (Exception $e) {
 			$this->setTitle('File Jobs - Error');
 			$this->set('megaerror', $e->getMessage());
+		}
+	}
+
+	/**
+	 * @param Job $job
+	 * @throws Exception
+	 */
+	private function ensureJobExists($job)
+	{
+		//did we really get someone?
+		if (!$job->isHydrated())
+			throw new Exception("Could not find that job.");
+	}
+
+	/**
+	 * @param int $id
+	 * @return Job
+	 * @throws Exception
+	 */
+	private function getJobByID($id)
+	{
+		//how do we find them?
+		if ($id) {
+			$job = new Job($id);
+			return $job;
+		}
+		else {
+			throw new Exception("Could not find that job");
 		}
 	}
 }
