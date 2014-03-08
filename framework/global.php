@@ -16,9 +16,9 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-// figure out the base dir, we're two directories past the base dir
-// so just pop them off the end
-$base_dir = dirname(__FILE__) . "../..";
+// figure out the base dir, we're one directory past the base dir
+// so just get the relative path, and then find the actual path
+$base_dir = dirname(__FILE__) . "/..";
 $base_dir = realpath($base_dir);
 
 
