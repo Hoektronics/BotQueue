@@ -216,5 +216,3 @@ class SetStatusTest extends BotQueue_Unit_Test
 		$this->states[BotState::Retired][BotState::Retired] = true;
 	}
 }
-
-?>

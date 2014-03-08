@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -24,5 +24,3 @@ class AjaxTemplateController extends Controller
         $this->setArg('content');
     }
 }
-
-?>

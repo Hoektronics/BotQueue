@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -136,7 +136,7 @@ class UploadController extends Controller
 
                 //does it match?
                 if (!preg_match("/\\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
-                    throw new Exception("The file <a href=\"$url\">{$data['realname']}</a> is not valid for printing.");
+                    throw new Exception("The file <a href=\"".$url."\">{$data['realname']}</a> is not valid for printing.");
 
                 $s3 = new S3File();
                 $s3->set('user_id', User::$me->id);
@@ -313,5 +313,3 @@ function hex2b64($str)
     }
     return base64_encode($raw);
 }
-
-?>

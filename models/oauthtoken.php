@@ -15,7 +15,9 @@ class OAuthToken extends Model
 		$id = db()->getValue("
 				SELECT id
 				FROM oauth_token
-				WHERE token = '{$key}'"
+				WHERE token = '".
+				db()->escape($key)
+				."'"
 		);
 
 		return new OAuthToken($id);
@@ -96,5 +98,3 @@ class OAuthToken extends Model
 			return $this->getConsumer()->getName() . " #" . $this->id;
 	}
 }
-
-?>

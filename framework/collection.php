@@ -29,7 +29,7 @@ class Collection
 
     public function __construct($query, $obj_types, $expiration = null, $key = null)
     {
-        $this->query = preg_replace("/\;/", '', $query);
+        $this->query = preg_replace("/\\;/", '', $query);
         $this->query_total = "SELECT count(*) FROM ({$this->query}) AS subq";
         $this->total = db()->getValue($this->query_total);
         //set the object types for this object, e.g. array('InventoryLogEntry' => 'id')
@@ -171,5 +171,3 @@ class Collection
     }
 
 }
-
-?>

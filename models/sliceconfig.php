@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -114,5 +114,3 @@ class SliceConfig extends Model
         db()->execute($sql);
     }
 }
-
-?>

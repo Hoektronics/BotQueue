@@ -36,7 +36,7 @@ class Database
 	/**
 	 * @param $key string
 	 * @return DatabaseSocket
-	*/
+	 */
 	public static function getSocket($key = null)
 	{
 		if ($key === null)
@@ -294,5 +294,3 @@ class DatabaseSocket
 		echo "\n";
 	}
 }
-
-?>

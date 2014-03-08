@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 	This file is part of BotQueue.
 
@@ -79,4 +79,3 @@ class QueueStats {
         return $data;
     }
 }
-?> 

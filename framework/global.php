@@ -18,16 +18,14 @@
 
 // figure out the base dir, we're two directories past the base dir
 // so just pop them off the end
-$parts = explode("/", __FILE__);
-array_pop($parts);
-array_pop($parts);
-$base_dir = join('/', $parts);
+$base_dir = dirname(__FILE__) . "../..";
+$base_dir = realpath($base_dir);
 
 
 //define some useful constants.
 define('HOME_DIR', $base_dir);
 define('WEB_DIR', $base_dir . '/web/');
-define('BASE_DIR', $base_dir . '/framework/');
+define('FRAMEWORK_DIR', $base_dir . '/framework/');
 define('EXTENSIONS_DIR', $base_dir . '/extensions/');
 define('CLASSES_DIR', $base_dir . '/classes/');
 define('VIEWS_DIR', $base_dir . '/views/');
@@ -35,14 +33,14 @@ define('CONTROLLERS_DIR', $base_dir . '/controllers/');
 define('MODELS_DIR', $base_dir . '/models/');
 
 //simply include all our files...
-include(BASE_DIR . "model.php");
-include(BASE_DIR . "view.php");
-include(BASE_DIR . "controller.php");
-include(BASE_DIR . "collection.php");
-include(BASE_DIR . "db.php");
-include(BASE_DIR . "exceptions.php");
-include(BASE_DIR . "file.php");
-include(BASE_DIR . "cachebot.php");
+include(FRAMEWORK_DIR . "/model.php");
+include(FRAMEWORK_DIR . "view.php");
+include(FRAMEWORK_DIR . "controller.php");
+include(FRAMEWORK_DIR . "collection.php");
+include(FRAMEWORK_DIR . "db.php");
+include(FRAMEWORK_DIR . "exceptions.php");
+include(FRAMEWORK_DIR . "file.php");
+include(FRAMEWORK_DIR . "cachebot.php");
 
 // create our own loader class
 class BotQueue_Loader
@@ -51,25 +49,24 @@ class BotQueue_Loader
 	{
 		$fileName = "/" . strtolower($class) . ".php";
 
-        $di = new RecursiveDirectoryIterator(MODELS_DIR);
-        foreach (new RecursiveIteratorIterator($di) as $name => $file) {
-            if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
-                include($name);
-                return true;
-            }
-        }
+		$di = new RecursiveDirectoryIterator(MODELS_DIR);
+		foreach (new RecursiveIteratorIterator($di) as $name => $file) {
+			if (strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
+				include($name);
+				return true;
+			}
+		}
 
-        $di = new RecursiveDirectoryIterator(CLASSES_DIR);
-        foreach (new RecursiveIteratorIterator($di) as $name => $file) {
-            if(strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
-                include($name);
-                return true;
-            }
-        }
+		$di = new RecursiveDirectoryIterator(CLASSES_DIR);
+		foreach (new RecursiveIteratorIterator($di) as $name => $file) {
+			if (strcasecmp(substr($name, -strlen($fileName)), $fileName) == 0) {
+				include($name);
+				return true;
+			}
+		}
 
 		return false;
 	}
 }
 
 spl_autoload_register(array('BotQueue_Loader', '__autoload'));
-?>

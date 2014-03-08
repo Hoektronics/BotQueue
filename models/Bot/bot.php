@@ -484,5 +484,3 @@ class Bot extends Model
 		$this->save();
 	}
 }
-
-?>

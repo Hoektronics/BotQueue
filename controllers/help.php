@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -19,17 +19,15 @@
 
 class HelpController extends Controller
 {
-    function home()
-    {
-        $this->set('area', 'help');
-    }
+	function home()
+	{
+		$this->set('area', 'help');
+	}
 
-    function raspberry_pi_installation()
-    {
-        $this->set('area', 'help');
+	function raspberry_pi_installation()
+	{
+		$this->set('area', 'help');
 
-        $this->setTitle("Raspberry Pi Installation");
-    }
+		$this->setTitle("Raspberry Pi Installation");
+	}
 }
-
-?>

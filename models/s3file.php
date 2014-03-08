@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -43,7 +43,7 @@ class S3File extends Model
         if (file_exists($file)) {
             //do the actual upload.
             $s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
-            $result = $s3->putObjectFile($file, AMAZON_S3_BUCKET_NAME, $path, S3::ACL_PUBLIC_READ);
+            $result = $s3->putObjectFile($file, AMAZON_S3_BUCKET_NAME, $path, $acl);
 
             //echo "Uploading {$file} to " . AMAZON_S3_BUCKET_NAME . ":{$path}\n";
 
@@ -311,5 +311,3 @@ class S3File extends Model
         return new Collection($sql, array('S3File' => 'id'));
     }
 }
-
-?>

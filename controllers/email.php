@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -30,5 +30,3 @@ class EmailController extends Controller
         $this->lost_pass();
     }
 }
-
-?>

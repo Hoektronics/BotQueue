@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -693,5 +693,3 @@ class SlicerController extends Controller
         }
     }
 }
-
-?>

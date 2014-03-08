@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -19,85 +19,83 @@
 
 class FormController extends Controller
 {
-    public function vertical_form()
-    {
-        $this->_form();
-    }
+	public function vertical_form()
+	{
+		$this->_form();
+	}
 
-    public function horizontal_form()
-    {
-        $this->_form();
-    }
+	public function horizontal_form()
+	{
+		$this->_form();
+	}
 
-    public function hiddenfield()
-    {
-        $this->_field();
-    }
+	public function hiddenfield()
+	{
+		$this->_field();
+	}
 
-    public function textfield()
-    {
-        $this->_field();
-    }
+	public function textfield()
+	{
+		$this->_field();
+	}
 
-    public function textareafield()
-    {
-        $this->_field();
-    }
+	public function textareafield()
+	{
+		$this->_field();
+	}
 
-    public function checkboxfield()
-    {
-        $this->_field();
-    }
+	public function checkboxfield()
+	{
+		$this->_field();
+	}
 
-    public function selectfield()
-    {
-        $this->_field();
-    }
+	public function selectfield()
+	{
+		$this->_field();
+	}
 
-    public function uploadfield()
-    {
-        $this->_field();
-    }
+	public function uploadfield()
+	{
+		$this->_field();
+	}
 
-    public function displayfield()
-    {
-        $this->_field();
-    }
+	public function displayfield()
+	{
+		$this->_field();
+	}
 
-    public function rawfield()
-    {
-        $this->_field();
-    }
+	public function rawfield()
+	{
+		$this->_field();
+	}
 
-    public function warningfield()
-    {
-        $this->_field();
-    }
+	public function warningfield()
+	{
+		$this->_field();
+	}
 
-    public function errorfield()
-    {
-        $this->_field();
-    }
+	public function errorfield()
+	{
+		$this->_field();
+	}
 
-    public function successfield()
-    {
-        $this->_field();
-    }
+	public function successfield()
+	{
+		$this->_field();
+	}
 
-    public function informationfield()
-    {
-        $this->_field();
-    }
+	public function informationfield()
+	{
+		$this->_field();
+	}
 
-    private function _form()
-    {
-        $this->setArg('form');
-    }
+	private function _form()
+	{
+		$this->setArg('form');
+	}
 
-    private function _field()
-    {
-        $this->setArg('field');
-    }
+	private function _field()
+	{
+		$this->setArg('field');
+	}
 }
-
-?>

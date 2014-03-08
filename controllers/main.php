@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -256,5 +256,3 @@ class MainController extends Controller
         }
     }
 }
-
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -432,5 +432,3 @@ class UserController extends Controller
         $this->setArg('users');
     }
 }
-
-?>

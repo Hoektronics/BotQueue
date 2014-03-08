@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -169,5 +169,3 @@ class Queue extends Model
         parent::delete();
     }
 }
-
-?>

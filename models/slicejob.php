@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -212,5 +212,3 @@ class SliceJob extends Model
 		return new Collection($sql, array('SliceJob' => 'id', 'S3File' => 'input_id', 'Job' => 'job_id'));
 	}
 }
-
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -54,5 +54,3 @@ class ShortCode extends Model
         return base_convert((int)$this->id, 10, 36);
     }
 }
-
-?>

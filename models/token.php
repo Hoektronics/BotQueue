@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -56,5 +56,3 @@ class Token extends Model
         return base64_encode(serialize($data));
     }
 }
-
-?>
