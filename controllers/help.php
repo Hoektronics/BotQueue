@@ -30,4 +30,11 @@ class HelpController extends Controller
 
 		$this->setTitle("Raspberry Pi Installation");
 	}
+
+	function osx_installation()
+	{
+		$this->set('area', 'help');
+
+		$this->setTitle("Mac OS X Installation");
+	}
 }
