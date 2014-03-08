@@ -88,6 +88,7 @@ class Bot extends Model
 			}
 		} else if($this->getStatus() == BotState::Paused) {
 			switch($status) {
+				case BotState::Idle:
 				case BotState::Working:
 				case BotState::Slicing:
 				case BotState::Maintenance:

@@ -149,7 +149,7 @@ class SetStatusTest extends BotQueue_Unit_Test
 	protected function createPausedStateChanges()
 	{
 		$this->states[BotState::Paused] = array();
-		$this->states[BotState::Paused][BotState::Idle] = false;
+		$this->states[BotState::Paused][BotState::Idle] = true;
 		$this->states[BotState::Paused][BotState::Slicing] = true;
 		$this->states[BotState::Paused][BotState::Working] = true;
 		$this->states[BotState::Paused][BotState::Paused] = true;
