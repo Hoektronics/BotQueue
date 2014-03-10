@@ -34,6 +34,7 @@ define("AMAZON_AWS_KEY", "");
 define("AMAZON_AWS_SECRET", "");
 define("AMAZON_S3_BUCKET_NAME", "botqueue");
 
+define("EMAIL_METHOD", "SMTP");
 define("EMAIL_USERNAME", "mailer@example.com");
 define("EMAIL_NAME", "BotQueue");
 define("EMAIL_PASSWORD", "");
