@@ -41,6 +41,7 @@ include(FRAMEWORK_DIR . "db.php");
 include(FRAMEWORK_DIR . "exceptions.php");
 include(FRAMEWORK_DIR . "file.php");
 include(FRAMEWORK_DIR . "cachebot.php");
+include(FRAMEWORK_DIR . "config.php");
 
 // create our own loader class
 class BotQueue_Loader

@@ -16,7 +16,7 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-class Old_Config_Converter_Test extends BotQueue_Unit_Test {
+class Config_Define_Converter_Test extends BotQueue_Unit_Test {
 
 	public function testConvertDefineString() {
 		/** @var string $key */
@@ -26,7 +26,7 @@ class Old_Config_Converter_Test extends BotQueue_Unit_Test {
 		$value = "BotQueue";
 
 		/** @var array $config */
-		$config = ConfigConverter::convertToKeys($this->getDefine($key, $value));
+		$config = ConfigConverter::convertDefines($this->getDefine($key, $value));
 
 		$this->assertArrayHasKey($key, $config);
 		$this->assertEquals($value, $config[$key]);
@@ -39,14 +39,14 @@ class Old_Config_Converter_Test extends BotQueue_Unit_Test {
 
 		$this->setExpectedException("InvalidConfigDefine");
 
-		ConfigConverter::convertToKeys($defineToConvert);
+		ConfigConverter::convertDefines($defineToConvert);
 	}
 
 	public function testConvertBooleanValue() {
 		$key = "TESTS_ARE_COOL";
 		$value = false;
 
-		$config = ConfigConverter::convertToKeys($this->getDefine($key, $value));
+		$config = ConfigConverter::convertDefines($this->getDefine($key, $value));
 
 		$this->assertArrayHasKey($key, $config);
 		$this->assertEquals($value, $config[$key]);
@@ -58,7 +58,7 @@ class Old_Config_Converter_Test extends BotQueue_Unit_Test {
 
 		$defineToConvert = "\ndefine\n(\n\"".$key."\",\n\"".$value."\"\n);";
 
-		$config = ConfigConverter::convertToKeys($defineToConvert);
+		$config = ConfigConverter::convertDefines($defineToConvert);
 
 		$this->assertArrayHasKey($key, $config);
 		$this->assertEquals($value, $config[$key]);
@@ -72,7 +72,7 @@ class Old_Config_Converter_Test extends BotQueue_Unit_Test {
 			$definesToConvert .= $this->getDefine($key, $value);
 		}
 
-		$config = ConfigConverter::convertToKeys($definesToConvert);
+		$config = ConfigConverter::convertDefines($definesToConvert);
 
 		foreach($keys as $key => $value) {
 			$this->assertArrayHasKey($key, $config);

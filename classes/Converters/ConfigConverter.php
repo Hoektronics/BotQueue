@@ -20,7 +20,7 @@
 class ConfigConverter
 {
 
-	public static function convertToKeys($defines)
+	public static function convertDefines($defines)
 	{
 		$letters = "a-zA-Z_\x7f-\xff";
 		$spaces = "\\s*";
@@ -85,5 +85,56 @@ class ConfigConverter
 	private static function endsWith($haystack, $needle)
 	{
 		return substr($haystack, -strlen($needle)) === $needle;
+	}
+
+	public static function convertKeys($keys) {
+		$result = array();
+
+		if(isset($keys["FORCE_SSL"]))
+			$result["force_ssl"] = $keys["FORCE_SSL"];
+		if(isset($keys["COMPANY_NAME"]))
+			$result["company_name"] = $keys["COMPANY_NAME"];
+		if(isset($keys["IS_DEV_SITE"]))
+			$result["dev_site"] = $keys["IS_DEV_SITE"];
+		if(isset($keys["SITE_HOSTNAME"]))
+			$result["hostname"] = $keys["SITE_HOSTNAME"];
+		if(isset($keys["RR_PROJECT_NAME"]))
+			$result["db/name"] = $keys["RR_PROJECT_NAME"];
+		if(isset($keys["RR_DB_HOST"]))
+			$result["db/host"] = $keys["RR_DB_HOST"];
+		if(isset($keys["RR_DB_PORT"]))
+			$result["db/port"] = $keys["RR_DB_PORT"];
+		if(isset($keys["RR_DB_USER"]))
+			$result["db/user"] = $keys["RR_DB_USER"];
+		if(isset($keys["RR_DB_PASS"]))
+			$result["db/pass"] = $keys["RR_DB_PASS"];
+		if(isset($keys["AMAZON_AWS_KEY"]))
+			$result["aws/key"] = $keys["AMAZON_AWS_KEY"];
+		if(isset($keys["AMAZON_AWS_SECRET"]))
+			$result["aws/secret"] = $keys["AMAZON_AWS_SECRET"];
+		if(isset($keys["EMAIL_METHOD"]))
+			$result["email/method"] = $keys["EMAIL_METHOD"];
+		if(isset($keys["SES_USE_DKIM"]))
+			$result["email/ses_dkim"] = $keys["SES_USE_DKIM"];
+		if(isset($keys["EMAIL_USERNAME"]))
+			$result["email/user"] = $keys["EMAIL_USERNAME"];
+		if(isset($keys["EMAIL_NAME"]))
+			$result["email/name"] = $keys["EMAIL_NAME"];
+		if(isset($keys["EMAIL_PASSWORD"]))
+			$result["email/pass"] = $keys["EMAIL_PASSWORD"];
+		if(isset($keys["EMAIL_SMTP_SERVER"]))
+			$result["email/smtp_server"] = $keys["EMAIL_SMTP_SERVER"];
+		if(isset($keys["EMAIL_SMTP_SERVER_PORT"]))
+			$result["email/smtp_port"] = $keys["EMAIL_SMTP_SERVER_PORT"];
+		if(isset($keys["TRACK_SQL_QUERIES"]))
+			$result["track/sql"] = $keys["TRACK_SQL_QUERIES"];
+		if(isset($keys["TRACK_CACHE_HITS"]))
+			$result["track/cache"] = $keys["TRACK_CACHE_HITS"];
+		if(isset($keys["THINGIVERSE_API_CLIENT_ID"]))
+			$result["thingiverse/client_id"] = $keys["THINGIVERSE_API_CLIENT_ID"];
+		if(isset($keys["THINGIVERSE_API_CLIENT_SECRET"]))
+			$result["thingiverse/client_secret"] = $keys["THINGIVERSE_API_CLIENT_SECRET"];
+
+		return $result;
 	}
 }
