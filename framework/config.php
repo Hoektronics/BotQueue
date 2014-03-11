@@ -22,11 +22,11 @@ class Config
 	/**
 	 * we store the config options in an array.
 	 */
-	private $data;
+	private static $data;
 
 	public function __construct($array = array())
 	{
-		$this->data = $array;
+		self::$data = $array;
 	}
 
 	/**
@@ -36,10 +36,10 @@ class Config
 	 * @throws Exception
 	 * @return mixed the value of that key.
 	 */
-	public function get($key)
+	public static function get($key)
 	{
-		if (isset($this->data[$key]))
-			return $this->data[$key];
+		if (isset(self::$data[$key]))
+			return self::$data[$key];
 		throw new Exception("Invalid Configuration key");
 	}
 
@@ -49,16 +49,16 @@ class Config
 	 * @param $key mixed the key to set.
 	 * @param $val mixed the value to set the key to.
 	 */
-	public function set($key, $val)
+	public static function set($key, $val)
 	{
-		$this->data[$key] = $val;
+		self::$data[$key] = $val;
 	}
 
 
-	public function save($ini_file)
+	public static function save($ini_file)
 	{
 		$ini_data = array();
-		foreach ($this->data as $key => $value) {
+		foreach (self::$data as $key => $value) {
 			$splitPosition = strpos($key, '/');
 			if ($splitPosition !== FALSE) {
 				$header = substr($key, 0, $splitPosition);
@@ -74,7 +74,6 @@ class Config
 			}
 		}
 
-		print($ini_file . "\n");
 		self::write_php_ini($ini_data, $ini_file);
 	}
 
@@ -96,7 +95,7 @@ class Config
 			$first_entry = false;
 		}
 
-		self::safefilerewrite($file, implode("\r\n", $res));
+		self::safeFileWrite($file, implode("\r\n", $res));
 	}
 
 	private static function getKeyValue($key, $value) {
@@ -113,9 +112,9 @@ class Config
 		return $result;
 	}
 
-	private static function safefilerewrite($fileName, $dataToSave)
+	private static function safeFileWrite($fileName, $dataToSave)
 	{
-		if ($fp = fopen($fileName, 'wb')) {
+		if ($fp = @fopen($fileName, 'wb')) {
 			$startTime = microtime();
 			do {
 				$canWrite = flock($fp, LOCK_EX);
@@ -129,8 +128,6 @@ class Config
 				flock($fp, LOCK_UN);
 			}
 			fclose($fp);
-		} else {
-			print("Could not write config file\n");
 		}
 	}
 }

@@ -61,114 +61,114 @@ class ConfigTest extends BotQueue_Unit_Test {
 	public function testConvertKeys() {
 		$this->assertEquals(
 			$this->keys["FORCE_SSL"],
-			$this->config->get("force_ssl")
+			Config::get("force_ssl")
 		);
 
 		$this->assertEquals(
 			$this->keys["COMPANY_NAME"],
-			$this->config->get("company_name")
+			Config::get("company_name")
 		);
 
 		$this->assertEquals(
 			$this->keys["IS_DEV_SITE"],
-			$this->config->get("dev_site")
+			Config::get("dev_site")
 		);
 
 		$this->assertEquals(
 			$this->keys["SITE_HOSTNAME"],
-			$this->config->get("hostname")
+			Config::get("hostname")
 		);
 
 		$this->assertEquals(
 			$this->keys["RR_PROJECT_NAME"],
-			$this->config->get("db/name")
+			Config::get("db/name")
 		);
 
 		$this->assertEquals(
 			$this->keys["RR_DB_HOST"],
-			$this->config->get("db/host")
+			Config::get("db/host")
 		);
 
 		$this->assertEquals(
 			$this->keys["RR_DB_PORT"],
-			$this->config->get("db/port")
+			Config::get("db/port")
 		);
 
 		$this->assertEquals(
 			$this->keys["RR_DB_USER"],
-			$this->config->get("db/user")
+			Config::get("db/user")
 		);
 
 		$this->assertEquals(
 			$this->keys["RR_DB_PASS"],
-			$this->config->get("db/pass")
+			Config::get("db/pass")
 		);
 
 		$this->assertEquals(
 			$this->keys["AMAZON_AWS_KEY"],
-			$this->config->get("aws/key")
+			Config::get("aws/key")
 		);
 
 		$this->assertEquals(
 			$this->keys["AMAZON_AWS_SECRET"],
-			$this->config->get("aws/secret")
+			Config::get("aws/secret")
 		);
 
 		$this->assertEquals(
 			$this->keys["EMAIL_METHOD"],
-			$this->config->get("email/method")
+			Config::get("email/method")
 		);
 
 		$this->assertEquals(
 			$this->keys["SES_USE_DKIM"],
-			$this->config->get("email/ses_dkim")
+			Config::get("email/ses_dkim")
 		);
 
 		$this->assertEquals(
 			$this->keys["EMAIL_NAME"],
-			$this->config->get("email/name")
+			Config::get("email/name")
 		);
 
 		$this->assertEquals(
 			$this->keys["EMAIL_PASSWORD"],
-			$this->config->get("email/pass")
+			Config::get("email/pass")
 		);
 
 		$this->assertEquals(
 			$this->keys["EMAIL_SMTP_SERVER"],
-			$this->config->get("email/smtp_server")
+			Config::get("email/smtp_server")
 		);
 
 		$this->assertEquals(
 			$this->keys["EMAIL_SMTP_SERVER_PORT"],
-			$this->config->get("email/smtp_port")
+			Config::get("email/smtp_port")
 		);
 
 		$this->assertEquals(
 			$this->keys["TRACK_SQL_QUERIES"],
-			$this->config->get("track/sql")
+			Config::get("track/sql")
 		);
 
 		$this->assertEquals(
 			$this->keys["TRACK_CACHE_HITS"],
-			$this->config->get("track/cache")
+			Config::get("track/cache")
 		);
 
 		$this->assertEquals(
 			$this->keys["THINGIVERSE_API_CLIENT_ID"],
-			$this->config->get("thingiverse/client_id")
+			Config::get("thingiverse/client_id")
 		);
 
 		$this->assertEquals(
 			$this->keys["THINGIVERSE_API_CLIENT_SECRET"],
-			$this->config->get("thingiverse/client_secret")
+			Config::get("thingiverse/client_secret")
 		);
 	}
 
 	public function testErrorOnNonExistentKey() {
 		$this->setExpectedException("Exception");
 
-		$this->config->get("SuperNonExistentKey");
+		Config::get("SuperNonExistentKey");
 	}
 }
  

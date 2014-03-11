@@ -30,12 +30,22 @@ if (file_exists($php_config_file)) {
 	/** @var Config $config */
 	$config = new Config(ConfigConverter::convertKeys($keys));
 
-	$config->save($ini_config_file);
+	try {
+		$config->save($ini_config_file);
+		/*
+		 * We can't delete the file until we move over all of the defines
+		if(file_exists($php_config_file))
+			unlink($php_config_file);
+		 */
+	} catch(FilePermissionException $e) {
+		// Send a notification to the admin?
+	}
 
-	//todo: Delete the config.php file
 	//todo: Replace all of the defines
-} else if (file_exists($ini_config_file)) {
-	$config = Config::load($ini_config_file);
+}
+
+if (file_exists($ini_config_file)) {
+	//$config = Config::load($ini_config_file);
 } else {
 	// Umm. Site setup mode?
 	// It should be in setup mode for tests, though.
