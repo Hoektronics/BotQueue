@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
   This file is part of BotQueue.
@@ -72,23 +72,23 @@ class CommentController extends Controller
         $form->action = "/comment/add";
         $form->submitText = "Add Comment";
 
-        $form->add(new HiddenField(array(
-            'name' => 'content_id',
-            'value' => $content_id
-        )));
-        $form->add(new HiddenField(array(
-            'name' => 'content_type',
-            'value' => $content_type
-        )));
-        $form->add(new TextAreaField(array(
-            'name' => 'comment',
-            'required' => true,
-            'width' => '50%',
-            'rows' => '3'
-        )));
+		$form->add(
+			HiddenField::name('content_id')
+			->value($content_id)
+		);
+
+		$form->add(
+			HiddenField::name('content_type')
+			->value($content_type)
+		);
+
+		$form->add(
+			TextareaField::name('comment')
+			->required(true)
+			->width('50%')
+			->rows(3)
+		);
 
         return $form;
     }
 }
-
-?>

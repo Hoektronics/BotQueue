@@ -219,52 +219,52 @@ class SlicerController extends Controller
         $form = new Form();
         //$config = $engine->getDefaultConfig();
 
-        $form->add(new TextField(array(
-            'name' => 'engine_name',
-            'label' => 'Engine Name',
-            'help' => 'What is the name of this slicing engine.  Include the version number.  Eg: MySlice v3.2.1',
-            'required' => true,
-            'value' => $engine->get('engine_name')
-        )));
+        $form->add(
+            TextField::name('engine_name')
+            ->label('Engine Name')
+            ->help('What is the name of this slicing engine.  Include the version number.  Eg: MySlice v3.2.1')
+            ->required(true)
+            ->value($engine->get('engine_name'))
+        );
 
-        $form->add(new TextField(array(
-            'name' => 'engine_path',
-            'label' => 'Engine Path',
-            'help' => 'What is the path to the slicing engine from the bumblebee/slicers directory?  Eg: myslice-3.2.1',
-            'required' => true,
-            'value' => $engine->get('engine_path')
-        )));
+        $form->add(
+            TextField::name('engine_path')
+            ->label('Engine Path')
+            ->help('What is the path to the slicing engine from the bumblebee/slicers directory?  Eg: myslice-3.2.1')
+            ->required(true)
+            ->value($engine->get('engine_path'))
+        );
 
-        $form->add(new CheckboxField(array(
-            'name' => 'is_public',
-            'label' => 'Is this slice engine public and available for use?',
-            'help' => 'Check this box when you are ready to roll out a new slice engine.',
-            'value' => $engine->get('is_public')
-        )));
+        $form->add(
+            CheckboxField::name('is_public')
+            ->label('Is this slice engine public and available for use?')
+            ->help('Check this box when you are ready to roll out a new slice engine.')
+            ->value($engine->get('is_public'))
+        );
 
-        $form->add(new CheckboxField(array(
-            'name' => 'is_featured',
-            'label' => 'Is this slice engine featured?',
-            'help' => 'Featured slice engines will be more prominently featured, and will make it easier to use the latest and greatest slicing tech.',
-            'value' => $engine->get('is_featured')
-        )));
+        $form->add(
+            CheckboxField::name('is_featured')
+            ->label('Is this slice engine featured?')
+            ->help('Featured slice engines will be more prominently featured, and will make it easier to use the latest and greatest slicing tech.')
+            ->value($engine->get('is_featured'))
+        );
 
-        $form->add(new TextareaField(array(
-            'name' => 'engine_description',
-            'label' => 'Engine Description',
-            'help' => 'Enter a description for this engine that will help people understand it.',
-            'required' => true,
-            'width' => '60%',
-            'rows' => '4',
-            'value' => $engine->get('engine_description')
-        )));
+        $form->add(
+            TextareaField::name('engine_description')
+            ->label('Engine Description')
+            ->help('Enter a description for this engine that will help people understand it.')
+            ->required(true)
+            ->width('60%')
+            ->rows('4')
+            ->value($engine->get('engine_description'))
+        );
 
-        $form->add(new UploadField(array(
-            'name' => 'config_file',
-            'label' => 'Default Configuration',
-            'help' => 'Upload the default configuration text for this engine (.ini for Slic3r)',
-            'required' => !(bool)$engine->id
-        )));
+        $form->add(
+            UploadField::name('config_file')
+            ->label('Default Configuration')
+            ->help('Upload the default configuration text for this engine (.ini for Slic3r)')
+            ->required(!(bool)$engine->id)
+        );
 
         return $form;
     }
@@ -315,9 +315,12 @@ class SlicerController extends Controller
             //create our form
             $form = new Form();
             $form->action = $engine->getUrl() . "/delete";
-            $form->add(new WarningField(array(
-                'value' => "<strong>Warning</strong>: deleting the " . $engine->getLink() . " slice engine will delete all slice configs associated with it, and likely break a ton of stuff.  Are you really sure you want to do this?"
-            )));
+            $form->add(
+				WarningField::name('warning')
+                ->value("<strong>Warning</strong>: deleting the " .
+						$engine->getLink() .
+						" slice engine will delete all slice configs associated with it, and likely break a ton of stuff.  Are you really sure you want to do this?")
+            );
 
             $this->set('form', $form);
 
@@ -411,40 +414,40 @@ class SlicerController extends Controller
             $e = $row['SliceEngine'];
             $engines[$e->id] = $e->getName();
         }
-        $form->add(new SelectField(array(
-            'name' => 'engine_id',
-            'label' => 'Slice Engine',
-            'help' => 'Which slicing engine does this config use?',
-            'required' => true,
-            'value' => $config->get('engine_id'),
-            'options' => $engines
-        )));
+        $form->add(
+            SelectField::name('engine_id')
+            ->label('Slice Engine')
+            ->help('Which slicing engine does this config use?')
+            ->required(true)
+            ->value($config->get('engine_id'))
+            ->options($engines)
+        );
 
-        $form->add(new TextField(array(
-            'name' => 'config_name',
-            'label' => 'Config Name',
-            'help' => 'What is the name of this slicing configuration.',
-            'required' => true,
-            'value' => $config->get('config_name')
-        )));
+        $form->add(
+            TextField::name('config_name')
+            ->label('Config Name')
+            ->help('What is the name of this slicing configuration.')
+            ->required(true)
+            ->value($config->get('config_name'))
+        );
 
         if ($config->isHydrated())
-            $form->add(new CheckBoxField(array(
-                'name' => 'expire_slicejobs',
-                'label' => 'Expire Old Slice Jobs',
-                'help' => 'If checked, old slice jobs will be expired and never re-used.',
-                'value' => 1
-            )));
+            $form->add(
+				CheckboxField::name('expire_slicejobs')
+                ->label('Expire Old Slice Jobs')
+                ->help('If checked, old slice jobs will be expired and never re-used.')
+                ->value(1)
+            );
 
-        $form->add(new TextareaField(array(
-            'name' => 'default_config',
-            'label' => 'Raw Configuration Text',
-            'help' => 'Edit the raw configuration text for this engine.',
-            'required' => true,
-            'width' => '60%',
-            'rows' => '20',
-            'value' => $config->get('config_data')
-        )));
+        $form->add(
+            TextareaField::name('default_config')
+            ->label('Raw Configuration Text')
+            ->help('Edit the raw configuration text for this engine.')
+            ->required(true)
+            ->width('60%')
+            ->rows('20')
+            ->value($config->get('config_data'))
+        );
 
         return $form;
     }
@@ -468,36 +471,36 @@ class SlicerController extends Controller
             $e = $row['SliceEngine'];
             $engs[$e->id] = $e->getName();
         }
-        $form->add(new SelectField(array(
-            'name' => 'engine_id',
-            'label' => 'Slice Engine',
-            'help' => 'Which slicing engine does this config use?',
-            'required' => true,
-            'value' => $config->get('engine_id'),
-            'options' => $engs
-        )));
-        $form->add(new TextField(array(
-            'name' => 'config_name',
-            'label' => 'Config Name',
-            'help' => 'What is the name of this slicing configuration.',
-            'required' => true,
-            'value' => $config->get('config_name')
-        )));
+        $form->add(
+            SelectField::name('engine_id')
+            ->label('Slice Engine')
+            ->help('Which slicing engine does this config use?')
+            ->required(true)
+            ->value($config->get('engine_id'))
+            ->options($engs)
+        );
+        $form->add(
+            TextField::name('config_name')
+            ->label('Config Name')
+            ->help('What is the name of this slicing configuration.')
+            ->required(true)
+            ->value($config->get('config_name'))
+        );
 
         if ($config->isHydrated())
-            $form->add(new CheckBoxField(array(
-                'name' => 'expire_slicejobs',
-                'label' => 'Expire Old Slice Jobs',
-                'help' => 'If checked, old slice jobs will be expired and never re-used.',
-                'value' => 1
-            )));
+            $form->add(
+				CheckboxField::name('expire_slicejobs')
+                ->label('Expire Old Slice Jobs')
+                ->help('If checked, old slice jobs will be expired and never re-used.')
+                ->value(1)
+            );
 
-        $form->add(new UploadField(array(
-            'name' => 'config_file',
-            'label' => 'Configuration File',
-            'help' => 'The configuration file to use (.ini for Slic3r)',
-            'required' => true,
-        )));
+        $form->add(
+            UploadField::name('config_file')
+            ->label('Configuration File')
+            ->help('The configuration file to use (.ini for Slic3r)')
+            ->required(true)
+        );
 
         return $form;
     }
@@ -612,9 +615,10 @@ class SlicerController extends Controller
             //create our form
             $form = new Form();
             $form->action = $config->getUrl() . "/delete";
-            $form->add(new WarningField(array(
-                'value' => "<strong>Warning</strong>: deleting the " . $config->getLink() . " slice config is permanent.  Are you really sure you want to do this?"
-            )));
+            $form->add(
+				WarningField::name('warning')
+                ->value("<strong>Warning</strong>: deleting the " . $config->getLink() . " slice config is permanent.  Are you really sure you want to do this?")
+            );
 
             $this->set('form', $form);
 

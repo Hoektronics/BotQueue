@@ -172,23 +172,23 @@ class AppController extends Controller
         $form->action = "/app/authorize";
         $form->submitText = "Approve App";
 
-        $form->add(new HiddenField(array(
-            'name' => 'oauth_token',
-            'value' => $this->args('oauth_token')
-        )));
+		$form->add(
+			HiddenField::name('oauth_token')
+			->value($this->args('oauth_token'))
+		);
 
-        $form->add(new HiddenField(array(
-            'name' => 'verifier',
-            'value' => $token->get('verifier')
-        )));
+		$form->add(
+			HiddenField::name('verifier')
+			->value($token->get('verifier'))
+		);
 
-        $form->add(new TextField(array(
-            'name' => 'name',
-            'label' => 'Name',
-            'help' => 'A nickname for this instance of ' . $app->getName() . " such as the name the computer its running on or the machine its intended to control.",
-            'required' => true,
-            'value' => $app->getName(),
-        )));
+		$form->add(
+			TextField::name('name')
+			->label('Name')
+			->help("A nickname for this instance of " . $app->getName() . " such as the name of the computer it's running on or the machine it's intended to control.")
+			->required(true)
+			->value($app->getName())
+		);
 
         return $form;
     }
@@ -296,13 +296,11 @@ class AppController extends Controller
         $form->action = $token->getUrl() . "/edit";
         $form->submitText = "Manage App Token";
 
-        $form->add(new TextField(array(
-            'name' => 'name',
-            'label' => 'Name',
-            'help' => 'A nickname for this token such as the name the computer its running on or the machine its intended to control.',
-            'required' => true,
-            'value' => $token->getName(),
-        )));
+		$form->add(
+			TextField::name('name')
+			->label('Name')
+			->help("A nickname for this token such as the name the computer it's running on or the machine it's intended to control.")
+		);
 
         return $form;
     }
@@ -345,5 +343,3 @@ class AppController extends Controller
         }
     }
 }
-
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 	This file is part of BotQueue.
@@ -86,29 +86,29 @@ class BotController extends Controller
 		$form = new Form('register');
 		$form->action = "/bot/register";
 
-		$form->add(new TextField(array(
-			'name' => 'name',
-			'label' => 'Bot Name',
-			'help' => 'What should humans call your bot?',
-			'required' => true,
-			'value' => $bot->get('name')
-		)));
+		$form->add(
+			TextField::name('manufacturer')
+			->label('Bot Name')
+			->help('What should humans call your bot?')
+			->required(true)
+			->value($bot->get('name'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'manufacturer',
-			'label' => 'Manufacturer',
-			'help' => 'Which company (or person) built your bot?',
-			'required' => true,
-			'value' => $bot->get('manufacturer')
-		)));
+		$form->add(
+			TextField::name('manufacturer')
+			->label('Manufacturer')
+			->help('Which company (or person) built your bot?')
+			->required(true)
+			->value($bot->get('manufacturer'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'model',
-			'label' => 'Model',
-			'help' => 'What is the model or name of your bot design?',
-			'required' => true,
-			'value' => $bot->get('model')
-		)));
+		$form->add(
+			TextField::name('model')
+			->label('Model')
+			->help('What is the model or name of your bot design?')
+			->required(true)
+			->value($bot->get('model'))
+		);
 
 		return $form;
 	}
@@ -481,54 +481,61 @@ class BotController extends Controller
 	{
 		$form = new Form();
 
-		$form->add(new DisplayField(array(
-			'name' => 'bot',
-			'label' => 'Bot Name',
-			'value' => $bot->getLink()
-		)));
+		$form->add(
+			DisplayField::name('bot')
+			->label('Bot Name')
+			->value($bot->getLink())
+		);
 
-		$form->add(new DisplayField(array(
-			'name' => 'job',
-			'label' => 'Job Name',
-			'value' => $job->getLink()
-		)));
+		$form->add(
+			DisplayField::name('job')
+			->label('Job Name')
+			->value($job->getLink())
+		);
 
-		$form->add(new CheckBoxField(array(
-			'name' => 'take_offline',
-			'label' => 'Take Offline',
-			'help' => 'Should the bot be taken offline afterwards?',
-			'value' => false
-		)));
+		$form->add(
+			CheckboxField::name('take_offline')
+			->label('Take Offline')
+			->help('Should the bot be taken offline afterwards?')
+			->value(false)
+		);
 
-		$form->add(new CheckBoxField(array(
-			'name' => 'cancel_job',
-			'label' => 'Cancel Job',
-			'help' => 'Do you want to cancel this job?',
-			'value' => false
-		)));
+		$form->add(
+			CheckboxField::name('take_offline')
+			->label('Take Offline')
+			->help('Should the bot be taken offline afterwards?')
+			->value(false)
+		);
 
-		$form->add(new CheckBoxField(array(
-			'name' => 'job_error',
-			'label' => 'Job/Bot Error',
-			'help' => 'Were there errors with the job or bot?',
-			'value' => false
-		)));
+		$form->add(
+			CheckboxField::name('cancel_job')
+			->label('Cancel Job')
+			->help('Do you want to cancel this job?')
+			->value(false)
+		);
 
-		$form->add(new SelectField(array(
-			'name' => 'failure_reason',
-			'label' => 'Reason for failure',
-			'help' => 'Please enter a reason for rejecting this print.',
-			'required' => true,
-			'options' => self::$failure_options
-		)));
+		$form->add(
+			CheckboxField::name('job_error')
+			->label('Job/Bot Error')
+			->help('Where there errors with the job or bot?')
+			->value(false)
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'failure_reason_other',
-			'label' => 'Other Reason',
-			'help' => 'If you selected "other" above, please enter the reason here.',
-			'required' => false,
-			'value' => ""
-		)));
+		$form->add(
+			SelectField::name('failure_reason')
+			->label('Reason for failure')
+			->help('Please enter a reason for rejecting this print.')
+			->required(true)
+			->options(self::$failure_options)
+		);
+
+		$form->add(
+			TextField::name('failure_reason_other')
+			->label('Other Reason')
+			->help('If you selected "other" above, please enter the reason here.')
+			->required(false)
+			->value("")
+		);
 
 		return $form;
 	}
@@ -653,59 +660,56 @@ class BotController extends Controller
 			$form->action = $bot->getUrl() . "/edit";
 		}
 
-		$form->add(new DisplayField(array(
-			'name' => 'title',
-			'label' => '',
-			'value' => "<h2>Information / Details</h2>"
-		)));
+		$form->add(
+			DisplayField::name('title')
+			->label('')
+			->value('<h2>Information / Details</h2>')
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'name',
-			'label' => 'Bot Name',
-			'help' => 'What should humans call your bot?',
-			'required' => true,
-			'value' => $bot->get('name')
-		)));
+		$form->add(
+			TextField::name('name')
+			->label('Bot Name')
+			->help('What should humans call your bot?')
+			->required(true)
+			->value($bot->get('name'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'manufacturer',
-			'label' => 'Manufacturer',
-			'help' => 'Which company (or person) built your bot?',
-			'required' => true,
-			'value' => $bot->get('manufacturer')
-		)));
+		$form->add(
+			TextField::name('manufacturer')
+			->label('Manufacturer')
+			->help('Which company (or person) built your bot?')
+			->required(true)
+			->value($bot->get('manufacturer'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'model',
-			'label' => 'Model',
-			'help' => 'What is the model or name of your bot design?',
-			'required' => true,
-			'value' => $bot->get('model')
-		)));
+		$form->add(
+			TextField::name('model')
+			->label('Model')
+			->help('What is the model or name of your bot design?')
+			->required(true)
+			->value($bot->get('model'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'electronics',
-			'label' => 'Electronics',
-			'help' => 'What electronics are you using to control your bot?',
-			'required' => false,
-			'value' => $bot->get('electronics')
-		)));
+		$form->add(
+			TextField::name('electronics')
+			->label('Electronics')
+			->help('What electronics are you using to control your bot?')
+			->value($bot->get('electronics'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'firmware',
-			'label' => 'Firmware',
-			'help' => 'What firmware are you running on your electronics?',
-			'required' => false,
-			'value' => $bot->get('firmware')
-		)));
+		$form->add(
+			TextField::name('firmware')
+			->label('Firmware')
+			->help('What firmware are you running on your electronics?')
+			->value($bot->get('firmware'))
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'extruder',
-			'label' => 'Extruder',
-			'help' => 'What extruder are you using to print with?',
-			'required' => false,
-			'value' => $bot->get('extruder')
-		)));
+		$form->add(
+			TextField::name('extruder')
+			->label('Extruder')
+			->help('What extruder are you using to print with?')
+			->value($bot->get('extruder'))
+		);
 
 		return $form;
 	}
@@ -753,11 +757,11 @@ class BotController extends Controller
 			$form->action = $bot->getUrl() . "/edit";
 		}
 
-		$form->add(new DisplayField(array(
-			'name' => 'title',
-			'label' => '',
-			'value' => "<h2>Slicing Setup</h2>"
-		)));
+		$form->add(
+			DisplayField::name('title')
+			->label('')
+			->value('<h2>Slicing Setup</h2>')
+		);
 
 		//load up our queues.
 		$queues = User::$me->getQueues()->getAll();
@@ -770,42 +774,40 @@ class BotController extends Controller
 
 		$config = $bot->getDriverConfig();
 
-		$form->add(new CheckboxField(array(
-			'name' => 'can_slice',
-			'label' => 'Client Slicing Enabled?',
-			'help' => 'Is the controlling computer fast enough to slice?',
-			'value' => $config->can_slice,
-		)));
+		$form->add(
+			CheckboxField::name('can_slice')
+			->label('Client Slicing Enabled?')
+			->help('Is the controlling computer fast enough to slice?')
+			->value($config->can_slice)
+		);
 
-		$form->add(new SelectField(array(
-			'name' => 'queue_id',
-			'label' => 'Queue',
-			'help' => 'Which queue does this bot pull jobs from?',
-			'required' => true,
-			'value' => $bot->get('queue_id'),
-			'options' => $queueList
-		)));
+		$form->add(
+			SelectField::name('queue_id')
+			->label('Queue')
+			->help('Which queue does this bot pull jobs from?')
+			->required(true)
+			->value($bot->get('queue_id'))
+			->options($queueList)
+		);
 
-		$form->add(new SelectField(array(
-			'id' => 'slice_engine_dropdown',
-			'name' => 'slice_engine_id',
-			'label' => 'Slice Engine',
-			'help' => 'Which slicing engine does this bot use?',
-			'required' => false,
-			'value' => $bot->get('slice_engine_id'),
-			'options' => $engineList,
-			'onchange' => 'update_slice_config_dropdown(this)'
-		)));
+		$form->add(
+			SelectField::name('slice_engine_id')
+			->id('slice_engine_dropdown')
+			->label('Slice Engine')
+			->help('Which slicing engine does this bot use?')
+			->value($bot->get('slice_engine_id'))
+			->options($engineList)
+			->onchange('update_slice_config_dropdown(this)')
+		);
 
-		$form->add(new SelectField(array(
-			'id' => 'slice_config_dropdown',
-			'name' => 'slice_config_id',
-			'label' => 'Slice Configuration',
-			'help' => 'Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.',
-			'required' => false,
-			'value' => $bot->get('slice_config_id'),
-			'options' => $configList
-		)));
+		$form->add(
+			SelectField::name('slice_config_id')
+			->id('slice_config_dropdown')
+			->label('Slice Configuration')
+			->help('Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.')
+			->value($bot->get('slice_config_id'))
+			->options($configList)
+		);
 
 		return $form;
 	}
@@ -815,14 +817,18 @@ class BotController extends Controller
 		//load up our configs
 		$engine = new SliceEngine($this->args('id'));
 		$configs = $engine->getMyConfigs()->getAll();
+		$configList = array();
 		if (!empty($configs)) {
 			foreach ($configs AS $row) {
 				/* @var $c SliceConfig */
 				$c = $row['SliceConfig'];
-				echo '<option value="' . $c->id . '">' . $c->getName() . '</option>' . "\n";
+				$configList[$c->id] = $c->getName();
 			}
 		} else
-			echo '<option value="0">None</option>' . "\n";
+			$configList[0] = "None";
+
+		foreach($configList as $id => $name)
+			echo '<option value="' . $id . '">' . $name. '</option>' . "\n";
 
 		exit;
 	}
@@ -852,42 +858,43 @@ class BotController extends Controller
 		$form = new Form('driver');
 		$form->action = $bot->getUrl() . "/edit";
 
-		$form->add(new DisplayField(array(
-			'name' => 'title',
-			'label' => '',
-			'value' => "<h2>Driver Configuration</h2>"
-		)));
+		$form->add(
+			DisplayField::name('title')
+			->label('')
+			->value("<h2>Driver Configuration</h2>")
+		);
 
-		$form->add(new SelectField(array(
-			'id' => 'oauth_token_dropdown',
-			'name' => 'oauth_token_id',
-			'label' => 'Computer',
-			'help' => 'Which computer is this bot connected to? <a href="/apps">Full list in the apps area.</a>',
-			'required' => false,
-			'value' => $bot->get('oauth_token_id'),
-			'options' => $apps,
-			'onchange' => 'update_driver_form(this)'
-		)));
+		$form->add(
+			SelectField::name('oauth_token_id')
+			->id('oauth_token_dropdown')
+			->label('Computer')
+			->help('Which computer is this bot connected to? <a href="/apps">Full list in the apps area.</a>')
+			->value($bot->get('oauth_token_id'))
+			->options($apps)
+			->onchange('update_driver_form(this')
+		);
 
-		$form->add(new SelectField(array(
-			'id' => 'driver_name_dropdown',
-			'name' => 'driver_name',
-			'label' => 'Driver Name',
-			'help' => 'Which driver to use? <a href="/help">More info available in the help area.</a>',
-			'required' => true,
-			'value' => $bot->get('driver_name'),
-			'options' => $drivers,
-			'onchange' => 'update_driver_form(this)'
-		)));
+		$form->add(
+			SelectField::name('driver_name')
+			->id('driver_name_dropdown')
+			->label('Driver Name')
+			->help('Which driver to use? <a href="/help">More info available in the help area.</a>')
+			->required(true)
+			->value($bot->get('driver_name'))
+			->options($drivers)
+			->onchange('update_driver_form(this)')
+		);
 
 		// $driver_form = Controller::byName('bot')->renderView('driver_form', array(
 		//   'bot_id' => $bot->id,
 		//   'driver' => $bot->get('driver_name'),
 		//   'token_id' => $bot->get('oauth_token_id')
 		// ));
-		$form->add(new RawField(array(
-			'value' => '<div id="driver_edit_area"></div>',
-		)));
+
+		$form->add(
+			RawField::name()
+			->value('<div id="driver_edit_area"></div>')
+		);
 
 		return $form;
 	}
@@ -1010,5 +1017,3 @@ class BotController extends Controller
 		$this->set('dashboard_style', 'medium_thumbnails');
 	}
 }
-
-?>

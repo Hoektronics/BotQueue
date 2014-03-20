@@ -17,6 +17,16 @@
   along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//Workaround for php 5.3 inability to chain off of the constructor
+//todo remove this
+/**
+ * @param $object
+ * @return mixed
+ */
+function with($object){
+	return $object;
+}
+
 class Form
 {
 	private $fields;
@@ -30,11 +40,12 @@ class Form
 	{
 		$this->name = $name;
 
-		$this->add(new HiddenField(array(
-			'name' => "{$this->name}_is_submitted",
-			'value' => 1,
-			'required' => true
-		)));
+
+		$this->add(
+			HiddenField::name($this->name."_is_submitted")
+			->value(1)
+			->required(true)
+		);
 	}
 
 	public function checkSubmitAndValidate($data)
@@ -138,74 +149,162 @@ class FormField
 	public $required = false;
 	public $hasError = false;
 	public $errorText;
-
-	public $validAttributes = array(
-		'id',
-		'name',
-		'onchange',
-		'onclick',
-		'ondblclick',
-		'onmousedown',
-		'onmousemove',
-		'onmouseover',
-		'onmouseout',
-		'onmouseup',
-		'onkeydown',
-		'onkeypress',
-		'onkeyup',
-		'onblur',
-		'onchange',
-		'onfocus',
-		'onreset',
-		'onselect'
-	);
-
 	public $attributes = array();
 
-	public function __construct($opts)
+	// Valid Attribute fields
+	public function onchange($callback)
 	{
-		//pull in our name
-		if (isset($opts['name']))
-			$this->name = $opts['name'];
+		$this->attributes['onchange'] = $callback;
+		return $this;
+	}
 
-		//pull in our id
-		if (!isset($opts['id']))
-			$opts['id'] = "i{$this->name}";
-		$this->id = $opts['id'];
+	public function onclick($callback)
+	{
+		$this->attributes['onclick'] = $callback;
+		return $this;
+	}
 
-		if (isset($opts['value']))
-			$this->setValue($opts['value']);
-		if (isset($opts['label']))
-			$this->label = $opts['label'];
-		if (isset($opts['help']))
-			$this->help = $opts['help'];
-		if (isset($opts['required']))
-			$this->required = (boolean)$opts['required'];
+	public function ondblclick($callback)
+	{
+		$this->attributes['ondblclick'] = $callback;
+		return $this;
+	}
 
-		foreach ($this->validAttributes AS $attr) {
-			if (isset($opts[$attr]))
-				$this->attributes[$attr] = $opts[$attr];
-		}
+	public function onmousedown($callback)
+	{
+		$this->attributes['onmousedown'] = $callback;
+		return $this;
+	}
+
+	public function onmousemove($callback)
+	{
+		$this->attributes['onmousemove'] = $callback;
+		return $this;
+	}
+
+	public function onmouseover($callback)
+	{
+		$this->attributes['onmouseover'] = $callback;
+		return $this;
+	}
+
+	public function onmouseout($callback)
+	{
+		$this->attributes['onmouseout'] = $callback;
+		return $this;
+	}
+
+	public function onmouseup($callback)
+	{
+		$this->attributes['onmouseup'] = $callback;
+		return $this;
+	}
+
+	public function onkeydown($callback)
+	{
+		$this->attributes['onkeydown'] = $callback;
+		return $this;
+	}
+
+	public function onkeypress($callback)
+	{
+		$this->attributes['onkeypress'] = $callback;
+		return $this;
+	}
+
+	public function onkeyup($callback)
+	{
+		$this->attributes['onkeyup'] = $callback;
+		return $this;
+	}
+
+	public function onblur($callback)
+	{
+		$this->attributes['onblur'] = $callback;
+		return $this;
+	}
+
+	public function onfocus($callback)
+	{
+		$this->attributes['onfocus'] = $callback;
+		return $this;
+	}
+
+	public function onreset($callback)
+	{
+		$this->attributes['onreset'] = $callback;
+		return $this;
+	}
+
+	public function onselect($callback)
+	{
+		$this->attributes['onselect'] = $callback;
+		return $this;
+	}
+
+	public function id($id)
+	{
+		$this->id = $id;
+		$this->attributes['id'] = $id;
+		return $this;
+	}
+
+	public function value($value)
+	{
+		$this->value =$value;
+		return $this;
+	}
+
+	public function label($label)
+	{
+		$this->label = $label;
+		return $this;
+	}
+
+	public function help($text)
+	{
+		$this->help = $text;
+		return $this;
+	}
+
+	public function required($required)
+	{
+		$this->required = $required;
+		return $this;
+	}
+
+	/**
+	 * @param $name string
+	 */
+	protected function __construct($name)
+	{
+		$this->name = $name;
+		$this->attributes['name'] = $name;
+	}
+
+	public static function name($name)
+	{
+		return new static($name);
 	}
 
 	public function getAttributes()
 	{
-		$attribs = array();
+		//pull in our id
+		if (!isset($this->attributes['id']))
+			$this->attributes['id'] = "i".$this->name;
+		$this->id = $this->attributes['id'];
+
+		$attribute_text = array();
 		if (!empty($this->attributes))
 			foreach ($this->attributes AS $key => $val)
-				$attribs[] = "$key=\"$val\"";
+				$attribute_text[] = "$key=\"$val\"";
 
-		return implode(" ", $attribs);
+		return implode(" ", $attribute_text);
 	}
 
 	public function getValue()
 	{
 		return $this->value;
-	}
-
-	public function setValue($value)
-	{
-		$this->value = $value;
 	}
 
 	public function validate($data)
@@ -219,8 +318,8 @@ class FormField
 		if (!$this->hasError) {
 			// sanitize our data to prevent XSS
 			$sanitized_name = filter_var($data[$this->name], FILTER_SANITIZE_STRING);
-			if($sanitized_name === $data[$this->name]) {
-				$this->setValue($data[$this->name]);
+			if ($sanitized_name === $data[$this->name]) {
+				$this->value($data[$this->name]);
 			} else {
 				$this->hasError = true;
 				$this->errorText = "Sorry, no HTML in this field, please";
@@ -248,17 +347,24 @@ class TextField extends FormField
 class TextareaField extends FormField
 {
 	public $width;
+	public $rows;
 
-	public function __construct($opts)
+	protected function __construct($name)
 	{
-		if (isset($opts['width']))
-			$this->width = $opts['width'];
-		if (!isset($opts['rows']))
-			$opts['rows'] = 4;
+		$this->rows = 4;
+		parent::__construct($name);
+	}
 
-		$this->validAttributes[] = 'rows';
+	public function rows($rows)
+	{
+		$this->rows = $rows;
+		return $this;
+	}
 
-		parent::__construct($opts);
+	public function width($width)
+	{
+		$this->width = $width;
+		return $this;
 	}
 }
 
@@ -268,7 +374,7 @@ class CheckboxField extends FormField
 	public function validate($data)
 	{
 		$this->hasError = false;
-		$this->setValue((int)$data[$this->name]);
+		$this->value((int)$data[$this->name]);
 
 		return true;
 	}
@@ -276,14 +382,22 @@ class CheckboxField extends FormField
 
 class SelectField extends FormField
 {
-	public $options;
+	public $options = array();
 
-	public function __construct($opts)
+	/**
+	 * @param $options array
+	 * @return $this
+	 */
+	public function options($options)
 	{
-		$this->options = $opts['options'];
-		unset($opts['options']);
+		$this->options = $options;
+		return $this;
+	}
 
-		parent::__construct($opts);
+	public function option($option)
+	{
+		$this->options[] = $option;
+		return $this;
 	}
 }
 
@@ -312,7 +426,7 @@ class UploadField extends FormField
 			$file['error'] = 5;
 
 		//set our value for future reference.
-		$this->setValue($file);
+		$this->value($file);
 
 		//these our are english translations of errors.
 		$upload_errors = array(
@@ -340,6 +454,10 @@ class UploadField extends FormField
 
 class RawField extends DisplayField
 {
+	public static function name()
+	{
+		return parent::name('');
+	}
 }
 
 class WarningField extends DisplayField
@@ -357,5 +475,3 @@ class SuccessField extends DisplayField
 class InformationField extends DisplayField
 {
 }
-
-?>

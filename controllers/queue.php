@@ -267,13 +267,13 @@ class QueueController extends Controller
     {
         $form = new Form();
 
-        $form->add(new TextField(array(
-            'name' => 'name',
-            'label' => 'Name',
-            'help' => 'What is the name of this queue?',
-            'required' => true,
-            'value' => $queue->get('name')
-        )));
+		$form->add(
+			TextField::name('name')
+			->label('Name')
+			->help('What is the name of this queue?')
+			->required(true)
+			->value($queue->get('name'))
+		);
 
         return $form;
     }

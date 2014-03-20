@@ -196,22 +196,22 @@ class JobController extends Controller
 
 		$form = new Form();
 
-		$form->add(new TextField(array(
-			'name' => 'name',
-			'label' => 'Job Name',
-			'help' => 'What should we call this job?',
-			'required' => true,
-			'value' => $job->getName()
-		)));
+		$form->add(
+			TextField::name('name')
+			->label('Job Name')
+			->help('What should we call this job?')
+			->required(true)
+			->value($job->getName())
+		);
 
-		$form->add(new SelectField(array(
-			'name' => 'queue_id',
-			'label' => 'Queue',
-			'help' => 'Which queue does this bot pull jobs from?',
-			'required' => true,
-			'value' => $job->get('queue_id'),
-			'options' => $qs
-		)));
+		$form->add(
+			SelectField::name('queue_id')
+			->label('Queue')
+			->help('Which queue does this bot pull jobs from?')
+			->required(true)
+			->value($job->get('queue_id'))
+			->options($qs)
+		);
 
 		return $form;
 	}
@@ -467,34 +467,33 @@ class JobController extends Controller
 			"Other" => "Other - Please enter reason in field below."
 		);
 
-		$form->add(new SelectField(array(
-			'name' => 'failure_reason',
-			'label' => 'Reason for failure',
-			'help' => 'Please enter a reason for rejecting this print.',
-			'required' => true,
-			'options' => $failure_options
-		)));
+		$form->add(
+			SelectField::name('failure_reason')
+			->label('Reason for failure')
+			->help('Please enter a reason for rejecting this print.')
+			->required(true)
+			->options($failure_options)
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'failure_reason_other',
-			'label' => 'Other Reason',
-			'help' => 'If you selected "other" above, please enter the reason here.',
-			'required' => false,
-			'value' => ""
-		)));
+		$form->add(
+			TextField::name('failure_reason_other')
+			->label('Other Reason')
+			->help('If you selected "other" above, please enter the reason here.')
+			->value("")
+		);
 
-		$form->add(new CheckboxField(array(
-			'name' => 'bot_error',
-			'label' => 'Put the bot in error/maintenance mode?',
-			'help' => 'Check this box if the bot needs maintenance and should stop grabbing jobs.',
-			'value' => 1
-		)));
+		$form->add(
+			CheckboxField::name('bot_error')
+			->label('Put the bot in error/maintenance mode?')
+			->help('Check this box if the bot needs maintenance and should stop grabbing jobs.')
+			->value(1)
+		);
 
-		$form->add(new CheckboxField(array(
-			'name' => 'job_error',
-			'label' => 'Pull this job from the queue?',
-			'help' => 'Check this box if the job itself has issues and should be pulled from the queue.'
-		)));
+		$form->add(
+			CheckboxField::name('job_error')
+			->label('Pull this job from the queue?')
+			->help('Check this box if the job itself has issues and should be pulled from the queue.')
+		);
 
 		return $form;
 	}
@@ -729,34 +728,35 @@ class JobController extends Controller
 
 		$form = new Form();
 
-		$form->add(new DisplayField(array(
-			'label' => 'File',
-			'help' => 'The file that will be printed.',
-			'value' => $file->getLink()
-		)));
+		$form->add(
+			DisplayField::name('file_name')
+			->label('File')
+			->help('The file that will be printed.')
+			->value($file->getLink())
+		);
 
-		$form->add(new SelectField(array(
-			'name' => 'queue_id',
-			'label' => 'Queue',
-			'help' => 'Which queue are you adding this job to?',
-			'required' => true,
-			'options' => $qs,
-			'value' => $queue_id
-		)));
+		$form->add(
+			SelectField::name('queue_id')
+			->label('Queue')
+			->help('Whcih queue are you adding this job to?')
+			->required(true)
+			->options($qs)
+			->value($queue_id)
+		);
 
-		$form->add(new TextField(array(
-			'name' => 'quantity',
-			'label' => 'Quantity',
-			'help' => 'How many copies? Minimum 1, Maximum 100',
-			'required' => true,
-			'value' => 1
-		)));
+		$form->add(
+			TextField::name('quantity')
+			->label('Quantity')
+			->help('How many copies? Minimum 1, Maximum 100')
+			->required(true)
+			->value(1)
+		);
 
-		$form->add(new CheckboxField(array(
-			'name' => 'priority',
-			'label' => 'Is this a priority job?',
-			'help' => 'Check this box to push this job to the top of the queue.'
-		)));
+		$form->add(
+			CheckboxField::name('priority')
+			->label('Is this a priority job?')
+			->help('Check this box to push this job to the top of the queue')
+		);
 
 		return $form;
 	}
