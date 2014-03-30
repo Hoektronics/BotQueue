@@ -280,6 +280,11 @@ class Bot extends Model
 		if ($this->get('job_id'))
 			return false;
 
+		if(!$this->getDriverConfig()->can_slice &&
+			!$job->getFile()->isHydrated()
+		)
+			return false;
+
 		return true;
 	}
 
@@ -302,8 +307,8 @@ class Bot extends Model
 			throw new Exception("Unable to lock job #{$job->id}");
 
 		//do we need to slice this job?
-		if (!$job->getFile()->isHydrated()) {
-			//pull in our config and make sure its legit.
+		if (!$job->getFile()->isHydrated() && $can_slice) {
+			//pull in our config and make sure it's legit.
 			$config = $this->getSliceConfig();
 			if (!$config->isHydrated()) {
 				$job->setStatus('available');
