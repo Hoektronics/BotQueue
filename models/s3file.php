@@ -283,15 +283,16 @@ class S3File extends Model
 
     public function getJobs()
     {
-        $sql = "
-		    SELECT id
-		    FROM jobs
-		    WHERE source_file_id = '" . db()->escape($this->id) . "'
-		      OR file_id = '" . db()->escape($this->id) . "'
-		    ORDER BY id DESC
-		  ";
+        $sql = "SELECT id
+		    	FROM jobs
+		    	WHERE source_file_id = ?
+		      	OR file_id = ?
+		    	ORDER BY id DESC";
 
-        return new Collection($sql, array('Job' => 'id'));
+		$jobs = new Collection($sql, array($this->id, $this->id));
+		$jobs->bindType('id', 'Job');
+
+		return $jobs;
     }
 
     public function getParent()
@@ -301,13 +302,14 @@ class S3File extends Model
 
     public function getChildren()
     {
-        $sql = "
-		    SELECT id
-		    FROM s3_files
-		    WHERE parent_id = '" . db()->escape($this->id) . "'
-		    ORDER BY id DESC
-		  ";
+        $sql = "SELECT id
+		    	FROM s3_files
+		    	WHERE parent_id = ?
+		    	ORDER BY id DESC";
 
-        return new Collection($sql, array('S3File' => 'id'));
+		$children = new Collection($sql, array($this->id));
+		$children->bindType('id', 'S3File');
+
+		return $children;
     }
 }

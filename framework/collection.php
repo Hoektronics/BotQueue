@@ -20,41 +20,30 @@
 class Collection
 {
     private $query;
+	private $bind_data;
     private $query_total;
     private $obj_types;
-    private $expiration;
-    private $key;
     private $map;
     private $total;
 
-    public function __construct($query, $obj_types, $expiration = null, $key = null)
+    public function __construct($query, $bind_data = array())
     {
         $this->query = preg_replace("/\\;/", '', $query);
+		$this->bind_data = $bind_data;
         $this->query_total = "SELECT count(*) FROM ({$this->query}) AS subq";
-        $this->total = db()->getValue($this->query_total);
+        $this->total = db()->getValue($this->query_total, $bind_data);
         //set the object types for this object, e.g. array('InventoryLogEntry' => 'id')
-        $this->obj_types = $obj_types;
-        $this->expiration = $expiration;
-        $this->key = $key;
+        $this->obj_types = array();
     }
+
+	public function bindType($key, $value) {
+		$this->obj_types[$key] = $value;
+	}
 
     private function setMap()
     {
         if (!$this->map) {
-            //if no key is defined, then create a sha1 key from the query string
-            if ($this->key === null) {
-                $this->key = sha1($this->query);
-            }
-
-            if ($this->expiration > 0) {
-                $this->map = db()->getArray($this->query, "{$this->key}.map", $this->$expiration);
-            } else {
-                //Call the getArray function (within the subclass DatabaseSocket, which is itself derived from the Database class)
-                //Note: If no object of type DatabaseSocket exits, then a new one will be created
-                //The db()->getArray method returns an array which contains the results of the mysql query
-                //collection->map now contains the results array of the MySQL query
-                $this->map = db()->getArray($this->query);
-            }
+			$this->map = db()->getArray($this->query, $this->bind_data);
         }
     }
 
@@ -152,8 +141,8 @@ class Collection
         //  ...
 
         foreach ($map AS $key => $row) {
-            //An example of the collection->obj_types property is array("Item" => "id")
-            foreach ($this->obj_types AS $type => $id) {
+            //An example of the collection->obj_types property is array("id" => "Item")
+            foreach ($this->obj_types AS $id => $type) {
                 //$data is an array of objects
                 //for example: This creates a new object (of the type Item class) for each row in the MySQL results
                 //example: $data[0]['Item'] = new Item($row('id'))
@@ -163,11 +152,6 @@ class Collection
 
         //returns the $data array: an array of objects, e.g. items
         return $data;
-    }
-
-    public function bustCache()
-    {
-        CacheBot::delete("{$this->key}.map");
     }
 
 }

@@ -12,13 +12,11 @@ class OAuthToken extends Model
 
 	public static function findByKey($key)
 	{
-		$id = db()->getValue("
-				SELECT id
+		$sql = "SELECT id
 				FROM oauth_token
-				WHERE token = '".
-				db()->escape($key)
-				."'"
-		);
+				WHERE token = ?";
+
+		$id = db()->getValue($sql, array($key));
 
 		return new OAuthToken($id);
 	}
@@ -64,30 +62,35 @@ class OAuthToken extends Model
 
 	public static function getRequestTokensByIP()
 	{
-		$sql = "
-		    SELECT id, consumer_id
-		    FROM oauth_token
-		    WHERE ip_address = '" . db()->escape($_SERVER['REMOTE_ADDR']) . "'
-		      AND type = 1
-		      AND verified = 0
-		      AND (user_id = 0 || user_id = '" . db()->escape(User::$me->id) . "')
-		    ORDER BY id DESC
-		  ";
+		$sql = "SELECT id, consumer_id
+		    	FROM oauth_token
+		    	WHERE ip_address = ?
+		     	AND type = 1
+		      	AND verified = 0
+		      	AND (user_id = 0 || user_id = ?)
+		    	ORDER BY id DESC";
 
-		return new Collection($sql, array('OAuthToken' => 'id', 'OAuthConsumer' => 'consumer_id'));
+		$requests = new Collection($sql, array($_SERVER['REMOTE_ADDR'], User::$me->id));
+		$requests->bindType('id', 'OAuthToken');
+		$requests->bindType('consumer_id', 'OAuthConsumer');
+
+		return $requests;
 	}
 
 	public function getActiveBots()
 	{
-		$sql = "
-				SELECT id, queue_id, job_id
+		$sql = "SELECT id, queue_id, job_id
 				FROM bots
-				WHERE oauth_token_id = " . db()->escape($this->id) . "
-				AND STATUS != 'retired'
-				ORDER BY name
-			";
+				WHERE oauth_token_id = ?
+				AND status != 'retired'
+				ORDER BY name";
 
-		return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
+		$bots->bindType('queue_id', 'Queue');
+		$bots->bindType('job_id', 'Job');
+
+		return $bots;
 	}
 
 	public function getName()

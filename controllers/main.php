@@ -154,8 +154,9 @@ class MainController extends Controller
 
         //total printing hours
         $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE status != 'working'";
-        if (db()->getValue($sql) != "")
-            $this->set('total_printing_time', db()->getValue($sql));
+        $totalHours = db()->getValue($sql);
+		if ($totalHours != "")
+            $this->set('total_printing_time', $totalHours);
         else
             $this->set('total_printing_time', 0);
 
@@ -188,31 +189,32 @@ class MainController extends Controller
         $this->set('bot_leaderboard', db()->getArray($sql));
 
         //bot leaderboard - all time
-        $sql = "
-		    SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, bot_id
-		    FROM job_clock WHERE status != 'working' AND start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
-		    GROUP BY bot_id
-		    ORDER BY total DESC LIMIT 10
-		  ";
+        $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, bot_id
+				FROM job_clock WHERE status != 'working' AND start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
+				GROUP BY bot_id
+				ORDER BY total DESC LIMIT 10";
         $this->set('bot_leaderboard_30', db()->getArray($sql));
 
         if (User::isLoggedIn()) {
+			$me = array((int)User::$me->id);
             //active bots
-            $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300 AND user_id = " . (int)User::$me->id;
-            $this->set('my_total_active_bots', db()->getValue($sql));
+            $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300 AND user_id = ?";
+            $this->set('my_total_active_bots', db()->getValue($sql, $me));
 
             //total prints
-            $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'available' AND user_id = " . (int)User::$me->id;
-            $this->set('my_total_pending_jobs', db()->getValue($sql));
+            $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'available' AND user_id = ?";
+            $this->set('my_total_pending_jobs', db()->getValue($sql, $me));
 
             //total prints
-            $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'complete' AND user_id = " . (int)User::$me->id;
-            $this->set('my_total_completed_jobs', db()->getValue($sql));
+            $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'complete' AND user_id = ?";
+            $this->set('my_total_completed_jobs', db()->getValue($sql, $me));
 
             //total printing hours
-            $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE  status != 'working' AND user_id = " . (int)User::$me->id;
-            if (db()->getValue($sql) != "")
-                $this->set('my_total_printing_time', db()->getValue($sql));
+            $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE  status != 'working' AND user_id = ?";
+			$totalHours = db()->getValue($sql, $me);
+
+            if ($totalHours != "")
+                $this->set('my_total_printing_time', $totalHours);
             else
                 $this->set('my_total_printing_time', 0);
         }

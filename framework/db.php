@@ -52,8 +52,8 @@ class Database
 
 class DatabaseSocket
 {
-	/* @var $link mysqli */
-	private $link;
+	/** @var PDO $db */
+	private $db;
 
 	private $user;
 	private $pass;
@@ -80,27 +80,20 @@ class DatabaseSocket
 
 	public function reconnect()
 	{
-		ob_start();
-		$this->link = new mysqli($this->host, $this->user, $this->pass, RR_DB_NAME, $this->port);
-		ob_end_clean();
-
-		if ($this->link->connect_errno) {
+		try {
+			ob_start();
+			$connect = "mysql:host=$this->host;dbname=".RR_DB_NAME.";charset=utf8";
+			$this->db = new PDO($connect, $this->user, $this->pass);
+			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+			ob_end_clean();
+		} catch (PDOException $e) {
 			throw new Exception("Failed to connect to database!");
 		}
-
-		//select the right db.
-		if (defined('RR_DB_NAME'))
-			$this->selectDb(RR_DB_NAME);
 	}
 
-	public function error()
-	{
-		return $this->link->error;
-	}
-
-	public function escape($data)
-	{
-		return $this->link->real_escape_string($data);
+	public function prepare($sql) {
+		return $this->db->prepare($sql);
 	}
 
 	public function insert($sql, $data = array())
@@ -108,15 +101,11 @@ class DatabaseSocket
 		if (TRACK_SQL_QUERIES)
 			self::$inserts[] = array($sql, $data);
 
-		//todo: prepared statements suck!!!
-		//run our query.
-		//$stmt = $this->prepareStatement($sql, $data);
-		//$stmt->execute();
-		//$stmt->close();
+		// prepared statements rock
+		$stmt = $this->prepare($sql);
+		$stmt->execute($data);
 
-		$this->link->query($sql);
-
-		return $this->link->insert_id;
+		return $this->db->lastInsertId();
 	}
 
 	public function execute($sql, $data = array())
@@ -124,80 +113,47 @@ class DatabaseSocket
 		if (TRACK_SQL_QUERIES)
 			self::$executes[] = array($sql, $data);
 
-		//todo: prepared statements suck!!!
-		//run our query.
-		//$stmt = $this->prepareStatement($sql, $data);
-		//$stmt->execute();
-		//$stmt->close();
+		// prepared statements rock
+		$stmt = $this->prepare($sql);
+		$stmt->execute($data);
 
-		$this->link->query($sql);
-
-		return $this->link->affected_rows;
-	}
-
-	public function prepareStatement($sql, $data)
-	{
-		$stmt = $this->link->prepare($sql);
-
-		//did we even get data passed in?
-		if (!empty($data)) {
-			//okay, what types are these guys?
-			$types = "";
-			foreach ($data AS $val) {
-				if (is_string($val))
-					$types .= 's';
-				else if (is_int($val))
-					$types .= 'i';
-				else if (is_double($val))
-					$types .= 'd';
-				else
-					$types .= 'b';
-			}
-
-			//bind result needs parameters that are references
-			$refs = array($types);
-			foreach ($data AS $key => $val)
-				$refs[$key] = & $data[$key];
-
-			//magic to call bind
-			call_user_func_array(array($stmt, 'bind_param'), $refs);
-		}
-
-		return $stmt;
+		return $stmt->rowCount();
 	}
 
 	public function ping()
 	{
-		if (!$this->link->ping())
-			$this->reconnect();
+//		$pingSql = "SELECT 1";
+//
+//		try {
+//			$this->query($pingSql);
+//		} catch (PDOException $e) {
+//			$this->reconnect();
+//		}
 	}
 
-	public function query($sql)
+	public function query($sql, $data = array())
 	{
 		if (TRACK_SQL_QUERIES)
 			self::$queries[] = $sql;
 
-		$link = $this->link->query($sql);
+		try {
+			$stmt = $this->db->prepare($sql);
+			$stmt->execute($data);
 
-		//error?
-		if ($this->link->errno)
-			trigger_error("MYSQL ERROR ({$this->link->errno}): {$this->link->error} ($sql)");
-
-		return $link;
-	}
-
-	public function getArray($sql, $key = null, $life = null)
-	{
-		//check the cache first?
-		if ($key !== null && $life !== null) {
-			$data = CacheBot::get($key);
-			if (is_array($data))
-				return $data;
+			return $stmt;
+		} catch(PDOException $e) {
+			trigger_error("MySQL Error (". $e->getCode() ."): ". $e->errorInfo . " for SQL Code: ". $sql);
 		}
 
+		// We should never get here because of trigger_error
+		return null;
+	}
+
+	public function getArray($sql, $params = array())
+	{
 		//okay, load it from db.
 		//$rs now contains a resource that can be used to extract the results of the query
-		$rs = $this->query($sql);
+		$stmt = $this->query($sql, $params);
 
 		//snag it - populate the $data array with the results of the mysql output
 		//$data is a numerically indexed array where each row corresponds to one row of MySQL output
@@ -207,62 +163,38 @@ class DatabaseSocket
 		//  $data[1] = array('id' => '2', 'user_id' => '6', ...)
 		//  ...
 		$data = array();
-		while ($row = $rs->fetch_assoc())
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
 			$data[] = $row;
-
-		//save it to cache?
-		if ($key !== null && $life !== null)
-			CacheBot::set($key, $data, $life);
 
 		//return the $data array, which contains the results of the mysql query
 		return $data;
 	}
 
-	public function getRow($sql, $key = null, $life = null)
+	public function getRow($sql, $params = array())
 	{
-		//check the cache first?
-		if ($key !== null && $life !== null) {
-			$data = CacheBot::get($key);
-			if (is_array($data))
-				return $data;
-		}
 
 		$this->ping();
 
 		//okay, load it from db.
-		$rs = $this->query($sql);
+		$stmt = $this->query($sql, $params);
 		/** @var $data array */
-		$data = $rs->fetch_assoc();
+		$data = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		//error?
-		if (mysql_error())
-			trigger_error(mysql_error() . ": $sql");
-
-		//save it to cache?
-		if ($key !== null && $life !== null)
-			CacheBot::set($key, $data, $life);
+		//if (mysql_error())
+		//	trigger_error(mysql_error() . ": $sql");
 
 		return $data;
 	}
 
-	public function getValue($sql, $key = null, $life = null)
+	public function getValue($sql, $params = array())
 	{
-		$row = $this->getRow($sql, $key, $life);
+		$row = $this->getRow($sql, $params);
 
 		if (is_array($row) && count($row))
 			return array_shift($row);
 
 		return null;
-	}
-
-	public function getLink()
-	{
-		return $this->link;
-	}
-
-	public function selectDb($db)
-	{
-		return $this->link->select_db($db);
 	}
 
 	public static function drawDbStats()

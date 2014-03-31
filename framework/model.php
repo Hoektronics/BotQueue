@@ -232,7 +232,7 @@ class Model
 	 */
 	public function cleanField($field)
 	{
-		//by default... we dont clean anything
+		//by default... we don't clean anything
 	}
 
 	/**
@@ -338,11 +338,7 @@ class Model
 	{
 		//make sure we have an id....
 		if ($this->id) {
-			$result = db()->getRow("
-				SELECT *
-				FROM $this->tableName
-				WHERE id = '$this->id'
-			");
+			$result = db()->getRow("SELECT * FROM $this->tableName WHERE id = ?", array($this->id));
 
 			if (is_array($result))
 				return $result;
@@ -361,6 +357,7 @@ class Model
 	{
 		//format our sql statements w/ the valid fields
 		$fields = array();
+		$sqlFields = "";
 
 		//loop thru all our dirty fields.
 		foreach ($this->dirtyFields AS $key => $foo) {
@@ -368,20 +365,17 @@ class Model
 			if (isset($this->data[$key]) && $key != 'id') {
 				$val = $this->data[$key];
 
-				//slashes replacement..
-				//$val = str_replace("\\\\", "\\", $val);
-				//$val = str_replace("\'", "'", $val);
-				//$val = str_replace("\\\"", "\"", $val);
-
 				//add it if we have it...
-				$fields[] = "`$key` = '" . db()->escape($val) . "'";
+				$fields[] = $val;
+				if($sqlFields != "")
+					$sqlFields .= ", ";
+				$sqlFields .= $key . "=?";
 			}
 		}
+		$sqlFields .= " ";
 
 		//update if we have an id....
-		if (count($fields)) {
-			//now make our array
-			$sqlFields = implode(",\n", $fields);
+		if (count($fields) && $sqlFields != "") {
 
 			//update it?
 			if ($this->id) {
@@ -389,11 +383,11 @@ class Model
 				$sql .= $sqlFields;
 				$sql .= "WHERE id = '$this->id'\n";
 				$sql .= "LIMIT 1";
-				db()->execute($sql);
+				db()->execute($sql, $fields);
 			} //otherwise insert it...
 			else {
 				$sql = "INSERT INTO $this->tableName SET " . $sqlFields;
-				$this->id = db()->insert($sql);
+				$this->id = db()->insert($sql, $fields);
 			}
 		}
 	}
@@ -407,10 +401,7 @@ class Model
 	{
 		//do we have an id?
 		if ($this->id) {
-			db()->execute("
-				DELETE FROM $this->tableName
-				WHERE id = '$this->id'
-			");
+			db()->getRow("DELETE FROM $this->tableName WHERE id = ?", array($this->id));
 
 			return true;
 		}
@@ -502,7 +493,7 @@ class Model
 	}
 
 	/**
-	 * this funciton deletes our data from the cache. no need to override
+	 * this function deletes our data from the cache. no need to override
 	 */
 	public function deleteCache()
 	{
@@ -570,18 +561,5 @@ class Model
 		$obj->save();
 
 		return $obj;
-	}
-
-	/**
-	 * @param $status
-	 * @return string
-	 */
-	public function getStatusSql($status)
-	{
-		if ($status !== null)
-			$statusSql = " AND status = '" . db()->escape($status) . "'";
-		else
-			$statusSql = "";
-		return $statusSql;
 	}
 }

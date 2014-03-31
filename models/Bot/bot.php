@@ -213,26 +213,40 @@ class Bot extends Model
 
 	public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
 	{
-		$sql = "
-				SELECT id
-				FROM jobs
-				WHERE bot_id = " . db()->escape($this->id) . "
-					{$this->getStatusSql($status)}
-				ORDER BY {$sortField} {$sortOrder}
-			";
-		return new Collection($sql, array('Job' => 'id'));
+		$sql = "SELECT id FROM jobs WHERE bot_id = ? ";
+
+		$data = array($this->id);
+
+		if($status !== null) {
+			$sql .= "AND status = ? ";
+			$data[] = $status;
+		}
+
+		$sql .= "ORDER BY {$sortField} ". $sortOrder;
+
+		$jobs = new Collection($sql, array($data));
+		$jobs->bindType('id', 'Job');
+
+		return $jobs;
 	}
 
 	public function getJobClocks($status = null, $sortField = 'id', $sortOrder = 'ASC')
 	{
-		$sql = "
-				SELECT id
-				FROM job_clock
-				WHERE bot_id = " . db()->escape($this->id) . "
-					{$this->getStatusSql($status)}
-				ORDER BY {$sortField} {$sortOrder}
-			";
-		return new Collection($sql, array('JobClockEntry' => 'id'));
+		$sql = "SELECT id FROM job_clock WHERE bot_id = ? ";
+
+		$data = array($this->id);
+
+		if($status !== null) {
+			$sql .= "AND status = ? ";
+			$data[] = $status;
+		}
+
+		$sql .= "ORDER BY {$sortField} ". $sortOrder;
+
+		$jobClocks = new Collection($sql, $data);
+		$jobClocks->bindType('id', 'JobClockEntry');
+
+		return $jobClocks;
 	}
 
 
@@ -241,14 +255,15 @@ class Bot extends Model
 	 */
 	public function getErrorLog()
 	{
-		$sql = "
-		    SELECT id
-		    FROM error_log
-		    WHERE bot_id = '" . db()->escape($this->id) . "'
-		    ORDER BY error_date DESC
-		  ";
+		$sql = "SELECT id
+		    	FROM error_log
+		    	WHERE bot_id = ?
+		    	ORDER BY error_date DESC";
 
-		return new Collection($sql, array('ErrorLog' => 'id'));
+		$logs = new Collection($sql, array($this->id));
+		$logs->bindType('id', 'ErrorLog');
+
+		return $logs;
 	}
 
 	public function isMine()

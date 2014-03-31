@@ -27,12 +27,10 @@ class Token extends Model
     public static function byToken($token)
     {
         //look up the token
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM tokens
-				WHERE hash = '" . db()->escape($token) . "'
-			";
-        $id = db()->getValue($sql);
+				WHERE hash = ?";
+        $id = db()->getValue($sql, array($token));
 
         //send it!
         return new Token($id);

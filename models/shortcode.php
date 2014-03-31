@@ -26,13 +26,11 @@ class ShortCode extends Model
 
     public static function byUrl($url)
     {
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM shortcodes
-				WHERE url = '" . db()->escape($url) . "'
-			";
+				WHERE url = ?";
 
-        $value = db()->getValue($sql);
+        $value = db()->getValue($sql, array($url));
         $code = new ShortCode($value);
 
         if (!$code->isHydrated()) {

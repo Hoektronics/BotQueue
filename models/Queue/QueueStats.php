@@ -25,16 +25,14 @@ class QueueStats {
      */
     public static function getStats($queue)
     {
-        $sql = "
-				SELECT status, count(status) as cnt
+        $sql = "SELECT status, count(status) as cnt
 				FROM jobs
 				WHERE status != 'canceled' and
-				queue_id = " . db()->escape($queue->id) . "
-				GROUP BY status
-			";
+				queue_id = ?
+				GROUP BY status";
 
+		$stats = db()->getArray($sql, array($queue->id));
         $data = array();
-        $stats = db()->getArray($sql);
         if (!empty($stats)) {
             //load up our stats
             foreach ($stats AS $row) {
@@ -51,20 +49,18 @@ class QueueStats {
         }
 
         //pull in our time based stats.
-        $sql = "
-				SELECT sum(unix_timestamp(taken_time) - unix_timestamp(created_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(finished_time) - unix_timestamp(created_time)) as total
+        $sql = "SELECT sum(unix_timestamp(taken_time) - unix_timestamp(created_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(finished_time) - unix_timestamp(created_time)) as total
 				FROM jobs
 				WHERE status = 'complete'
-					AND queue_id = " . db()->escape($queue->id) . "
-			";
+				AND queue_id = ?";
 
-        $stats = db()->getArray($sql);
+        $stats = db()->getArray($sql, array($queue->id));
         $data['total_waittime'] = (int)$stats[0]['wait'];
         $data['total_time'] = (int)$stats[0]['total'];
 
         //pull in our runtime stats
-        $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND queue_id = " . db()->escape($queue->id);
-        $data['total_runtime'] = (int)db()->getValue($sql);
+        $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND queue_id = ?";
+        $data['total_runtime'] = (int)db()->getValue($sql, array($queue->id));
 
         if ($data['total'] > 0) {
             $data['avg_waittime'] = $data['total_waittime'] / $data['total'];

@@ -61,25 +61,28 @@ class SliceEngine extends Model
 
     public static function getAllEngines()
     {
-        $sql = "
-		    SELECT id, engine_name, engine_path, engine_description, is_public, default_config_id
-		    FROM slice_engines
-		    ORDER BY engine_name ASC
-		  ";
+		//todo Is anything other than id required here?
+        $sql = "SELECT id, engine_name, engine_path, engine_description, is_public, default_config_id
+		    	FROM slice_engines
+		    	ORDER BY engine_name ASC";
 
-        return new Collection($sql, array('SliceEngine' => 'id'));
+		$engines = new Collection($sql);
+		$engines->bindType('id', 'SliceEngine');
+
+		return $engines;
     }
 
     public static function getPublicEngines()
     {
-        $sql = "
-		    SELECT id
-		    FROM slice_engines
-		    WHERE is_public = 1
-		    ORDER BY engine_name ASC
-		  ";
+        $sql = "SELECT id
+		    	FROM slice_engines
+		    	WHERE is_public = 1
+		    	ORDER BY engine_name ASC";
 
-        return new Collection($sql, array('SliceEngine' => 'id'));
+		$engines = new Collection($sql);
+		$engines->bindType('id', 'SliceEngine');
+
+		return $engines;
     }
 
     public static function engine_exists($engine_path)
@@ -87,9 +90,8 @@ class SliceEngine extends Model
         $sql = "
         SELECT id
         FROM slice_engines
-        WHERE is_public = 1 and engine_path='" . db()->escape($engine_path) . "'
-      ";
-        if (count(db()->getArray($sql)) > 0) {
+        WHERE is_public = 1 and engine_path = ?";
+        if (count(db()->getArray($sql, array($engine_path))) > 0) {
             return true;
         }
         return false;
@@ -97,27 +99,29 @@ class SliceEngine extends Model
 
     public function getAllConfigs()
     {
-        $sql = "
-		    SELECT id
-		    FROM slice_configs
-		    WHERE engine_id = '" . db()->escape($this->id) . "'
-		    ORDER BY config_name
-		  ";
+        $sql = "SELECT id
+		    	FROM slice_configs
+		    	WHERE engine_id = ?
+		    	ORDER BY config_name";
 
-        return new Collection($sql, array('SliceConfig' => 'id'));
+		$configs = new Collection($sql, array($this->id));
+		$configs->bindType('id', 'SliceConfig');
+
+		return $configs;
     }
 
     public function getMyConfigs()
     {
-        $sql = "
-		    SELECT id
-		    FROM slice_configs
-		    WHERE engine_id = '" . db()->escape($this->id) . "'
-		      AND (user_id = '" . User::$me->id . "' OR id = '" . $this->get('default_config_id') . "')
-		    ORDER BY config_name
-		  ";
+        $sql = "SELECT id
+		    	FROM slice_configs
+		    	WHERE engine_id = ?
+		      	AND (user_id = ? OR id = ?)
+		    	ORDER BY config_name";
 
-        return new Collection($sql, array('SliceConfig' => 'id'));
+		$configs = new Collection($sql, array($this->id, User::$me->id, $this->get('default_config_id')));
+		$configs->bindType('id', 'SliceConfig');
+
+		return $configs;
     }
 
     public function delete()
@@ -138,11 +142,11 @@ class SliceEngine extends Model
 	 * @param $os
 	 */
 	public static function validOS($engine_path, $os) {
-		$sql = "insert into engine_os
-				select id, '".$os."'
-				from slice_engines
-				where engine_path='".$engine_path."'";
+		$engineSQL = "SELECT id FROM slice_engines WHERE engine_path = ?";
+		$engine_id = db()->getValue($engineSQL, array($engine_path));
 
-		db()->execute($sql);
+		$sql = "INSERT IGNORE INTO engine_os(engine_id, os) VALUES(?,?)";
+
+		db()->execute($sql, array($engine_id, $os));
 	}
 }

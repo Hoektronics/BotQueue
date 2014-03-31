@@ -24,12 +24,11 @@ class OAuthConsumer extends Model
 
 	public static function findByKey($key)
 	{
-		$sql = "
-				SELECT id
+		$sql = "SELECT id
 				FROM oauth_consumer
-				WHERE consumer_key = '" . db()->escape($key) . "'
-			";
-		$id = db()->getValue($sql);
+				WHERE consumer_key = ?";
+
+		$id = db()->getValue($sql, array($key));
 
 		return new OAuthConsumer($id);
 	}
@@ -121,14 +120,10 @@ class OAuthConsumer extends Model
 	public function delete()
 	{
 		//delete all our tokens
-		db()->execute("
-				DELETE FROM oauth_token WHERE consumer_id = " . db()->escape($this->id) . "
-			");
+		db()->execute("DELETE FROM oauth_token WHERE consumer_id = ?", array($this->id));
 
 		//delete all our nonces
-		db()->execute("
-				DELETE FROM oauth_token_nonce WHERE consumer_id = " . db()->escape($this->id) . "
-			");
+		db()->execute("DELETE FROM oauth_consumer_nonce WHERE consumer_id = ?", array($this->id));
 
 		parent::delete();
 	}

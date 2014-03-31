@@ -151,12 +151,14 @@ class Email extends Model
 
 	public static function getQueuedEmails()
 	{
-		return new Collection("
-				SELECT id
+		$sql = "SELECT id
 				FROM email_queue
 				WHERE status = 'queued'
-				ORDER BY queue_date ASC
-			", array('Email' => 'id'));
+				ORDER BY queue_date ASC";
+		$emails = new Collection($sql);
+		$emails->bindType('id', 'Email');
+
+		return $emails;
 	}
 }
 

@@ -87,7 +87,7 @@ class BotController extends Controller
 		$form->action = "/bot/register";
 
 		$form->add(
-			TextField::name('manufacturer')
+			TextField::name('name')
 			->label('Bot Name')
 			->help('What should humans call your bot?')
 			->required(true)
@@ -1012,7 +1012,11 @@ class BotController extends Controller
 		$this->setTitle("Live Bots View");
 
 		$sql = "SELECT id, queue_id, job_id FROM bots WHERE webcam_image_id != 0 AND last_seen > NOW() - 3600 ORDER BY last_seen DESC";
-		$bots = new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		$bots = new Collection($sql);
+		$bots->bindType('id', 'Bot');
+		$bots->bindType('queue_id', 'Queue');
+		$bots->bindType('job_id', 'Job');
+
 		$this->set('bots', $bots->getRange(0, 24));
 		$this->set('dashboard_style', 'medium_thumbnails');
 	}

@@ -26,15 +26,13 @@ class BotStats {
      */
     public static function getStats($bot)
     {
-        $sql = "
-				SELECT status, count(status) as cnt
+        $sql = "SELECT status, count(status) as cnt
 				FROM jobs
-				WHERE bot_id = " . db()->escape($bot->id) . "
-				GROUP BY status
-			";
+				WHERE bot_id = ?
+				GROUP BY status";
 
+		$stats = db()->getArray($sql, array($bot->id));
         $data = array();
-        $stats = db()->getArray($sql);
         if (!empty($stats)) {
             //load up our stats
             foreach ($stats AS $row) {
@@ -48,20 +46,19 @@ class BotStats {
         }
 
         //pull in our time based stats.
-        $sql = "
-				SELECT sum(unix_timestamp(verified_time) - unix_timestamp(finished_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(verified_time) - unix_timestamp(taken_time)) as total
+        $sql = "SELECT sum(unix_timestamp(verified_time) - unix_timestamp(finished_time)) as wait, sum(unix_timestamp(finished_time) - unix_timestamp(taken_time)) as runtime, sum(unix_timestamp(verified_time) - unix_timestamp(taken_time)) as total
 				FROM jobs
 				WHERE status = 'complete'
-					AND bot_id = " . db()->escape($bot->id);
+				AND bot_id = ?";
 
-        $stats = db()->getArray($sql);
+        $stats = db()->getArray($sql, array($bot->id));
 
         $data['total_waittime'] = (int)$stats[0]['wait'];
         $data['total_time'] = (int)$stats[0]['total'];
 
         //pull in our runtime stats
-        $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND bot_id = " . db()->escape($bot->id);
-        $data['total_runtime'] = (int)db()->getValue($sql);
+        $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND bot_id = ?";
+        $data['total_runtime'] = (int)db()->getValue($sql, array($bot->id));
 
         if ($data['total']) {
             $data['avg_waittime'] = $stats[0]['wait'] / $data['total'];

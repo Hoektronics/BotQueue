@@ -86,6 +86,7 @@ class APIV1Controller extends Controller
 
 			$result = array('status' => 'success', 'data' => $data);
 		} catch (Exception $e) {
+			error_log($e->getMessage());
 			error_log(print_r($this->args(), true));
 			error_log(print_r($provider->oauth, true));
 			$result = array('status' => 'error', 'error' => $e->getMessage());

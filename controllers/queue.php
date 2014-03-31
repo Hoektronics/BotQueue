@@ -138,23 +138,28 @@ class QueueController extends Controller
             die("Error: You need to pass in at least 2 jobs.");
 
         //load up our ids.
-        $jids = array();
+        $jobIds = array();
+		$sqlParams = "";
+
         foreach ($jobs AS $job) {
-            $jarray = explode("_", $job);
-            $jid = (int)$jarray[1];
-            if (!$jid)
-                die("Error: format must be a csv of job_### where ### is the job id.");
-            $jids[] = (int)$jid;
+            $jobArray = explode("_", $job);
+
+			if(count($jobArray) == 2) {
+				$jobIds[] = (int) $jobArray[1];
+				if($sqlParams != "")
+					$sqlParams .= ",";
+				$sqlParams .= "?";
+			} else {
+				die("Error: format must be a csv of job_### where ### is the job id.");
+			}
         }
 
         //find our our current max
-        $sql = "SELECT min(user_sort) FROM jobs WHERE id IN (" .
-            db()->escape(implode($jids, ",")) .
-            ")";
-        $min = (int)db()->getValue($sql);
+        $sql = "SELECT min(user_sort) FROM jobs WHERE id IN (". $sqlParams .")";
+        $min = (int)db()->getValue($sql, $jobIds);
 
         //now actually update.
-        foreach ($jids AS $jid) {
+        foreach ($jobIds AS $jid) {
             $job = new Job($jid);
             if ($job->get('user_id') == User::$me->id) {
                 $job->set('user_sort', $min);

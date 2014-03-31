@@ -55,58 +55,65 @@ class Queue extends Model
 
     public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
     {
-        $sql = "
-				SELECT id
-				FROM jobs
-				WHERE queue_id = '" . db()->escape($this->id) . "'
-					{$this->getStatusSql($status)}
-				ORDER BY {$sortField} {$sortOrder}
-			";
-        return new Collection($sql, array('Job' => 'id'));
+		$sql = "SELECT id FROM jobs WHERE queue_id = ? ";
+
+		$data = array($this->id);
+
+		if($status !== null) {
+			$sql .= "AND status = ? ";
+			$data[] = $status;
+		}
+
+		$sql .= "ORDER BY {$sortField} ". $sortOrder;
+
+		$jobs = new Collection($sql, $data);
+		$jobs->bindType('id', 'Job');
+
+		return $jobs;
     }
 
     public function findNewJob($can_slice = true)
     {
-        if (!$can_slice)
-            $sliceSql = " AND file_id > 0 ";
-        else
-            $sliceSql = "";
+		$data = array($this->id);
 
-        $sql = "
-				SELECT id
-				FROM jobs
-				WHERE queue_id = '" . $this->id . "'
-					AND status = 'available'
-					{$sliceSql}
-				ORDER BY user_sort ASC
-			";
-        $job_id = db()->getValue($sql);
+		$sql = "SELECT id FROM jobs WHERE queue_id = ? AND status = 'available' ";
+
+		if(!$can_slice) {
+			$sql .= "AND file_id > 0 ";
+		}
+
+		$sql .= "ORDER BY user_sort ASC";
+
+        $job_id = db()->getValue($sql, $data);
 
         return new Job($job_id);
     }
 
     public function getActiveJobs($sortField = 'user_sort', $sortOrder = 'ASC')
     {
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM jobs
-				WHERE queue_id = '" . db()->escape($this->id) . "'
-					AND status IN ('available', 'taken')
-				ORDER BY {$sortField} {$sortOrder}
-			";
-        return new Collection($sql, array('Job' => 'id'));
+				WHERE queue_id = ?
+				AND status IN ('available', 'taken')
+				ORDER BY {$sortField} ". $sortOrder;
+
+		$jobs = new Collection($sql, array($this->id));
+		$jobs->bindType('id', 'Job');
+
+		return $jobs;
     }
 
     public function getBots()
     {
-        $sql = "
-		    SELECT id
-		    FROM bots
-		    WHERE queue_id = '" . db()->escape($this->id) . "'
-		    ORDER BY last_seen DESC
-		  ";
+        $sql = "SELECT id
+				FROM bots
+				WHERE queue_id = ?
+				ORDER BY last_seen DESC";
 
-        return new Collection($sql, array('Bot' => 'id'));
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
+
+		return $bots;
     }
 
     /**
@@ -132,39 +139,35 @@ class Queue extends Model
 
     public function getErrorLog()
     {
-        $sql = "
-		    SELECT id
-		    FROM error_log
-		    WHERE queue_id = '" . db()->escape($this->id) . "'
-		    ORDER BY error_date DESC
-		  ";
+        $sql = "SELECT id
+				FROM error_log
+				WHERE queue_id = ?
+				ORDER BY error_date DESC";
 
-        return new Collection($sql, array('ErrorLog' => 'id'));
+		$logs = new Collection($sql, array($this->id));
+		$logs->bindType('id', 'ErrorLog');
+
+		return $logs;
     }
 
     public function flush()
     {
-        $sql = "
-		    DELETE FROM jobs
-		    WHERE queue_id = " . (int)$this->id . "
-		    AND status = 'available'
-		  ";
-        db()->execute($sql);
+        $sql = "DELETE FROM jobs
+				WHERE queue_id = ?
+				AND status = 'available'";
+        db()->execute($sql, array($this->id));
     }
 
     public function delete()
     {
-        $sql = "
-		    DELETE FROM jobs
-		    WHERE queue_id = " . (int)$this->id . "
-		  ";
-        db()->execute($sql);
+        $sql = "DELETE FROM jobs
+				WHERE queue_id = ?";
 
-        $sql = "
-		    DELETE FROM error_log
-		    WHERE queue_id = " . (int)$this->id . "
-		  ";
-        db()->execute($sql);
+        db()->execute($sql, array($this->id));
+
+        $sql = "DELETE FROM error_log
+				WHERE queue_id = ?";
+        db()->execute($sql, array($this->id));
 
         parent::delete();
     }

@@ -156,15 +156,11 @@ class User extends Model
 
     public static function byUsername($username)
     {
-        $username = db()->escape($username);
-
         //look up the token
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM users
-				WHERE username = '". $username . "'
-			";
-        $id = db()->getValue($sql);
+				WHERE username = ?";
+        $id = db()->getValue($sql, array($username));
 
         //send it!
         return new User($id);
@@ -172,17 +168,14 @@ class User extends Model
 
     public static function byUsernameAndPassword($username, $password)
     {
-        $username = db()->escape($username);
         $pass_hash = sha1($password);
 
         //look up the combo.
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM users
-				WHERE username = '" . $username . "'
-					AND pass_hash = '" . $pass_hash . "'
-			";
-        $id = db()->getValue($sql);
+				WHERE username = ?
+				AND pass_hash = ?";
+        $id = db()->getValue($sql, array($username, $pass_hash));
 
         //send it!
         return new User($id);
@@ -190,15 +183,11 @@ class User extends Model
 
     public static function byEmail($email)
     {
-        $email = db()->escape($email);
-
         //look up the token
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM users
-				WHERE email = '" . $email ."'
-			";
-        $id = db()->getValue($sql);
+				WHERE email = ?";
+        $id = db()->getValue($sql, array($email));
 
         //send it!
         return new User($id);
@@ -247,39 +236,37 @@ class User extends Model
 
     public function getActivityStream()
     {
-        $sql = "
-				SELECT id, user_id
+        $sql = "SELECT id, user_id
 				FROM activities
-				WHERE user_id = '" . db()->escape($this->id) . "'
-				ORDER BY id DESC
-			";
+				WHERE user_id = ?
+				ORDER BY id DESC";
 
-        return new Collection($sql, array(
-            'User' => 'user_id',
-            'Activity' => 'id'
-        ));
+		$stream = new Collection($sql, array($this->id));
+		$stream->bindType('user_id', 'User');
+		$stream->bindType('id', 'Activity');
+
+		return $stream;
     }
 
     public function getQueues()
     {
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM queues
-				WHERE user_id = " . db()->escape($this->id) . "
-				ORDER BY name
-			";
+				WHERE user_id = ?
+				ORDER BY name";
 
-        return new Collection($sql, array('Queue' => 'id'));
+		$queues = new Collection($sql, array($this->id));
+		$queues->bindType('id', 'Queue');
+
+		return $queues;
     }
 
     public function getDefaultQueue()
     {
-        $sql = "
-				SELECT id FROM queues
+        $sql = "SELECT id FROM queues
 				WHERE name = 'Default'
-					AND user_id = " . db()->escape($this->id) . "
-			";
-        $q = new Queue(db()->getValue($sql));
+				AND user_id = ?";
+        $q = new Queue(db()->getValue($sql, array($this->id)));
 
         if (!$q->isHydrated()) {
             $sql = "SELECT id FROM queues ORDER BY id LIMIT 1";
@@ -291,101 +278,120 @@ class User extends Model
 
     public function getBots()
     {
-        $sql = "
-				SELECT id, queue_id, job_id
+        $sql = "SELECT id, queue_id, job_id
 				FROM bots
-				WHERE user_id = " . db()->escape($this->id) . "
-				ORDER BY name
-			";
+				WHERE user_id = ?
+				ORDER BY name";
 
-        return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
+		$bots->bindType('queue_id', 'Queue');
+		$bots->bindType('job_id', 'Job');
+
+		return $bots;
     }
 
     public function getRetiredBots()
     {
-        $sql = "
-				SELECT id, queue_id, job_id
+        $sql = "SELECT id, queue_id, job_id
 				FROM bots
-				WHERE user_id = " . db()->escape($this->id) . "
+				WHERE user_id = ?
 				AND status = 'retired'
-				ORDER BY name
-			";
+				ORDER BY name";
 
-        return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
+		$bots->bindType('queue_id', 'Queue');
+		$bots->bindType('job_id', 'Job');
+
+		return $bots;
     }
 
     public function getActiveBots()
     {
-        $sql = "
-				SELECT id, queue_id, job_id
+        $sql = "SELECT id, queue_id, job_id
 				FROM bots
-				WHERE user_id = " . db()->escape($this->id) . "
+				WHERE user_id = ?
 				AND status != 'retired'
-				ORDER BY name
-			";
+				ORDER BY name";
 
-        return new Collection($sql, array('Bot' => 'id', 'Queue' => 'queue_id', 'Job' => 'job_id'));
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
+		$bots->bindType('queue_id', 'Queue');
+		$bots->bindType('job_id', 'Job');
+
+		return $bots;
     }
 
     public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')
     {
-        $sql = "
-				SELECT id
-				FROM jobs
-				WHERE user_id = " . db()->escape($this->id) . "
-					{$this->getStatusSql($status)}
-				ORDER BY {$sortField} {$sortOrder}
-			";
+		$sql = "SELECT id FROM jobs WHERE user_id = ? ";
 
-        return new Collection($sql, array('Job' => 'id'));
+		$data = array($this->id);
+
+		if($status !== null) {
+			$sql .= "AND status = ? ";
+			$data[] = $status;
+		}
+
+		$sql .= "ORDER BY {$sortField} ". $sortOrder;
+
+		$jobs = new Collection($sql, $data);
+		$jobs->bindType('id', 'Job');
+
+		return $jobs;
     }
 
     public function getAuthorizedApps()
     {
-        $sql = "
-				SELECT id, consumer_id
+        $sql = "SELECT id, consumer_id
 				FROM oauth_token
-				WHERE user_id = " . db()->escape($this->id) . "
-					AND type = 2
-				ORDER BY id
-			";
+				WHERE user_id = ?
+				AND type = 2
+				ORDER BY id";
 
-        return new Collection($sql, array('OAuthToken' => 'id', 'OAuthConsumer' => 'consumer_id'));
+		$apps = new Collection($sql, array($this->id));
+		$apps->bindType('id', 'OAuthToken');
+		$apps->bindType('consumer_id', 'OAuthConsumer');
+
+		return $apps;
     }
 
     public function getMyApps()
     {
-        $sql = "
-				SELECT id
+        $sql = "SELECT id
 				FROM oauth_consumer
-				WHERE user_id = " . db()->escape($this->id) . "
-				ORDER BY name
-			";
+				WHERE user_id = ?
+				ORDER BY name";
 
-        return new Collection($sql, array('OAuthConsumer' => 'id'));
+		$apps = new Collection($sql, array($this->id));
+		$apps->bindType('id', 'OAuthConsumer');
+
+		return $apps;
     }
 
     public function getErrorLog()
     {
-        $sql = "
-		    SELECT id
-		    FROM error_log
-		    WHERE user_id = '" . db()->escape($this->id) . "'
-		    ORDER BY error_date DESC
-		  ";
+        $sql = "SELECT id
+		    	FROM error_log
+		    	WHERE user_id = ?
+		    	ORDER BY error_date DESC";
 
-        return new Collection($sql, array('ErrorLog' => 'id'));
+		$logs = new Collection($sql, array($this->id));
+		$logs->bindType('id', 'ErrorLog');
     }
 
     public function getMySliceConfigs()
     {
-        $sql = "
-		    SELECT id, engine_id
-		    FROM slice_configs
-		    WHERE user_id = '" . db()->escape($this->id) . "'
-		    ORDER BY engine_id DESC
-		  ";
+        $sql = "SELECT id, engine_id
+				FROM slice_configs
+				WHERE user_id = ?
+				ORDER BY engine_id DESC";
 
-        return new Collection($sql, array('SliceConfig' => 'id', 'SliceEngine' => 'engine_id'));
+		$configs = new Collection($sql, array($this->id));
+		$configs->bindType('id', 'SliceConfig');
+		$configs->bindType('engine_id', 'SliceEngine');
+
+		return $configs;
     }
 }

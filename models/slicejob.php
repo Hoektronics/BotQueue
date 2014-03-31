@@ -186,29 +186,30 @@ class SliceJob extends Model
 		$config_id = (int)$config_id;
 		$source_id = (int)$source_id;
 
-		$sql = "
-		    SELECT id
-		    FROM slice_jobs
-		    WHERE slice_config_id = " . db()->escape($config_id) . "
-		      AND input_id = " . db()->escape($source_id) . "
-		      AND user_id = " . User::$me->id . "
-		      AND status = 'complete'
-		  ";
+		$sql = "SELECT id
+				FROM slice_jobs
+				WHERE slice_config_id = ?
+				AND input_id = ?
+				AND user_id = ?
+				AND status = 'complete'";
 
-		$id = db()->getValue($sql);
+		$id = db()->getValue($sql, array($config_id, $source_id, User::$me->id));
 
 		return new SliceJob($id);
 	}
 
 	public static function getJobsRequiringAction()
 	{
-		$sql = "
-		    SELECT id, input_id, job_id
-		    FROM slice_jobs
-		    WHERE status = 'pending'
-		    ORDER BY finish_date ASC
-		  ";
+		$sql = "SELECT id, input_id, job_id
+		    	FROM slice_jobs
+		    	WHERE status = 'pending'
+		    	ORDER BY finish_date ASC";
 
-		return new Collection($sql, array('SliceJob' => 'id', 'S3File' => 'input_id', 'Job' => 'job_id'));
+		$jobs = new Collection($sql);
+		$jobs->bindType('id', 'SliceJob');
+		$jobs->bindType('input_id', 'S3File');
+		$jobs->bindType('job_id', 'Job');
+
+		return $jobs;
 	}
 }

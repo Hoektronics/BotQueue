@@ -89,8 +89,8 @@ class Job extends Model
 
 	public function getLatestTimeLog()
 	{
-		$sql = "SELECT id FROM job_clock WHERE job_id = " . $this->id ." AND status = 'working' ORDER BY id DESC";
-		$id = db()->getValue($sql);
+		$sql = "SELECT id FROM job_clock WHERE job_id = ? AND status = 'working' ORDER BY id DESC";
+		$id = db()->getValue($sql, array($this->id));
 
 		return new JobClockEntry($id);
 	}
@@ -159,12 +159,12 @@ class Job extends Model
 	{
 		//Prevent there from being a user_sort value of 0 for now
 		//todo Make this process better
-		$sql = "UPDATE jobs set user_sort=user_sort+1 where user_id= " . (int)$this->get('user_id');
-		db()->execute($sql);
+		$sql = "UPDATE jobs set user_sort=user_sort+1 where user_id = ?";
+		db()->execute($sql, array($this->get('user_id')));
 
 		// Find the minimum value and get the slot before it
-		$sql = "SELECT min(user_sort)-1 FROM jobs WHERE user_id = " . (int)$this->get('user_id');
-		$min = (int)db()->getValue($sql);
+		$sql = "SELECT min(user_sort)-1 FROM jobs WHERE user_id = ?";
+		$min = (int)db()->getValue($sql, array($this->get('user_id')));
 
 		$this->set('user_sort', $min);
 		$this->save();
@@ -224,26 +224,30 @@ class Job extends Model
 
 	public function getErrorLog()
 	{
-		$sql = "
-		    SELECT id
-		    FROM error_log
-		    WHERE job_id = '" . db()->escape($this->id) . "'
-		    ORDER BY error_date DESC
-		  ";
+		$sql = "SELECT id
+				FROM error_log
+				WHERE job_id = ?
+				ORDER BY error_date DESC";
 
-		return new Collection($sql, array('ErrorLog' => 'id'));
+		$logs = new Collection($sql, array($this->id));
+		$logs->bindType('id', 'ErrorLog');
+
+		return $logs;
 	}
 
 	public static function getJobsRequiringAction()
 	{
-		$sql = "
-		    SELECT id, queue_id, bot_id
-		    FROM jobs
-		    WHERE status = 'qa'
-		    ORDER BY finished_time ASC
-		  ";
+		$sql = "SELECT id, queue_id, bot_id
+				FROM jobs
+				WHERE status = 'qa'
+				ORDER BY finished_time ASC";
 
-		return new Collection($sql, array('Job' => 'id', 'Queue' => 'queue_id', 'Bot' => 'bot_id'));
+		$jobs = new Collection($sql);
+		$jobs->bindType('id', 'Job');
+		$jobs->bindType('queue_id', 'Queue');
+		$jobs->bindType('bot_id', 'Bot');
+
+		return $jobs;
 	}
 
 	public function delete()
@@ -258,11 +262,11 @@ class Job extends Model
 		//  $bot->save();
 		// }
 
-		$sql = "DELETE FROM error_log WHERE job_id = " . $this->id;
-		db()->execute($sql);
+		$sql = "DELETE FROM error_log WHERE job_id = ?";
+		db()->execute($sql, array($this->id));
 
-		$sql = "DELETE FROM slice_jobs WHERE job_id = " . $this->id;
-		db()->execute($sql);
+		$sql = "DELETE FROM slice_jobs WHERE job_id = ?";
+		db()->execute($sql, array($this->id));
 
 		parent::delete();
 	}

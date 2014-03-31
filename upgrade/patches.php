@@ -13,19 +13,14 @@ function start_patch()
 }
 
 function finish_patch($patchNumber, $description) {
-  $patch = "INSERT INTO patches
-  (patch_num, description)
-  VALUES(".
-    db()->escape($patchNumber).",'".
-    db()->escape($description)."')";
-  db()->execute($patch);
+  $patch = "INSERT INTO patches (patch_num, description) VALUES(?,?)";
+  db()->execute($patch, array($patchNumber, $description));
   print("Patch ".$patchNumber." applied\n");
 }
 
 function patch_exists($patchNumber) {
-  $patchSQL = "SELECT * from patches
-  where patch_num>=".db()->escape($patchNumber);
-  return (db()->execute($patchSQL) > 0);
+  $patchSQL = "SELECT * from patches where patch_num >= ?";
+  return (db()->execute($patchSQL, array($patchNumber)) > 0);
 }
 
 ?>

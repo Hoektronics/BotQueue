@@ -19,98 +19,99 @@
 
 class SliceConfig extends Model
 {
-    public function __construct($id = null)
-    {
-        parent::__construct($id, "slice_configs");
-    }
+	public function __construct($id = null)
+	{
+		parent::__construct($id, "slice_configs");
+	}
 
-    public function getName()
-    {
-        return $this->get('config_name');
-    }
+	public function getName()
+	{
+		return $this->get('config_name');
+	}
 
-    public function getAPIData($deep = true)
-    {
-        $r = array();
-        $r['id'] = $this->id;
-        $r['name'] = $this->getName();
-        $r['user_id'] = $this->get('user_id');
-        $r['fork_id'] = $this->get('fork_id');
-        if ($deep)
-            $r['engine'] = $this->getEngine()->getAPIData(false);
-        $r['config_data'] = $this->get('config_data');
-        $r['add_date'] = $this->get('add_date');
-        $r['edit_date'] = $this->get('edit_date');
+	public function getAPIData($deep = true)
+	{
+		$r = array();
+		$r['id'] = $this->id;
+		$r['name'] = $this->getName();
+		$r['user_id'] = $this->get('user_id');
+		$r['fork_id'] = $this->get('fork_id');
+		if ($deep)
+			$r['engine'] = $this->getEngine()->getAPIData(false);
+		$r['config_data'] = $this->get('config_data');
+		$r['add_date'] = $this->get('add_date');
+		$r['edit_date'] = $this->get('edit_date');
 
-        return $r;
-    }
+		return $r;
+	}
 
-    public function getSnapshot()
-    {
-        return $this->get('config_data');
-    }
+	public function getSnapshot()
+	{
+		return $this->get('config_data');
+	}
 
-    public function getUser()
-    {
-        return new User($this->get('user_id'));
-    }
+	public function getUser()
+	{
+		return new User($this->get('user_id'));
+	}
 
-    public function getEngine()
-    {
-        return new SliceEngine($this->get('engine_id'));
-    }
+	public function getEngine()
+	{
+		return new SliceEngine($this->get('engine_id'));
+	}
 
-    public function getUrl()
-    {
-        return "/sliceconfig:" . $this->id;
-    }
+	public function getUrl()
+	{
+		return "/sliceconfig:" . $this->id;
+	}
 
-    public function getBots()
-    {
-        $sql = "
-        SELECT id
-        FROM bots
-        WHERE slice_config_id = '" . db()->escape($this->id) . "'
-        ORDER BY name
-      ";
+	public function getBots()
+	{
+		$sql = "SELECT id
+        		FROM bots
+        		WHERE slice_config_id = ?
+        		ORDER BY name";
 
-        return new Collection($sql, array('Bot' => 'id'));
-    }
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
 
-    public function getActiveBots()
-    {
-        $sql = "
-        SELECT id
-        FROM bots
-        WHERE slice_config_id = '" . db()->escape($this->id) . "'
-        AND status != 'retired'
-        ORDER BY name
-      ";
+		return $bots;
+	}
 
-        return new Collection($sql, array('Bot' => 'id'));
-    }
+	public function getActiveBots()
+	{
+		$sql = "SELECT id
+        		FROM bots
+        		WHERE slice_config_id = ?
+        		AND status != 'retired'
+        		ORDER BY name";
 
-    public function getSliceJobs()
-    {
-        $sql = "
-        SELECT id
-        FROM slice_jobs
-        WHERE slice_config_id = '" . db()->escape($this->id) . "'
-        ORDER BY id DESC
-      ";
+		$bots = new Collection($sql, array($this->id));
+		$bots->bindType('id', 'Bot');
 
-        return new Collection($sql, array('SliceJob' => 'id'));
-    }
+		return $bots;
+	}
 
-    public function expireSliceJobs()
-    {
-        $sql = "
-        UPDATE slice_jobs
-        SET status = 'expired'
-        WHERE status = 'complete'
-          AND slice_config_id = '" . db()->escape($this->id) . "'
-      ";
+	public function getSliceJobs()
+	{
+		$sql = "SELECT id
+        		FROM slice_jobs
+        		WHERE slice_config_id = ?
+        		ORDER BY id DESC";
 
-        db()->execute($sql);
-    }
+		$sliceJobs = new Collection($sql, array($this->id));
+		$sliceJobs->bindType('id', 'SliceJob');
+
+		return $sliceJobs;
+	}
+
+	public function expireSliceJobs()
+	{
+		$sql = "UPDATE slice_jobs
+				SET status = 'expired'
+				WHERE status = 'complete'
+				AND slice_config_id = ?";
+
+		db()->execute($sql, array($this->id));
+	}
 }

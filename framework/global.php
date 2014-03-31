@@ -33,7 +33,7 @@ define('CONTROLLERS_DIR', $base_dir . '/controllers/');
 define('MODELS_DIR', $base_dir . '/models/');
 
 //simply include all our files...
-include(FRAMEWORK_DIR . "/model.php");
+include(FRAMEWORK_DIR . "model.php");
 include(FRAMEWORK_DIR . "view.php");
 include(FRAMEWORK_DIR . "controller.php");
 include(FRAMEWORK_DIR . "collection.php");
