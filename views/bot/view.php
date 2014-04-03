@@ -65,7 +65,11 @@
 					<tr>
 						<th>Slice Engine:</th>
 						<? if ($engine->isHydrated()): ?>
-  						<td><?=$engine->getLink()?></td>
+							<? if ($bot->getDriverConfig()->can_slice): ?>
+  								<td><?=$engine->getLink()?></td>
+							<? else: ?>
+								<td><?=$engine->getLink()?> (Slicing disabled)</td>
+							<? endif ?>
   					<? else: ?>
   						<td><span class="text-error">No slice engine selected!</span></td>
             <? endif ?>
