@@ -401,7 +401,7 @@ class Model
 	{
 		//do we have an id?
 		if ($this->id) {
-			db()->getRow("DELETE FROM $this->tableName WHERE id = ?", array($this->id));
+			db()->execute("DELETE FROM $this->tableName WHERE id = ?", array($this->id));
 
 			return true;
 		}
