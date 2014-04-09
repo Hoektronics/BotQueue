@@ -910,13 +910,14 @@ class APIV1Controller extends Controller
 		//var_dump($scan_data);
 
 		if (!empty($_FILES)) {
-			//delete any old files if we have them.
-			if (!empty($old_scan_data->camera_files)) {
-				foreach ($old_scan_data->camera_files AS $id) {
-					$s3 = new S3File($id);
-					$s3->delete();
-				}
-			}
+			// We currently don't want to delete the old data
+//			//delete any old files if we have them.
+//			if (!empty($old_scan_data->camera_files)) {
+//				foreach ($old_scan_data->camera_files AS $id) {
+//					$s3 = new S3File($id);
+//					$s3->delete();
+//				}
+//			}
 
 			foreach ($_FILES AS $file) {
 				if (is_uploaded_file($file['tmp_name'])) {
