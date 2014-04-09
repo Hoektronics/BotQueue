@@ -87,18 +87,32 @@ class SlicerController extends Controller
 
     public function import()
     {
-        $this->assertLoggedIn();
-        try {
-            if (!User::isAdmin())
-                throw new Exception("You must be an admin to import slice engines.");
+		// todo Until BotQueue is linked up with github, we have no real way of
+		// deciding if someone should be able to add engines or not since this
+		// currently adds everything publicly. Most likely, if the one who pushed it
+		// is linked to an admin user, then it will go through and be public. If it's
+		// linked to a normal user, then it won't be public.
+		// tl;dr If you uncomment the lines bellow, then any repo that has a webhook
+		// pointed here can add slicers.
+//		$github_info = array();
+//		if($this->args('payload'))
+//			$github_info = json_decode($this->args('payload'),true);
 
+//		if(isset($github_info['repository']) && isset($github_info['repository']['url'])) {
+//			$github_url = $github_info['repository']['url'];
+//			$github_url = str_replace("http://", "", $github_url);
+//			$github_url = str_replace("https://", "", $github_url);
+//			$github_url = str_replace("github.com/", "", $github_url);
+//		} else {
+			$github_url = "Hoektronics/engines";
+//		}
+		print("Repo URL: " . $github_url ."\n");
+
+        try {
             $this->setTitle('Import Slice Engine');
             $this->set('area', 'slicers');
-			
-			$User = "Hoektronics";
-			$Repo = "engines";
 
-            $response = Utility::downloadUrl("https://api.github.com/repos/{$User}/{$Repo}/git/refs");
+            $response = Utility::downloadUrl("https://api.github.com/repos/{$github_url}/git/refs");
 
 			if($response == False)
 				throw new Exception("I'm sorry, I couldn't access github");
@@ -120,7 +134,7 @@ class SlicerController extends Controller
                     $engine_path = $engineName . '-' . $version;
 
                     if (!SliceEngine::engine_exists($engine_path)) { // Do we already have this engine?
-                        $manifestResponse = Utility::downloadUrl("https://raw.github.com/{$User}/{$Repo}/" . $branch . "/manifest.json");
+                        $manifestResponse = Utility::downloadUrl("https://raw.github.com/{$github_url}/" . $branch . "/manifest.json");
                         $manifest = json_decode(file_get_contents($manifestResponse['localpath']), True);
 
                         $engine = new SliceEngine();
@@ -135,7 +149,7 @@ class SlicerController extends Controller
                         //now we make it a default config object
                         $config = new SliceConfig();
                         $config->set('config_name', 'Default');
-                        $file = Utility::downloadUrl("https://raw.github.com/{$User}/{$Repo}/" . $branch . "/" . $manifest['configuration']);
+                        $file = Utility::downloadUrl("https://raw.github.com/{$github_url}/" . $branch . "/" . $manifest['configuration']);
                         $config->set('config_data', file_get_contents($file['localpath']));
                         $config->set('engine_id', $engine->id);
                         //$config->set('user_id', User::$me->id); // Config for everyone?
@@ -155,6 +169,10 @@ class SlicerController extends Controller
 					SliceEngine::validOS($engine_path, $os);
                 }
             }
+			if($this->args('payload')) {
+				print("Payload: " . $this->args('payload') ."\n");
+				die("Update from Github worked");
+			}
             $this->forwardToURL("/slicers");
         } catch (Exception $e) {
             $this->set('megaerror', $e->getMessage());
