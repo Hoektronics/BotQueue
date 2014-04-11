@@ -19,60 +19,77 @@
 
 class AuthController extends Controller
 {
-    public function logout()
-    {
-        if (User::isLoggedIn()) {
-            Activity::log("logged out.");
+	public function logout()
+	{
+		if (User::isLoggedIn()) {
+			Activity::log("logged out.");
 
-            //remove our token, if we got one.
-            if ($_COOKIE['token']) {
-                $data = unserialize(base64_decode($_COOKIE['token']));
-                $token = Token::byToken($data['token']);
-                $token->delete();
-            }
+			//remove our token, if we got one.
+			if ($_COOKIE['token']) {
+				$data = unserialize(base64_decode($_COOKIE['token']));
+				$token = Token::byToken($data['token']);
+				$token->delete();
+			}
 
-            //unset specific variables.
-            setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME);
-            unset($_SESSION['userid']);
+			//unset specific variables.
+			setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME);
+			unset($_SESSION['userid']);
 
-            //nuke the session.
-            if (isset($_COOKIE[session_name()]))
-                setcookie(session_name(), '', time() - 420000, '/');
+			//nuke the session.
+			if (isset($_COOKIE[session_name()]))
+				setcookie(session_name(), '', time() - 420000, '/');
 
-            session_unset();
-            session_destroy();
+			session_unset();
+			session_destroy();
 
-            $this->forwardToUrl("/");
-        }
-    }
+			$this->forwardToUrl("/");
+		}
+	}
 
-    public function forgotpass()
-    {
-        $this->setTitle("Retrieve Forgotten Password");
+	public function forgotpass()
+	{
+		$this->setTitle("Retrieve Forgotten Password");
 
-        if ($this->args('submit')) {
-            $user = User::byEmail($this->args('email'));
-            if ($user->isHydrated()) {
-                //give them a pass hash.
-                $user->set('pass_reset_hash', sha1(mt_rand() . mt_rand() . mt_rand()));
-                $user->save();
+		$forgotPassForm = $this->_createForgotPassForm();
+		$this->set('form', $forgotPassForm);
 
-                $link = "http://" . SITE_HOSTNAME . $user->getUrl() . "/resetpass:" . $user->get('pass_reset_hash');
-                $text = Controller::byName('email')->renderView('lost_pass', array('user' => $user, 'link' => $link));
-                $html = Controller::byName('email')->renderView('lost_pass_html', array('user' => $user, 'link' => $link));
+		if ($forgotPassForm->checkSubmitAndValidate($this->args())) {
+			$user = User::byEmail($this->args('email'));
+			if ($user->isHydrated()) {
+				//give them a pass hash.
+				$user->set('pass_reset_hash', sha1(mt_rand() . mt_rand() . mt_rand()));
+				$user->save();
 
-                Activity::log("forgot his/her password. :P", $user);
+				$link = "http://" . SITE_HOSTNAME . $user->getUrl() . "/resetpass:" . $user->get('pass_reset_hash');
+				$text = Controller::byName('email')->renderView('lost_pass', array('user' => $user, 'link' => $link));
+				$html = Controller::byName('email')->renderView('lost_pass_html', array('user' => $user, 'link' => $link));
 
-                $email = Email::queue($user, "Password Reset", $text, $html);
-                $email->send();
+				Activity::log("forgot his/her password. :P", $user);
 
-                $this->set('status', "We have sent a reset password confirmation email to '" . $this->args('email') . "'.");
-            } else
-                $this->set('error', "We could not find an account with that email address.");
+				$email = Email::queue($user, "Password Reset", $text, $html);
+				$email->send();
 
-            $this->setArg('email');
-        }
-    }
+				$this->set('status', "We have sent a reset password confirmation email to '" . $this->args('email') . "'.");
+			} else
+				$this->set('error', "We could not find an account with that email address.");
+
+			$this->setArg('email');
+		}
+	}
+
+	public function _createForgotPassForm()
+	{
+		$form = new Form();
+
+		$form->action = "/forgotpass";
+
+		$form->add(
+			TextField::name('email')
+				->label('Email')
+				->help('What is your email address?')
+				->required(true)
+		);
+
+		return $form;
+	}
 }
-
-?>
