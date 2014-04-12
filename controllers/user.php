@@ -19,314 +19,314 @@
 
 class UserController extends Controller
 {
-    public function home()
-    {
-        $this->assertLoggedIn();
-    }
+	public function home()
+	{
+		$this->assertLoggedIn();
+	}
 
-    public function profile()
-    {
-        $this->assertLoggedIn();
+	public function profile()
+	{
+		$this->assertLoggedIn();
 
-        try {
-            //how do we find them?
-            if ($this->args('id'))
-                $user = new User($this->args('id'));
-            else if ($this->args('username'))
-                $user = User::byUsername($this->args('username'));
-            else
-                $user = new User();
+		try {
+			//how do we find them?
+			if ($this->args('id'))
+				$user = new User($this->args('id'));
+			else if ($this->args('username'))
+				$user = User::byUsername($this->args('username'));
+			else
+				$user = new User();
 
-            //redirects!
-            if ($_COOKIE['viewmode'] == 'iphone')
-                $this->forwardToUrl($user->getiPhoneUrl());
+			//redirects!
+			if ($_COOKIE['viewmode'] == 'iphone')
+				$this->forwardToUrl($user->getiPhoneUrl());
 
-            //did we really get someone?
-            if (!$user->isHydrated())
-                throw new Exception("Could not find that user.");
+			//did we really get someone?
+			if (!$user->isHydrated())
+				throw new Exception("Could not find that user.");
 
-            //set our title.
-            if ($user->isMe())
-                $this->setTitle("Welcome, " . $user->getName());
-            else
-                $this->setTitle("About " . $user->getName());
+			//set our title.
+			if ($user->isMe())
+				$this->setTitle("Welcome, " . $user->getName());
+			else
+				$this->setTitle("About " . $user->getName());
 
-            $this->set('user', $user);
-            //$this->set('photo', $user->getProfileImage());
+			$this->set('user', $user);
+			//$this->set('photo', $user->getProfileImage());
 
-            //figure out our info.
-            $collection = $user->getActivityStream();
-            $this->set('activities', $collection->getRange(0, 25));
-            $this->set('activity_total', $collection->count());
-        } catch (Exception $e) {
-            $this->setTitle('View User - Error');
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+			//figure out our info.
+			$collection = $user->getActivityStream();
+			$this->set('activities', $collection->getRange(0, 25));
+			$this->set('activity_total', $collection->count());
+		} catch (Exception $e) {
+			$this->setTitle('View User - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function activity()
-    {
-        $this->assertLoggedIn();
+	public function activity()
+	{
+		$this->assertLoggedIn();
 
-        try {
-            $this->setTitle('Activity Log');
+		try {
+			$this->setTitle('Activity Log');
 
-            //how do we find them?
-            if ($this->args('id'))
-                $user = new User($this->args('id'));
-            else if ($this->args('username'))
-                $user = User::byUsername($this->args('username'));
-            else
-                $user = new User();
+			//how do we find them?
+			if ($this->args('id'))
+				$user = new User($this->args('id'));
+			else if ($this->args('username'))
+				$user = User::byUsername($this->args('username'));
+			else
+				$user = new User();
 
-            //did we really get someone?
-            if (!$user->isHydrated())
-                throw new Exception("Could not find that user.");
+			//did we really get someone?
+			if (!$user->isHydrated())
+				throw new Exception("Could not find that user.");
 
-            $this->set('user', $user);
+			$this->set('user', $user);
 
-            $this->setTitle('Activity Log - ' . $user->getName());
+			$this->setTitle('Activity Log - ' . $user->getName());
 
-            //figure out our info.
-            $collection = $user->getActivityStream();
-            $per_page = 25;
-            $page = $collection->putWithinBounds($this->args('page'), $per_page);
+			//figure out our info.
+			$collection = $user->getActivityStream();
+			$per_page = 25;
+			$page = $collection->putWithinBounds($this->args('page'), $per_page);
 
-            //all our meta stuff.
-            $this->set('per_page', $per_page);
-            $this->set('total', $collection->count());
-            $this->set('page', $page);
-            $this->set('activities', $collection->getPage($page, $per_page));
-        } catch (Exception $e) {
-            $this->setTitle('View User - Error');
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+			//all our meta stuff.
+			$this->set('per_page', $per_page);
+			$this->set('total', $collection->count());
+			$this->set('page', $page);
+			$this->set('activities', $collection->getPage($page, $per_page));
+		} catch (Exception $e) {
+			$this->setTitle('View User - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function edit()
-    {
-        $this->assertLoggedIn();
+	public function edit()
+	{
+		$this->assertLoggedIn();
 
-        try {
-            $this->setTitle("Edit Profile");
+		try {
+			$this->setTitle("Edit Profile");
 
-            //how do we find them?
-            if ($this->args('id'))
-                $user = new User($this->args('id'));
-            else if ($this->args('username'))
-                $user = User::byUsername($this->args('username'));
-            else
-                $user = User::$me;
+			//how do we find them?
+			if ($this->args('id'))
+				$user = new User($this->args('id'));
+			else if ($this->args('username'))
+				$user = User::byUsername($this->args('username'));
+			else
+				$user = User::$me;
 
-            //are we cool?
-            if (!$user->isHydrated())
-                throw new Exception("Could not find that user.");
-            //are we cool to edit
-            else if (!$user->isMe() && !User::isAdmin())
-                throw new Exception("You do not have permission to edit this user.");
+			//are we cool?
+			if (!$user->isHydrated())
+				throw new Exception("Could not find that user.");
+			//are we cool to edit
+			else if (!$user->isMe() && !User::isAdmin())
+				throw new Exception("You do not have permission to edit this user.");
 
-            //did we get a form submission?
-            if ($this->args('submit')) {
-                // birthday boy?
-                if ($this->args('birthday')) {
-                    if (strtotime($this->args('birthday')))
-                        $user->set('birthday', date("Y-m-d H:i:s", strtotime($this->args('birthday'))));
-                    else
-                        $errors['birthday'] = "We couldn't understand your birthday.  Try using MM/DD/YYY.";
-                }
+			//did we get a form submission?
+			if ($this->args('submit')) {
+				// birthday boy?
+				if ($this->args('birthday')) {
+					if (strtotime($this->args('birthday')))
+						$user->set('birthday', date("Y-m-d H:i:s", strtotime($this->args('birthday'))));
+					else
+						$errors['birthday'] = "We couldn't understand your birthday.  Try using MM/DD/YYY.";
+				}
 
-                // email change?
-                if (Verify::email($this->args('email')))
-                    $user->set('email', $this->args('email'));
-                else
-                    $errors['email'] = "Your email address is invalid.";
+				// email change?
+				if (Verify::email($this->args('email')))
+					$user->set('email', $this->args('email'));
+				else
+					$errors['email'] = "Your email address is invalid.";
 
-                // password change?
-                if ($this->args('changepass1') && $this->args('changepass2')) {
-                    if ($this->args('changepass1') == $this->args('changepass2'))
-                        $user->set('pass_hash', User::hashPass($this->args('changepass1')));
-                    else
-                        $errors['password'] = "Your passwords did not match.";
-                }
+				// password change?
+				if ($this->args('changepass1') && $this->args('changepass2')) {
+					if ($this->args('changepass1') == $this->args('changepass2'))
+						$user->set('pass_hash', User::hashPass($this->args('changepass1')));
+					else
+						$errors['password'] = "Your passwords did not match.";
+				}
 
-                $user->set('first_name', stripslashes($this->args('first_name')));
-                $user->set('last_name', stripslashes($this->args('last_name')));
+				$user->set('first_name', stripslashes($this->args('first_name')));
+				$user->set('last_name', stripslashes($this->args('last_name')));
 
-                if (empty($errors)) {
-                    if ($user->isMe())
-                        Activity::log("edited their profile.");
-                    else
-                        Activity::log("edited " . $this->args('username') . "'s profile.");
+				if (empty($errors)) {
+					if ($user->isMe())
+						Activity::log("edited their profile.");
+					else
+						Activity::log("edited " . $this->args('username') . "'s profile.");
 
-                    $user->save();
-                    $this->set('status', "Your " . $user->getLink("profile information") . " has been updated.");
-                } else {
-                    $this->set('errors', $errors);
-                    $this->set('error', "Uh oh, there was an error!");
-                }
+					$user->save();
+					$this->set('status', "Your " . $user->getLink("profile information") . " has been updated.");
+				} else {
+					$this->set('errors', $errors);
+					$this->set('error', "Uh oh, there was an error!");
+				}
 
-                $this->set('user', $user);
-            }
-        } catch (Exception $e) {
-            $this->setTitle('Edit User - Error');
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+				$this->set('user', $user);
+			}
+		} catch (Exception $e) {
+			$this->setTitle('Edit User - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function changepass()
-    {
-        $this->assertLoggedIn();
+	public function changepass()
+	{
+		$this->assertLoggedIn();
 
-        try {
-            $this->setTitle("Edit Password");
+		try {
+			$this->setTitle("Edit Password");
 
-            //how do we find them?
-            if ($this->args('id'))
-                $user = new User($this->args('id'));
-            else if ($this->args('username'))
-                $user = User::byUsername($this->args('username'));
-            else
-                $user = User::$me;
+			//how do we find them?
+			if ($this->args('id'))
+				$user = new User($this->args('id'));
+			else if ($this->args('username'))
+				$user = User::byUsername($this->args('username'));
+			else
+				$user = User::$me;
 
-            //are we cool?
-            if (!$user->isHydrated())
-                throw new Exception("Could not find that user.");
-            //are we cool to edit
-            if (!$user->isMe() && !User::isAdmin())
-                throw new Exception("You do not have permission to edit this user.");
+			//are we cool?
+			if (!$user->isHydrated())
+				throw new Exception("Could not find that user.");
+			//are we cool to edit
+			if (!$user->isMe() && !User::isAdmin())
+				throw new Exception("You do not have permission to edit this user.");
 
-            if ($this->args('submit')) {
-                if (!$this->args('changepass1') || !$this->args('changepass2'))
-                    $error = "You must enter a password.";
-                else if ($user->get('pass_hash') == User::hashPass($this->args('changepass1')))
-                    $error = "The new password must be different from your old password.";
-                else if ($this->args('changepass1') != $this->args('changepass2'))
-                    $error = "The passwords did not match.";
-                else if (strlen($this->args('changepass1')) < 8)
-                    $error = "The password must be at least 8 characters long.";
-                else
-                    $error = "";
+			if ($this->args('submit')) {
+				if (!$this->args('changepass1') || !$this->args('changepass2'))
+					$error = "You must enter a password.";
+				else if ($user->get('pass_hash') == User::hashPass($this->args('changepass1')))
+					$error = "The new password must be different from your old password.";
+				else if ($this->args('changepass1') != $this->args('changepass2'))
+					$error = "The passwords did not match.";
+				else if (strlen($this->args('changepass1')) < 8)
+					$error = "The password must be at least 8 characters long.";
+				else
+					$error = "";
 
-                if ($error != "") {
-                    $user->set('pass_hash', User::hashPass($this->args('changepass1')));
-                    //$user->set('force_password_change', 0); //pass updated.
-                    $user->save();
-                    $this->set('status', "Your password has been updated.");
-                } else
-                    $this->set('error', $error);
-            }
+				if ($error != "") {
+					$user->set('pass_hash', User::hashPass($this->args('changepass1')));
+					//$user->set('force_password_change', 0); //pass updated.
+					$user->save();
+					$this->set('status', "Your password has been updated.");
+				} else
+					$this->set('error', $error);
+			}
 
-            $this->set('user', $user);
-        } catch (Exception $e) {
-            $this->setTitle('Edit User - Error');
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+			$this->set('user', $user);
+		} catch (Exception $e) {
+			$this->setTitle('Edit User - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function resetpass()
-    {
-        try {
-            //how do we find them?
-            if ($this->args('id'))
-                $user = new User($this->args('id'));
-            else if ($this->args('username'))
-                $user = User::byUsername($this->args('username'));
-            else
-                $user = User::$me;
+	public function resetpass()
+	{
+		try {
+			//how do we find them?
+			if ($this->args('id'))
+				$user = new User($this->args('id'));
+			else if ($this->args('username'))
+				$user = User::byUsername($this->args('username'));
+			else
+				$user = User::$me;
 
-            //are we cool?
-            if (!$user->isHydrated())
-                $this->set('megaerror', "Could not find that user.");
+			//are we cool?
+			if (!$user->isHydrated())
+				$this->set('megaerror', "Could not find that user.");
 
-            //is that hash good?  pass it bro!
-            if ($user->get('pass_reset_hash') != $this->args('hash'))
-                throw new Exception("Invalid hash.  Die hacker scum.");
+			//is that hash good?  pass it bro!
+			if ($user->get('pass_reset_hash') != $this->args('hash'))
+				throw new Exception("Invalid hash.  Die hacker scum.");
 
-            //one time use only.
-            $user->set('pass_reset_hash', '');
-            //$user->set('force_password_change', 1);
-            $user->save();
+			//one time use only.
+			$user->set('pass_reset_hash', '');
+			//$user->set('force_password_change', 1);
+			$user->save();
 
-            User::createLogin($user);
+			User::createLogin($user);
 
-            $this->forwardToUrl('/user/changepass');
-        } catch (Exception $e) {
-            $this->setTitle('Reset Pass - Error');
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+			$this->forwardToUrl('/user/changepass');
+		} catch (Exception $e) {
+			$this->setTitle('Reset Pass - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function delete()
-    {
-        $this->assertLoggedIn();
+	public function delete()
+	{
+		$this->assertLoggedIn();
 
-        try {
-            $this->setTitle("Delete User");
+		try {
+			$this->setTitle("Delete User");
 
-            //how do we find them?
-            if ($this->args('id'))
-                $user = new User($this->args('id'));
-            else
-                throw new Exception("Could not find that user.");
+			//how do we find them?
+			if ($this->args('id'))
+				$user = new User($this->args('id'));
+			else
+				throw new Exception("Could not find that user.");
 
-            //are we cool?
-            if (!$user->isHydrated())
-                throw new Exception("Could not find that user.");
-            //are we cool to edit
-            if ($user->get('is_admin'))
-                throw new Exception("You cannot delete admins.");
-            if (!User::isAdmin())
-                throw new Exception("You are not an admin and cannot delete users.");
+			//are we cool?
+			if (!$user->isHydrated())
+				throw new Exception("Could not find that user.");
+			//are we cool to edit
+			if ($user->get('is_admin'))
+				throw new Exception("You cannot delete admins.");
+			if (!User::isAdmin())
+				throw new Exception("You are not an admin and cannot delete users.");
 
-            if ($this->args('submit')) {
-                $user->delete();
-                $this->set('status', "The user has been deleted!");
-            }
+			if ($this->args('submit')) {
+				$user->delete();
+				$this->set('status', "The user has been deleted!");
+			}
 
-            $this->set('user', $user);
-        } catch (Exception $e) {
-            $this->setTitle('Delete User - Error');
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+			$this->set('user', $user);
+		} catch (Exception $e) {
+			$this->setTitle('Delete User - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function loginandregister()
-    {
-        $this->setTitle('Login or register a new account.');
+	public function loginandregister()
+	{
+		$this->setTitle('Login or register a new account.');
 
-        //did we get a redirect payload or anything?
-        if ($this->args('payload')) {
-            $payload = unserialize(base64_decode($this->args('payload')));
-            if (is_array($payload) && $payload['type'] && $payload['data'])
-                $_SESSION['payload'] = $payload;
-        }
+		//did we get a redirect payload or anything?
+		if ($this->args('payload')) {
+			$payload = unserialize(base64_decode($this->args('payload')));
+			if (is_array($payload) && $payload['type'] && $payload['data'])
+				$_SESSION['payload'] = $payload;
+		}
 
-        //did we get a token?
-        if ($this->args('token')) {
-            //try to login with it.
-            User::loginWithToken($this->args('token'));
-            if (User::isLoggedIn()) {
-                //fully log them in.
-                $data = unserialize(base64_decode($this->args('token')));
-                $token = Token::byToken($data['token']);
-                $token->setCookie();
+		//did we get a token?
+		if ($this->args('token')) {
+			//try to login with it.
+			User::loginWithToken($this->args('token'));
+			if (User::isLoggedIn()) {
+				//fully log them in.
+				$data = unserialize(base64_decode($this->args('token')));
+				$token = Token::byToken($data['token']);
+				$token->setCookie();
 
-                //to our dashboard
-                $this->forwardToUrl("/");
-            }
-        }
-    }
+				//to our dashboard
+				$this->forwardToUrl("/");
+			}
+		}
+	}
 
-    public function register()
-    {
+	public function register()
+	{
 		$registerForm = $this->_createRegisterForm();
 		$this->set('register_form', $registerForm);
 
-		if($registerForm->checkSubmitAndValidate($this->args())) {
+		if ($registerForm->checkSubmitAndValidate($this->args())) {
 			$registrationSuccess = true;
 			//todo Fix at least email so that it can validate itself
 			$username = $this->args('username');
-			if(!Verify::username($username, $reason)) {
+			if (!Verify::username($username, $reason)) {
 				/** @var FormField $field */
 				$field = $registerForm->get('username');
 				$field->hasError = true;
@@ -335,22 +335,16 @@ class UserController extends Controller
 			}
 
 			$email = $this->args('email');
-			/** @var FormField $emailField */
-			$emailField = $registerForm->get('email');
-			if(!Verify::email($email)) {
+			$testUser = User::byEmail($email);
+			if ($testUser->isHydrated()) {
+				/** @var FormField $emailField */
+				$emailField = $registerForm->get('email');
 				$emailField->hasError = true;
-				$emailField->errorText = "You must supply a valid email";
+				$emailField->errorText = "That email is already being used";
 				$registrationSuccess = false;
-			} else {
-				$testUser = User::byEmail($email);
-				if($testUser->isHydrated()) {
-					$emailField->hasError = true;
-					$emailField->errorText = "That email is already being used";
-					$registrationSuccess = false;
-				}
 			}
 
-			if($this->args('pass1') != $this->args('pass2')) {
+			if ($this->args('pass1') != $this->args('pass2')) {
 				/** @var FormField $field */
 				$field = $registerForm->get('pass2');
 				$field->hasError = true;
@@ -358,7 +352,7 @@ class UserController extends Controller
 				$registrationSuccess = false;
 			}
 
-			if($registrationSuccess) {
+			if ($registrationSuccess) {
 				//woot!
 				$user = new User();
 				$user->set('username', $username);
@@ -383,55 +377,56 @@ class UserController extends Controller
 				$this->forwardToURL("/");
 			}
 		}
-    }
+	}
 
-	public function _createRegisterForm() {
+	public function _createRegisterForm()
+	{
 		$form = new Form('register');
 
-		if(!$this->args('username'))
+		if (!$this->args('username'))
 			$username = '';
 		else
 			$username = $this->args('username');
 
-		if(!$this->args('email'))
+		if (!$this->args('email'))
 			$email = '';
 		else
 			$email = $this->args('email');
 
 		$form->add(
 			TextField::name('username')
-			->label("Username")
-			->value($username)
-			->required(true)
+				->label("Username")
+				->value($username)
+				->required(true)
 		);
 
 		$form->add(
-			TextField::name('email')
-			->label("Email address")
-			->value($email)
-			->required(true)
+			EmailField::name('email')
+				->label("Email address")
+				->value($email)
+				->required(true)
 		);
 
 		$form->add(
 			PasswordField::name('pass1')
-			->label("Password")
-			->required(true)
+				->label("Password")
+				->required(true)
 		);
 
 		$form->add(
 			PasswordField::name('pass2')
-			->label("Password Confirmation")
-			->required(true)
+				->label("Password Confirmation")
+				->required(true)
 		);
 
 		$tos = "By clicking on the \"Create your account\" button below, you certify that you have read and agree to our ";
-		$tos.= "<a href=\"/tos\">Terms of use</a>";
-		$tos.= " and ";
-		$tos.= "<a href=\"/privacy\">Privacy Policy</a>.";
+		$tos .= "<a href=\"/tos\">Terms of use</a>";
+		$tos .= " and ";
+		$tos .= "<a href=\"/privacy\">Privacy Policy</a>.";
 
 		$form->add(
 			DisplayField::name('tos')
-			->value($tos)
+				->value($tos)
 		);
 
 		$form->setSubmitText("Create your account");
@@ -440,21 +435,21 @@ class UserController extends Controller
 		return $form;
 	}
 
-    public function login()
-    {
+	public function login()
+	{
 		$loginForm = $this->_createLoginForm();
 		$this->set('login_form', $loginForm);
 
-		if($loginForm->checkSubmitAndValidate($this->args())) {
+		if ($loginForm->checkSubmitAndValidate($this->args())) {
 			$username = $this->args('username');
 			$password = $this->args('password');
 			$rememberMe = $this->args('remember_me');
 
 			User::login($username, $password);
 
-			if(User::isLoggedIn()) {
+			if (User::isLoggedIn()) {
 				//Want a cookie?
-				if($rememberMe) {
+				if ($rememberMe) {
 					$token = User::$me->createToken();
 					$token->setCookie();
 				}
@@ -465,44 +460,45 @@ class UserController extends Controller
 
 				$this->forwardToURL('/');
 			} else {
-				$this->set('error' , "We could not find that username/password combination");
+				$this->set('error', "We could not find that username/password combination");
 			}
 		}
-    }
+	}
 
-	public function _createLoginForm() {
+	public function _createLoginForm()
+	{
 		$form = new Form("login");
 
 		$form->action = "/login";
 
-		if(!$this->args('username'))
+		if (!$this->args('username'))
 			$username = '';
 		else
 			$username = $this->args('username');
 
 		$form->add(
 			HiddenField::name('action')
-			->value('login')
-			->required(true)
+				->value('login')
+				->required(true)
 		);
 
 		$form->add(
 			TextField::name('username')
-			->label('Username')
-			->value($username)
-			->required(true)
+				->label('Username')
+				->value($username)
+				->required(true)
 		);
 
 		$form->add(
 			PasswordField::name('password')
-			->label('Password')
-			->required(true)
+				->label('Password')
+				->required(true)
 		);
 
 		$form->add(
 			CheckboxField::name('remember_me')
-			->label("Remember me on this computer.")
-			->checked(true)
+				->label("Remember me on this computer.")
+				->checked(true)
 		);
 
 		$form->setSubmitText("Sign into your account");
@@ -511,8 +507,8 @@ class UserController extends Controller
 		return $form;
 	}
 
-    public function draw_users()
-    {
-        $this->setArg('users');
-    }
+	public function draw_users()
+	{
+		$this->setArg('users');
+	}
 }

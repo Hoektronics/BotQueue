@@ -84,7 +84,7 @@ class AuthController extends Controller
 		$form->action = "/forgotpass";
 
 		$form->add(
-			TextField::name('email')
+			EmailField::name('email')
 				->label('Email')
 				->help('What is your email address?')
 				->required(true)

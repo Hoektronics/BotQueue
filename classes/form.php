@@ -362,6 +362,23 @@ class PasswordField extends TextField
 {
 }
 
+class EmailField extends TextField
+{
+
+	public function validate($data) {
+		$email = $data[$this->name];
+		$filtered_email = filter_var($email, FILTER_VALIDATE_EMAIL);
+		if($filtered_email != $email) {
+			$this->hasError = true;
+			$this->errorText = "You must supply a valid email.";
+		} else {
+			parent::validate($data);
+		}
+
+		return !$this->hasError;
+	}
+}
+
 class TextareaField extends FormField
 {
 	public $width;

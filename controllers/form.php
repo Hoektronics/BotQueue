@@ -39,6 +39,11 @@ class FormController extends Controller
 		$this->_field();
 	}
 
+	public function emailfield()
+	{
+		$this->_field();
+	}
+
 	public function textareafield()
 	{
 		$this->_field();
