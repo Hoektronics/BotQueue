@@ -19,98 +19,15 @@
 
 class FormController extends Controller
 {
-	public function vertical_form()
-	{
-		$this->_form();
-	}
-
-	public function horizontal_form()
-	{
-		$this->_form();
-	}
-
-	public function hiddenfield()
-	{
-		$this->_field();
-	}
-
-	public function textfield()
-	{
-		$this->_field();
-	}
-
-	public function emailfield()
-	{
-		$this->_field();
-	}
-
-	public function textareafield()
-	{
-		$this->_field();
-	}
-
-	public function checkboxfield()
-	{
-		$this->_field();
-	}
-
-	public function selectfield()
-	{
-		$this->_field();
-	}
-
-	public function uploadfield()
-	{
-		$this->_field();
-	}
-
-	public function displayfield()
-	{
-		$this->_field();
-	}
-
-	public function linkfield()
-	{
-		$this->_field();
-	}
-
-	public function rawfield()
-	{
-		$this->_field();
-	}
-
-	public function warningfield()
-	{
-		$this->_field();
-	}
-
-	public function errorfield()
-	{
-		$this->_field();
-	}
-
-	public function successfield()
-	{
-		$this->_field();
-	}
-
-	public function informationfield()
-	{
-		$this->_field();
-	}
-
-	public function passwordfield()
-	{
-		$this->_field();
-	}
-
-	private function _form()
-	{
-		$this->setArg('form');
-	}
-
-	private function _field()
-	{
-		$this->setArg('field');
+	// Automatically handles all field and form types
+	public function __call($name, $arguments) {
+		if(strlen($name) < 5)
+			return;
+		if (substr($name, -5) === "field") {
+			$this->setArg('field');
+		}
+		if (substr($name, -4) === "form") {
+			$this->setArg('form');
+		}
 	}
 }

@@ -157,8 +157,8 @@ class Controller
 		//call our controller's view method
 		//e.g. check to see if the 'newest' method exists within the itemController object
 		//if the specified view method exists within this object, then call it (e.g. 'newest' in ItemController)
-		//This method sets the the property, $this->data['items'], equal to an array containing one page worth of object (e.g item) data read in from MySQL
-		if (method_exists($this, $view_name))
+		//If the method doesn't exist, but the call function does, we should try it anyway
+		if (method_exists($this, $view_name) || method_exists($this, "__call"))
 			$this->$view_name();
 
 		//no cache, get down to business
