@@ -319,113 +319,197 @@ class UserController extends Controller
 
     public function register()
     {
-        if ($this->args('submit') && $this->args('action') == 'register') {
-            //validate username
-            $username = $this->args('username');
-            if (!Verify::username($username, $reason)) {
-                $errors['username'] = $reason;
-                $errorfields['username'] = 'error';
-            }
+		$registerForm = $this->_createRegisterForm();
+		$this->set('register_form', $registerForm);
 
-            //validate email
-            $email = $this->args('email');
-            if (!Verify::email($email)) {
-                $errors['email'] = "You must supply a valid email.";
-                $errorfields['email'] = 'error';
-            } else {
-                $testUser = User::byEmail($email);
-                if ($testUser->isHydrated()) {
-                    $errors['email'] = "That email is already being used.";
-                    $errorfields['email'] = 'error';
-                }
-            }
+		if($registerForm->checkSubmitAndValidate($this->args())) {
+			$registrationSuccess = true;
+			//todo Fix at least email so that it can validate itself
+			$username = $this->args('username');
+			if(!Verify::username($username, $reason)) {
+				/** @var FormField $field */
+				$field = $registerForm->get('username');
+				$field->hasError = true;
+				$field->errorText = $reason;
+				$registrationSuccess = false;
+			}
 
-            //check passwords
-            if ($this->args('pass1') != $this->args('pass2')) {
-                $errors['password'] = "Your passwords do not match.";
-                $errorfields['password'] = 'error';
-            } else if (!strlen($this->args('pass1'))) {
-                $errors['password'] = "You must enter a password.";
-                $errorfields['password'] = 'error';
-            }
+			$email = $this->args('email');
+			/** @var FormField $emailField */
+			$emailField = $registerForm->get('email');
+			if(!Verify::email($email)) {
+				$emailField->hasError = true;
+				$emailField->errorText = "You must supply a valid email";
+				$registrationSuccess = false;
+			} else {
+				$testUser = User::byEmail($email);
+				if($testUser->isHydrated()) {
+					$emailField->hasError = true;
+					$emailField->errorText = "That email is already being used";
+					$registrationSuccess = false;
+				}
+			}
 
-            //okay, we good?
-            if (empty($errors) && empty($errorfields)) {
-                //woot!
-                $user = new User();
-                $user->set('username', $username);
-                $user->set('email', $email);
-                $user->set('pass_hash', User::hashPass($this->args('pass1')));
-                $user->set('registered_on', date("Y-m-d H:i:s"));
-                $user->save();
+			if($this->args('pass1') != $this->args('pass2')) {
+				/** @var FormField $field */
+				$field = $registerForm->get('pass2');
+				$field->hasError = true;
+				$field->errorText = "Your passwords do not match";
+				$registrationSuccess = false;
+			}
 
-                //create them a default queue.
-                $q = new Queue();
-                $q->set("name", 'Default');
-                $q->set("user_id", $user->id);
-                $q->save();
+			if($registrationSuccess) {
+				//woot!
+				$user = new User();
+				$user->set('username', $username);
+				$user->set('email', $email);
+				$user->set('pass_hash', User::hashPass($this->args('pass1')));
+				$user->set('registered_on', date("Y-m-d H:i:s"));
+				$user->save();
 
-                //todo: send a confirmation email.
-                Activity::log("registered a new account on BotQueue.", $user);
+				//create a default queue for them
+				$q = new Queue();
+				$q->set("name", 'Default');
+				$q->set("user_id", $user->id);
+				$q->save();
 
-                //automatically log them in.
-                $token = $user->createToken();
-                $token->setCookie();
+				//todo send a confirmation email
+				Activity::log("registered a new account on BotQueue.", $user);
 
-                $this->forwardToUrl('/');
-            } else {
-                $this->set('errors', $errors);
-                $this->set('errorfields', $errorfields);
-                $this->setArg('username');
-                $this->setArg('email');
-                $this->setArg('pass1');
-                $this->setArg('pass2');
-            }
-        }
+				//automatically log them in.
+				$token = $user->createToken();
+				$token->setCookie();
+
+				$this->forwardToURL("/");
+			}
+		}
     }
+
+	public function _createRegisterForm() {
+		$form = new Form('register');
+
+		if(!$this->args('username'))
+			$username = '';
+		else
+			$username = $this->args('username');
+
+		if(!$this->args('email'))
+			$email = '';
+		else
+			$email = $this->args('email');
+
+		$form->add(
+			TextField::name('username')
+			->label("Username")
+			->value($username)
+			->required(true)
+		);
+
+		$form->add(
+			TextField::name('email')
+			->label("Email address")
+			->value($email)
+			->required(true)
+		);
+
+		$form->add(
+			PasswordField::name('pass1')
+			->label("Password")
+			->required(true)
+		);
+
+		$form->add(
+			PasswordField::name('pass2')
+			->label("Password Confirmation")
+			->required(true)
+		);
+
+		$tos = "By clicking on the \"Create your account\" button below, you certify that you have read and agree to our ";
+		$tos.= "<a href=\"/tos\">Terms of use</a>";
+		$tos.= " and ";
+		$tos.= "<a href=\"/privacy\">Privacy Policy</a>.";
+
+		$form->add(
+			DisplayField::name('tos')
+			->value($tos)
+		);
+
+		$form->setSubmitText("Create your account");
+		$form->setSubmitClass("btn btn-success btn-large");
+
+		return $form;
+	}
 
     public function login()
     {
-        if ($this->args('submit') && $this->args('action') == 'login') {
-            $username = $this->args('username');
-            $pass = $this->args('password');
-            $rememberme = $this->args('rememberme');
+		$loginForm = $this->_createLoginForm();
+		$this->set('login_form', $loginForm);
 
-            //are we good?
-            if (!$username) {
-                $errors['username'] = "You must supply a username.";
-                $errorfields['username'] = 'error';
-            } else if (!$pass) {
-                $errors['password'] = "You must supply a password.";
-                $errorfields['password'] = 'error';
-            } else {
-                User::login($username, $pass);
+		if($loginForm->checkSubmitAndValidate($this->args())) {
+			$username = $this->args('username');
+			$password = $this->args('password');
+			$rememberMe = $this->args('remember_me');
 
-                if (User::isLoggedIn()) {
-                    //want a cookie?
-                    if ($rememberme) {
-                        $token = User::$me->createToken();
-                        $token->setCookie();
-                    }
+			User::login($username, $password);
 
-                    Activity::log("logged in.");
+			if(User::isLoggedIn()) {
+				//Want a cookie?
+				if($rememberMe) {
+					$token = User::$me->createToken();
+					$token->setCookie();
+				}
 
-                    //send us!
-                    $this->forwardToUrl('/');
-                } else {
-                    $errors['password'] = "We could not find that username and password combination.";
-                    $errorfields['password'] = 'error';
-                    $errorfields['username'] = 'error';
-                }
-            }
+				Activity::log("logged in.");
 
-            if (!empty($errors) && !empty($errorfields)) {
-                $this->setArg('username');
-                $this->set('errors', $errors);
-                $this->set('errorfields', $errorfields);
-            }
-        }
+				//send us!
+
+				$this->forwardToURL('/');
+			} else {
+				$this->set('error' , "We could not find that username/password combination");
+			}
+		}
     }
+
+	public function _createLoginForm() {
+		$form = new Form("login");
+
+		$form->action = "/login";
+
+		if(!$this->args('username'))
+			$username = '';
+		else
+			$username = $this->args('username');
+
+		$form->add(
+			HiddenField::name('action')
+			->value('login')
+			->required(true)
+		);
+
+		$form->add(
+			TextField::name('username')
+			->label('Username')
+			->value($username)
+			->required(true)
+		);
+
+		$form->add(
+			PasswordField::name('password')
+			->label('Password')
+			->required(true)
+		);
+
+		$form->add(
+			CheckboxField::name('remember_me')
+			->label("Remember me on this computer.")
+			->checked(true)
+		);
+
+		$form->setSubmitText("Sign into your account");
+		$form->setSubmitClass("btn btn-primary btn-large");
+
+		return $form;
+	}
 
     public function draw_users()
     {

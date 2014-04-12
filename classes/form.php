@@ -35,6 +35,7 @@ class Form
 	public $action;
 	public $method = 'POST';
 	public $submitText = "Submit";
+	public $submitClass = "btn btn-primary";
 
 	public function __construct($name = 'form')
 	{
@@ -67,6 +68,15 @@ class Form
 	{
 		$this->fields[$field->name] = $field;
 	}
+
+	public function get($name) {
+		return $this->fields[$name];
+	}
+
+	/**
+	 * @param $data
+	 * @return bool
+	 */
 
 	public function validate($data)
 	{
@@ -135,6 +145,10 @@ class Form
 	public function setSubmitText($text = 'Submit')
 	{
 		$this->submitText = $text;
+	}
+
+	public function setSubmitClass($class = 'btn btn-primary') {
+		$this->submitClass = $class;
 	}
 }
 
@@ -344,6 +358,10 @@ class TextField extends FormField
 {
 }
 
+class PasswordField extends TextField
+{
+}
+
 class TextareaField extends FormField
 {
 	public $width;
@@ -370,6 +388,9 @@ class TextareaField extends FormField
 
 class CheckboxField extends FormField
 {
+
+	public $is_checked = true;
+
 	//checkboxes have only 2 states and are valid no matter what.
 	public function validate($data)
 	{
@@ -377,6 +398,11 @@ class CheckboxField extends FormField
 		$this->value((int)$data[$this->name]);
 
 		return true;
+	}
+
+	public function checked($is_checked = true) {
+		$this->is_checked = $is_checked;
+		return $this;
 	}
 }
 
@@ -408,6 +434,20 @@ class DisplayField extends FormField
 		$this->hasError = false;
 
 		return true;
+	}
+}
+
+class LinkField extends FormField
+{
+	public $link;
+
+	public static function name() {
+		return parent::name('');
+	}
+
+	public function link($link) {
+		$this->link = $link;
+		return $this;
 	}
 }
 
@@ -447,7 +487,7 @@ class UploadField extends FormField
 			$this->errorText = $upload_errors[$file['error']];
 		}
 
-		//how'd we do?
+		//how did we do?
 		return !$this->hasError;
 	}
 }

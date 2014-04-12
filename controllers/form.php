@@ -64,6 +64,11 @@ class FormController extends Controller
 		$this->_field();
 	}
 
+	public function linkfield()
+	{
+		$this->_field();
+	}
+
 	public function rawfield()
 	{
 		$this->_field();
@@ -85,6 +90,11 @@ class FormController extends Controller
 	}
 
 	public function informationfield()
+	{
+		$this->_field();
+	}
+
+	public function passwordfield()
 	{
 		$this->_field();
 	}
