@@ -35,6 +35,9 @@ define("AMAZON_AWS_SECRET", "");
 define("AMAZON_S3_BUCKET_NAME", "botqueue");
 
 define("EMAIL_METHOD", "SMTP");
+define("SES_USE_DKIM", false);
+define("SES_USE_VERP", true);
+
 define("EMAIL_USERNAME", "mailer@example.com");
 define("EMAIL_NAME", "BotQueue");
 define("EMAIL_PASSWORD", "");
@@ -50,4 +53,3 @@ define('THINGIVERSE_API_CLIENT_SECRET', "");
 
 //CacheBot::setBot(new EasyDBCache());
 CacheBot::setBot(new NoCache());
-?>

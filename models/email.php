@@ -82,34 +82,60 @@ class Email extends Model
 
 	public function sesSend()
 	{
-		require_once('AWSSDKforPHP/sdk.class.php');
-		require_once('AWSSDKforPHP/services/ses.class.php');
+		require(CLASSES_DIR . "aws/aws-autoloader.php");
 
-		$ses = new AmazonSES(array(
-			"key" => AMAZON_AWS_KEY,
-			"secret" => AMAZON_AWS_SECRET
-		));
+		$awsSettings = array();
+		$awsSettings['key'] = AMAZON_AWS_KEY;
+		$awsSettings['secret'] = AMAZON_AWS_SECRET;
+		$awsSettings['region'] = AMAZON_AWS_REGION;
+		$ses = Aws\Ses\SesClient::factory($awsSettings);
 
-		if (defined('SES_USE_DKIM'))
-			$ses->set_identity_dkim_enabled($this->From, true);
+		if (defined('SES_USE_DKIM') && SES_USE_DKIM)
+			$ses->setIdentityDkimEnabled(array(
+				'Identity' => EMAIL_USERNAME,
+				'DkimEnabled' => SES_USE_DKIM
+			));
 
 		//format our from and to emails.
-		$from = '"' . RR_PROJECT_NAME . '" <' . EMAIL_FROM . '>';
+		//$from = '"' . RR_PROJECT_NAME . '" <' . EMAIL_USERNAME . '>';
+		if(defined('SES_USE_VERP') && SES_USE_VERP) {
+			$split = explode('@', EMAIL_USERNAME);
+			$from = $split[0] . "+" . $this->get('to_name') . "@" . $split[1];
+		}
+		else
+			$from = EMAIL_USERNAME;
+
+		$from = '"' . RR_PROJECT_NAME . '" <' . $from . '>';
+
 		if ($this->get('to_name'))
 			$to = '"' . $this->get('to_name') . '" <' . $this->get('to_email') . '>';
 		else
 			$to = $this->get('to_email');
 
-		$response = $ses->send_email($from,
-			array('ToAddresses' => array($to)),
-			array(
-				'Subject.Data' => $this->get('subject'),
-				'Body.Text.Data' => $this->get('text_body'),
-				'Body.Html.Data' => $this->get('html_body'),
+		$response = $ses->sendEmail(array(
+			'Source' => $from,
+			'Destination' => array(
+				'ToAddresses' => array($to),
+			),
+			'Message' => array(
+				'Subject' => array(
+					'Data' => $this->get('subject'),
+					'Charset' => 'us-ascii',
+				),
+				'Body' => array(
+					'Text' => array(
+						'Data' => $this->get('text_body'),
+						'Charset' => 'us-ascii',
+					),
+					'Html' => array(
+						'Data' => $this->get('html_body'),
+						'Charset' => 'us-ascii'
+					)
+				)
 			)
-		);
+		));
 
-		return $response->isOK();
+		return $response->hasKey("ResponseMetadata");
 	}
 
 	public function smtpSend()
@@ -131,11 +157,8 @@ class Email extends Model
 		$mailer = Swift_Mailer::newInstance($transport);
 		$result = $mailer->send($message);
 
-		if($result == 0) {
-			return false;
-		} else {
-			return true;
-		}
+		// result is 0 if no messages were sent
+		return ($result != 0);
 	}
 
 	public static function getQueuedEmails()
