@@ -24,6 +24,13 @@ class Email extends Model
 		parent::__construct($id, "email_queue");
 	}
 
+	/**
+	 * @param $user User
+	 * @param $subject string
+	 * @param $text string
+	 * @param $html string
+	 * @return Email string
+	 */
 	public static function queue($user, $subject, $text, $html)
 	{
 		$to_email = $user->get('email');
@@ -107,46 +114,28 @@ class Email extends Model
 
 	public function smtpSend()
 	{
-		/*
-		  //load swift class.
-			require_once(CLASSES_DIR . "Swift.php");
-			 Swift_ClassLoader::load("Swift_Connection_SMTP");
+		//load swift class.
+		require_once(CLASSES_DIR . "Swift/swift_required.php");
 
-			// Create the message, and set the message subject.
-		$message =& new Swift_Message($this->get('subject'));
+		$message = Swift_Message::newInstance();
+		$message->setSubject($this->get('subject'));
+		$message->setFrom(array(EMAIL_USERNAME => EMAIL_NAME));
+		$message->setTo(array($this->get('to_email')));
+		$message->setBody($this->get('html_body'), "text/html");
+		$message->addPart($this->get('text_body'), "text/plain");
 
-			//create the html / text body
-	  $message->attach(new Swift_Message_Part($this->get('html_body'), "text/html"));
-	  $message->attach(new Swift_Message_Part($this->get('text_body'), "text/plain"));
+		$transport = Swift_SmtpTransport::newInstance(EMAIL_SMTP_SERVER, EMAIL_SMTP_SERVER_PORT, 'ssl')
+			->setUsername(EMAIL_USERNAME)
+			->setPassword(EMAIL_PASSWORD);
 
-	  // Set the from address/name.
-	  $from =& new Swift_Address(EMAIL_FROM, EMAIL_NAME);
+		$mailer = Swift_Mailer::newInstance($transport);
+		$result = $mailer->send($message);
 
-	  // Create the recipient list.
-	  $recipients =& new Swift_RecipientList();
-
-	  // Add the recipient
-	  $recipients->addTo($this->get('to_email'), $this->get('to_name'));
-
-			//connect and create mailer
-			$smtp =& new Swift_Connection_SMTP("smtp.gmail.com", Swift_Connection_SMTP::PORT_SECURE, Swift_Connection_SMTP::ENC_TLS);
-	  $smtp->setUsername(EMAIL_FROM);
-	  $smtp->setPassword(EMAIL_PASSWORD);
-
-			$mailer = new Swift($smtp);
-
-	  // Attempt to send the email.
-	  try {
-		$result = $mailer->send($message, $recipients, $from);
-		$mailer->disconnect();
-
-			  return true;
-			} catch (Swift_BadResponseException $e) {
-		return false;
-			}
-			*/
-
-		return false;
+		if($result == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public static function getQueuedEmails()
