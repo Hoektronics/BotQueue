@@ -29,9 +29,9 @@ install:
   - sudo pear channel-discover guzzlephp.org/pear
   - sudo pear channel-discover pear.symfony.com
   
-  # Install the aws sdk
-  - sudo pear install aws/sdk
-
+  # Install composer
+  - composer install
+  
 before_script:
   - cp extensions/config-travis.php extensions/config.php
 
