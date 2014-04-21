@@ -82,8 +82,6 @@ class Email extends Model
 
 	public function sesSend()
 	{
-		require(CLASSES_DIR . "aws/aws-autoloader.php");
-
 		$awsSettings = array();
 		$awsSettings['key'] = AMAZON_AWS_KEY;
 		$awsSettings['secret'] = AMAZON_AWS_SECRET;
@@ -140,19 +138,17 @@ class Email extends Model
 
 	public function smtpSend()
 	{
-		//load swift class.
-		require_once(CLASSES_DIR . "Swift/swift_required.php");
-
 		$message = Swift_Message::newInstance();
 		$message->setSubject($this->get('subject'));
 		$message->setFrom(array(EMAIL_USERNAME => EMAIL_NAME));
 		$message->setTo(array($this->get('to_email')));
 		$message->setBody($this->get('html_body'), "text/html");
-		$message->addPart($this->get('text_body'), "text/plain");
+		// addPart doesn't currently exist
+		//$message->addPart($this->get('text_body'), "text/plain");
 
-		$transport = Swift_SmtpTransport::newInstance(EMAIL_SMTP_SERVER, EMAIL_SMTP_SERVER_PORT, 'ssl')
-			->setUsername(EMAIL_USERNAME)
-			->setPassword(EMAIL_PASSWORD);
+		$transport = Swift_SmtpTransport::newInstance(EMAIL_SMTP_SERVER, EMAIL_SMTP_SERVER_PORT, 'ssl');
+		$transport->setUsername(EMAIL_USERNAME);
+		$transport->setPassword(EMAIL_PASSWORD);
 
 		$mailer = Swift_Mailer::newInstance($transport);
 		$result = $mailer->send($message);
@@ -173,5 +169,3 @@ class Email extends Model
 		return $emails;
 	}
 }
-
-?>

@@ -1,0 +1,20 @@
+{
+    "name": "Hoektronics/botqueue",
+    "description": "Control your 3D Printer over the Internet",
+    "minimum-stability": "dev",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Zach 'Hoeken' Smith",
+            "email": "hoeken@gmail.com"
+        },
+        {
+            "name": "Justin Nesselrotte",
+            "email": "jnesselr@harding.edu"
+        }
+    ],
+    "require": {
+        "aws/aws-sdk-php": "2.6.0",
+        "swiftmailer/swiftmailer": "@stable"
+    }
+}

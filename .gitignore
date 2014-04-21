@@ -7,3 +7,4 @@ botqueue.tmproj
 ssl-cert.pem
 ssl-cert.int
 ssl-cert.key
+vendor/
