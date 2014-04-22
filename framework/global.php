@@ -71,4 +71,4 @@ class BotQueue_Loader
 }
 
 spl_autoload_register(array('BotQueue_Loader', '__autoload'));
-require(HOME_DIR . "/vender/autoload.php");
+require(HOME_DIR . "/vendor/autoload.php");
