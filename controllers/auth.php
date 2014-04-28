@@ -32,12 +32,12 @@ class AuthController extends Controller
 			}
 
 			//unset specific variables.
-			setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME);
+			setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
 			unset($_SESSION['userid']);
 
 			//nuke the session.
 			if (isset($_COOKIE[session_name()]))
-				setcookie(session_name(), '', time() - 420000, '/');
+				setcookie(session_name(), '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
 
 			session_unset();
 			session_destroy();

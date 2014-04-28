@@ -114,7 +114,7 @@ class MainController extends Controller
     public function viewmode()
     {
         $mode = $this->args('view_mode');
-        setcookie('viewmode', $mode, time() + 60 * 60 * 24 * 30, '/');
+        setcookie('viewmode', $mode, time() + 60 * 60 * 24 * 30, '/', SITE_HOSTNAME, FORCE_SSL, true);
         $this->forwardToUrl('/');
     }
 
