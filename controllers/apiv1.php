@@ -253,7 +253,7 @@ class APIV1Controller extends Controller
 
 			//does it match?
 			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $data['realname']))
-				throw new Exception("The file <a href=\"$url\">{$data['realname']}</a> is not valid for printing.");
+				throw new Exception("The file <a href=\"".$url."\">{$data['realname']}</a> is not valid for printing.");
 
 			//create our file object.
 			$s3 = new S3File();
@@ -267,24 +267,7 @@ class APIV1Controller extends Controller
 		else if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
 			//upload our file to S3
 			$file = $_FILES['file'];
-			if ($file['error'] != 0) {
-				if ($file['size'] == 0 && $file['error'] == 0)
-					$file['error'] = 5;
-
-				$upload_errors = array(
-					UPLOAD_ERR_OK => "No errors.",
-					UPLOAD_ERR_INI_SIZE => "Larger than upload_max_filesize.",
-					UPLOAD_ERR_FORM_SIZE => "Larger than form MAX_FILE_SIZE.",
-					UPLOAD_ERR_PARTIAL => "Partial upload.",
-					UPLOAD_ERR_NO_FILE => "No file.",
-					UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
-					UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
-					UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
-					UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
-				);
-
-				throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
-			}
+			$this->ensureGoodFile($file);
 
 			//does it match?
 			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $file['name']))
@@ -607,24 +590,7 @@ class APIV1Controller extends Controller
 		if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
 			//upload our file to S3
 			$file = $_FILES['file'];
-			if ($file['error'] != 0) {
-				if ($file['size'] == 0 && $file['error'] == 0)
-					$file['error'] = 5;
-
-				$upload_errors = array(
-					UPLOAD_ERR_OK => "No errors.",
-					UPLOAD_ERR_INI_SIZE => "Larger than upload_max_filesize.",
-					UPLOAD_ERR_FORM_SIZE => "Larger than form MAX_FILE_SIZE.",
-					UPLOAD_ERR_PARTIAL => "Partial upload.",
-					UPLOAD_ERR_NO_FILE => "No file.",
-					UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
-					UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
-					UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
-					UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
-				);
-
-				throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
-			}
+			$this->ensureGoodFile($file);
 
 			//does it match?
 			if (!preg_match("/\\.jpg$/i", $file['name']))
@@ -840,24 +806,7 @@ class APIV1Controller extends Controller
 
 		//upload our file to S3
 		$file = $_FILES['file'];
-		if ($file['error'] != 0) {
-			if ($file['size'] == 0 && $file['error'] == 0)
-				$file['error'] = 5;
-
-			$upload_errors = array(
-				UPLOAD_ERR_OK => "No errors.",
-				UPLOAD_ERR_INI_SIZE => "Larger than upload_max_filesize.",
-				UPLOAD_ERR_FORM_SIZE => "Larger than form MAX_FILE_SIZE.",
-				UPLOAD_ERR_PARTIAL => "Partial upload.",
-				UPLOAD_ERR_NO_FILE => "No file.",
-				UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
-				UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
-				UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
-				UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
-			);
-
-			throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
-		}
+		$this->ensureGoodFile($file);
 
 		//okay, we're good.. do it.
 		$s3 = new S3File();
@@ -907,7 +856,7 @@ class APIV1Controller extends Controller
 
 	public function api_devicescanresults()
 	{
-		$old_scan_data = json::decode($this->token->get('device_data'));
+		//$old_scan_data = json::decode($this->token->get('device_data'));
 		$scan_data = json::decode($this->args('scan_data'));
 
 		//var_dump($scan_data);
@@ -924,31 +873,13 @@ class APIV1Controller extends Controller
 
 			foreach ($_FILES AS $file) {
 				if (is_uploaded_file($file['tmp_name'])) {
-					if ($file['error'] != 0) {
-						if ($file['size'] == 0 && $file['error'] == 0)
-							$file['error'] = 5;
+					$this->ensureGoodFile($file);
+					//okay, we're good.. do it.
+					$s3 = new S3File();
+					$s3->set('user_id', User::$me->id);
+					$s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
 
-						$upload_errors = array(
-							UPLOAD_ERR_OK => "No errors.",
-							UPLOAD_ERR_INI_SIZE => "Larger than upload_max_filesize.",
-							UPLOAD_ERR_FORM_SIZE => "Larger than form MAX_FILE_SIZE.",
-							UPLOAD_ERR_PARTIAL => "Partial upload.",
-							UPLOAD_ERR_NO_FILE => "No file.",
-							UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
-							UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
-							UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
-							UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
-						);
-
-						throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
-					} else {
-						//okay, we're good.. do it.
-						$s3 = new S3File();
-						$s3->set('user_id', User::$me->id);
-						$s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
-
-						$scan_data->camera_files[] = $s3->id;
-					}
+					$scan_data->camera_files[] = $s3->id;
 				}
 			}
 		}
@@ -961,5 +892,32 @@ class APIV1Controller extends Controller
 		$this->token->save();
 
 		return True;
+	}
+
+	/**
+	 * @param $file
+	 * @throws Exception
+	 */
+	private function ensureGoodFile($file)
+	{
+		if ($file['size'] == 0 && $file['error'] == 0)
+			$file['error'] = UPLOAD_ERR_EMPTY;
+
+		if ($file['error'] == 0)
+			return;
+
+		$upload_errors = array(
+			UPLOAD_ERR_OK => "No errors.",
+			UPLOAD_ERR_INI_SIZE => "Larger than upload_max_filesize.",
+			UPLOAD_ERR_FORM_SIZE => "Larger than form MAX_FILE_SIZE.",
+			UPLOAD_ERR_PARTIAL => "Partial upload.",
+			UPLOAD_ERR_NO_FILE => "No file.",
+			UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
+			UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
+			UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
+			UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
+		);
+
+		throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
 	}
 }
