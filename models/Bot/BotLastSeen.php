@@ -32,17 +32,16 @@ class BotLastSeen {
 			return "never";
 
 		$months = floor($elapsed / (60 * 60 * 24 * 30));
-		$elapsed = $elapsed - $months * 60 * 60 * 30;
+		$elapsed = $elapsed - ($months * 60 * 60 * 30);
 
 		$days = floor($elapsed / (60 * 60 * 24));
-		$elapsed = $elapsed - $days * 60 * 60 * 24;
+		$elapsed = $elapsed - ($days * 60 * 60 * 24);
 
 		$hours = floor($elapsed / (60 * 60));
-		$elapsed = $elapsed - $hours * 60 * 60;
+		$elapsed = $elapsed - ($hours * 60 * 60);
 
-		$minutes = floor($elapsed / (60));
-		if ($minutes > 1)
-			$elapsed = $elapsed - $minutes * 60;
+		$minutes = floor($elapsed / 60);
+		$seconds = $elapsed - $minutes * 60;
 
 		if ($months)
 			return "{$months} months";
@@ -53,9 +52,11 @@ class BotLastSeen {
 		if ($hours > 1)
 			return "{$hours} hours ago";
 		if ($hours)
-			return "{$hours}:{$minutes}:{$elapsed} ago";
+			return "{$hours}:{$minutes}:{$seconds} ago";
 		if ($minutes > 1)
 			return "{$minutes} minutes ago";
-		return "{$elapsed}s ago";
+		if ($minutes)
+			return "{$minutes} minute ago";
+		return "{$seconds}s ago";
 	}
 }
