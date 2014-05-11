@@ -367,8 +367,12 @@ class UserController extends Controller
 				$q->set("user_id", $user->id);
 				$q->save();
 
-				//todo send a confirmation email
 				Activity::log("registered a new account on BotQueue.", $user);
+
+				$text = Controller::byName('email')->renderView('new_user', array('user' => $user));
+				$html = Controller::byName('email')->renderView('new_user_html', array('user' => $user));
+				$email = Email::queue($user, "Welcome to ".RR_PROJECT_NAME."!", $text, $html);
+				$email->send();
 
 				//automatically log them in.
 				$token = $user->createToken();

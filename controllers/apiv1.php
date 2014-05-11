@@ -85,6 +85,9 @@ class APIV1Controller extends Controller
 				throw new Exception("Specified api_call '{$c}' does not exist.");
 
 			$result = array('status' => 'success', 'data' => $data);
+		} catch (OAuthException $e) {
+			error_log("Something went wrong with OAuth");
+			error_log($e->getMessage());
 		} catch (Exception $e) {
 			error_log($e->getMessage());
 			error_log(print_r($this->args(), true));
@@ -249,7 +252,7 @@ class APIV1Controller extends Controller
 			$data = Utility::downloadUrl($url);
 
 			//does it match?
-			if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $data['realname']))
+			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $data['realname']))
 				throw new Exception("The file <a href=\"$url\">{$data['realname']}</a> is not valid for printing.");
 
 			//create our file object.
@@ -284,7 +287,7 @@ class APIV1Controller extends Controller
 			}
 
 			//does it match?
-			if (!preg_match("/\.(stl|obj|amf|gcode)$/i", $file['name']))
+			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $file['name']))
 				throw new Exception("The file '$file[name]' is not valid for printing.");
 
 			//okay, we're good.. do it.
@@ -960,5 +963,3 @@ class APIV1Controller extends Controller
 		return True;
 	}
 }
-
-?>

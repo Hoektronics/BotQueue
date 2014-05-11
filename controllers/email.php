@@ -29,4 +29,14 @@ class EmailController extends Controller
     {
         $this->lost_pass();
     }
+
+	public function new_user()
+	{
+		$this->setArg('user');
+	}
+
+	public function new_user_html()
+	{
+		$this->new_user();
+	}
 }
