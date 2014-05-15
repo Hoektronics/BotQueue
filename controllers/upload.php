@@ -28,40 +28,10 @@ class UploadController extends Controller
 
     public function uploader()
     {
-        $payload = base64_encode(serialize($this->args('payload')));
+		$form = $this->_createS3Form();
 
-        $this->setArg('label');
-
-        //where you want me go?
-        $redirect = "http://" . SITE_HOSTNAME . "/upload/success/$payload";
-        $acl = "public-read";
-        $expiration = gmdate("Y-m-d\TH:i:s\Z", strtotime("+1 day"));
-
-        //create amazons crazy policy data array.
-        $policy_json = '
-			{
-				"expiration": "' . $expiration . '",
-				"conditions": [
-					{"acl": "' . $acl . '"},
-					{"bucket": "' . AMAZON_S3_BUCKET_NAME . '"},
-					["starts-with", "$key", "uploads/"],
-					["starts-with", "$Content-Type", ""],
-					["starts-with", "$Content-Disposition", ""],
-					{"success_action_redirect": "' . $redirect . '"},
-					["content-length-range", 1, 262144000]
-				]
-			}';
-
-        //create our various encoded/signed stuff.
-        $policy_json_cleaned = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $policy_json);
-        $policy_encoded = base64_encode($policy_json_cleaned);
-        $signature = hex2b64(hash_hmac('sha1', $policy_encoded, AMAZON_AWS_SECRET));
-
-        //okay, set our view vars.
-        $this->set('redirect', $redirect);
-        $this->set('acl', $acl);
-        $this->set('policy', $policy_encoded);
-        $this->set('signature', $signature);
+		$this->setArg('label');
+		$this->set('form', $form);
     }
 
     public function url()
@@ -144,7 +114,7 @@ class UploadController extends Controller
                 $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
 
                 //is it a zip file?  do some magic on it.
-                if (!preg_match("/\.zip$/i", $data['realname']))
+                if (!preg_match("/\\.zip$/i", $data['realname']))
                     $this->_handleZipFile($data['localpath'], $s3);
 
                 Activity::log("uploaded a new file called " . $s3->getLink() . ".");
@@ -302,6 +272,89 @@ class UploadController extends Controller
 
         //exit;
     }
+
+	/**
+	 * @return string
+	 */
+	private function _createS3Form()
+	{
+		$payload = base64_encode(serialize($this->args('payload')));
+
+		$redirect = "http://" . SITE_HOSTNAME . "/upload/success/$payload";
+		$acl = "public-read";
+		$expiration = gmdate("Y-m-d\\TH:i:s\\Z", strtotime("+1 day"));
+
+		//create amazons crazy policy data array.
+		$policy_json = '
+			{
+				"expiration": "' . $expiration . '",
+				"conditions": [
+					{"acl": "' . $acl . '"},
+					{"bucket": "' . AMAZON_S3_BUCKET_NAME . '"},
+					["starts-with", "$key", "uploads/"],
+					["starts-with", "$Content-Type", ""],
+					["starts-with", "$Content-Disposition", ""],
+					{"success_action_redirect": "' . $redirect . '"},
+					["content-length-range", 1, 262144000]
+				]
+			}';
+
+		//create our various encoded/signed stuff.
+		$policy_json_cleaned = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $policy_json);
+		$policy_encoded = base64_encode($policy_json_cleaned);
+		$signature = hex2b64(hash_hmac('sha1', $policy_encoded, AMAZON_AWS_SECRET));
+
+		$form = new Form("form", true);
+
+		$form->add(
+			HiddenField::name("AWSAccessKeyId")
+			->value(AMAZON_AWS_KEY)
+		);
+
+		$form->add(
+			HiddenField::name("key")
+			->value("uploads/\${filename}")
+		);
+
+		$form->add(
+			HiddenField::name("acl")
+			->value($acl)
+		);
+
+		$form->add(
+			HiddenField::name("success_action_redirect")
+			->value($redirect)
+		);
+
+		$form->add(
+			HiddenField::name("policy")
+			->value($policy_encoded)
+		);
+
+		$form->add(
+			HiddenField::name("signature")
+			->value($signature)
+		);
+
+		$form->add(
+			HiddenField::name("Content-Type")
+			->value("")
+		);
+
+		$form->add(
+			HiddenField::name("Content-Disposition")
+			->value("")
+		);
+
+		$form->add(
+			UploadField::name("file")
+		);
+
+		$form->setSubmitText("Upload File");
+		$form->action = "https://".AMAZON_S3_BUCKET_NAME.".s3.amazonaws.com/";
+
+		return $form;
+	}
 }
 
 // Function to help sign the policy

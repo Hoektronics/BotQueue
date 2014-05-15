@@ -17,16 +17,6 @@
   along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//Workaround for php 5.3 inability to chain off of the constructor
-//todo remove this
-/**
- * @param $object
- * @return mixed
- */
-function with($object){
-	return $object;
-}
-
 class Form
 {
 	private $fields;
@@ -36,17 +26,20 @@ class Form
 	public $method = 'POST';
 	public $submitText = "Submit";
 	public $submitClass = "btn btn-primary";
+	private $externalForm = false;
 
-	public function __construct($name = 'form')
+	public function __construct($name = 'form', $externalForm = false)
 	{
 		$this->name = $name;
+		$this->externalForm = $externalForm;
 
-
-		$this->add(
-			HiddenField::name($this->name."_is_submitted")
-			->value(1)
-			->required(true)
-		);
+		if(!$externalForm) {
+			$this->add(
+				HiddenField::name($this->name."_is_submitted")
+				->value(1)
+				->required(true)
+			);
+		}
 	}
 
 	public function checkSubmitAndValidate($data)
@@ -305,7 +298,7 @@ class FormField
 	{
 		//pull in our id
 		if (!isset($this->attributes['id']))
-			$this->attributes['id'] = "i".$this->name;
+			$this->attributes['id'] = $this->name;
 		$this->id = $this->attributes['id'];
 
 		$attribute_text = array();
@@ -480,7 +473,7 @@ class UploadField extends FormField
 
 		//double check for errors.
 		if ($file['size'] == 0 && $file['error'] == 0)
-			$file['error'] = 5;
+			$file['error'] = UPLOAD_ERR_EMPTY;
 
 		//set our value for future reference.
 		$this->value($file);
