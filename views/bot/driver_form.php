@@ -79,13 +79,13 @@
             <img src="/img/colorbars.gif">
           </div>
           <? foreach ($devices->camera_files AS $idx => $file_id): ?>
-            <? $s3 = new S3File($file_id); ?>
+            <? $webcam_file = Storage::get($file_id); ?>
             <div class="span3 webcam_preview <?= ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : ''?>" id="webcam_preview_<?=$idx?>" onclick="set_webcam(<?=$idx?>)">
               <input type="hidden" id="webcam_id_<?=$idx?>" value="<?=$devices->cameras[$idx]->id?>">
               <input type="hidden" id="webcam_name_<?=$idx?>" value="<?=$devices->cameras[$idx]->name?>">
               <input type="hidden" id="webcam_device_<?=$idx?>" value="<?=$devices->cameras[$idx]->device?>">
               <span class="webcam_name"><?=$devices->cameras[$idx]->name?></span>
-              <img src="<?=$s3->getRealUrl()?>">
+              <img src="<?=$webcam_file->getDownloadURL()?>">
             </div>
           <? endforeach ?>
         </div>

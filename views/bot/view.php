@@ -8,7 +8,7 @@
 	  <div class="span6">
 		  <? if ($webcam->isHydrated()): ?>
 		    <h3>Latest Image - <span class="muted"><?=Utility::getTimeAgo($webcam->get('add_date'))?></span></h3>
-		    <img src="<?=$webcam->getRealUrl()?>">
+		    <img src="<?=$webcam->getDownloadURL()?>">
 		  <? else: ?>
         <img src="/img/colorbars.gif">
 		  <? endif ?>

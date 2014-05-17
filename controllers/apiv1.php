@@ -223,7 +223,7 @@ class APIV1Controller extends Controller
 			/* @var $quantity int */
 			$quantity = (int)$this->args('quantity');
 		else
-			$quantity = 0;
+			$quantity = 1;
 		$quantity = max(1, $quantity);
 		$quantity = min(100, $quantity);
 
@@ -256,16 +256,16 @@ class APIV1Controller extends Controller
 				throw new Exception("The file <a href=\"".$url."\">{$data['realname']}</a> is not valid for printing.");
 
 			//create our file object.
-			$s3 = new S3File();
-			$s3->set('user_id', User::$me->id);
-			$s3->set('source_url', $url);
-			$s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+			$file = Storage::newFile();
+			$file->set('user_id', User::$me->id);
+			$file->set('source_url', $url);
+			$file->upload($data['localpath'], StorageInterface::getNiceDir($data['realname']));
 
 			//okay, create our jobs.
-			$jobs = $queue->addFile($s3, $quantity);
+			$jobs = $queue->addFile($file, $quantity);
 		} // #3 - post a file via http multipart form
 		else if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
-			//upload our file to S3
+			//upload our file
 			$file = $_FILES['file'];
 			$this->ensureGoodFile($file);
 
@@ -274,12 +274,12 @@ class APIV1Controller extends Controller
 				throw new Exception("The file '$file[name]' is not valid for printing.");
 
 			//okay, we're good.. do it.
-			$s3 = new S3File();
-			$s3->set('user_id', User::$me->id);
-			$s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+			$data_file = Storage::newFile();
+			$data_file->set('user_id', User::$me->id);
+			$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
 
 			//okay, create our jobs.
-			$jobs = $queue->addFile($s3, $quantity);
+			$jobs = $queue->addFile($data_file, $quantity);
 		} else {
 			throw new Exception("Unknown job creation method.");
 		}
@@ -588,7 +588,7 @@ class APIV1Controller extends Controller
 			throw new Exception("This is not your bot.");
 
 		if (!empty($_FILES['file']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
-			//upload our file to S3
+			//upload our file
 			$file = $_FILES['file'];
 			$this->ensureGoodFile($file);
 
@@ -603,30 +603,30 @@ class APIV1Controller extends Controller
 
 			//okay, we're good.. do it.
 			if ($job->isHydrated())
-				$s3 = new S3File();
+				$data_file = Storage::newFile();
 			else
-				$s3 = $bot->getWebcamImage();
-			$s3->set('user_id', User::$me->id);
-			$s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+				$data_file = $bot->getWebcamImage();
+			$data_file->set('user_id', User::$me->id);
+			$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
 
 			//if we have a job, save our new image.
 			if ($job->isHydrated()) {
-				$job->set('webcam_image_id', $s3->id);
+				$job->set('webcam_image_id', $data_file->id);
 
 				$ids = json::decode($job->get('webcam_images'));
 				if ($ids == NULL) {
 					$ids = array();
-					$ids[time()] = $s3->id;
+					$ids[time()] = $data_file->id;
 				} else {
 					$index = time();
-					$ids->$index = $s3->id;
+					$ids->$index = $data_file->id;
 				}
 
 				$job->set('webcam_images', json::encode($ids));
 			}
 
 			//always pull the latest image in for the bot.
-			$bot->set('webcam_image_id', $s3->id);
+			$bot->set('webcam_image_id', $data_file->id);
 		} else
 			throw new Exception("No file uploaded.");
 
@@ -804,24 +804,24 @@ class APIV1Controller extends Controller
 		$job = $sj->getJob();
 		$bot = $job->getBot();
 
-		//upload our file to S3
+		//upload our file to
 		$file = $_FILES['file'];
 		$this->ensureGoodFile($file);
 
 		//okay, we're good.. do it.
-		$s3 = new S3File();
-		$s3->set('user_id', User::$me->id);
-		$s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+		$data_file = Storage::newFile();
+		$data_file->set('user_id', User::$me->id);
+		$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
 
 		//update our status.
 		$sj->set('output_log', $this->args('output'));
 		$sj->set('error_log', $this->args('errors'));
-		$sj->set('output_id', $s3->id);
+		$sj->set('output_id', $data_file->id);
 		$sj->save();
 
 		//update our job
 		$job->set('slice_complete_time', date("Y-m-d H:i:s"));
-		$job->set('file_id', $s3->id);
+		$job->set('file_id', $data_file->id);
 		$job->save();
 
 		//what do do with it now?
@@ -866,8 +866,8 @@ class APIV1Controller extends Controller
 //			//delete any old files if we have them.
 //			if (!empty($old_scan_data->camera_files)) {
 //				foreach ($old_scan_data->camera_files AS $id) {
-//					$s3 = new S3File($id);
-//					$s3->delete();
+//					$data_file = Storage::get($id);
+//					$data_file->delete();
 //				}
 //			}
 
@@ -875,11 +875,11 @@ class APIV1Controller extends Controller
 				if (is_uploaded_file($file['tmp_name'])) {
 					$this->ensureGoodFile($file);
 					//okay, we're good.. do it.
-					$s3 = new S3File();
-					$s3->set('user_id', User::$me->id);
-					$s3->uploadFile($file['tmp_name'], S3File::getNiceDir($file['name']));
+					$data_file = Storage::newFile();
+					$data_file->set('user_id', User::$me->id);
+					$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
 
-					$scan_data->camera_files[] = $s3->id;
+					$scan_data->camera_files[] = $data_file->id;
 				}
 			}
 		}

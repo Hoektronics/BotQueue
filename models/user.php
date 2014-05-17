@@ -27,11 +27,6 @@ class User extends Model
         parent::__construct($id, "users");
     }
 
-    public function getFullName()
-    {
-        return $this->get('first_name') . " " . $this->get('last_name');
-    }
-
     public function getThingiverseToken() {
         return $this->get('thingiverse_token');
     }

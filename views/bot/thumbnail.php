@@ -4,7 +4,7 @@
  * @var int $size
  * @var Bot $b
  * @var Job $j
- * @var S3File $webcam
+ * @var StorageInterface $webcam
  */
 ?>
 <div class="span<?=$size?> bot_thumbnail bot_thumbnail_<?=$size?>">
@@ -26,7 +26,7 @@
   	
       <a href="<?=$b->getUrl()?>">
         <? if ($webcam->isHydrated()): ?>
-          <img class="webcam" src="<?=$webcam->getRealUrl()?>">
+          <img class="webcam" src="<?=$webcam->getDownloadURL()?>">
         <? else: ?>
           <img class="webcam" src="/img/colorbars.gif">
         <? endif ?>

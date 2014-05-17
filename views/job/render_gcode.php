@@ -1,7 +1,7 @@
 <?
 /**
  * @package botqueue_job
- * @var S3File $file
+ * @var StorageInterface $file
  * @var int $width
  * @var int $height
  */

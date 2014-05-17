@@ -4,11 +4,11 @@
  * @var string $megaerror
  * @var array $comments
  * @var array $errors
- * @var S3File $webcam
+ * @var StorageInterface $webcam
  * @var Job $job
- * @var S3File $parent_file
- * @var S3File $source_file
- * @var S3File $gcode_file
+ * @var StorageInterface $parent_file
+ * @var StorageInterface $source_file
+ * @var StorageInterface $gcode_file
  * @var SliceJob $slicejob
  * @var SliceEngine $sliceengine
  * @var SliceConfig $sliceconfig
@@ -32,7 +32,7 @@
   	<div class="row tab-pane fade in active" id="details">
   	  <div class="span6">
   		  <? if ($webcam->isHydrated()): ?>
-  		    <img src="<?=$webcam->getRealUrl()?>">
+  		    <img src="<?=$webcam->getDownloadURL()?>">
   		  <? else: ?>
           <img src="/img/colorbars.gif">
   		  <? endif ?>

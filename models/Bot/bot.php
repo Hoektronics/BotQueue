@@ -208,7 +208,7 @@ class Bot extends Model
 
 	public function getWebCamImage()
 	{
-		return new S3File($this->get('webcam_image_id'));
+		return Storage::get($this->get('webcam_image_id'));
 	}
 
 	public function getJobs($status = null, $sortField = 'user_sort', $sortOrder = 'ASC')

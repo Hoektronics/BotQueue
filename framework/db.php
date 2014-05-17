@@ -70,6 +70,7 @@ class DatabaseSocket
 		$this->pass = $pass;
 		$this->host = $host;
 		$this->port = $port;
+		$this->database = RR_DB_NAME;
 
 		//Call the function to connect to the MySQL server
 		$this->reconnect();
@@ -82,13 +83,20 @@ class DatabaseSocket
 	{
 		try {
 			ob_start();
-			$connect = "mysql:host=$this->host;dbname=".RR_DB_NAME.";charset=utf8";
+			$connect = "mysql:host=$this->host;dbname=".$this->database.";charset=utf8";
 			$this->db = new PDO($connect, $this->user, $this->pass);
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 			ob_end_clean();
 		} catch (PDOException $e) {
 			throw new Exception("Failed to connect to database!");
+		}
+	}
+
+	public function selectDb($database_name) {
+		if($this->database !== $database_name) {
+			$this->database = $database_name;
+			$this->reconnect();
 		}
 	}
 

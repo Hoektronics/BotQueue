@@ -53,7 +53,7 @@ class JobController extends Controller
 		$sql = "SELECT id, webcam_image_id FROM jobs WHERE webcam_image_id != 0 AND status = 'complete' ORDER BY finished_time DESC";
 		$available = new Collection($sql);
 		$available->bindType('id', 'Job');
-		$available->bindType('webcam_image_id', 'S3File');
+		$available->bindType('webcam_image_id', STORAGE_METHOD);
 
 		$this->set('jobs', $available->getRange(0, 24));
 	}
@@ -508,7 +508,7 @@ class JobController extends Controller
 		try {
 			//how do we find them?
 			if ($this->args('id'))
-				$file = new S3File($this->args('id'));
+				$file = Storage::get($this->args('id'));
 			else
 				throw new Exception("Could not find that file");
 
@@ -540,7 +540,7 @@ class JobController extends Controller
 		$this->assertLoggedIn();
 
 		try {
-			$file = new S3File($this->args('id'));
+			$file = Storage::get($this->args('id'));
 			if (!$file->isHydrated())
 				throw new Exception("This file does not exist.");
 
@@ -553,7 +553,7 @@ class JobController extends Controller
 				header('Content-Type: ' . $file->get('type'));
 			else
 				header('Content-Type: application/octet-stream');
-			header('Content-Disposition: attachment; filename=' . basename($file->getRealUrl()));
+			header('Content-Disposition: attachment; filename=' . basename($file->getDownloadURL()));
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate');
@@ -561,7 +561,7 @@ class JobController extends Controller
 			header('Content-Length: ' . (int)$file->get('size'));
 
 			//kay, send it
-			readfile($file->getRealUrl());
+			readfile($file->getDownloadURL());
 			exit;
 		} catch (Exception $e) {
 			$this->set('megaerror', $e->getMessage());
@@ -604,7 +604,7 @@ class JobController extends Controller
 				$file = $job->getSourceFile();
 				$queue_id = $job->get('queue_id');
 			} else if($this->args('file_id')) {
-				$file = new S3File($this->args('file_id'));
+				$file = Storage::get($this->args('file_id'));
 				$queue_id = User::$me->getDefaultQueue()->id;
 			} else {
 				throw new Exception("Could not create that file");
@@ -639,7 +639,7 @@ class JobController extends Controller
 
 					//what ones do we want to actually add?
 					foreach ($use AS $id => $value) {
-						$kid = new S3File($id);
+						$kid = Storage::get($id);
 						if (!$kid->isHydrated())
 							throw new Exception("That file does not exist.");
 						if ($kid->get('user_id') != User::$me->id)
@@ -679,7 +679,7 @@ class JobController extends Controller
 	}
 
 	/**
-	 * @param $file S3File
+	 * @param $file StorageInterface
 	 * @param $quantity mixed
 	 * @param $queue_id mixed
 	 * @param $priority mixed
@@ -714,7 +714,7 @@ class JobController extends Controller
 	}
 
 	/**
-	 * @param $file S3File
+	 * @param $file StorageInterface
 	 * @param $queue_id int
 	 * @return Form
 	 */
@@ -769,7 +769,7 @@ class JobController extends Controller
 		$this->assertLoggedIn();
 
 		try {
-			$file = new S3File($this->args('id'));
+			$file = Storage::get($this->args('id'));
 			if (!$file->isHydrated())
 				throw new Exception("This file does not exist.");
 
@@ -813,7 +813,7 @@ class JobController extends Controller
 
 		try {
 			//did we get a queue?
-			$file = new S3File($this->args('id'));
+			$file = Storage::get($this->args('id'));
 			if (!$file->isHydrated())
 				throw new Exception("Could not find that queue.");
 			if ($file->get('user_id') != User::$me->id)

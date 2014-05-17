@@ -28,7 +28,7 @@ class UploadController extends Controller
 
     public function uploader()
     {
-		$form = $this->_createS3Form();
+		$form = $this->createFileForm();
 
 		$this->setArg('label');
 		$this->set('form', $form);
@@ -86,19 +86,19 @@ class UploadController extends Controller
                     $filename = basename($thing->name . ".zip");
                     $filename = str_replace(" ", "_", $filename);
                     $filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
-                    $path = "assets/" . S3File::getNiceDir($filename);
+                    $path = "assets/" . StorageInterface::getNiceDir($filename);
 
                     //okay, upload it and handle it.
-                    $s3 = new S3File();
-                    $s3->set('user_id', User::$me->id);
-                    $s3->set('source_url', $url);
+                    $file = Storage::newFile();
+                    $file->set('user_id', User::$me->id);
+                    $file->set('source_url', $url);
 
                     //echo "uploading $zip_path to $path<br/>";
 
-                    $s3->uploadFile($zip_path, $path);
-                    $this->_handleZipFile($zip_path, $s3);
+					$file->upload($zip_path, $path);
+                    $this->_handleZipFile($zip_path, $file);
 
-                    $this->forwardToUrl("/job/create/file:{$s3->id}");
+                    $this->forwardToUrl("/job/create/file:{$file->id}");
                 } else
                     throw new Exception("Unable to open zip {$zip_path} for writing.");
             } else {
@@ -108,19 +108,20 @@ class UploadController extends Controller
                 if (!preg_match("/\\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
                     throw new Exception("The file <a href=\"".$url."\">{$data['realname']}</a> is not valid for printing.");
 
-                $s3 = new S3File();
-                $s3->set('user_id', User::$me->id);
-                $s3->set('source_url', $url);
-                $s3->uploadFile($data['localpath'], S3File::getNiceDir($data['realname']));
+                $file = Storage::newFile();
+                $file->set('user_id', User::$me->id);
+                $file->set('source_url', $url);
+				$file->upload($data['localpath'],
+					StorageInterface::getNiceDir($data['realname']));
 
                 //is it a zip file?  do some magic on it.
                 if (!preg_match("/\\.zip$/i", $data['realname']))
-                    $this->_handleZipFile($data['localpath'], $s3);
+                    $this->_handleZipFile($data['localpath'], $file);
 
-                Activity::log("uploaded a new file called " . $s3->getLink() . ".");
+                Activity::log("uploaded a new file called " . $file->getLink() . ".");
 
                 //send us to step 2.
-                $this->forwardToUrl("/job/create/file:{$s3->id}");
+                $this->forwardToUrl("/job/create/file:{$file->id}");
             }
         } catch (Exception $e) {
             $this->set('megaerror', $e->getMessage());
@@ -131,10 +132,6 @@ class UploadController extends Controller
     {
         $this->assertLoggedIn();
 
-        //get our payload.
-        // We don't actually need the payload
-        unserialize(base64_decode($this->args('payload')));
-
         //handle our upload
         try {
             //some basic error checking.
@@ -142,14 +139,12 @@ class UploadController extends Controller
                 throw new Exception("Only .gcode, .stl, .obj, .amf, and .zip files are allowed at this time.");
 
             //make our file.
-            // We don't need file info
-            //$info = $this->_lookupFileInfo();
-            $file = $this->_createS3File();
+            $file = $this->_createFile();
 
             //is it a zip file?  do some magic on it.
             if (preg_match("/\\.zip$/i", $this->args('key'))) {
                 $path = tempnam("/tmp", "BQ");
-                $file->downloadToPath($path);
+				$file->download($file->get('path'), $path);
                 $this->_handleZipFile($path, $file);
             }
 
@@ -164,87 +159,32 @@ class UploadController extends Controller
         }
     }
 
-    private function _lookupFileInfo()
-    {
-        //look up our real info.
-        $s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
-        $info = $s3->getObjectInfo($this->args('bucket'), $this->args('key'), true);
-
-        if ($info['size'] == 0) {
-            //capture for debug
-            ob_start();
-
-            //var_dump($args);
-            var_dump($info);
-
-            //try it again.
-            sleep(1);
-            $info = $s3->getObjectInfo($this->args('bucket'), $this->args('key'), true);
-            var_dump($info);
-
-            //still bad?
-            if ($info['size'] == 0) {
-                $text = ob_get_contents();
-                $html = "<pre>{$text}</pre>";
-
-                //email the admin
-                $admin = User::byUsername('hoeken');
-                Email::queue($admin, "upload fail", $text, $html);
-
-                //show us.
-                if (User::isAdmin()) {
-                    @ob_end_clean();
-
-                    echo "'failed' file upload:<br/><br/>$html";
-                    exit;
-                }
-
-                //$this->set('megaerror', "You cannot upload a blank/empty file.");
-            }
-
-            @ob_end_clean();
-        }
-
-        //send it back.
-        return $info;
-    }
-
-    private function _createS3File()
+    private function _createFile()
     {
         //format the name and stuff
         $filename = basename($this->args('key'));
         $filename = str_replace(" ", "_", $filename);
         $filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
-        $path = "assets/" . S3File::getNiceDir($filename);
+        $path = "assets/" . StorageInterface::getNiceDir($filename);
 
-        //check our info out.
-        $info = $this->_lookupFileInfo();
-
-        //create new s3 file
-        $file = new S3File();
+        //create new file and upload it
+        $file = Storage::newFile();
+		$file->set('path', $this->args('key'));
+		$file->moveTo($path);
+		$file->getHash();
+		$file->getSize();
+		$file->getType();
         $file->set('user_id', User::$me->id);
-        $file->set('type', $info['type']);
-        $file->set('size', $info['size']);
-        $file->set('hash', $info['hash']);
         $file->set('add_date', date('Y-m-d H:i:s'));
-        $file->set('bucket', AMAZON_S3_BUCKET_NAME);
-        $file->set('path', $path);
         $file->save();
-
-        //copy to new location in s3.
-        $s3 = new S3(AMAZON_AWS_KEY, AMAZON_AWS_SECRET);
-        $s3->copyObject($this->args('bucket'), $this->args('key'), AMAZON_S3_BUCKET_NAME, $path, S3::ACL_PUBLIC_READ);
-
-        //remove the uploaded file.
-        $s3->deleteObject($this->args('bucket'), $this->args('key'));
 
         return $file;
     }
 
-    private function _handleZipFile($path, $file)
+    private function _handleZipFile($zip_path, $zip_file)
     {
         $za = new ZipArchive();
-        $za->open($path);
+        $za->open($zip_path);
 
         for ($i = 0; $i < $za->numFiles; $i++) {
             //look up file info.
@@ -252,21 +192,19 @@ class UploadController extends Controller
 
             //okay, is it a supported file?
             if (preg_match('/(gcode|stl|obj|amf)$/i', $filename)) {
-                $temp = tempnam("/tmp", "BQ");
-                copy("zip://" . $path . "#" . $filename, $temp);
+                $temp_file = tempnam("/tmp", "BQ");
+                copy("zip://" . $zip_path . "#" . $filename, $temp_file);
 
-                //format for s3
-                $s3_filename = str_replace(" ", "_", $filename);
-                $s3_filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $s3_filename);
-                $s3_path = "assets/" . S3File::getNiceDir($s3_filename);
+                //format for upload
+                $filename = str_replace(" ", "_", $filename);
+                $filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
+                $path = "assets/" . StorageInterface::getNiceDir($filename);
 
-                //create our s3 file
-                $s3 = new S3File();
-                $s3->set('parent_id', $file->id);
-                $s3->set('user_id', User::$me->id);
-                $s3->uploadFile($temp, $s3_path);
-
-                //echo "$filename - $s3_path<br/>";
+                //create our file
+                $file = Storage::newFile();
+                $file->set('parent_id', $zip_file->id);
+                $file->set('user_id', User::$me->id);
+                $file->upload($temp_file, $path);
             }
         }
 
@@ -276,82 +214,26 @@ class UploadController extends Controller
 	/**
 	 * @return string
 	 */
-	private function _createS3Form()
+	private function createFileForm()
 	{
-		$payload = base64_encode(serialize($this->args('payload')));
+		$form = new Form('form', true);
+		/** @var StorageInterface $file */
+		$file = Storage::newFile();
+		$fields = $file->getUploadFields();
 
-		$redirect = "http://" . SITE_HOSTNAME . "/upload/success/$payload";
-		$acl = "public-read";
-		$expiration = gmdate("Y-m-d\\TH:i:s\\Z", strtotime("+1 day"));
-
-		//create amazons crazy policy data array.
-		$policy_json = '
-			{
-				"expiration": "' . $expiration . '",
-				"conditions": [
-					{"acl": "' . $acl . '"},
-					{"bucket": "' . AMAZON_S3_BUCKET_NAME . '"},
-					["starts-with", "$key", "uploads/"],
-					["starts-with", "$Content-Type", ""],
-					["starts-with", "$Content-Disposition", ""],
-					{"success_action_redirect": "' . $redirect . '"},
-					["content-length-range", 1, 262144000]
-				]
-			}';
-
-		//create our various encoded/signed stuff.
-		$policy_json_cleaned = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $policy_json);
-		$policy_encoded = base64_encode($policy_json_cleaned);
-		$signature = hex2b64(hash_hmac('sha1', $policy_encoded, AMAZON_AWS_SECRET));
-
-		$form = new Form("form", true);
-
-		$form->add(
-			HiddenField::name("AWSAccessKeyId")
-			->value(AMAZON_AWS_KEY)
-		);
-
-		$form->add(
-			HiddenField::name("key")
-			->value("uploads/\${filename}")
-		);
-
-		$form->add(
-			HiddenField::name("acl")
-			->value($acl)
-		);
-
-		$form->add(
-			HiddenField::name("success_action_redirect")
-			->value($redirect)
-		);
-
-		$form->add(
-			HiddenField::name("policy")
-			->value($policy_encoded)
-		);
-
-		$form->add(
-			HiddenField::name("signature")
-			->value($signature)
-		);
-
-		$form->add(
-			HiddenField::name("Content-Type")
-			->value("")
-		);
-
-		$form->add(
-			HiddenField::name("Content-Disposition")
-			->value("")
-		);
+		foreach ($fields as $name => $value) {
+			$form->add(
+				HiddenField::name($name)
+				->value($value)
+			);
+		}
 
 		$form->add(
 			UploadField::name("file")
 		);
 
 		$form->setSubmitText("Upload File");
-		$form->action = "https://".AMAZON_S3_BUCKET_NAME.".s3.amazonaws.com/";
+		$form->action = $file->getUploadURL();
 
 		return $form;
 	}

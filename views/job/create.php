@@ -70,7 +70,7 @@
 						</thead>
 						<tbody>
 						<? foreach ($kids AS $row): ?>
-							<? $kid = $row['S3File'] ?>
+							<? $kid = $row['StorageInterface'] ?>
 							<tr>
 								<td align="center"><input type="checkbox" class="job_use" name="use[<?= $kid->id ?>]"
 														  value="1" checked></td>

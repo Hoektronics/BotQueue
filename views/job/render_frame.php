@@ -2,7 +2,7 @@
 /**
  * @package botqueue_job
  * @var string $megaerror
- * @var S3File $file
+ * @var StorageInterface $file
  * @var int $width
  * @var int $height
  */

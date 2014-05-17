@@ -465,7 +465,7 @@ class UploadField extends FormField
 {
 	public function validate($data)
 	{
-		//upload our file to S3
+		//upload our file
 		$file = $_FILES[$this->name];
 
 		//default to no error.

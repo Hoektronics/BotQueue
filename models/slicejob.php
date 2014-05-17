@@ -76,12 +76,12 @@ class SliceJob extends Model
 
 	public function getInputFile()
 	{
-		return new S3File($this->get('input_id'));
+		return Storage::get($this->get('input_id'));
 	}
 
 	public function getOutputFile()
 	{
-		return new S3File($this->get('output_id'));
+		return Storage::get($this->get('output_id'));
 	}
 
 	public function getSliceConfig()
@@ -207,7 +207,7 @@ class SliceJob extends Model
 
 		$jobs = new Collection($sql);
 		$jobs->bindType('id', 'SliceJob');
-		$jobs->bindType('input_id', 'S3File');
+		$jobs->bindType('input_id', STORAGE_METHOD);
 		$jobs->bindType('job_id', 'Job');
 
 		return $jobs;

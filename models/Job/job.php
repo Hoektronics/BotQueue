@@ -49,17 +49,17 @@ class Job extends Model
 
 	public function getStatusHTML()
 	{
-		return "<span class=\"label " . self::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
+		return "<span class=\"label " . JobStatus::getStatusHTMLClass($this->get('status')) . "\">" . $this->get('status') . "</span>";
 	}
 
 	public function getWebcamImage()
 	{
-		return new S3File($this->get('webcam_image_id'));
+		return Storage::get($this->get('webcam_image_id'));
 	}
 
 	public function getSourceFile()
 	{
-		return new S3File($this->get('source_file_id'));
+		return Storage::get($this->get('source_file_id'));
 	}
 
 	public function getSliceJob()
@@ -69,7 +69,7 @@ class Job extends Model
 
 	public function getFile()
 	{
-		return new S3File($this->get('file_id'));
+		return Storage::get($this->get('file_id'));
 	}
 
 	public function getQueue()
@@ -178,6 +178,9 @@ class Job extends Model
 		} elseif ($this->get('status') == 'taken' || $this->get('status') == 'downloading' || $this->get('status') == 'slicing') {
 			$start = strtotime($this->get('taken_time'));
 			$end = time();
+		} elseif ($this->get('status') == 'canceled') {
+			$start = 0;
+			$end = $start;
 		} else {
 			$start = strtotime($this->get('taken_time'));
 			$end = strtotime($this->get('finished_time'));
@@ -292,7 +295,7 @@ class Job extends Model
 
     /**
      * @param $queue_id int
-     * @param $file S3File
+     * @param $file StorageInterface
      * @return Job
      */
     public static function addFileToQueue($queue_id, $file) {

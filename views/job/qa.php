@@ -4,10 +4,10 @@
  * @var string $megaerror
  * @var Job $job
  * @var Bot $bot
- * @var S3File $webcam
+ * @var StorageInterface $webcam
  * @var Form $form
- * @var S3File $source_file
- * @var S3File $gcode_file
+ * @var StorageInterface $source_file
+ * @var StorageInterface $gcode_file
  */
 ?>
 <? if ($megaerror): ?>
@@ -19,7 +19,7 @@
   <div class="row">
     <div class="span6">
 		  <? if ($webcam->isHydrated()): ?>
-		    <img src="<?=$webcam->getRealUrl()?>">
+		    <img src="<?=$webcam->getDownloadURL()?>">
 		  <? else: ?>
         <img src="/img/colorbars.gif">
 		  <? endif ?>

@@ -30,6 +30,7 @@ define("RR_DB_USER", "root");
 define("RR_DB_PASS", "");
 define("RR_DB_NAME", "BotQueue");
 
+define("STORAGE_METHOD", "S3File");
 define("AMAZON_AWS_KEY", "");
 define("AMAZON_AWS_SECRET", "");
 define("AMAZON_S3_BUCKET_NAME", "botqueue");

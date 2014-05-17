@@ -1,7 +1,7 @@
 <?
 /**
  * @package botqueue_job
- * @var S3File $file
+ * @var StorageInterface $file
  */
 ?>
 <script src="/thingiview/Three.js"></script>

@@ -17,10 +17,7 @@
 	</div>
 	<div class="span6">
 	  <h2>Option 1: Upload a File</h2>
-		<?= Controller::byName('upload')->renderView('uploader', array(
-			'payload' => array(
-			'type' => 'new_job'
-		))); ?>
+		<?= Controller::byName('upload')->renderView('uploader'); ?>
     <br/>
 	  <h2>Option 2: Use a URL</h2>
 	  <form class="form-inline" action="/upload/url" method="post">

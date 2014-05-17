@@ -117,7 +117,7 @@ class Queue extends Model
     }
 
     /**
-     * @param $file S3File
+     * @param $file StorageInterface
      * @param int $qty
      * @return array
      * @throws Exception

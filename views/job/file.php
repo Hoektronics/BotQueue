@@ -8,7 +8,7 @@
 				<tbody>
 					<tr>
 						<th>Download URL:</th>
-						<td><a href="<?=$file->getRealUrl()?>"><?=$file->getName()?></a></td>
+						<td><a href="<?=$file->getDownloadURL()?>"><?=$file->getName()?></a></td>
 					</tr>
 					<? if ($file->get('source_url')): ?>
 					  <? $data = parse_url($file->get('source_url')) ?>
@@ -70,7 +70,7 @@
           </thead>
   				<tbody>
   				  <? foreach ($kids AS $row): ?>
-  				    <? $kid = $row['S3File'] ?>
+  				    <? $kid = $row['StorageInterface'] ?>
     					<tr>
                 <td><?=$kid->getLink()?></td>
                 <td><?= Utility::filesizeFormat($kid->get('size'))?></td>

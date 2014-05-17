@@ -33,17 +33,17 @@
   $ids = db()->getArray($sql);
   foreach ($ids AS $id => $row)
   {
-    $s3 = new S3File($row['id']);
+    $file = Storage::get($id);
     
-    if ($s3->exists(AMAZON_S3_BUCKET_NAME))
+    if ($file->exists())
     {
       echo "End of new files, done copying.\n";
       break;
     }
     
     //okay, copy it over.
-    $s3->copyToBucket(AMAZON_S3_BUCKET_NAME);
-    echo $id+1 . " / " . count($ids) . " / " . $s3->getName() . "\n";
+	$file->copy();
+    echo $id+1 . " / " . count($ids) . " / " . $file->getName() . "\n";
   }
   
   //finished!!!!
