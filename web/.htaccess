@@ -52,7 +52,11 @@ RewriteRule ^register$				dispatcher.php?controller=user&view=loginandregister [
 RewriteRule ^preferences$				dispatcher.php?controller=user&view=preferences [NC,L]
 
 #admin area
-RewriteRule ^admin$														dispatcher.php?controller=admin&view=home
+RewriteRule ^admin$														dispatcher.php?controller=admin&view=home [NC,L]
+
+#Local file storage
+RewriteRule ^local$                           dispatcher.php?controller=file&view=local [NC,L]
+RewriteRule ^local:([0-9]+)$                  dispatcher.php?controller=file&view=download&id=$1 [NC,L]
 
 #user profile stuff.
 RewriteRule ^user:([0-9]+)$												dispatcher.php?controller=user&view=profile&id=$1 [NC,L]

@@ -553,7 +553,7 @@ class JobController extends Controller
 				header('Content-Type: ' . $file->get('type'));
 			else
 				header('Content-Type: application/octet-stream');
-			header('Content-Disposition: attachment; filename=' . basename($file->getDownloadURL()));
+			header('Content-Disposition: attachment; filename=' . basename($file->get('path')));
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate');

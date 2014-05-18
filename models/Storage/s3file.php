@@ -175,7 +175,7 @@ class S3File extends StorageInterface
 	public function download($srcPath, $dstPath)
 	{
 		//make directory.
-		$dir = dirname($srcPath);
+		$dir = dirname($dstPath);
 		if (!file_exists($dir))
 			mkdir($dir, 0777, true);
 		if (!is_writable($dir))
