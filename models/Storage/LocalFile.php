@@ -97,8 +97,8 @@ class LocalFile extends StorageInterface {
 	{
 		$url = "http" . (FORCE_SSL ? "s" : "") . "://";
 		$url.= SITE_HOSTNAME;
-		$url.= "/local:";
-		$url.= $this->id;
+		$url.= "/local/";
+		$url.= $this->get('path');
 		return $url;
 	}
 }

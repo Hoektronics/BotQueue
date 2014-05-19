@@ -48,31 +48,32 @@ class FileController extends Controller
 
 	public function download()
 	{
-		$this->assertLoggedIn();
 
 		try {
-			$file = Storage::get($this->args('id'));
-			if (!$file->isHydrated())
-				throw new Exception("This file does not exist.");
+            $path = $this->get('id');
+            $file = STORAGE_PATH . "/" . $path;
+            error_log($path);
+            error_log($this->get('id'));
 
-			if ($file->get('user_id') != User::$me->id)
-				throw new Exception("This is not your file.");
+            if(!is_file($file))
+                throw new Exception("path does not exist");
 
 			//get our headers ready.
 			header('Content-Description: File Transfer');
-			if ($file->get('type'))
-				header('Content-Type: ' . $file->get('type'));
-			else
+            // todo Fix this once we can actually know the content
+//			if ($file->get('type'))
+//				header('Content-Type: ' . $file->get('type'));
+//			else
 				header('Content-Type: application/octet-stream');
-			header('Content-Disposition: attachment; filename=' . basename($file->get('path')));
+			header('Content-Disposition: attachment; filename=' . basename($path));
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate');
 			header('Pragma: public');
-			header('Content-Length: ' . (int)$file->get('size'));
+			header('Content-Length: ' . filesize($file));
 
 			//kay, send it
-			readfile(STORAGE_PATH . "/" . $file->get('path'));
+			readfile($file);
 			exit;
 		} catch (Exception $e) {
 			die($e);

@@ -561,6 +561,7 @@ class JobController extends Controller
 			header('Content-Length: ' . (int)$file->get('size'));
 
 			//kay, send it
+            error_log($file->getDownloadURL());
 			readfile($file->getDownloadURL());
 			exit;
 		} catch (Exception $e) {
