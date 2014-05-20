@@ -27,11 +27,11 @@ class FileController extends Controller
 			$dst = STORAGE_PATH . "/uploads/" . $tmp_file["name"];
 			$this->ensureGoodFile($tmp_file);
 
-			if(file_exists($dst)) {
+			if (file_exists($dst)) {
 				unlink($dst);
 			}
 			// Create the directory structure if it doesn't exist
-			if(!is_dir(dirname($dst))) {
+			if (!is_dir(dirname($dst))) {
 				mkdir(dirname($dst), 0777, true);
 			}
 			rename($tmp_file["tmp_name"], $dst);
@@ -50,21 +50,19 @@ class FileController extends Controller
 	{
 
 		try {
-            $path = $this->get('id');
-            $file = STORAGE_PATH . "/" . $path;
-            error_log($path);
-            error_log($this->get('id'));
+			$path = $this->args('id');
+			$file = STORAGE_PATH . "/" . $path;
 
-            if(!is_file($file))
-                throw new Exception("path does not exist");
+			if (!is_file($file))
+				throw new Exception("path does not exist");
 
 			//get our headers ready.
 			header('Content-Description: File Transfer');
-            // todo Fix this once we can actually know the content
+			// todo Fix this once we can actually know the content
 //			if ($file->get('type'))
 //				header('Content-Type: ' . $file->get('type'));
 //			else
-				header('Content-Type: application/octet-stream');
+			header('Content-Type: application/octet-stream');
 			header('Content-Disposition: attachment; filename=' . basename($path));
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');

@@ -1,7 +1,8 @@
 <?php
 
 
-class LocalFile extends StorageInterface {
+class LocalFile extends StorageInterface
+{
 
 	public function __construct($id = null)
 	{
@@ -10,7 +11,7 @@ class LocalFile extends StorageInterface {
 
 	public function exists()
 	{
-		if($this->get('path'))
+		if ($this->get('path'))
 			return file_exists(STORAGE_PATH . " / " . $this->get('path'));
 		return false;
 	}
@@ -23,23 +24,22 @@ class LocalFile extends StorageInterface {
 	public function getUploadURL()
 	{
 		$url = "http" . (FORCE_SSL ? "s" : "") . "://";
-		$url.= SITE_HOSTNAME;
-		$url.= "/local";
+		$url .= SITE_HOSTNAME;
+		$url .= "/local";
 		return $url;
 	}
 
-	private function move($src, $dst) {
-		error_log("Src: ".$src);
-		error_log("Dst: ".$dst);
+	private function move($src, $dst)
+	{
 		// Verify src and dst are either in /tmp or in the STORAGE_PATH
-		if(strpos($src, "/tmp") === 0 || strpos($src, STORAGE_PATH) === 0) {
-			if(strpos($dst, "/tmp") === 0 || strpos($dst, STORAGE_PATH) === 0) {
+		if (strpos($src, "/tmp") === 0 || strpos($src, STORAGE_PATH) === 0) {
+			if (strpos($dst, "/tmp") === 0 || strpos($dst, STORAGE_PATH) === 0) {
 				// Delete the original file if it exists
-				if(file_exists($dst)) {
+				if (file_exists($dst)) {
 					unlink($dst);
 				}
 				// Create the directory structure if it doesn't exist
-				if(!is_dir(dirname($dst))) {
+				if (!is_dir(dirname($dst))) {
 					mkdir(dirname($dst), 0777, true);
 				}
 				return rename($src, $dst);
@@ -55,6 +55,7 @@ class LocalFile extends StorageInterface {
 		$this->getSize();
 		$this->getHash();
 		$this->getType();
+		$this->save();
 		return $result;
 	}
 
@@ -65,7 +66,7 @@ class LocalFile extends StorageInterface {
 
 	public function moveTo($dstPath)
 	{
-		$result =  $this->move(STORAGE_PATH . "/" . $this->get('path'), STORAGE_PATH . "/" . $dstPath);
+		$result = $this->move(STORAGE_PATH . "/" . $this->get('path'), STORAGE_PATH . "/" . $dstPath);
 		$this->set('path', $dstPath);
 
 		return $result;
@@ -73,7 +74,7 @@ class LocalFile extends StorageInterface {
 
 	public function getSize()
 	{
-		if($this->get('path') && file_exists(STORAGE_PATH . "/" . $this->get('path'))) {
+		if ($this->get('path') && file_exists(STORAGE_PATH . "/" . $this->get('path'))) {
 			$this->set('size', filesize(STORAGE_PATH . "/" . $this->get('path')));
 		}
 		return $this->get('size');
@@ -81,7 +82,7 @@ class LocalFile extends StorageInterface {
 
 	public function getHash()
 	{
-		if($this->get('path') && file_exists(STORAGE_PATH . "/" . $this->get('path')))
+		if ($this->get('path') && file_exists(STORAGE_PATH . "/" . $this->get('path')))
 			$this->set('hash', md5_file(STORAGE_PATH . "/" . $this->get('path')));
 		return $this->get('hash');
 	}
@@ -96,9 +97,9 @@ class LocalFile extends StorageInterface {
 	public function getDownloadURL()
 	{
 		$url = "http" . (FORCE_SSL ? "s" : "") . "://";
-		$url.= SITE_HOSTNAME;
-		$url.= "/local/";
-		$url.= $this->get('path');
+		$url .= SITE_HOSTNAME;
+		$url .= "/local/";
+		$url .= $this->get('path');
 		return $url;
 	}
 }

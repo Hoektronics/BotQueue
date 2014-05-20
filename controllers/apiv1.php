@@ -253,7 +253,7 @@ class APIV1Controller extends Controller
 
 			//does it match?
 			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $data['realname']))
-				throw new Exception("The file <a href=\"".$url."\">{$data['realname']}</a> is not valid for printing.");
+				throw new Exception("The file <a href=\"" . $url . "\">{$data['realname']}</a> is not valid for printing.");
 
 			//create our file object.
 			$file = Storage::newFile();
