@@ -19,132 +19,132 @@
 
 class UploadController extends Controller
 {
-    public function home()
-    {
-        $this->assertLoggedIn();
+	public function home()
+	{
+		$this->assertLoggedIn();
 
-        $this->setTitle("Step 1 of 2: Choose File to Print");
-    }
+		$this->setTitle("Step 1 of 2: Choose File to Print");
+	}
 
-    public function uploader()
-    {
+	public function uploader()
+	{
 		$form = $this->createFileForm();
 
 		$this->setArg('label');
 		$this->set('form', $form);
-    }
+	}
 
-    public function url()
-    {
-        $this->assertLoggedIn();
+	public function url()
+	{
+		$this->assertLoggedIn();
 
-        $this->setTitle("Create Job from URL");
+		$this->setTitle("Create Job from URL");
 
-        try {
-            //did we get a url?
-            $url = $this->args('url');
-            if (!$url)
-                throw new Exception("You must pass in the URL parameter!");
+		try {
+			//did we get a url?
+			$url = $this->args('url');
+			if (!$url)
+				throw new Exception("You must pass in the URL parameter!");
 
-            $matches = array();
-            if (preg_match("/thingiverse.com\\/thing:([0-9]+)/i", $url, $matches)) {
-                $thing_id = $matches[1];
+			$matches = array();
+			if (preg_match("/thingiverse.com\\/thing:([0-9]+)/i", $url, $matches)) {
+				$thing_id = $matches[1];
 
-                //echo "found: $thing_id<Br/>";
+				//echo "found: $thing_id<Br/>";
 
-                // TODO: We need to define a thingiverse api client ID, or get it when the user
-                // authenticates it.
-                $api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());
+				// TODO: We need to define a thingiverse api client ID, or get it when the user
+				// authenticates it.
+				$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());
 
-                //load thingiverse data.
-                $thing = $api->make_call("/things/{$thing_id}");
-                $files = $api->make_call("/things/{$thing_id}/files");
+				//load thingiverse data.
+				$thing = $api->make_call("/things/{$thing_id}");
+				$files = $api->make_call("/things/{$thing_id}/files");
 
-                //echo "<pre>";
-                //print_r($thing);
-                //print_r($files);
-                //echo "</pre>";
+				//echo "<pre>";
+				//print_r($thing);
+				//print_r($files);
+				//echo "</pre>";
 
-                //open zip file.
-                $zip_path = tempnam("/tmp", "BQ");
-                $zip = new ZipArchive();
-                if ($zip->open($zip_path, ZIPARCHIVE::CREATE)) {
-                    //echo "opened $zip_path<br/>";
+				//open zip file.
+				$zip_path = tempnam("/tmp", "BQ");
+				$zip = new ZipArchive();
+				if ($zip->open($zip_path, ZIPARCHIVE::CREATE)) {
+					//echo "opened $zip_path<br/>";
 
-                    //pull in all our files.
-                    foreach ($files AS $row) {
-                        if (preg_match("/\\.(stl|obj|amf|gcode)$/i", $row->name)) {
-                            $data = Utility::downloadUrl($row->public_url);
-                            //echo "downloaded " . $data['realname'] . " to " . $data['localpath'] . "<br/>";
+					//pull in all our files.
+					foreach ($files AS $row) {
+						if (preg_match("/\\.(stl|obj|amf|gcode)$/i", $row->name)) {
+							$data = Utility::downloadUrl($row->public_url);
+							//echo "downloaded " . $data['realname'] . " to " . $data['localpath'] . "<br/>";
 
-                            $zip->addFile($data['localpath'], $data['realname']);
-                        }
-                    }
-                    $zip->close();
+							$zip->addFile($data['localpath'], $data['realname']);
+						}
+					}
+					$zip->close();
 
-                    //create zip name.
-                    $filename = basename($thing->name . ".zip");
-                    $filename = str_replace(" ", "_", $filename);
-                    $filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
-                    $path = "assets/" . StorageInterface::getNiceDir($filename);
+					//create zip name.
+					$filename = basename($thing->name . ".zip");
+					$filename = str_replace(" ", "_", $filename);
+					$filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
+					$path = "assets/" . StorageInterface::getNiceDir($filename);
 
-                    //okay, upload it and handle it.
-                    $file = Storage::newFile();
-                    $file->set('user_id', User::$me->id);
-                    $file->set('source_url', $url);
+					//okay, upload it and handle it.
+					$file = Storage::newFile();
+					$file->set('user_id', User::$me->id);
+					$file->set('source_url', $url);
 
-                    //echo "uploading $zip_path to $path<br/>";
+					//echo "uploading $zip_path to $path<br/>";
 
 					$file->upload($zip_path, $path);
-                    $this->_handleZipFile($zip_path, $file);
+					FileUploadHandler::_handleZipFile($zip_path, $file);
 
-                    $this->forwardToUrl("/job/create/file:{$file->id}");
-                } else
-                    throw new Exception("Unable to open zip {$zip_path} for writing.");
-            } else {
-                $data = Utility::downloadUrl($url);
+					$this->forwardToUrl("/job/create/file:{$file->id}");
+				} else
+					throw new Exception("Unable to open zip {$zip_path} for writing.");
+			} else {
+				$data = Utility::downloadUrl($url);
 
-                //does it match?
-                if (!preg_match("/\\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
-                    throw new Exception("The file <a href=\"".$url."\">{$data['realname']}</a> is not valid for printing.");
+				//does it match?
+				if (!preg_match("/\\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
+					throw new Exception("The file <a href=\"" . $url . "\">{$data['realname']}</a> is not valid for printing.");
 
-                $file = Storage::newFile();
-                $file->set('user_id', User::$me->id);
-                $file->set('source_url', $url);
+				$file = Storage::newFile();
+				$file->set('user_id', User::$me->id);
+				$file->set('source_url', $url);
 				$file->upload($data['localpath'],
 					StorageInterface::getNiceDir($data['realname']));
 
-                //is it a zip file?  do some magic on it.
-                if (!preg_match("/\\.zip$/i", $data['realname']))
-                    $this->_handleZipFile($data['localpath'], $file);
+				//is it a zip file?  do some magic on it.
+				if (!preg_match("/\\.zip$/i", $data['realname']))
+					FileUploadHandler::_handleZipFile($data['localpath'], $file);
 
-                Activity::log("uploaded a new file called " . $file->getLink() . ".");
+				Activity::log("uploaded a new file called " . $file->getLink() . ".");
 
-                //send us to step 2.
-                $this->forwardToUrl("/job/create/file:{$file->id}");
-            }
-        } catch (Exception $e) {
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+				//send us to step 2.
+				$this->forwardToUrl("/job/create/file:{$file->id}");
+			}
+		} catch (Exception $e) {
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
-    public function success()
-    {
-        $this->assertLoggedIn();
+	public function success()
+	{
+		$this->assertLoggedIn();
 
-        //handle our upload
-        try {
-            $file = JobFromFile::fromName($this->get('key'));
-            Activity::log("uploaded a new file called " . $file->getLink() . ".");
+		//handle our upload
+		try {
+			$file = FileUploadHandler::fromName($this->get('key'));
+			Activity::log("uploaded a new file called " . $file->getLink() . ".");
 
-            //send us to step 2.
-            $this->forwardToUrl("/job/create/file:{$file->id}");
-        } //did anything go wrong?
-        catch (Exception $e) {
-            $this->setTitle("Upload File - Error");
-            $this->set('megaerror', $e->getMessage());
-        }
-    }
+			//send us to step 2.
+			$this->forwardToUrl("/job/create/file:{$file->id}");
+		} //did anything go wrong?
+		catch (Exception $e) {
+			$this->setTitle("Upload File - Error");
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
 
 	/**
 	 * @return string
@@ -159,7 +159,7 @@ class UploadController extends Controller
 		foreach ($fields as $name => $value) {
 			$form->add(
 				HiddenField::name($name)
-				->value($value)
+					->value($value)
 			);
 		}
 
@@ -177,9 +177,9 @@ class UploadController extends Controller
 // Function to help sign the policy
 function hex2b64($str)
 {
-    $raw = '';
-    for ($i = 0; $i < strlen($str); $i += 2) {
-        $raw .= chr(hexdec(substr($str, $i, 2)));
-    }
-    return base64_encode($raw);
+	$raw = '';
+	for ($i = 0; $i < strlen($str); $i += 2) {
+		$raw .= chr(hexdec(substr($str, $i, 2)));
+	}
+	return base64_encode($raw);
 }

@@ -1,9 +1,11 @@
 <?php
 
 
-class JobFromFile {
+class FileUploadHandler
+{
 
-	public static function fromName($name) {
+	public static function fromName($name)
+	{
 		//some basic error checking.
 		if (!preg_match('/(gcode|stl|obj|amf|zip)$/i', $name))
 			throw new Exception("Only .gcode, .stl, .obj, .amf, and .zip files are allowed at this time.");
@@ -21,7 +23,7 @@ class JobFromFile {
 		return $file;
 	}
 
-	private function _createFile($path)
+	private static function _createFile($path)
 	{
 		//format the name and stuff
 		$filename = basename($path);
@@ -43,7 +45,7 @@ class JobFromFile {
 		return $file;
 	}
 
-	private function _handleZipFile($zip_path, $zip_file)
+	public static function _handleZipFile($zip_path, $zip_file)
 	{
 		$za = new ZipArchive();
 		$za->open($zip_path);

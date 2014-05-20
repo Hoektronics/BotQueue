@@ -35,7 +35,7 @@ class FileController extends Controller
 				mkdir(dirname($dst), 0777, true);
 			}
 			rename($tmp_file["tmp_name"], $dst);
-			$file = JobFromFile::fromName("uploads/" . $tmp_file["name"]);
+			$file = FileUploadHandler::fromName("uploads/" . $tmp_file["name"]);
 
 			Activity::log("uploaded a new file called " . $file->getLink() . ".");
 

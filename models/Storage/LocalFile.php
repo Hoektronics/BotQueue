@@ -29,21 +29,27 @@ class LocalFile extends StorageInterface
 		return $url;
 	}
 
-	private function move($src, $dst)
+	private function validPath($path)
+	{
+		return strpos($path, "/tmp") === 0 || strpos($path, STORAGE_PATH === 0);
+	}
+
+	private function transfer($src, $dst, $deleteOriginal = true)
 	{
 		// Verify src and dst are either in /tmp or in the STORAGE_PATH
-		if (strpos($src, "/tmp") === 0 || strpos($src, STORAGE_PATH) === 0) {
-			if (strpos($dst, "/tmp") === 0 || strpos($dst, STORAGE_PATH) === 0) {
-				// Delete the original file if it exists
-				if (file_exists($dst)) {
-					unlink($dst);
-				}
-				// Create the directory structure if it doesn't exist
-				if (!is_dir(dirname($dst))) {
-					mkdir(dirname($dst), 0777, true);
-				}
-				return rename($src, $dst);
+		if ($this->validPath($src) && $this->validPath($dst)) {
+			// Delete the original file if it exists
+			if (file_exists($dst)) {
+				unlink($dst);
 			}
+			// Create the directory structure if it doesn't exist
+			if (!is_dir(dirname($dst))) {
+				mkdir(dirname($dst), 0777, true);
+			}
+			if ($deleteOriginal)
+				return rename($src, $dst);
+			else
+				return copy($src, $dst);
 		}
 		return false;
 	}
@@ -51,7 +57,7 @@ class LocalFile extends StorageInterface
 	public function upload($srcPath, $dstPath)
 	{
 		$this->set('path', $dstPath);
-		$result = $this->move($srcPath, STORAGE_PATH . "/" . $dstPath);
+		$result = $this->transfer($srcPath, STORAGE_PATH . "/" . $dstPath);
 		$this->getSize();
 		$this->getHash();
 		$this->getType();
@@ -61,12 +67,12 @@ class LocalFile extends StorageInterface
 
 	public function download($srcPath, $dstPath)
 	{
-		return $this->move(STORAGE_PATH . "/" . $srcPath, $dstPath);
+		return $this->transfer(STORAGE_PATH . "/" . $srcPath, $dstPath);
 	}
 
 	public function moveTo($dstPath)
 	{
-		$result = $this->move(STORAGE_PATH . "/" . $this->get('path'), STORAGE_PATH . "/" . $dstPath);
+		$result = $this->transfer(STORAGE_PATH . "/" . $this->get('path'), STORAGE_PATH . "/" . $dstPath, true);
 		$this->set('path', $dstPath);
 
 		return $result;
