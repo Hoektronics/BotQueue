@@ -31,7 +31,7 @@ class LocalFile extends StorageInterface
 
 	private function validPath($path)
 	{
-		return strpos($path, "/tmp") === 0 || strpos($path, STORAGE_PATH === 0);
+		return strpos($path, "/tmp") === 0 || strpos($path, STORAGE_PATH) === 0;
 	}
 
 	private function transfer($src, $dst, $deleteOriginal = true)
@@ -46,10 +46,13 @@ class LocalFile extends StorageInterface
 			if (!is_dir(dirname($dst))) {
 				mkdir(dirname($dst), 0777, true);
 			}
-			if ($deleteOriginal)
+			if ($deleteOriginal) {
 				return rename($src, $dst);
+			}
 			else
+			{
 				return copy($src, $dst);
+			}
 		}
 		return false;
 	}
@@ -57,7 +60,8 @@ class LocalFile extends StorageInterface
 	public function upload($srcPath, $dstPath)
 	{
 		$this->set('path', $dstPath);
-		$result = $this->transfer($srcPath, STORAGE_PATH . "/" . $dstPath);
+		$result = $this->transfer($srcPath, STORAGE_PATH . "/" . $dstPath, false);
+		$this->set('add_date', date("Y-m-d H:i:s"));
 		$this->getSize();
 		$this->getHash();
 		$this->getType();
@@ -67,13 +71,14 @@ class LocalFile extends StorageInterface
 
 	public function download($srcPath, $dstPath)
 	{
-		return $this->transfer(STORAGE_PATH . "/" . $srcPath, $dstPath);
+		return $this->transfer(STORAGE_PATH . "/" . $srcPath, $dstPath, false);
 	}
 
 	public function moveTo($dstPath)
 	{
 		$result = $this->transfer(STORAGE_PATH . "/" . $this->get('path'), STORAGE_PATH . "/" . $dstPath, true);
 		$this->set('path', $dstPath);
+		$this->save();
 
 		return $result;
 	}

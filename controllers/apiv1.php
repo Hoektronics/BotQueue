@@ -873,11 +873,15 @@ class APIV1Controller extends Controller
 
 			foreach ($_FILES AS $file) {
 				if (is_uploaded_file($file['tmp_name'])) {
+					$filename = $file['name'];
+					$filename = str_replace(" ", "_", $filename);
+					$filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
+
 					$this->ensureGoodFile($file);
 					//okay, we're good.. do it.
 					$data_file = Storage::newFile();
 					$data_file->set('user_id', User::$me->id);
-					$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
+					$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($filename));
 
 					$scan_data->camera_files[] = $data_file->id;
 				}
