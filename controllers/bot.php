@@ -993,13 +993,11 @@ class BotController extends Controller
 	{
 		/* @var $bot Bot */
 		$bot = $this->args('bot');
-		$queue = $this->args('queue');
 		/* @var $job Job */
 		$job = $this->args('job');
 
 		$this->setArg('size');
 		$this->set('b', $bot);
-		$this->set('q', $queue);
 		$this->set('j', $job);
 		$this->set('sj', $job->getSliceJob());
 		$this->set('webcam', $bot->getWebcamImage());
