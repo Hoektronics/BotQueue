@@ -802,26 +802,41 @@ class APIV1Controller extends Controller
 
 		//load up our objects
 		$job = $sj->getJob();
-		$bot = $job->getBot();
 
-		//upload our file to
+		//upload our file
 		$file = $_FILES['file'];
-		$this->ensureGoodFile($file);
+		$emptyFile = false;
+		try {
+			$this->ensureGoodFile($file);
+		} catch (InvalidUploadedFile $ex) {
+			if ($ex->getCode() == UPLOAD_ERR_EMPTY) {
+				$emptyFile = true;
+			} else {
+				throw $ex;
+			}
+		}
 
-		//okay, we're good.. do it.
 		$data_file = Storage::newFile();
-		$data_file->set('user_id', User::$me->id);
-		$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
+		if (!$emptyFile) {
+			//okay, we're good.. do it.
+			$data_file->set('user_id', User::$me->id);
+			$data_file->upload($file['tmp_name'], StorageInterface::getNiceDir($file['name']));
+		}
 
 		//update our status.
 		$sj->set('output_log', $this->args('output'));
 		$sj->set('error_log', $this->args('errors'));
-		$sj->set('output_id', $data_file->id);
+
+		if (!$emptyFile)
+			$sj->set('output_id', $data_file->id);
 		$sj->save();
 
 		//update our job
 		$job->set('slice_complete_time', date("Y-m-d H:i:s"));
-		$job->set('file_id', $data_file->id);
+		$job->set('progress', 100); // todo Fix hack to deal with progress warning bar
+
+		if (!$emptyFile)
+			$job->set('file_id', $data_file->id);
 		$job->save();
 
 		//what do do with it now?
@@ -835,7 +850,7 @@ class APIV1Controller extends Controller
 			$sj->save();
 		}
 
-		Activity::log($bot->getLink() . " sliced the " . $job->getLink() . " job via the API.");
+		Activity::log($job->getBot()->getLink() . " sliced the " . $job->getLink() . " job via the API.");
 
 		return $job->getBot()->getAPIData();
 	}
@@ -904,8 +919,11 @@ class APIV1Controller extends Controller
 	 */
 	private function ensureGoodFile($file)
 	{
-		if ($file['size'] == 0 && $file['error'] == 0)
-			$file['error'] = UPLOAD_ERR_EMPTY;
+		// Some of the functions are okay with empty files
+		// I think it shouldn't upload empty files
+		// but I don't think it's an error.
+//		if ($file['size'] == 0 && $file['error'] == 0)
+//			$file['error'] = UPLOAD_ERR_EMPTY;
 
 		if ($file['error'] == 0)
 			return;
@@ -922,6 +940,6 @@ class APIV1Controller extends Controller
 			UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
 		);
 
-		throw new Exception("File upload failed: " . $upload_errors[$file['error']]);
+		throw new InvalidUploadedFile("File upload failed: " . $upload_errors[$file['error']], $file['error']);
 	}
 }

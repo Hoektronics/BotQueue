@@ -73,7 +73,7 @@
 						<? if ($j->get('status') == 'taken' || $j->get('status') == 'slicing'): ?>
 							<div class="bot_info_meta">
 								<div class="progress progress-striped active pull-right" style="width: 100%">
-									<div class="bar" style="width: <?= round($j->get('progress')) ?>%;"></div>
+									<div class="bar<?= ($sj->get('status') == 'pending' ? " bar-warning" : "")?>" style="width: <?= round($j->get('progress')) ?>%;"></div>
 								</div>
 							</div>
 						<? endif ?>
