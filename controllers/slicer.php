@@ -127,7 +127,6 @@ class SlicerController extends Controller
 
 					$tag = substr(strrchr($ref['ref'], '/'), 1);
 
-					error_log($tag);
 					$split = explode("-", $tag);
 					$os = $split[0];
 					$engineName = $split[1];
