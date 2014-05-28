@@ -6,7 +6,7 @@
 			'page' => $page,
 			'per_page' => $per_page,
 			'total' => $total,
-			'word' => 'activitie'
+			'word' => 'activity'
 		));
 	?>
 	<?= Controller::byName('main')->renderView('draw_activities', array('activities' => $activities)); ?>

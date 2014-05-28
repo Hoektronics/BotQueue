@@ -231,16 +231,7 @@ class User extends Model
 
     public function getActivityStream()
     {
-        $sql = "SELECT id, user_id
-				FROM activities
-				WHERE user_id = ?
-				ORDER BY id DESC";
-
-		$stream = new Collection($sql, array($this->id));
-		$stream->bindType('user_id', 'User');
-		$stream->bindType('id', 'Activity');
-
-		return $stream;
+        return Activity::getStream(User::$me);
     }
 
     public function getQueues()

@@ -86,7 +86,7 @@ class MainController extends Controller
     {
         $this->setTitle('Activity Log');
 
-        $collection = Activity::getStream();
+        $collection = Activity::getStream(User::$me);
         $per_page = 20;
         $page = $collection->putWithinBounds($this->args('page'), $per_page);
 

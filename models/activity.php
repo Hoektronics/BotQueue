@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 	This file is part of BotQueue.
@@ -24,22 +24,23 @@ class Activity extends Model
 		parent::__construct($id, "activities");
 	}
 
-	public static function getStream()
+	public static function getStream(User $user)
 	{
-		$sql = "SELECT id, user_id
+		$sql = "SELECT activity, action_date
 				FROM activities
 				WHERE user_id = ?
 				ORDER BY id DESC
 			";
 
-		$stream = new Collection($sql, array(User::$me->id));
-		$stream->bindType('user_id', 'User');
-		$stream->bindType('id', 'Activity');
+		$stream = new Collection($sql, array($user->id));
+		$stream->bindValue('activity');
+		$stream->bindType('action_date', 'DateTime');
+		$stream->bindData('user_link', $user->getLink());
 
 		return $stream;
 	}
 
-	public static function log($activity, $user = null)
+	public static function log($activity, User $user = null)
 	{
 		if ($user === null)
 			$user = User::$me;
@@ -53,5 +54,3 @@ class Activity extends Model
 		return $a;
 	}
 }
-
-?>
