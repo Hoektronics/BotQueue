@@ -36,6 +36,9 @@ class HTMLTemplateController extends Controller
     {
         $this->setArg('message');
     }
-}
 
-?>
+	public function menubar()
+	{
+		$this->setArg('area');
+	}
+}

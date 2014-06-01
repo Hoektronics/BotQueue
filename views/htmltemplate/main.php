@@ -54,125 +54,25 @@
 		<? endforeach ?>
 	<? endif ?>
 
-	<? if (IS_DEV_SITE): ?>
-		<style>
-			/*
-					body
-					{
-						background: #D3BECF url('/img/devsite-warning.gif');
-						background-repeat: repeat-all;
-					}
-
-					div.container {
-					  background: #fff;
-					}
-					*/
-		</style>
-	<? endif ?>
 	<?= Controller::$content_for["head"] ?>
 </head>
 <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="50">
 <div class="container">
 
-	<!-- Navbar -->
-	<section id="navbar">
-		<div class="navbar">
-			<div class="navbar-inner">
-				<div class="container" style="width: auto;">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<a class="brand" href="/"><?= RR_PROJECT_NAME ?></a>
+	<?= Controller::byName('htmltemplate')->renderView('menubar', array('area' => $area)); ?>
 
-					<div class="nav-collapse">
-						<ul class="nav">
-							<li class="<?= ($area == 'dashboard') ? 'active' : '' ?>"><a href="/">Dashboard</a></li>
-							<li class="<?= ($area == 'create') ? 'active' : '' ?> dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
-								<ul class="dropdown-menu">
-									<li><a href="/upload">Create Job</a></li>
-									<li><a href="/bot/register">Register Bot</a></li>
-									<li><a href="/queue/create">Create Queue</a></li>
-								</ul>
-							</li>
-							<li class="<?= ($area == 'bots') ? 'active' : '' ?>"><a href="/bots">Bots</a></li>
-							<li class="<?= ($area == 'queues') ? 'active' : '' ?>"><a href="/queues">Queues</a></li>
-							<li class="<?= ($area == 'jobs') ? 'active' : '' ?>"><a href="/jobs">Jobs</a></li>
-							<li class="<?= ($area == 'app') ? 'active' : '' ?>"><a href="/apps">App</a></li>
-							<li class="<?= ($area == 'slicers') ? 'active' : '' ?>"><a href="/slicers">Slicers</a></li>
-							<li class="<?= ($area == 'stats') ? 'active' : '' ?>"><a href="/stats">Stats</a></li>
-							<li class="<?= ($area == 'help') ? 'active' : '' ?>"><a href="/help">Help</a></li>
-							<? if (User::isAdmin()): ?>
-								<li class="<?= ($area == 'admin') ? 'active' : '' ?> dropdown">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
-									<ul class="dropdown-menu">
-										<li><a href="/admin">Admin Panel</a></li>
-										<li><a href="/bots/live">Live view</a></li>
-									</ul>
-								</li>
-							<? endif ?>
-						</ul>
-						<ul class="nav pull-right">
-							<li class="divider-vertical"></li>
-							<? if (User::isLoggedIn()): ?>
-								<li class="dropdown">
-									<a href="#" class="dropdown-toggle"
-									   data-toggle="dropdown">Hello, <?= User::$me->getName() ?>
-										<b class="caret"></b>
-									</a>
-									<ul class="dropdown-menu">
-										<li><a href="/preferences">Preferences</a></li>
-										<li class="divider"></li>
-										<li><a href="/logout">Log Out</a></li>
-									</ul>
-								</li>
-							<? else: ?>
-							<li>
-								<a href="/login"
-								   style="padding-left: 17px; background: transparent url('/img/lock_icon.png') no-repeat 0px center;">Log
-									in</a>
-							</li>
-							<li><a href="/register">Sign up</a></li>
-							<? endif ?>
-						</ul>
-						<!--
-			  <form class="navbar-search pull-right" action="">
-				<input type="text" class="search-query span2" placeholder="Search">
-			  </form>
-						-->
-					</div>
-					<!-- /.nav-collapse -->
-				</div>
-			</div>
-			<!-- /navbar-inner -->
-		</div>
-		<!-- /navbar -->
-	</section>
-
-	<!-- Content -->
 	<section id="content">
-
-		<!--
-		  <div class="alert alert-info">
-			<strong>Welcome to BotQueue v0.3!</strong> Please check out the <a href="http://www.hoektronics.com/2013/04/24/botqueue-v0-3-webcams-pausing-and-more/">blog entry about the new release</a> for more details.  TL;DR: webcams!!!
-		  </div>
-		  -->
-
 		<? if ($title): ?>
 			<div class="page-header">
 				<h1><?= $title ?></h1>
 			</div>
 		<? endif ?>
 
-		<!-- Headings & Paragraph Copy -->
 		<div class="row">
 			<div class="span12">
 				<?= $content ?>
 			</div>
 		</div>
-		<!-- end content -->
 
 		<br/><br/>
 
@@ -184,7 +84,6 @@
 
 	</section>
 
-	<!-- Footer -->
 	<hr>
 
 	<footer>
@@ -210,10 +109,7 @@
 	</footer>
 
 </div>
-<!-- /container -->
 
-<!-- Le javascript -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="/js/botqueue.js"></script>
 <script src="/bootstrap/2.3.0/js/bootstrap.js"></script>
 </body>
