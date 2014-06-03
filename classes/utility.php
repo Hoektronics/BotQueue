@@ -317,7 +317,7 @@ class Utility
 	public static function getHours($datediff)
 	{
 		$hours = round($datediff / (60 * 60));
-		return "$hours hour" . self::pluralizer($hours > 1);
+		return "$hours hour" . self::pluralizer($hours > 1 || $hours == 0);
 	}
 
 	public static function getTimeAgo($datetime)
