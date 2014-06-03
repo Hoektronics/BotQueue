@@ -36,20 +36,18 @@ class MyOAuthProvider
 	 */
 	public function checkConsumer($provider)
 	{
-		$return = OAUTH_CONSUMER_KEY_UNKNOWN;
-
 		$c = OAuthConsumer::findByKey($provider->consumer_key);
 		if ($c->isHydrated()) {
 			if (!$c->isActive()) {
-				$return = OAUTH_CONSUMER_KEY_REFUSED;
+				return OAUTH_CONSUMER_KEY_REFUSED;
 			} else {
 				$this->consumer = $c;
 				$provider->consumer_secret = $this->consumer->get('consumer_secret');
-				$return = OAUTH_OK;
+				return OAUTH_OK;
 			}
 		}
 
-		return $return;
+		return OAUTH_CONSUMER_KEY_UNKNOWN;
 	}
 
 	/**
@@ -115,5 +113,3 @@ class MyOAuthProvider
 			throw new Exception("User not authenticated");
 	}
 }
-
-?>

@@ -88,6 +88,7 @@ class APIV1Controller extends Controller
 		} catch (OAuthException $e) {
 			error_log("Something went wrong with OAuth");
 			error_log($e->getMessage());
+			$result = array('status' => 'error', 'error' => $e->getMessage());
 		} catch (Exception $e) {
 			error_log($e->getMessage());
 			error_log(print_r($this->args(), true));
