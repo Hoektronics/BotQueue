@@ -23,14 +23,18 @@ sudo apt-get install -qy apache2 mysql-server php5 php5-mysql libapache2-mod-php
 
 echo ""
 
+DEFAULT_APP_NAME=BotQueue
+read -p "What should we call this install? [$DEFAULT_APP_NAME]: " APP_NAME
+APP_NAME=${APP_NAME:-$DEFAULT_APACHE_NAME}
+
 git status > /dev/null 2>&1
 if [ $? -ne 0 ] ; then
-  botqueue_dir="`pwd`/BotQueue"
+  botqueue_dir="`pwd`/$APP_NAME"
   if [ -d ${botqueue_dir} ] ; then
-    echo "I see you already have a BotQueue folder. I'll just use that."
+    echo "I see you already have a $APP_NAME folder. I'll just use that."
   else
     echo "Let me download BotQueue for you"
-    git clone git://github.com/Hoektronics/BotQueue.git
+    git clone git://github.com/Hoektronics/BotQueue.git ${APP_NAME}
   fi
 else
   botqueue_dir="`pwd`/.." # We're in the install directory, so one level above
@@ -51,12 +55,9 @@ sed -i "s|$oldPath|$botqueue_dir|g" install/apache.conf
 
 echo ""
 DEFAULT_APACHE_PATH="/etc/apache2/sites-available"
-read -p "Where should we add the BotQueue apache config? [$DEFAULT_APACHE_PATH]: " APACHE_PATH
+read -p "Where should we add the $APP_NAME apache config? [$DEFAULT_APACHE_PATH]: " APACHE_PATH
 APACHE_PATH=${APACHE_PATH:-$DEFAULT_APACHE_PATH}
-DEFAULT_APACHE_NAME=BotQueue
-read -p "What should we call this install? [$DEFAULT_APACHE_NAME]: " APACHE_NAME
-APACHE_NAME=${APACHE_NAME:-$DEFAULT_APACHE_NAME}
-APACHE_CONF=${APACHE_PATH}/${APACHE_NAME}
+APACHE_CONF=${APACHE_PATH}/${APP_NAME}
 sudo cp install/apache.conf ${APACHE_CONF}
 
 echo ""
@@ -69,17 +70,18 @@ read -n 1 -s
 
 sudo "${EDITOR:-vi}" ${APACHE_CONF}
 
+echo ""
 echo "Note, that if you have not created the database, give the username"
 echo "and password of a user who can create the database"
-read -p "Database name [BotQueue]: " database_name
-database_name=${database_name:-BotQueue}
+read -p "Database name [$APP_NAME]: " database_name
+database_name=${database_name:-$APP_NAME}
 read -p "Database user [root]: " database_user
 database_user=${database_user:-root}
 read -s -p "Database password (Won't be shown) []: " database_pass
 database_pass=${database_pass:-""}
 echo "";
 
-
+echo "";
 if [ -n "$database_pass" ]; then
   echo "Creating the database if it doesn't exist"
   mysql -u ${database_user} -p${database_pass} -e "CREATE DATABASE IF NOT EXISTS ${database_name}"
@@ -94,6 +96,7 @@ fi
 
 cp extensions/config-example.php extensions/config.php
 
+echo ""
 echo "I'm about to let you edit the config file for the installation"
 echo "If you need to edit it again, it's located at:"
 echo "${botqueue_dir}/extensions/config.php"
@@ -102,8 +105,19 @@ echo "Press any key to continue"
 read -n 1 -s
 "${EDITOR:-vi}" extensions/config.php
 
-echo "Enabling site $APACHE_NAME"
-sudo a2ensite ${APACHE_NAME}
+if [ -e "composer.phar" ] ; then
+  echo "Composer is already here"
+else
+  echo "Downloading composer"
+  php -r "readfile('https://getcomposer.org/installer');" | php
+fi
+
+echo "Downloading components"
+php composer.phar install
+
+
+echo "Enabling site $APP_NAME"
+sudo a2ensite ${APP_NAME}
 sudo service apache2 reload
 
 echo "Done!"
