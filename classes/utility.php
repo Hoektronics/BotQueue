@@ -187,12 +187,6 @@ class Utility
 			return null;
 	}
 
-//	public static function generateBarcode($text)
-//	{
-//		require_once('PEAR/Image/Barcode.php');
-//		Image_Barcode::draw($text, 'Code39', 'png');
-//	}
-
 	public static function sanitize($value)
 	{
 		// $value = mb_convert_encoding($value, "UTF-8");
