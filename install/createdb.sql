@@ -1,6 +1,6 @@
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `activities` (
+CREATE TABLE IF NOT EXISTS `activities` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `activity` text NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE `activities` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `bots` (
+CREATE TABLE IF NOT EXISTS `bots` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `oauth_token_id` int(11) unsigned NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE `bots` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `comments` (
+CREATE TABLE IF NOT EXISTS `comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `content_id` int(11) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `comments` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `email_queue` (
+CREATE TABLE IF NOT EXISTS `email_queue` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `subject` varchar(255) NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE `email_queue` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `error_log` (
+CREATE TABLE IF NOT EXISTS `error_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `job_id` int(11) unsigned NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE `error_log` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `job_clock` (
+CREATE TABLE IF NOT EXISTS `job_clock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `job_id` int(11) NOT NULL,
   `bot_id` int(11) NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE `job_clock` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `jobs` (
+CREATE TABLE IF NOT EXISTS `jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `queue_id` int(11) unsigned NOT NULL DEFAULT '0',
@@ -150,7 +150,7 @@ CREATE TABLE `jobs` (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 
-CREATE TABLE `oauth_consumer` (
+CREATE TABLE IF NOT EXISTS `oauth_consumer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `consumer_key` varchar(255) NOT NULL,
   `consumer_secret` varchar(255) NOT NULL,
@@ -163,7 +163,7 @@ CREATE TABLE `oauth_consumer` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `oauth_consumer_nonce` (
+CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `consumer_id` int(11) unsigned default 0,
   `timestamp` int(11) unsigned default 0,
@@ -174,7 +174,7 @@ CREATE TABLE `oauth_consumer_nonce` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `oauth_token` (
+CREATE TABLE IF NOT EXISTS `oauth_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
   `name` text NOT NULL,
@@ -197,7 +197,7 @@ CREATE TABLE `oauth_token` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `queues` (
+CREATE TABLE IF NOT EXISTS `queues` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
@@ -207,7 +207,7 @@ CREATE TABLE `queues` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `s3_files` (
+CREATE TABLE IF NOT EXISTS `s3_files` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(255) NOT NULL,
   `size` int(10) unsigned NOT NULL,
@@ -224,7 +224,7 @@ CREATE TABLE `s3_files` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `shortcodes` (
+CREATE TABLE IF NOT EXISTS `shortcodes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -233,7 +233,7 @@ CREATE TABLE `shortcodes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `slice_configs` (
+CREATE TABLE IF NOT EXISTS `slice_configs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fork_id` int(11) unsigned NOT NULL,
   `engine_id` int(11) unsigned NOT NULL,
@@ -250,7 +250,7 @@ CREATE TABLE `slice_configs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `slice_engines` (
+CREATE TABLE IF NOT EXISTS `slice_engines` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `engine_name` varchar(255) NOT NULL,
   `engine_path` varchar(255) NOT NULL,
@@ -267,7 +267,7 @@ CREATE TABLE `slice_engines` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `engine_os` (
+CREATE TABLE IF NOT EXISTS `engine_os` (
   `engine_id` int(11) unsigned NOT NULL,
   `os` enum('osx','linux','win','raspberrypi'),
   PRIMARY KEY (`engine_id`, `os`)
@@ -275,7 +275,7 @@ CREATE TABLE `engine_os` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `slice_jobs` (
+CREATE TABLE IF NOT EXISTS `slice_jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `job_id` int(11) unsigned NOT NULL,
@@ -299,7 +299,7 @@ CREATE TABLE `slice_jobs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tokens` (
+CREATE TABLE IF NOT EXISTS `tokens` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `hash` varchar(40) NOT NULL,
@@ -311,7 +311,7 @@ CREATE TABLE `tokens` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
   `email` varchar(255) NOT NULL,
