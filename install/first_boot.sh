@@ -53,7 +53,10 @@ echo ""
 DEFAULT_APACHE_PATH="/etc/apache2/sites-available"
 read -p "Where should we add the BotQueue apache config? [$DEFAULT_APACHE_PATH]: " APACHE_PATH
 APACHE_PATH=${APACHE_PATH:-$DEFAULT_APACHE_PATH}
-APACHE_CONF=${APACHE_PATH}/BotQueue
+DEFAULT_APACHE_NAME=BotQueue
+read -p "What should we call this install? [$DEFAULT_APACHE_NAME]: " APACHE_NAME
+APACHE_NAME=${APACHE_NAME:-$DEFAULT_APACHE_NAME}
+APACHE_CONF=${APACHE_PATH}/${APACHE_NAME}
 sudo cp install/apache.conf ${APACHE_CONF}
 
 echo ""
@@ -93,8 +96,14 @@ cp extensions/config-example.php extensions/config.php
 
 echo "I'm about to let you edit the config file for the installation"
 echo "If you need to edit it again, it's located at:"
-echo "${newPath}/extensions/config.php"
+echo "${botqueue_dir}/extensions/config.php"
 echo ""
 echo "Press any key to continue"
 read -n 1 -s
 "${EDITOR:-vi}" extensions/config.php
+
+echo "Enabling site $APACHE_NAME"
+sudo a2ensite ${APACHE_NAME}
+sudo service apache2 reload
+
+echo "Done!"
