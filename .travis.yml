@@ -20,15 +20,6 @@ install:
   # Install the packages we need
   - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential php5-curl php5-dev libmagic-dev
 
-  # Install oauth and pecl_http
-  - printf "\n" | sudo pecl install oauth
-  - printf "\n" | sudo pecl install pecl_http
-
-  # Discover some channels
-  - sudo pear channel-discover pear.amazonwebservices.com
-  - sudo pear channel-discover guzzlephp.org/pear
-  - sudo pear channel-discover pear.symfony.com
-  
   # Install composer
   - composer self-update
   - composer install
