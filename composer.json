@@ -15,7 +15,7 @@
     ],
     "require": {
         "cboden/Ratchet": "0.3.*",
-        "aws/aws-sdk-php": "2.6.3",
+        "aws/aws-sdk-php": "2.6.*",
         "swiftmailer/swiftmailer": "@stable"
     }
 }
