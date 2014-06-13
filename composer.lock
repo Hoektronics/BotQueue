@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "22b6e52e657de205200acae7f2d3852a",
+    "hash": "f291b72b21ce23a676628d58413b76d0",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "dev-master",
+            "version": "2.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3fd1123b72720ee54efdcd102f1e823e062b8807"
+                "reference": "d2479a3f7dae629be60cb513ad88cefa6c8c2090"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3fd1123b72720ee54efdcd102f1e823e062b8807",
-                "reference": "3fd1123b72720ee54efdcd102f1e823e062b8807",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d2479a3f7dae629be60cb513ad88cefa6c8c2090",
+                "reference": "d2479a3f7dae629be60cb513ad88cefa6c8c2090",
                 "shasum": ""
             },
             "require": {
@@ -72,7 +72,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2014-06-12 19:20:27"
+            "time": "2014-05-14 19:29:32"
         },
         {
             "name": "cboden/ratchet",
