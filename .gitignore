@@ -8,3 +8,4 @@ ssl-cert.pem
 ssl-cert.int
 ssl-cert.key
 vendor/
+composer.phar
