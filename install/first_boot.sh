@@ -19,13 +19,14 @@ echo "First, we're going to update and install our needed components"
 sudo apt-get update
 sudo apt-get install -qy apache2 mysql-server php5 php5-mysql libapache2-mod-php5 \
                           php5-dev php-pear make libpcre3-dev php5-curl \
-                          libcurl3 libcurl4-gnutls-dev libmagic-dev
+                          libcurl3 libcurl4-gnutls-dev libmagic-dev git-core
+sudo pecl install oauth
 
 echo ""
 
 DEFAULT_APP_NAME=BotQueue
 read -p "What should we call this install? [$DEFAULT_APP_NAME]: " APP_NAME
-APP_NAME=${APP_NAME:-$DEFAULT_APACHE_NAME}
+[ -z "$APP_NAME" ] && APP_NAME=${DEFAULT_APP_NAME}
 
 git status > /dev/null 2>&1
 if [ $? -ne 0 ] ; then
@@ -47,7 +48,7 @@ git checkout 0.5X-dev
 echo ""
 DEFAULT_OAUTH_PATH="/etc/php5/apache2/conf.d"
 read -p "Where should we move the oauth.ini file? [$DEFAULT_OAUTH_PATH]: " OAUTH_PATH
-OAUTH_PATH=${OAUTH_PATH:-$DEFAULT_OAUTH_PATH}
+[ -z "$OAUTH_PATH" ] && OAUTH_PATH=${DEFAULT_OAUTH_PATH}
 sudo cp install/oauth.ini ${OAUTH_PATH}/oauth.ini
 
 oldPath="/home/ubuntu/BotQueue"
@@ -56,7 +57,7 @@ sed -i "s|$oldPath|$botqueue_dir|g" install/apache.conf
 echo ""
 DEFAULT_APACHE_PATH="/etc/apache2/sites-available"
 read -p "Where should we add the $APP_NAME apache config? [$DEFAULT_APACHE_PATH]: " APACHE_PATH
-APACHE_PATH=${APACHE_PATH:-$DEFAULT_APACHE_PATH}
+[ -z "$APACHE_PATH" ] && APACHE_PATH=${DEFAULT_APACHE_PATH}
 APACHE_CONF=${APACHE_PATH}/${APP_NAME}
 sudo cp install/apache.conf ${APACHE_CONF}
 
@@ -68,13 +69,15 @@ echo ""
 echo "Press any key to continue"
 read -n 1 -s
 
-sudo "${EDITOR:-vi}" ${APACHE_CONF}
+[ -z "$EDITOR" ] && EDITOR=vi
+
+sudo "$EDITOR" ${APACHE_CONF}
 
 echo ""
 echo "Note, that if you have not created the database, give the username"
 echo "and password of a user who can create the database"
 read -p "Database name [$APP_NAME]: " database_name
-database_name=${database_name:-$APP_NAME}
+[ -z "$database_name" ] && database_name=${APP_NAME}
 read -p "Database user [root]: " database_user
 database_user=${database_user:-root}
 read -s -p "Database password (Won't be shown) []: " database_pass
@@ -103,7 +106,7 @@ echo "${botqueue_dir}/extensions/config.php"
 echo ""
 echo "Press any key to continue"
 read -n 1 -s
-"${EDITOR:-vi}" extensions/config.php
+"$EDITOR" extensions/config.php
 
 if [ -e "composer.phar" ] ; then
   echo "Composer is already here"
@@ -117,7 +120,8 @@ php composer.phar install
 
 
 echo "Enabling site $APP_NAME"
-sudo a2ensite ${APP_NAME}
-sudo service apache2 reload
+sudo a2ensite ${APP_NAME} # reload apache for this
+sudo a2enmod rewrite # restart for this
+sudo service apache2 restart
 
 echo "Done!"
