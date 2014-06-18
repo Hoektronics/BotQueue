@@ -543,65 +543,6 @@ class Utility
 			return "{$word}'s";
 	}
 
-//	public static function userPossessive($user)
-//	{
-//		if(VimeoApplication::currentUser()->id == $user->id)
-//			return "My";
-//		else
-//			return Utility::possessive($user->get('display_name'));
-//	}
-
-	/**
-	 * turn search query into a list of clean words
-	 *
-	 * @param string $str
-	 * @param bool $split_words
-	 * @return array
-	 */
-	public static function normalizeSearch($str, $split_words = true)
-	{
-		//		if($split_words)
-		//			$str   = str_replace(' ','_',trim($str));
-		$words = explode(' ', $str);
-
-		$i = 0;
-		foreach ($words as $word) {
-			$words[$i] = preg_replace("/[^A-Za-z0-9\\ @\\.]/", "", trim($word));
-			$i++;
-		}
-
-		return $words;
-	}
-
-	/**
-	 * Normalizes search and returns string formatted for sql
-	 * given an array of fields.
-	 *
-	 * @param string $str
-	 * @param array $fields
-	 * @param boolean $split_words ... set this to False if you want to include spaces
-	 * @return string
-	 */
-	public static function getSearchQuery($str, $fields, $split_words = true)
-	{
-		if (!is_array($fields)) $fields[] = $fields;
-
-		$words = Utility::normalizeSearch($str, $split_words);
-
-		$query = "";
-		foreach ($fields as $field) {
-			foreach ($words as $word) {
-				if (!preg_match("/^@/i", $field)) {
-					$query .= " $field LIKE '%$word%' OR ";
-				} else {
-					$query .= " " . substr($field, 1, strlen($field) - 1) . " = '$word' OR ";
-				}
-			}
-		}
-
-		return ' ( ' . substr($query, 0, -3) . ' ) ';
-	}
-
 	public static function hiliteText($needle, $haystack)
 	{
 		return str_ireplace($needle, "<span style=\"color:#F75342; border-bottom: 1px dotted #ccc;\">{$needle}</span>", $haystack);
@@ -638,9 +579,9 @@ class Utility
 	public static function getAge($datetime)
 	{
 		if (trim($datetime) == '') return false;
-		$datediff = strtotime(date("Y-m-d H:i:s")) - strtotime("{$datetime} 00:00:00");
+		$dateDiff = strtotime(date("Y-m-d H:i:s")) - strtotime("{$datetime} 00:00:00");
 
-		$years = floor($datediff / (60 * 60 * 24 * 365));
+		$years = floor($dateDiff / (60 * 60 * 24 * 365));
 
 		if ($years > 0) {
 			return $years;
@@ -899,21 +840,6 @@ class Utility
 		return $str;
 	}
 
-	public function site_url()
-	{
-		$url = "";
-
-		if (FORCE_SSL) {
-			$url .= "https://";
-		} else {
-			$url .= "http://";
-		}
-
-		$url .= SITE_HOSTNAME;
-
-		return $url;
-	}
-
 	public static function downloadUrl($url)
 	{
 		$tempFile = tempnam('/tmp', 'BOTQUEUE-');
@@ -974,5 +900,3 @@ class Cycle
 		return $this->data[$this->pos];
 	}
 }
-
-?>

@@ -423,7 +423,7 @@ class Model
 	}
 
 	/**
-	 * this is the funciton that gets the data we need saved to cache.  by
+	 * this is the function that gets the data we need saved to cache.  by
 	 * default it saves our data, and will save the comments or tags objects if
 	 * needed. its recommended to extend this to add data that you'd like cached
 	 * by the object
@@ -500,19 +500,6 @@ class Model
 		CacheBot::delete($this->getCacheKey());
 	}
 
-	public function getiPhoneLink($text = null)
-	{
-		if ($text === null)
-			$text = $this->getName();
-
-		if (FORCE_SSL)
-			$protocol = 'https://';
-		else
-			$protocol = 'http://';
-
-		return '<a href="' . $protocol . SITE_HOSTNAME . $this->getiPhoneUrl() . '">' . $text . '</a>';
-	}
-
 	public function getLink($text = null)
 	{
 		if ($text === null)
@@ -537,16 +524,6 @@ class Model
 	public function getName()
 	{
 		return '???';
-	}
-
-	public function getAbsoluteUrl()
-	{
-		if (FORCE_SSL)
-			$protocol = 'https://';
-		else
-			$protocol = 'http://';
-
-		return $protocol . SITE_HOSTNAME . $this->getUrl();
 	}
 
 	public function copy()
