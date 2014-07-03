@@ -108,12 +108,8 @@ echo "Press any key to continue"
 read -n 1 -s
 "$EDITOR" extensions/config.php
 
-if [ -e "composer.phar" ] ; then
-  echo "Composer is already here"
-else
-  echo "Downloading composer"
-  php -r "readfile('https://getcomposer.org/installer');" | php
-fi
+echo "Downloading composer"
+php -r "readfile('https://getcomposer.org/installer');" | php
 
 echo "Downloading components"
 php composer.phar install
