@@ -1,3 +1,17 @@
+<?
+/**
+ * @package botqueue_browse
+ * @var int $total
+ * @var int $per_page
+ * @var int $prev_page
+ * @var string $base_url
+ * @var int $min_page
+ * @var int $max_page
+ * @var int $page
+ * @var int $next_page
+ * @var string $fragment
+ */
+?>
 <?  if ($total > $per_page): ?>
 	<div class="pagination">
 		<ul>

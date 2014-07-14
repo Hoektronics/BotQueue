@@ -1,3 +1,11 @@
+<?
+/**
+ * @package botqueue_comment
+ * @var array $comments
+ * @var Comment $c
+ * @var User $u
+ */
+?>
 <? if (!empty($comments)): ?>
   <? foreach ($comments AS $row): ?>
     <? $c = $row['Comment'] ?>
