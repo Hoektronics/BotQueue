@@ -56,7 +56,6 @@ class SlicerController extends Controller
 				//first create our engine object
 				$engine->set('engine_name', $form->data('engine_name'));
 				$engine->set('engine_path', $form->data('engine_path'));
-				$engine->set('engine_description', $form->data('engine_description'));
 				$engine->set('is_featured', $form->data('is_featured'));
 				$engine->set('is_public', $form->data('is_public'));
 				$engine->set('add_date', date("Y-m-d H:i:s"));
@@ -142,7 +141,6 @@ class SlicerController extends Controller
 						$engine->set('engine_path', $engine_path);
 						$engine->set('is_featured', false);
 						$engine->set('is_public', true);
-						$engine->set('engine_description', Utility::capitalize($engineName) . ' version ' . $version);
 						$engine->set('add_date', date("Y-m-d H:i:s"));
 						$engine->save();
 
@@ -205,7 +203,6 @@ class SlicerController extends Controller
 				//first create our engine object
 				$engine->set('engine_name', $form->data('engine_name'));
 				$engine->set('engine_path', $form->data('engine_path'));
-				$engine->set('engine_description', $form->data('engine_description'));
 				$engine->set('is_featured', $form->data('is_featured'));
 				$engine->set('is_public', $form->data('is_public'));
 				$engine->save();
@@ -265,16 +262,6 @@ class SlicerController extends Controller
 				->label('Is this slice engine featured?')
 				->help('Featured slice engines will be more prominently featured, and will make it easier to use the latest and greatest slicing tech.')
 				->value($engine->get('is_featured'))
-		);
-
-		$form->add(
-			TextareaField::name('engine_description')
-				->label('Engine Description')
-				->help('Enter a description for this engine that will help people understand it.')
-				->required(true)
-				->width('60%')
-				->rows('4')
-				->value($engine->get('engine_description'))
 		);
 
 		$form->add(

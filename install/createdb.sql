@@ -254,7 +254,6 @@ CREATE TABLE IF NOT EXISTS `slice_engines` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `engine_name` varchar(255) NOT NULL,
   `engine_path` varchar(255) NOT NULL,
-  `engine_description` text NOT NULL,
   `is_featured` tinyint(1) NOT NULL,
   `is_public` tinyint(1) NOT NULL,
   `add_date` datetime NOT NULL,
@@ -341,4 +340,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(7, 'Adding webcam image to bot temporarily');
+INSERT INTO patches(patch_num, description) VALUES(8, 'Removing the engine_description');

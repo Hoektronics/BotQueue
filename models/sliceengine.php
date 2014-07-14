@@ -38,7 +38,6 @@ class SliceEngine extends Model
         $r['id'] = $this->id;
         $r['name'] = $this->getName();
         $r['path'] = $this->get('engine_path');
-        $r['description'] = $this->get('engine_description');
         $r['is_featured'] = $this->get('is_featured');
         $r['is_public'] = $this->get('is_public');
         $r['add_date'] = $this->get('add_date');
@@ -62,7 +61,7 @@ class SliceEngine extends Model
     public static function getAllEngines()
     {
 		//todo Is anything other than id required here?
-        $sql = "SELECT id, engine_name, engine_path, engine_description, is_public, default_config_id
+        $sql = "SELECT id
 		    	FROM slice_engines
 		    	ORDER BY engine_name ASC";
 
