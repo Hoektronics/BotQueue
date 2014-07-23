@@ -30,7 +30,7 @@ class MainController extends Controller
     {
         if (User::isLoggedIn()) {
             $bots = User::$me->getActiveBots();
-            $this->set('bots', $bots->getRange(0, 10));
+            $this->set('bots', $bots->getAll());
             $this->set('bot_count', $bots->count());
 
             $on_deck = User::$me->getJobs('available', 'user_sort', 'ASC');
