@@ -50,4 +50,7 @@ sudo /bin/sh -c 'cat /home/pi/BotQueue/bumblebee/raspi/inittab >> /etc/inittab'
 chmod a+x $HOME/BotQueue/bumblebee/raspi/bin/bumblebee
 cat $HOME/BotQueue/bumblebee/raspi/profile >> $HOME/.profile
 source $HOME/.profile
+
+#authorize our app now.
+screen -dR botqueue bumblebee
 </pre>
