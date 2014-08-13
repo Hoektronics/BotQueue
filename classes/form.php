@@ -451,10 +451,6 @@ class LinkField extends FormField
 {
 	public $link;
 
-	public static function name() {
-		return parent::name('');
-	}
-
 	public function link($link) {
 		$this->link = $link;
 		return $this;
@@ -504,10 +500,6 @@ class UploadField extends FormField
 
 class RawField extends DisplayField
 {
-	public static function name()
-	{
-		return parent::name('');
-	}
 }
 
 class WarningField extends DisplayField

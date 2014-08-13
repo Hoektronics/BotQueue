@@ -892,7 +892,7 @@ class BotController extends Controller
 		// ));
 
 		$form->add(
-			RawField::name()
+			RawField::name("driver_edit_area")
 			->value('<div id="driver_edit_area"></div>')
 		);
 
