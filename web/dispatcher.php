@@ -98,7 +98,7 @@ try {
 	//Does the following:
 	//  - Create a new instance of a controller, e.g. htmltemplatecontroller.php (see controllers/htmltemplate.php)
 	//  - Call the renderView function on that new controller object, telling it to render the 'main' view with the arguments: content, title and sidebar
-	//  - Echo all that shizzle to the screen
+	//  - Echo all of that to the screen
 	//Note that $mode often is not defined
 	echo Controller::byName("{$mode}Template")->renderView('main', array(
 		'content' => $content,
@@ -109,4 +109,3 @@ try {
 } catch (Exception $ex) {
 	echo "Something bad happened: " . $ex->getMessage();
 }
-?>
