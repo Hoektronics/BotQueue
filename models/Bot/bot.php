@@ -401,9 +401,11 @@ class Bot extends Model
 		$job->reset();
 
 		$log = $job->getLatestTimeLog();
-		$log->set('end_date', date("Y-m-d H:i:s"));
-		$log->setStatus('dropped');
-		$log->save();
+		if($log->isHydrated()) {
+			$log->set('end_date', date("Y-m-d H:i:s"));
+			$log->setStatus('dropped');
+			$log->save();
+		}
 
 		$this->set('last_seen', date("Y-m-d H:i:s"));
 		$this->reset();

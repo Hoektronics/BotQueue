@@ -328,9 +328,11 @@ class Job extends Model
         $this->save();
 
         $log = $this->getLatestTimeLog();
-        $log->set('end_date', date("Y-m-d H:i:s"));
-        $log->setStatus('complete');
-        $log->save();
+        if($log->isHydrated()) {
+            $log->set('end_date', date("Y-m-d H:i:s"));
+            $log->setStatus('complete');
+            $log->save();
+        }
     }
 
 }
