@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `job_clock` (
   `bot_id` int(11) NOT NULL,
   `queue_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `status` enum('idle','slicing','working','waiting','error','maintenance','offline'),
+  `status` enum('idle','slicing','working','waiting','error','maintenance','offline', 'dropped'),
   `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `start_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -340,4 +340,4 @@ CREATE TABLE IF NOT EXISTS `patches` (
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO patches(patch_num, description) VALUES(8, 'Removing the engine_description');
+INSERT INTO patches(patch_num, description) VALUES(9, 'Adding dropped to the job_clock');
