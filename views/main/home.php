@@ -31,11 +31,15 @@
     {
       if ($('#autoload_dashboard').is(':checked'))
       {
-        url = "/ajax/main/dashboard/" + $("#dashboard_style").val();
+        var dashboard_style = $("#dashboard_style").val();
+        var url = "/ajax/main/dashboard/" + dashboard_style;
         console.log("loading " + url);
         var jqxhr = $.get(url, function(data) {
-          $('#DashtronHidden').html(data);
-          $('#DashtronHidden img.webcam').imagesLoaded(dashtronShow);
+          if(dashboard_style == $("#dashboard_style").val()) {
+            $('#DashtronHidden').html(data);
+            $('#DashtronHidden img.webcam').imagesLoaded(dashtronShow);
+            console.log(dashboard_style);
+          }
         })
         .always(function(){setTimeout(loadDashtron, 10000);})
         .fail(function() { console.log("dashtron fail"); });
