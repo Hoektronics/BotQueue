@@ -224,7 +224,7 @@ class Bot extends Model
 
 		$sql .= "ORDER BY {$sortField} ". $sortOrder;
 
-		$jobs = new Collection($sql, array($data));
+		$jobs = new Collection($sql, $data);
 		$jobs->bindType('id', 'Job');
 
 		return $jobs;
