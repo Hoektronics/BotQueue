@@ -7,8 +7,8 @@
     </h3>
     
     <form class="form-inline pull-right muted">
-      <input type="checkbox" id="autoload_dashboard" value="1" checked="1">
       <label for="autoload_dashboard" style="display: inline">Auto-refresh?</label>
+      <input type="checkbox" id="autoload_dashboard" value="1" checked="1" onchange="loadDashtron()">
       <label for="dashboard_style"></label>
       <select id="dashboard_style" onchange="loadDashtron()">
         <option value="large_thumbnails" <?= ($style == 'large_thumbnails') ? 'selected' : ''?>>Large Thumbnails</option>
@@ -23,9 +23,7 @@
   <div id="DashtronHidden" style="display: none;"></div>
 
   <script>
-    $(function() {
-        loadDashtron();
-    });
+    setInterval(loadDashtron, 10000);
     
     function loadDashtron()
     {
@@ -33,27 +31,18 @@
       {
         var dashboard_style = $("#dashboard_style").val();
         var url = "/ajax/main/dashboard/" + dashboard_style;
-        console.log("loading " + url);
         var jqxhr = $.get(url, function(data) {
           if(dashboard_style == $("#dashboard_style").val()) {
             $('#DashtronHidden').html(data);
-            $('#DashtronHidden img.webcam').imagesLoaded(dashtronShow);
-            console.log(dashboard_style);
+            $('#DashtronHidden').find('img.webcam').imagesLoaded(dashtronShow);
           }
         })
-        .always(function(){setTimeout(loadDashtron, 10000);})
         .fail(function() { console.log("dashtron fail"); });
-      }
-      else
-      {
-        //console.log("live mode disabled.");
-        setTimeout(loadDashtron, 1000);
       }
     }
     
     function dashtronShow()
     {
-      console.log("showing dashboard.");
       $('#Dashtron').html($('#DashtronHidden').html());
       //$('#Dashtron img.webcam').fadeOut();
       //$('#Dashtron img.webcam').fadeIn();
