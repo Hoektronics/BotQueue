@@ -91,6 +91,7 @@ class Job extends Model
 	{
 		$sql = "SELECT id FROM job_clock WHERE job_id = ? AND status = 'working' ORDER BY id DESC";
 		$id = db()->getValue($sql, array($this->id));
+        error_log("Job Clock ID: ".$id);
 
 		return new JobClockEntry($id);
 	}
@@ -255,15 +256,15 @@ class Job extends Model
 
 	public function delete()
 	{
-		//this should not need to be called - you cannot delete an active job, so this will be handled elsewhere.
-		//clean up our bot.
-		//       $bot = $this->getBot();
-		// if ($bot->isHydrated())
-		// {
-		//  $bot->set('job_id', 0);
-		//  $bot->setStatus('idle');
-		//  $bot->save();
-		// }
+		// Clean up our bot just in case we try to delete the job while it's active
+        // It shouldn't be possible, but I'm not so sure yet
+		$bot = $this->getBot();
+		if ($bot->isHydrated())
+		{
+		    $bot->set('job_id', 0);
+		    $bot->setStatus('idle');
+		    $bot->save();
+		}
 
 		$sql = "DELETE FROM error_log WHERE job_id = ?";
 		db()->execute($sql, array($this->id));

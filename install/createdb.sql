@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `job_clock` (
   `bot_id` int(11) NOT NULL,
   `queue_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `status` enum('idle','slicing','working','waiting','error','maintenance','offline', 'dropped'),
+  `status` enum('working','waiting', 'complete', 'dropped'),
   `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `start_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -349,4 +349,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(10, 'Adding stats view');
+INSERT INTO patches(patch_num, description) VALUES(11, 'Changing job_clock enum');
