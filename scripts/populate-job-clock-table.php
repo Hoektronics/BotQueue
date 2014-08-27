@@ -22,7 +22,12 @@ while ($row = $rs->fetch(PDO::FETCH_ASSOC)) {
 		$log->set('start_date', $row['taken_time']);
 		$log->setStatus('working');
 		$log->save();
-	}
+	} else if ($row['status'] == 'cancelled') {
+        $log->set('start_date', $row['taken_time']);
+        $log->set('end_date', $row['finished_time']);
+        $log->setStatus('dropped');
+        $log->save();
+    }
 }
 
 //finished!!!!
