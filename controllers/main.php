@@ -163,38 +163,42 @@ class MainController extends Controller
 
         //user leaderboard - all time
         $sql = "
-            SELECT CEIL(SUM(seconds)/3600) AS total, user_id
+            SELECT CEIL(SUM(seconds)/3600) AS hours, user_id
             FROM stats
             GROUP BY user_id
+            ORDER BY hours DESC
             LIMIT 10
         ";
         $this->set('user_leaderboard', db()->getArray($sql));
 
         //user leaderboard - last month
         $sql = "
-            SELECT CEIL(SUM(seconds)/3600) AS total, user_id
+            SELECT CEIL(SUM(seconds)/3600) AS hours, user_id
             FROM stats
             WHERE start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY user_id
+            ORDER BY hours DESC
             LIMIT 10
         ";
         $this->set('user_leaderboard_30', db()->getArray($sql));
 
         //bot leaderboard - all time
         $sql = "
-            SELECT CEIL(SUM(seconds)/3600) AS total, bot_id
+            SELECT CEIL(SUM(seconds)/3600) AS hours, bot_id
             from stats
             GROUP BY bot_id
+            ORDER BY hours DESC
             LIMIT 10
         ";
         $this->set('bot_leaderboard', db()->getArray($sql));
 
         //bot leaderboard - all time
         $sql = "
-            SELECT CEIL(SUM(seconds)/3600) AS total, bot_id
+            SELECT CEIL(SUM(seconds)/3600) AS hours, bot_id
             FROM stats
             WHERE start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY bot_id
+            ORDER BY hours DESC
             LIMIT 10
         ";
         $this->set('bot_leaderboard_30', db()->getArray($sql));
