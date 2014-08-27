@@ -339,5 +339,14 @@ CREATE TABLE IF NOT EXISTS `patches` (
   PRIMARY KEY (`id`),
   KEY `patch_num` (`patch_num`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE VIEW stats AS
+  SELECT (unix_timestamp(end_date) - unix_timestamp(start_date)) AS seconds,
+    bot_id, user_id, status, start_date, end_date
+  FROM job_clock
+  WHERE status != 'working'
+  ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(9, 'Adding dropped to the job_clock');
+INSERT INTO patches(patch_num, description) VALUES(10, 'Adding stats view');

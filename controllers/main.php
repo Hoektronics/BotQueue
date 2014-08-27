@@ -141,7 +141,8 @@ class MainController extends Controller
         $this->set('area', 'stats');
 
         //active bots
-        $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300";
+        $sql = "SELECT count(id) FROM bots
+        WHERE last_seen > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
         $this->set('total_active_bots', db()->getValue($sql));
 
         //total prints
@@ -153,7 +154,7 @@ class MainController extends Controller
         $this->set('total_completed_jobs', db()->getValue($sql));
 
         //total printing hours
-        $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE status != 'working'";
+        $sql = "SELECT CEIL(SUM(seconds)/3600) FROM stats";
         $totalHours = db()->getValue($sql);
 		if ($totalHours != "")
             $this->set('total_printing_time', $totalHours);
@@ -162,47 +163,51 @@ class MainController extends Controller
 
         //user leaderboard - all time
         $sql = "
-		    SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, user_id
-		    FROM job_clock
-		    WHERE status != 'working'
-		    GROUP BY user_id
-		    ORDER BY total DESC LIMIT 10
-		  ";
+            SELECT CEIL(SUM(seconds)/3600) AS total, user_id
+            FROM stats
+            GROUP BY user_id
+            LIMIT 10
+        ";
         $this->set('user_leaderboard', db()->getArray($sql));
 
         //user leaderboard - last month
         $sql = "
-		    SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, user_id
-		    FROM job_clock WHERE status != 'working' AND start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
-		    GROUP BY user_id
-		    ORDER BY total DESC LIMIT 10
-		  ";
+            SELECT CEIL(SUM(seconds)/3600) AS total, user_id
+            FROM stats
+            WHERE start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY user_id
+            LIMIT 10
+        ";
         $this->set('user_leaderboard_30', db()->getArray($sql));
 
         //bot leaderboard - all time
         $sql = "
-		    SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, bot_id
-		    FROM job_clock WHERE status != 'working'
-		    GROUP BY bot_id
-		    ORDER BY total DESC LIMIT 10
-		  ";
+            SELECT CEIL(SUM(seconds)/3600) AS total, bot_id
+            from stats
+            GROUP BY bot_id
+            LIMIT 10
+        ";
         $this->set('bot_leaderboard', db()->getArray($sql));
 
         //bot leaderboard - all time
-        $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total, bot_id
-				FROM job_clock WHERE status != 'working' AND start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
-				GROUP BY bot_id
-				ORDER BY total DESC LIMIT 10";
+        $sql = "
+            SELECT CEIL(SUM(seconds)/3600) AS total, bot_id
+            FROM stats
+            WHERE start_date > DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY bot_id
+            LIMIT 10
+        ";
         $this->set('bot_leaderboard_30', db()->getArray($sql));
 
         if (User::isLoggedIn()) {
 			$me = array((int)User::$me->id);
             //active bots
-            $sql = "SELECT count(id) AS total FROM bots WHERE last_seen > NOW() - 300 AND user_id = ?";
+            $sql = "SELECT count(id) FROM bots
+            WHERE last_seen > DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND user_id = ?";
             $this->set('my_total_active_bots', db()->getValue($sql, $me));
 
             //total prints
-            $sql = "SELECT count(id) AS total FROM jobs WHERE status = 'available' AND user_id = ?";
+            $sql = "SELECT count(id) FROM jobs WHERE status = 'available' AND user_id = ?";
             $this->set('my_total_pending_jobs', db()->getValue($sql, $me));
 
             //total prints
@@ -210,7 +215,7 @@ class MainController extends Controller
             $this->set('my_total_completed_jobs', db()->getValue($sql, $me));
 
             //total printing hours
-            $sql = "SELECT CEIL(SUM(unix_timestamp(end_date) - unix_timestamp(start_date)) / 3600) AS total FROM job_clock WHERE  status != 'working' AND user_id = ?";
+            $sql = "SELECT CEIL(SUM(seconds)/3600) FROM stats WHERE user_id = ?";
 			$totalHours = db()->getValue($sql, $me);
 
             if ($totalHours != "")
