@@ -129,11 +129,15 @@ class SliceJob extends Model
 			$this->set('uid', $uid);
 			$this->save();
 
-			usleep(1000 + mt_rand(100, 500));
-
+            // Begin a transaction to avoid the race condition
+            db()->beginTransaction();
 			$sj = new SliceJob($this->id);
-			if ($sj->get('uid') != $uid)
+            
+			if ($sj->get('uid') != $uid) {
+                db()->rollBack(); // Nothing really to rollback
 				throw new Exception("Unable to lock slice job #{$this->id}");
+            }
+            db()->commit();
 
 			$bot = $this->getBot();
 			$bot->setStatus(BotState::Slicing);

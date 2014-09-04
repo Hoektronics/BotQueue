@@ -316,10 +316,15 @@ class Bot extends Model
 		$job->set('taken_time', date('Y-m-d H:i:s'));
 		$job->save();
 
-		usleep(1000 + mt_rand(100, 500));
-		$job = new Job($job->id);
-		if ($job->get('bot_id') != $this->id)
+        // Begin a transaction to avoid the race condition
+        db()->beginTransaction();
+		$job = new Job($job->id); // Reload the job
+
+		if ($job->get('bot_id') != $this->id) {
+            db()->rollBack(); // Nothing really to rollback
 			throw new Exception("Unable to lock job #{$job->id}");
+        }
+        db()->commit(); // Nothing really to commit
 
 		//do we need to slice this job?
 		if (!$job->getFile()->isHydrated() && $can_slice) {
