@@ -91,7 +91,6 @@ class Job extends Model
 	{
 		$sql = "SELECT id FROM job_clock WHERE job_id = ? AND status = 'working' ORDER BY id DESC";
 		$id = db()->getValue($sql, array($this->id));
-        error_log("Job Clock ID: ".$id);
 
 		return new JobClockEntry($id);
 	}
