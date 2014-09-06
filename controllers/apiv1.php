@@ -520,12 +520,6 @@ class APIV1Controller extends Controller
 					$jobtemps->$index = $temps;
 					$job->set('temperature_data', JSON::encode($jobtemps));
 				}
-				// else
-				// {
-				//   $jobtemps = array();
-				//            $jobtemps[time()] = $temps;
-				//            $job->set('temperature_data', JSON::encode($jobtemps));
-				// }
 			} else {
 				$jobtemps = array();
 				$jobtemps[time()] = $temps;

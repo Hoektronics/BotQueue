@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `bots` (
   `error_text` varchar(255) NOT NULL DEFAULT '',
   `slice_config_id` int(11) unsigned NOT NULL,
   `slice_engine_id` int(11) unsigned NOT NULL,
-  `temperature_data` text NOT NULL,
+  `temperature_data` longtext NOT NULL,
   `remote_ip` varchar(255) NOT NULL,
   `local_ip` varchar(255) NOT NULL,
   `driver_name` varchar(255) NOT NULL DEFAULT 'printcore',
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `user_sort` int(11) unsigned NOT NULL DEFAULT '0',
   `bot_id` int(11) NOT NULL DEFAULT '0',
   `progress` float NOT NULL DEFAULT '0',
-  `temperature_data` text NOT NULL,
+  `temperature_data` longtext NOT NULL,
   `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `downloaded_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -349,4 +349,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(11, 'Changing job_clock enum');
+INSERT INTO patches(patch_num, description) VALUES(12, 'Expanded temperature data fields');
