@@ -29,7 +29,8 @@ class Bot extends Model
 		return $this->get('name');
 	}
 
-	public function getStatus() {
+	public function getStatus()
+	{
 		return $this->get('status');
 	}
 
@@ -37,21 +38,22 @@ class Bot extends Model
 	 * @param $status string
 	 * @throws InvalidStateChange
 	 */
-	public function setStatus($status) {
+	public function setStatus($status)
+	{
 		$invalidStateChange = false;
 
-		if($status == $this->getStatus())
+		if ($status == $this->getStatus())
 			return;
 
-		if($this->getStatus() == "") {
-			switch($status) {
+		if ($this->getStatus() == "") {
+			switch ($status) {
 				case BotState::Offline:
 					break;
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Idle) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Idle) {
+			switch ($status) {
 				case BotState::Offline:
 				case BotState::Error:
 				case BotState::Maintenance:
@@ -61,8 +63,8 @@ class Bot extends Model
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Slicing) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Slicing) {
+			switch ($status) {
 				case BotState::Idle:
 				case BotState::Waiting:
 				case BotState::Working:
@@ -73,8 +75,8 @@ class Bot extends Model
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Working) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Working) {
+			switch ($status) {
 				case BotState::Slicing:
 				case BotState::Error:
 				case BotState::Idle:
@@ -86,8 +88,8 @@ class Bot extends Model
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Paused) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Paused) {
+			switch ($status) {
 				case BotState::Idle:
 				case BotState::Working:
 				case BotState::Slicing:
@@ -97,8 +99,8 @@ class Bot extends Model
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Waiting) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Waiting) {
+			switch ($status) {
 				case BotState::Idle:
 				case BotState::Working:
 				case BotState::Error:
@@ -106,24 +108,24 @@ class Bot extends Model
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Error) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Error) {
+			switch ($status) {
 				case BotState::Idle:
 				case BotState::Maintenance:
 					break;
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Maintenance) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Maintenance) {
+			switch ($status) {
 				case BotState::Idle:
 				case BotState::Offline:
 					break;
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Offline) {
-			switch($status) {
+		} else if ($this->getStatus() == BotState::Offline) {
+			switch ($status) {
 				case BotState::Idle:
 				case BotState::Retired:
 				case BotState::Maintenance:
@@ -131,12 +133,12 @@ class Bot extends Model
 				default:
 					$invalidStateChange = true;
 			}
-		} else if($this->getStatus() == BotState::Retired) {
+		} else if ($this->getStatus() == BotState::Retired) {
 			$invalidStateChange = true;
 		}
 
-		if($invalidStateChange) {
-			throw new InvalidStateChange("Cannot change Bot #".$this->id."'s status from {$this->getStatus()} to {$status}");
+		if ($invalidStateChange) {
+			throw new InvalidStateChange("Cannot change Bot #" . $this->id . "'s status from {$this->getStatus()} to {$status}");
 		} else {
 			$this->set('status', $status);
 		}
@@ -217,12 +219,12 @@ class Bot extends Model
 
 		$data = array($this->id);
 
-		if($status !== null) {
+		if ($status !== null) {
 			$sql .= "AND status = ? ";
 			$data[] = $status;
 		}
 
-		$sql .= "ORDER BY {$sortField} ". $sortOrder;
+		$sql .= "ORDER BY {$sortField} " . $sortOrder;
 
 		$jobs = new Collection($sql, $data);
 		$jobs->bindType('id', 'Job');
@@ -236,12 +238,12 @@ class Bot extends Model
 
 		$data = array($this->id);
 
-		if($status !== null) {
+		if ($status !== null) {
 			$sql .= "AND status = ? ";
 			$data[] = $status;
 		}
 
-		$sql .= "ORDER BY {$sortField} ". $sortOrder;
+		$sql .= "ORDER BY {$sortField} " . $sortOrder;
 
 		$jobClocks = new Collection($sql, $data);
 		$jobClocks->bindType('id', 'JobClockEntry');
@@ -295,7 +297,7 @@ class Bot extends Model
 		if ($this->get('job_id'))
 			return false;
 
-		if(!$this->getDriverConfig()->can_slice &&
+		if (!$this->getDriverConfig()->can_slice &&
 			!$job->getFile()->isHydrated()
 		)
 			return false;
@@ -311,20 +313,32 @@ class Bot extends Model
 	 */
 	public function grabJob($job, $can_slice = true)
 	{
-		$job->setStatus('taken');
-		$job->set('bot_id', $this->id);
-		$job->set('taken_time', date('Y-m-d H:i:s'));
-		$job->save();
+		$grabAttemptSQL = "
+            UPDATE jobs
+            SET bot_id =
+              CASE
+                WHEN bot_id=0
+                THEN
+                  ?
+                ELSE
+                  bot_id
+              END
+            WHERE id = ?
+        ";
 
-        // Begin a transaction to avoid the race condition
-        db()->beginTransaction();
+		// Attempt to grab the job unless another bot already has
+		db()->execute($grabAttemptSQL, array($this->id, $job->id));
+
 		$job = new Job($job->id); // Reload the job
 
 		if ($job->get('bot_id') != $this->id) {
-            db()->rollBack(); // Nothing really to rollback
+			// We didn't grab it in time.
 			throw new Exception("Unable to lock job #{$job->id}");
-        }
-        db()->commit(); // Nothing really to commit
+		}
+
+		$job->setStatus('taken');
+		$job->set('taken_time', date('Y-m-d H:i:s'));
+		$job->save();
 
 		//do we need to slice this job?
 		if (!$job->getFile()->isHydrated() && $can_slice) {
@@ -406,7 +420,7 @@ class Bot extends Model
 		$job->reset();
 
 		$log = $job->getLatestTimeLog();
-		if($log->isHydrated()) {
+		if ($log->isHydrated()) {
 			$log->set('end_date', date("Y-m-d H:i:s"));
 			$log->setStatus('dropped');
 			$log->save();

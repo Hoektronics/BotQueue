@@ -384,7 +384,6 @@ class BotController extends Controller
 					else
 						$error_text = $form->data('failure_reason');
 
-					//log that shit!
 					$job->logError($error_text);
 				}
 

@@ -29,13 +29,15 @@ class Job extends Model
 		return basename($this->get('name'));
 	}
 
-    public function setName($name) {
-        $this->set('name', $name);
-    }
+	public function setName($name)
+	{
+		$this->set('name', $name);
+	}
 
-    public function setStatus($status) {
-        $this->set('status', $status);
-    }
+	public function setStatus($status)
+	{
+		$this->set('status', $status);
+	}
 
 	public function getUser()
 	{
@@ -146,7 +148,7 @@ class Job extends Model
 	{
 		$bot = $this->getBot();
 		if ($bot->isHydrated()) {
-            $bot->reset();
+			$bot->reset();
 		}
 
 		$this->setStatus('canceled');
@@ -159,7 +161,7 @@ class Job extends Model
 	{
 		//Prevent there from being a user_sort value of 0 for now
 		//todo Make this process better
-		$sql = "UPDATE jobs set user_sort=user_sort+1 where user_id = ?";
+		$sql = "UPDATE jobs SET user_sort=user_sort+1 WHERE user_id = ?";
 		db()->execute($sql, array($this->get('user_id')));
 
 		// Find the minimum value and get the slot before it
@@ -256,13 +258,12 @@ class Job extends Model
 	public function delete()
 	{
 		// Clean up our bot just in case we try to delete the job while it's active
-        // It shouldn't be possible, but I'm not so sure yet
+		// It shouldn't be possible, but I'm not so sure yet
 		$bot = $this->getBot();
-		if ($bot->isHydrated())
-		{
-		    $bot->set('job_id', 0);
-		    $bot->setStatus('idle');
-		    $bot->save();
+		if ($bot->isHydrated()) {
+			$bot->set('job_id', 0);
+			$bot->setStatus(BotState::Idle);
+			$bot->save();
 		}
 
 		$sql = "DELETE FROM error_log WHERE job_id = ?";
@@ -274,65 +275,68 @@ class Job extends Model
 		parent::delete();
 	}
 
-    public function reset()
-    {
-        if ($this->getSliceJob()->isHydrated()) {
-            $this->set('slice_job_id', 0);
-            $this->set('file_id', 0);
-        }
+	public function reset()
+	{
+		if ($this->getSliceJob()->isHydrated()) {
+			// todo Actually delete the old slice job
+			$this->set('slice_job_id', 0);
+			$this->set('file_id', 0);
+		}
 
-        //clear out our data for the next bot.
-        $this->setStatus('available');
-        $this->set('bot_id', 0);
-        $this->set('taken_time', 0);
-        $this->set('downloaded_time', 0);
-        $this->set('finished_time', 0);
-        $this->set('verified_time', 0);
-        $this->set('progress', 0);
-        $this->set('temperature_data', '');
-        $this->save();
-    }
+		//clear out our data for the next bot.
+		$this->setStatus(JobState::Available);
+		$this->set('bot_id', 0);
+		$this->set('taken_time', 0);
+		$this->set('downloaded_time', 0);
+		$this->set('finished_time', 0);
+		$this->set('verified_time', 0);
+		$this->set('progress', 0);
+		$this->set('temperature_data', '');
+		$this->save();
+	}
 
-    /**
-     * @param $queue_id int
-     * @param $file StorageInterface
-     * @return Job
-     */
-    public static function addFileToQueue($queue_id, $file) {
-        $sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+	/**
+	 * @param $queue_id int
+	 * @param $file StorageInterface
+	 * @return Job
+	 */
+	public static function addFileToQueue($queue_id, $file)
+	{
+		$sort = db()->getValue("SELECT max(id)+1 FROM jobs");
 
 		// Special case for first sort value
-		if($sort == "") {
+		if ($sort == "") {
 			$sort = 1;
 		}
 
-        $job = new Job();
-        $job->set('user_id', User::$me->id);
-        $job->set('queue_id', $queue_id);
-        $job->set('source_file_id', $file->id);
-        if($file->isGCode())
-            $job->set('file_id', $file->id);
-        $job->setName($file->get('path'));
-        $job->setStatus('available');
-        $job->set('created_time', date("Y-m-d H:i:s"));
-        $job->set('user_sort', $sort);
-        $job->save();
+		$job = new Job();
+		$job->set('user_id', User::$me->id);
+		$job->set('queue_id', $queue_id);
+		$job->set('source_file_id', $file->id);
+		if ($file->isGCode())
+			$job->set('file_id', $file->id);
+		$job->setName($file->get('path'));
+		$job->setStatus('available');
+		$job->set('created_time', date("Y-m-d H:i:s"));
+		$job->set('user_sort', $sort);
+		$job->save();
 
-        return $job;
-    }
+		return $job;
+	}
 
-    public function complete() {
-        $this->setStatus('qa');
-        $this->set('progress', 100);
-        $this->set('finished_time', date('Y-m-d H:i:s'));
-        $this->save();
+	public function complete()
+	{
+		$this->setStatus('qa');
+		$this->set('progress', 100);
+		$this->set('finished_time', date('Y-m-d H:i:s'));
+		$this->save();
 
-        $log = $this->getLatestTimeLog();
-        if($log->isHydrated()) {
-            $log->set('end_date', date("Y-m-d H:i:s"));
-            $log->setStatus('complete');
-            $log->save();
-        }
-    }
+		$log = $this->getLatestTimeLog();
+		if ($log->isHydrated()) {
+			$log->set('end_date', date("Y-m-d H:i:s"));
+			$log->setStatus('complete');
+			$log->save();
+		}
+	}
 
 }

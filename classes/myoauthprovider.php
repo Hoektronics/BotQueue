@@ -70,7 +70,7 @@ class MyOAuthProvider
 			if ($this->token->get('type') == 2) {
 				/* if this is an access token we register the user to the provider for use in our api */
 				$this->user = $this->token->getUser();
-				User::$me = $this->token->getUser();
+				User::$me = $this->user;
 			}
 
 			$provider->token_secret = $this->token->get('token_secret');

@@ -201,19 +201,19 @@ class JobController extends Controller
 
 		$form->add(
 			TextField::name('name')
-			->label('Job Name')
-			->help('What should we call this job?')
-			->required(true)
-			->value($job->getName())
+				->label('Job Name')
+				->help('What should we call this job?')
+				->required(true)
+				->value($job->getName())
 		);
 
 		$form->add(
 			SelectField::name('queue_id')
-			->label('Queue')
-			->help('Which queue does this bot pull jobs from?')
-			->required(true)
-			->value($job->get('queue_id'))
-			->options($qs)
+				->label('Queue')
+				->help('Which queue does this bot pull jobs from?')
+				->required(true)
+				->value($job->get('queue_id'))
+				->options($qs)
 		);
 
 		return $form;
@@ -414,30 +414,23 @@ class JobController extends Controller
 				$job->logError($error_text);
 
 				if ($form->data('bot_error')) {
-					$bot->set('job_id', 0);
 					$bot->setStatus(BotState::Error);
 					$bot->set('error_text', $error_text);
-					$bot->save();
 
 					Activity::log("took the bot " . $bot->getLink() . "offline for repairs.");
 				} else {
-					$bot->set('job_id', 0);
 					$bot->setStatus(BotState::Idle);
-					$bot->save();
 				}
+
+				$bot->set('job_id', 0);
+				$bot->save();
 
 				if ($form->data('job_error')) {
 					$job->setStatus(JobState::Failure);
 					$job->set('verified_time', date("Y-m-d H:i:s"));
 					$job->save();
 				} else {
-					$job->setStatus(JobState::Available);
-					$job->set('taken_time', 0);
-					$job->set('downloaded_time', 0);
-					$job->set('finished_time', 0);
-					$job->set('verified_time', 0);
-					$job->set('bot_id', 0);
-					$job->save();
+					$job->reset();
 				}
 
 				Activity::log("rejected the output of job " . $job->getLink() . ".");
@@ -472,30 +465,30 @@ class JobController extends Controller
 
 		$form->add(
 			SelectField::name('failure_reason')
-			->label('Reason for failure')
-			->help('Please enter a reason for rejecting this print.')
-			->required(true)
-			->options($failure_options)
+				->label('Reason for failure')
+				->help('Please enter a reason for rejecting this print.')
+				->required(true)
+				->options($failure_options)
 		);
 
 		$form->add(
 			TextField::name('failure_reason_other')
-			->label('Other Reason')
-			->help('If you selected "other" above, please enter the reason here.')
-			->value("")
+				->label('Other Reason')
+				->help('If you selected "other" above, please enter the reason here.')
+				->value("")
 		);
 
 		$form->add(
 			CheckboxField::name('bot_error')
-			->label('Put the bot in error/maintenance mode?')
-			->help('Check this box if the bot needs maintenance and should stop grabbing jobs.')
-			->value(1)
+				->label('Put the bot in error/maintenance mode?')
+				->help('Check this box if the bot needs maintenance and should stop grabbing jobs.')
+				->value(1)
 		);
 
 		$form->add(
 			CheckboxField::name('job_error')
-			->label('Pull this job from the queue?')
-			->help('Check this box if the job itself has issues and should be pulled from the queue.')
+				->label('Pull this job from the queue?')
+				->help('Check this box if the job itself has issues and should be pulled from the queue.')
 		);
 
 		return $form;
@@ -603,7 +596,7 @@ class JobController extends Controller
 
 				$file = $job->getSourceFile();
 				$queue_id = $job->get('queue_id');
-			} else if($this->args('file_id')) {
+			} else if ($this->args('file_id')) {
 				$file = Storage::get($this->args('file_id'));
 				$queue_id = User::$me->getDefaultQueue()->id;
 			} else {
@@ -733,32 +726,32 @@ class JobController extends Controller
 
 		$form->add(
 			DisplayField::name('file_name')
-			->label('File')
-			->help('The file that will be printed.')
-			->value($file->getLink())
+				->label('File')
+				->help('The file that will be printed.')
+				->value($file->getLink())
 		);
 
 		$form->add(
 			SelectField::name('queue_id')
-			->label('Queue')
-			->help('Whcih queue are you adding this job to?')
-			->required(true)
-			->options($qs)
-			->value($queue_id)
+				->label('Queue')
+				->help('Whcih queue are you adding this job to?')
+				->required(true)
+				->options($qs)
+				->value($queue_id)
 		);
 
 		$form->add(
 			TextField::name('quantity')
-			->label('Quantity')
-			->help('How many copies? Minimum 1, Maximum 100')
-			->required(true)
-			->value(1)
+				->label('Quantity')
+				->help('How many copies? Minimum 1, Maximum 100')
+				->required(true)
+				->value(1)
 		);
 
 		$form->add(
 			CheckboxField::name('priority')
-			->label('Is this a priority job?')
-			->help('Check this box to push this job to the top of the queue')
+				->label('Is this a priority job?')
+				->help('Check this box to push this job to the top of the queue')
 		);
 
 		return $form;
@@ -860,8 +853,7 @@ class JobController extends Controller
 		if ($id) {
 			$job = new Job($id);
 			return $job;
-		}
-		else {
+		} else {
 			throw new Exception("Could not find that job");
 		}
 	}
