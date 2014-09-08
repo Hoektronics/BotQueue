@@ -16,3 +16,9 @@ You can use the <a href="http://dl.botqueue.com/bumblebee">official release</a> 
     			<h5>Install These Libraries:</h5>
 <pre>sudo easy_install pip
 sudo pip install Pygments pyserial requests requests-oauth</pre>
+
+<h5>Download other modules</h5>
+<pre>git submodule update --init</pre>
+
+<h5>Run it!</h5>
+<pre>python -m bumblebee</pre>

@@ -32,25 +32,24 @@ screen -dR botqueue</pre></li>
 
 <h5>Run these commands to configure your Pi.</h5>
 <pre>
-#make sure we're on the latest raspbian
-sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get update -qy
+sudo apt-get upgrade -qy
 
 #install webcam tools
-sudo apt-get install fswebcam uvcdynctrl v4l-utils
+sudo apt-get install fswebcam uvcdynctrl v4l-utils python-picamera
 
 #get Botqueue linked up and working on boot.
 sudo apt-get install -qy git-core vim screen python-pip
-git clone https://github.com/Hoektronics/bumblebee.git
 sudo usermod -a -G dialout pi
 sudo pip install pyserial Pygments requests requests-oauth
 
-#make botqueue start on boot 
-sudo /bin/sh -c 'cat /home/pi/BotQueue/bumblebee/raspi/inittab >> /etc/inittab'
-chmod a+x $HOME/BotQueue/bumblebee/raspi/bin/bumblebee
-cat $HOME/BotQueue/bumblebee/raspi/profile >> $HOME/.profile
-source $HOME/.profile
+#make botqueue start on boot
+sudo /bin/sh -c 'cat /home/pi/bumblebee/raspi/inittab >> /etc/inittab'
+cat $HOME/bumblebee/raspi/profile >> $HOME/.profile
+
+cd ..
+git submodule update --init
 
 #authorize our app now.
-screen -dR botqueue bumblebee
+screen -dR botqueue python -m bumblebee
 </pre>
