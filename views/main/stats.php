@@ -69,7 +69,7 @@
                 <tr <?= ($user->id == User::$me->id) ? 'class="success"' : ''?>>
                   <td><?=$rank?></td>
                   <td><?=$user->getName()?></td>
-                  <td><?=$row['total']?></td>
+                  <td><?=$row['hours']?></td>
               <? endforeach ?>
             </tbody>
           </table>
@@ -89,7 +89,7 @@
                 <tr <?= ($user->id == User::$me->id) ? 'class="success"' : ''?>>
                   <td><?=$rank?></td>
                   <td><?=$user->getName()?></td>
-                  <td><?=$row['total']?></td>
+                  <td><?=$row['hours']?></td>
               <? endforeach ?>
             </tbody>
           </table>
@@ -127,7 +127,7 @@
                   <td><?=$rank?></td>
                   <td><?=$bot->getName()?></td>
                   <td><?=$bot->getUser()->getName()?></td>
-                  <td><?=$row['total']?></td>
+                  <td><?=$row['hours']?></td>
               <? endforeach ?>
             </tbody>
           </table>
@@ -149,7 +149,7 @@
                   <td><?=$rank?></td>
                   <td><?=$bot->getName()?></td>
                   <td><?=$bot->getUser()->getName()?></td>
-                  <td><?=$row['total']?></td>
+                  <td><?=$row['hours']?></td>
               <? endforeach ?>
             </tbody>
           </table>        </div>

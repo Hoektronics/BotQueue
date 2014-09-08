@@ -1,3 +1,14 @@
+<?
+/**
+ * @package botqueue_job
+ * @var string $megaerror
+ * @var int $page
+ * @var int $per_page
+ * @var int $total
+ * @var array $jobs
+ * @var string $status
+ */
+?>
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>

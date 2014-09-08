@@ -2,7 +2,7 @@
 	<div class="controls">
 	  <? if ($field->label): ?>
     	<label class="checkbox">
-    	  <input type="checkbox" <?=$field->getAttributes()?> <?= ($field->getValue()) ? 'checked="true"' : '' ?> value="1">
+    	  <input type="checkbox" <?=$field->getAttributes()?> <?= ($field->is_checked) ? 'checked="true"' : '' ?> value="1">
     	  <strong><?=$field->label?></strong>
       </label>
     <? endif ?>

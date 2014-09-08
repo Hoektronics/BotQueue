@@ -1,3 +1,9 @@
+<?
+/**
+ * @package botqueue_form
+ * @var Form $form
+ */
+?>
 <? if ($form->hasError()): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => "There was an error with your form submission."))?>
 <? endif ?>

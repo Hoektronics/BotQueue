@@ -28,6 +28,9 @@ RewriteRule ^(.*)$	$1 [NC,L]
 #RewriteCond %{REQUEST_URI} !^/ajax/admin
 #RewriteRule (.*) down.html [NC,L]
 
+#Secure our cookies a little better
+php_flag session.cookie_httponly on
+
 #ajax rule!
 RewriteRule ^ajax/main/dashboard/(list|large_thumbnails|medium_thumbnails|small_thumbnails)$		dispatcher.php?mode=ajax&controller=main&view=dashboard&dashboard_style=$1 [NC,L]
 RewriteRule ^ajax/([_a-zA-Z0-9]+)/([_a-zA-Z0-9]+)$		dispatcher.php?mode=ajax&controller=$1&view=$2 [NC,L]
@@ -49,7 +52,11 @@ RewriteRule ^register$				dispatcher.php?controller=user&view=loginandregister [
 RewriteRule ^preferences$				dispatcher.php?controller=user&view=preferences [NC,L]
 
 #admin area
-RewriteRule ^admin$														dispatcher.php?controller=admin&view=home
+RewriteRule ^admin$														dispatcher.php?controller=admin&view=home [NC,L]
+
+#Local file storage
+RewriteRule ^local$                           dispatcher.php?controller=file&view=local [NC,L]
+RewriteRule ^local/(.*)$                  dispatcher.php?controller=file&view=download&id=$1 [NC,L]
 
 #user profile stuff.
 RewriteRule ^user:([0-9]+)$												dispatcher.php?controller=user&view=profile&id=$1 [NC,L]
@@ -73,21 +80,23 @@ RewriteRule ^queue:([0-9]+)/jobs/(available|taken|qa|failure|complete)(/page:([0
 #uploader
 RewriteRule ^upload$												dispatcher.php?controller=upload&view=home [NC,L]
 RewriteRule ^upload/url$												dispatcher.php?controller=upload&view=url [NC,L,QSA]
-RewriteRule ^upload/success/(.*)$												dispatcher.php?controller=upload&view=success&payload=$1 [NC,L,QSA]
+RewriteRule ^upload/success$												dispatcher.php?controller=upload&view=success [NC,L,QSA]
 
 #bot stuff.
 RewriteRule ^bots(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=home&page=$2 [NC,L]
 RewriteRule ^bots/live$									    			dispatcher.php?controller=bot&view=live [NC,L]
 RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
-RewriteRule ^bot:([0-9]+)/driverform:(dummy|printcore)/token:([0-9]+)$												dispatcher.php?controller=bot&mode=ajax&view=driver_form&id=$1&driver=$2&token_id=$3 [NC,L]
+RewriteRule ^bot:([0-9]+)/driverform:(dummy|printcore|s3g)/token:([0-9]+)$												dispatcher.php?controller=bot&mode=ajax&view=driver_form&id=$1&driver=$2&token_id=$3 [NC,L]
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
 RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=edit&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/edit/setup:(info|slicing|driver)$												dispatcher.php?controller=bot&view=edit&id=$1&setup=$2 [NC,L]
 RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/dropjob$												dispatcher.php?controller=bot&view=dropjob&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/jobs(/page:([0-9]+))?$												dispatcher.php?controller=bot&view=listjobs&id=$1&page=$3 [NC,L]
 RewriteRule ^bot:([0-9]+)/play$												dispatcher.php?controller=bot&view=play&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/pause$												dispatcher.php?controller=bot&view=pause&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/retire$                       dispatcher.php?controller=bot&view=retire&id=$1
 
 #jobs stuff.
 RewriteRule ^jobs$												dispatcher.php?controller=job&view=home [NC,L]
@@ -131,6 +140,7 @@ RewriteRule ^app/token:([0-9]+)/revoke$					dispatcher.php?controller=app&view=r
 #slicer stuff.
 RewriteRule ^slicers$											        dispatcher.php?controller=slicer&view=home [NC,L]
 RewriteRule ^slicer/create$									  		dispatcher.php?controller=slicer&view=create [NC,L]
+RewriteRule ^slicer/import$											dispatcher.php?controller=slicer&view=import [NC,L]
 RewriteRule ^slicer/createconfig$	  	          	dispatcher.php?controller=slicer&view=config_create [NC,L]
 RewriteRule ^slicer:([0-9]+)$										  dispatcher.php?controller=slicer&view=view&id=$1 [NC,L]
 RewriteRule ^slicer:([0-9]+)/edit$							  dispatcher.php?controller=slicer&view=edit&id=$1 [NC,L]

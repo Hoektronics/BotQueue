@@ -5,8 +5,8 @@
 <form class="form-horizontal" method="<?=$form->method?>" action="<?= $form->action ?>" enctype="multipart/form-data">
 	<fieldset>
 		<?= $form->renderFields() ?>
-  	<div class="form-actions">
-			<button type="submit" class="btn btn-primary"><?= $form->submitText ?></button>
+  		<div class="form-actions">
+			<button type="submit" class="<?= $form->submitClass ?>"><?= $form->submitText ?></button>
 		</div>
 	</fieldset>
 </form>

@@ -89,7 +89,7 @@ class SQS
 	{
 		//format params
 		$params = array();
-		if ($prefix !== null)
+		if ($QueueNamePrefix !== null)
 			$params['QueueNamePrefix'] = $QueueNamePrefix;
 
 		//make the call.
@@ -235,6 +235,7 @@ class SQS
 		$params['Signature'] = $this->_getSignature($params);
 
 		//create our request string.
+        $pairs = array();
 		foreach ($params as $name => $value)
 			if ($value)
 				$pairs[] = $name . '=' . urlencode($value);

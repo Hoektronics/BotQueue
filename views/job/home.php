@@ -1,3 +1,16 @@
+<?
+/**
+ * @package botqueue_jobs
+ * @var int $available_count
+ * @var array $available
+ * @var int $taken_count
+ * @var array $taken
+ * @var int $complete_count
+ * @var array $complete
+ * @var int $failure_count
+ * @var array $failure
+ */
+?>
 <div class="row">
 	<div class="span6">
 		<h2>

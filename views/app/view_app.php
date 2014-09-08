@@ -1,3 +1,10 @@
+<?
+/**
+ * @package botqueue_app
+ * @var string $megaerror
+ * @var OAuthConsumer $app
+ */
+?>
 <? if ($megaerror): ?>
 	<div class="MegaError"><?=$megaerror?></div>
 <? else: ?>

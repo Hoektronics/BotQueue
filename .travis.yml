@@ -18,22 +18,14 @@ before_install:
 
 install:
   # Install the packages we need
-  - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential libpcre3-dev php5-curl libcurl3 php5-dev libcurl4-gnutls-dev libmagic-dev
+  - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential php5-curl php5-dev libmagic-dev
 
-  # Install oauth and pecl_http
-  - sudo pecl install oauth
-  - sudo pecl install pecl_http
-
-  # Discover some channels
-  - sudo pear channel-discover pear.amazonwebservices.com
-  - sudo pear channel-discover guzzlephp.org/pear
-  - sudo pear channel-discover pear.symfony.com
+  # Install composer
+  - composer self-update
+  - composer install
   
-  # Install the aws sdk
-  - sudo pear install aws/sdk
-
 before_script:
   - cp extensions/config-travis.php extensions/config.php
 
 script:
-  - phpunit test
+  - phpunit --bootstrap extensions/global.php tests

@@ -16,7 +16,7 @@
 				<? $j = $row['Job'] ?>
 				<tr>
 					<td><?=$b->getLink()?></td>
-					<td><?=$b->getStatusHTML()?></td>
+					<td><?=BotStatus::getStatusHTML($b);?></td>
 					<td><?=Utility::relativeTime($b->get('last_seen'))?></td>
 					<td><?=$q->getLink()?></td>
 					<? if ($j->isHydrated()): ?>

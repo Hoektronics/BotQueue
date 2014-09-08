@@ -1,158 +1,136 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
-  <? if ($bot->get('status') == 'error'): ?>
-  	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => "This bot is offline with the following error: " . $bot->get('error_text')))?>    
-  <? endif ?>
+	<? if ($bot->get('status') == 'error'): ?>
+		<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => "This bot is offline with the following error: " . $bot->get('error_text'))) ?>
+	<? endif ?>
 	<div class="row">
-	  <div class="span6">
-		  <? if ($webcam->isHydrated()): ?>
-		    <h3>Latest Image - <span class="muted"><?=Utility::getTimeAgo($webcam->get('add_date'))?></span></h3>
-		    <img src="<?=$webcam->getRealUrl()?>">
-		  <? else: ?>
-        <img src="/img/colorbars.gif">
-		  <? endif ?>
+		<div class="span6">
+			<? if ($webcam->isHydrated()): ?>
+				<h3>Latest Image - <span class="muted"><?= Utility::getTimeAgo($webcam->get('add_date')) ?></span></h3>
+				<img src="<?= $webcam->getDownloadURL() ?>">
+			<? else: ?>
+				<img src="/img/colorbars.gif">
+			<? endif ?>
 		</div>
 		<div class="span6">
 			<h3>Basic Info</h3>
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
+				<tr>
+					<th>Status:</th>
+					<td><?= BotStatus::getStatusHTML($bot) ?></td>
+				</tr>
+				<? if ($bot->get('remote_ip')): ?>
 					<tr>
-						<th>Status:</th>
-						<td><?=$bot->getStatusHTML() ?></td>
+						<th>Remote IP:</th>
+						<td><?= $bot->get('remote_ip') ?></td>
 					</tr>
-					<? if ($bot->get('remote_ip')): ?>
-  					<tr>
-  						<th>Remote IP:</th>
-  						<td><?=$bot->get('remote_ip') ?></td>
-  					</tr>
-  				<? endif ?>
-					<? if ($bot->get('local_ip')): ?>
-  					<tr>
-  						<th>Local IP:</th>
-  						<td><?=$bot->get('local_ip') ?></td>
-  					</tr>
-  				<? endif ?>
+				<? endif ?>
+				<? if ($bot->get('local_ip')): ?>
 					<tr>
-						<th>Current Job:</th>
-						<td>
-							<? if ($job->isHydrated()): ?>
-								<?=$job->getLink()?>
-							<? else: ?>
-								none
-							<? endif?>
-						</td>
+						<th>Local IP:</th>
+						<td><?= $bot->get('local_ip') ?></td>
 					</tr>
-					<tr>
-						<th>Owner:</th>
-						<td><?=$owner->getLink()?></td>
-					</tr>
-					<? if ($app->isHydrated()): ?>
-  					<tr>
-  						<th>Assigned to:</th>
-  						<td><a href="<?=$app->getUrl()?>/edit"><?=$app->getName()?></a></td>
-  					</tr>
-  				<? else: ?>
-    				<tr>
-  						<th>Assigned to:</th>
-  						<td><span class="text-error">No controlling app found.</span></td>
-  					</tr>
-          <? endif ?>
-					<tr>
-						<th>Queue:</th>
-						<td><?=$queue->getLink()?></td>
-					</tr>
-					<tr>
-						<th>Slice Engine:</th>
-						<? if ($engine->isHydrated()): ?>
-  						<td><?=$engine->getLink()?></td>
-  					<? else: ?>
-  						<td><span class="text-error">No slice engine selected!</span></td>
-            <? endif ?>
-					</tr>
-					<tr>
-						<th>Engine Config:</th>
-						<? if ($config->isHydrated()): ?>
-  						<td><?=$config->getLink()?></td>
+				<? endif ?>
+				<tr>
+					<th>Current Job:</th>
+					<td>
+						<? if ($job->isHydrated()): ?>
+							<?= $job->getLink() ?>
 						<? else: ?>
-  						<td><span class="text-error">No slice config selected!</span></td>
-            <? endif ?>
-					</tr>					
-					<? if ($bot->get('manufacturer')): ?>
-						<tr>
-							<th>Maker:</th>
-							<td><?=$bot->get('manufacturer')?></td>
-						</tr>
+							none
+						<? endif ?>
+					</td>
+				</tr>
+				<tr>
+					<th>Owner:</th>
+					<td><?= $owner->getLink() ?></td>
+				</tr>
+				<? if ($app->isHydrated()): ?>
+					<tr>
+						<th>Assigned to:</th>
+						<td><a href="<?= $app->getUrl() ?>/edit"><?= $app->getName() ?></a></td>
+					</tr>
+				<? else: ?>
+					<tr>
+						<th>Assigned to:</th>
+						<td><span class="text-error">No controlling app found.</span></td>
+					</tr>
+				<? endif ?>
+				<tr>
+					<th>Queue:</th>
+					<td><?= $queue->getLink() ?></td>
+				</tr>
+				<tr>
+					<th>Slice Engine:</th>
+					<? if ($engine->isHydrated()): ?>
+						<? if ($bot->getDriverConfig()->can_slice): ?>
+							<td><?= $engine->getLink() ?></td>
+						<? else: ?>
+							<td><?= $engine->getLink() ?> (Slicing disabled)</td>
+						<? endif ?>
+					<? else: ?>
+						<td><span class="text-error">No slice engine selected!</span></td>
 					<? endif ?>
-					<? if ($bot->get('model')): ?>
-						<tr>
-							<th>Model:</th>
-							<td><?=$bot->get('model')?></td>
-						</tr>
+				</tr>
+				<tr>
+					<th>Engine Config:</th>
+					<? if ($config->isHydrated()): ?>
+						<td><?= $config->getLink() ?></td>
+					<? else: ?>
+						<td><span class="text-error">No slice config selected!</span></td>
 					<? endif ?>
-					<? if ($bot->get('electronics')): ?>
-						<tr>
-							<th>Electronics:</th>
-							<td><?=$bot->get('electronics')?></td>
-						</tr>
-					<? endif ?>
-					<? if ($bot->get('firmware')): ?>
-						<tr>
-							<th>Firmware:</th>
-							<td><?=$bot->get('firmware')?></td>
-						</tr>
-					<? endif ?>
-					<? if ($bot->get('extruder')): ?>
-						<tr>
-							<th>Extruder:</th>
-							<td><?=$bot->get('extruder')?></td>
-						</tr>
-					<? endif ?>
-					<!-- >
+				</tr>
+				<? if ($bot->get('manufacturer')): ?>
 					<tr>
-						<th>Total Wait Time</th>
-						<td><?= Utility::getHours($stats['total_waittime'])?></td>
+						<th>Maker:</th>
+						<td><?= $bot->get('manufacturer') ?></td>
 					</tr>
-					-->
+				<? endif ?>
+				<? if ($bot->get('model')): ?>
 					<tr>
-						<th>Total Run Time</th>
-						<td><?= Utility::getHours($stats['total_runtime'])?></td>
+						<th>Model:</th>
+						<td><?= $bot->get('model') ?></td>
 					</tr>
-					<!-- >
+				<? endif ?>
+				<? if ($bot->get('electronics')): ?>
 					<tr>
-						<th>Total Overall Time</th>
-						<td><?= Utility::getHours($stats['total_time'])?></td>
+						<th>Electronics:</th>
+						<td><?= $bot->get('electronics') ?></td>
 					</tr>
+				<? endif ?>
+				<? if ($bot->get('firmware')): ?>
 					<tr>
-						<th>Average Wait Time</th>
-						<td><?= Utility::getHours($stats['avg_waittime'])?></td>
+						<th>Firmware:</th>
+						<td><?= $bot->get('firmware') ?></td>
 					</tr>
+				<? endif ?>
+				<? if ($bot->get('extruder')): ?>
 					<tr>
-						<th>Average Run Time</th>
-						<td><?= Utility::getHours($stats['avg_runtime'])?></td>
+						<th>Extruder:</th>
+						<td><?= $bot->get('extruder') ?></td>
 					</tr>
-					<tr>
-						<th>Average Overall Time</th>
-						<td><?= Utility::getHours($stats['avg_time'])?></td>
-					</tr>
-					<tr>
-						<th>Available Jobs</th>
-						<td><span class="label <?=Job::getStatusHTMLClass('available')?>"><?= (int)$stats['available'] ?></span> (<?= round($stats['available_pct'], 2)?>%)</td>
-					</tr>
-					<tr>
-						<th>Taken Jobs</th>
-						<td><span class="label <?=Job::getStatusHTMLClass('taken')?>"><?= (int)$stats['taken'] ?></span> (<?= round($stats['taken_pct'], 2)?>%)</td>
-					</tr>
-					-->
-					<tr>
-						<th>Complete Jobs</th>
-						<td><span class="label <?=Job::getStatusHTMLClass('complete')?>"><?= (int)$stats['complete'] ?></span> (<?= round($stats['complete_pct'], 2)?>%)</td>
-					</tr>
-					<tr>
-						<th>Failed Jobs</th>
-						<td><span class="label <?=Job::getStatusHTMLClass('failure')?>"><?= (int)$stats['failure'] ?></span> (<?= round($stats['failure_pct'], 2)?>%)</td>
-					</tr>
-					<!-- >
+				<? endif ?>
+				<tr>
+					<th>Total Run Time</th>
+					<td><?= Utility::getHours($stats['total_runtime']) ?></td>
+				</tr>
+				<tr>
+					<th>Complete Jobs</th>
+					<td><span
+							class="label <?= JobStatus::getStatusHTMLClass('complete') ?>"><?= (int)$stats['complete'] ?></span>
+						(<?= round($stats['complete_pct'], 2) ?>%)
+					</td>
+				</tr>
+				<tr>
+					<th>Failed Jobs</th>
+					<td><span
+							class="label <?= JobStatus::getStatusHTMLClass('failure') ?>"><?= (int)$stats['failure'] ?></span>
+						(<?= round($stats['failure_pct'], 2) ?>%)
+					</td>
+				</tr>
+				<!-- >
 					<tr>
 						<th>Total Jobs</th>
 						<td><span class="label label-inverse"><?= (int)$stats['total'] ?></span></td>
@@ -166,17 +144,17 @@
 		<div class="span12">
 			<h3>
 				Jobs
-				:: 1-<?=min(10, $job_count)?> of <?=$job_count?> :: <a href="<?=$bot->getUrl()?>/jobs">see all</a>
+				:: 1-<?= min(10, $job_count) ?> of <?= $job_count ?> :: <a href="<?= $bot->getUrl() ?>/jobs">see all</a>
 			</h3>
 			<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $jobs)) ?>
 		</div>
 	</div>
 	<? if (!empty($errors)): ?>
-  	<div class="row">
-  	  <div class="span12">
-    	  <h3>Error Log</h3>
-  	    <?= Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'bot'))?>
-  	  </div>
-  	</div>
+		<div class="row">
+			<div class="span12">
+				<h3>Error Log</h3>
+				<?= Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'bot')) ?>
+			</div>
+		</div>
 	<? endif ?>
 <? endif ?>

@@ -1,3 +1,10 @@
+<?
+/**
+ * @package botqueue_email
+ * @var User $user
+ * @var string $link
+ */
+?>
 Dear <?=$user->getName() ?>,
 
 Someone requested a password reset on <?=SITE_HOSTNAME?>.  In order to verify and complete with this password reset operation, please follow the link below:

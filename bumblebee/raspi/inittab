@@ -1,3 +1,0 @@
-
-#this is our config line to start a terminal for bumblebee
-8:2345:respawn:/bin/login -f pi tty8 </dev/tty8 >/dev/tty8 2>&1

@@ -1,6 +1,6 @@
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
-<? else: ?>
+<? elseif(!$nodriver): ?>
   <? if (!is_object($devices)): ?>
 		<div class="alert alert-error">
 			<strong>Warning</strong> The client has not reported the results of the device scan yet, wait a moment and reload to see the device scan results for easier configuration of serial ports, webcams, etc.
@@ -14,7 +14,7 @@
         <span class="muted">(in seconds between gcode commands)</span>
       </div>
     </div>
-  <? elseif ($driver == 'printcore'): ?>
+  <? elseif ($driver == 'printcore' || $driver == 's3g'): ?>
     <div class="control-group ">
       <label class="control-label" for="iserial_port"><strong>Serial Port</strong></label>
       <div class="controls">
@@ -38,6 +38,8 @@
         <p class="help-block">Name of the serial port to connect to.</p>
       </div>
     </div>
+  <? endif ?>
+  <? if ($driver == 'printcore'): ?>
     <div class="control-group ">
       <label class="control-label" for="ibaudrate"><strong>Baudrate</strong></label>
       <div class="controls">
@@ -77,13 +79,13 @@
             <img src="/img/colorbars.gif">
           </div>
           <? foreach ($devices->camera_files AS $idx => $file_id): ?>
-            <? $s3 = new S3File($file_id); ?>
+            <? $webcam_file = Storage::get($file_id); ?>
             <div class="span3 webcam_preview <?= ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : ''?>" id="webcam_preview_<?=$idx?>" onclick="set_webcam(<?=$idx?>)">
               <input type="hidden" id="webcam_id_<?=$idx?>" value="<?=$devices->cameras[$idx]->id?>">
               <input type="hidden" id="webcam_name_<?=$idx?>" value="<?=$devices->cameras[$idx]->name?>">
               <input type="hidden" id="webcam_device_<?=$idx?>" value="<?=$devices->cameras[$idx]->device?>">
               <span class="webcam_name"><?=$devices->cameras[$idx]->name?></span>
-              <img src="<?=$s3->getRealUrl()?>">
+              <img src="<?=$webcam_file->getDownloadURL()?>">
             </div>
           <? endforeach ?>
         </div>
@@ -124,7 +126,7 @@
   <script>
     function set_serialport(ele, idx)
     {
-      $('#iserial_port').val($(ele).html())
+      $('#iserial_port').val($(ele).html());
       $('#port_id').val($('#port_id_' + idx).val());
       
       return false;

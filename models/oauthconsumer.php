@@ -1,60 +1,66 @@
 <?php
-	class OAuthConsumer extends Model
+
+class OAuthConsumer extends Model
+{
+	private $key;
+	private $secret;
+	private $active;
+
+	public function __construct($id = null)
 	{
-		public function __construct($id = null)
-		{
-			parent::__construct($id, "oauth_consumer");
-		}
-		
-		public function canEdit()
-		{
-		  if (User::$me->isAdmin())
-		    return true;
-		  
-		  if (User::isLoggedIn() && $this->get('user_id') == User::$me->id)
-		    return true;
+		parent::__construct($id, "oauth_consumer");
+	}
 
-			return false;
-		}
+	public function canEdit()
+	{
+		if (User::$me->isAdmin())
+			return true;
 
-		public static function findByKey($key)
-		{
-			$sql = "
-				SELECT id
+		if (User::isLoggedIn() && $this->get('user_id') == User::$me->id)
+			return true;
+
+		return false;
+	}
+
+	public static function findByKey($key)
+	{
+		$sql = "SELECT id
 				FROM oauth_consumer
-				WHERE consumer_key = '". db()->escape($key) ."'
-			";
-			$id = db()->getValue($sql);
+				WHERE consumer_key = ?";
 
-			return new OAuthConsumer($id);
-		}
-		
-		public function getUrl()
-		{
-			return '/app:' . $this->id;
-		}
-		
-		public function getName()
-		{
-			return $this->get('name');
-		}
-		
-		public function isActive()
-		{
-			return $this->get('active');
-		}
-		
-		public function getKey(){
-			return $this->get('consumer_key');
-		}
-		
-		public function getSecretKey(){
-			return $this->get('consumer_secret');
-		}
-		
-		public function hasNonce($nonce, $timestamp)
-		{
-		  /*
+		$id = db()->getValue($sql, array($key));
+
+		return new OAuthConsumer($id);
+	}
+
+	public function getUrl()
+	{
+		return '/app:' . $this->id;
+	}
+
+	public function getName()
+	{
+		return $this->get('name');
+	}
+
+	public function isActive()
+	{
+		return $this->get('active');
+	}
+
+	public function getKey()
+	{
+		return $this->get('consumer_key');
+	}
+
+	public function getSecretKey()
+	{
+		return $this->get('consumer_secret');
+	}
+
+	public function hasNonce($nonce, $timestamp)
+	{
+		/*
 		  $timestamp = (int)$timestamp;
 		  $nonce = (int)$nonce;
 		  
@@ -68,13 +74,13 @@
 
 			return ($check==1);
 			*/
-			
-			return true;
-		}
-		
-		public function addNonce($nonce)
-		{
-		  /*
+
+		return true;
+	}
+
+	public function addNonce($nonce)
+	{
+		/*
 			$n = new OAuthConsumerNonce();
 			$n->set('consumer_id', $this->id);
 			$n->set('timestamp', time());
@@ -83,43 +89,42 @@
 			
 			return $n;
 			*/
-		}
-		
-		/* setters */
-		
-		//todo: nuke this.
-		public function setKey($key){
-			$this->key = $key;
-		}
-		
-		//todo: nuke this.
-		public function setSecret($secret){
-			$this->secret = $secret;
-		}
-		
-		//todo: nuk this.
-		public function setActive($active){
-			$this->active = $active;
-		}
-		
-		//todo: nuke this.
-		public function setId($id){
-			$this->id = $id;
-		}	
-		
-		public function delete()
-		{
-			//delete all our tokens
-			db()->execute("
-				DELETE FROM oauth_token WHERE consumer_id = ". db()->escape($this->id) ."
-			");
-
-			//delete all our nonces
-			db()->execute("
-				DELETE FROM oauth_token_nonce WHERE consumer_id = ". db()->escape($this->id) ."
-			");
-			
-			parent::delete();
-		}
 	}
-?>
+
+	/* setters */
+
+	//todo: nuke this.
+	public function setKey($key)
+	{
+		$this->key = $key;
+	}
+
+	//todo: nuke this.
+	public function setSecret($secret)
+	{
+		$this->secret = $secret;
+	}
+
+	//todo: nuk this.
+	public function setActive($active)
+	{
+		$this->active = $active;
+	}
+
+	//todo: nuke this.
+	public function setId($id)
+	{
+		$this->id = $id;
+	}
+
+	public function delete()
+	{
+		//delete all our tokens
+		db()->execute("DELETE FROM oauth_token WHERE consumer_id = ?", array($this->id));
+
+		//delete all our nonces
+		db()->execute("DELETE FROM oauth_consumer_nonce WHERE consumer_id = ?", array($this->id));
+
+		parent::delete();
+	}
+}

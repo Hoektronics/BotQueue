@@ -1,13 +1,25 @@
+<?
+/**
+ * @package botqueue_job
+ * @var string $megaerror
+ * @var Job $job
+ * @var Bot $bot
+ * @var StorageInterface $webcam
+ * @var Form $form
+ * @var StorageInterface $source_file
+ * @var StorageInterface $gcode_file
+ */
+?>
 <? if ($megaerror): ?>
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
 
-  <h2>Awesome!  The printer <?=$bot->getLink()?> has completed the <?=$job->getLink()?> job.</h3>
+  <h2>Awesome!  The printer <?=$bot->getLink()?> has completed the <?=$job->getLink()?> job.</h2>
 
   <div class="row">
     <div class="span6">
 		  <? if ($webcam->isHydrated()): ?>
-		    <img src="<?=$webcam->getRealUrl()?>">
+		    <img src="<?=$webcam->getDownloadURL()?>">
 		  <? else: ?>
         <img src="/img/colorbars.gif">
 		  <? endif ?>
@@ -16,14 +28,12 @@
       <div class="row">
         <div class="span6">
           <div class="alert alert-info">
-            <p>
-              Before this printer can start the next job, you need to do a few things:
+            <p>Before this printer can start the next job, you need to do a few things:</p>
               <ol>
                 <li>Remove the print from the machine.</li>
                 <li>Inspect the print for errors or problems.</li>
                 <li>Make sure the machine is ready for printing.</li>
               </ol>
-            </p>
           </div>
         </div>
         <div class="span6">

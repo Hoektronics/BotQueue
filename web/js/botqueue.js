@@ -44,5 +44,6 @@ function update_slice_config_dropdown(ele)
 {
   engine_id = $("select#slice_engine_dropdown option:selected").val();
   $("select#slice_config_dropdown").attr("disabled", "disabled");
-  $("select#slice_config_dropdown").load("/ajax/bot/slice_config_select", {"id" : engine_id}, function(){$("select#slice_config_dropdown").removeAttr("disabled");});
+  $(':submit').attr("disabled","disabled");
+  $("select#slice_config_dropdown").load("/ajax/bot/slice_config_select", {"id" : engine_id}, function(){$("select#slice_config_dropdown").removeAttr("disabled");$(':submit').removeAttr("disabled");});
 }

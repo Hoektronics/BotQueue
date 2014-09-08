@@ -21,7 +21,7 @@
 					<td><i class="icon-resize-vertical"></i></td>
 					<td><?=$j->id?></td>
 					<td><?=$j->getLink()?></td>
-					<td><?=$j->getStatusHTML()?></td>
+					<td><?=JobStatus::getStatusHTML($j)?></td>
 					<td class="muted"><?=$j->getElapsedText()?></td>
 					<td class="muted"><?=$j->getEstimatedText()?></td>
 					<td align="right" style="width: 300px">

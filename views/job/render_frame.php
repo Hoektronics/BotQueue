@@ -1,6 +1,15 @@
+<?
+/**
+ * @package botqueue_job
+ * @var string $megaerror
+ * @var StorageInterface $file
+ * @var int $width
+ * @var int $height
+ */
+?>
 <html>
   <head>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <link href="/bootstrap/2.1.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
       body {
@@ -26,10 +35,7 @@
         line-height: 50px;
         top: 50%;
         left: 50%;
-        margin-left: -100px;
-        margin-top: -25px;
-        margin-bottom: 0px;
-        margin-right: 0px;
+        margin: -25px 0px 0px -100px;
         padding: 0px;
         text-align: center;
         z-index: 1000;

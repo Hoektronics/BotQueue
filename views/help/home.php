@@ -40,14 +40,7 @@ sudo apt-get install fswebcam uvcdynctrl v4l-utils</pre>
     		</div>
 
     		<div class="tab-pane" id="osx_install">
-    		  <h5>Download Bumblebee</h5>
-    		  <p>
-    		    You can use the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git.</a>
-    		  </p>
-
-    			<h5>Install These Libraries:</h5>
-<pre>sudo easy_install pip
-sudo pip install Pygments pyserial requests requests-oauth</pre>
+		  <?= Controller::byName('help')->renderView('osx_installation') ?>
     		</div>
 		
     		<div class="tab-pane" id="raspi_install">

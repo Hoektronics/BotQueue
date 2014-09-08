@@ -2,22 +2,20 @@
 	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
 <? else: ?>
   <? if ($job->get('status') == 'pending'): ?>
-  <h2>Oh no!  Something went wrong with the slicing process.</h3>
+  <h2>Oh no!  Something went wrong with the slicing process.</h2>
 
   <div class="alert alert-error">
-    <p>You should download the <a href="<?=$outputfile->getRealUrl()?>">output file</a> and verify that it is correct or not with the GCode Viewer below.</p>
+    <p>You should download the <a href="<?=$outputfile->getDownloadURL()?>">output file</a> and verify that it is correct or not with the GCode Viewer below.</p>
     <p>Here is the error that the slice engine reported:</p>
     <blockquote><?= nl2br(Utility::sanitize($job->get('error_log')))?></blockquote>
   </div>
   
   <div class="row">
     <div class="span6">
-        <div class="alert alert-success">
-          <input type="hidden" name="submit" value="1">
-          <a class="btn btn-large btn-success" style="float:right;" href="<?=$job->getUrl()?>/pass">PASS</a>
-          <span>If everything is okay, click <strong>Pass</strong>.<br/> The slice job will be marked as good and your bot will run it.</span>
-        </div>
-      </form>
+      <div class="alert alert-success">
+        <a class="btn btn-large btn-success" style="float:right;" href="<?=$job->getUrl()?>/pass">PASS</a>
+        <span>If everything is okay, click <strong>Pass</strong>.<br/> The slice job will be marked as good and your bot will run it.</span>
+      </div>
     </div>
     <div class="span6">
       <div class="alert alert-error">
@@ -54,7 +52,7 @@
 					</tr>
 					<tr>
 						<th>Status:</th>
-						<td><?=$job->getStatusHTML() ?></td>
+						<td><?=JobStatus::getStatusHTML($job) ?></td>
 					</tr>
 					<tr>
 						<th>Slice Engine:</th>

@@ -2,10 +2,10 @@
 *.DS_Store
 .idea/
 extensions/config.php
-bumblebee/config.json
-bumblebee/cache*
+extensions/config.ini
 botqueue.tmproj
-info.log
 ssl-cert.pem
 ssl-cert.int
 ssl-cert.key
+vendor/
+composer.phar
