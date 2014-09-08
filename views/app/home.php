@@ -32,7 +32,7 @@
 
 		</ul>
 		<p>
-			The <a href="http://dl.botqueue.com/bumblebee">latest version</a> of Bumblebee is
+			The <a href="https://github.com/Hoektronics/Bumblebee">latest version</a> of Bumblebee is
 			<strong>v<? $c = Controller::byName('APIV1');
 				echo $c::$api_version ?></strong>
 		</p>

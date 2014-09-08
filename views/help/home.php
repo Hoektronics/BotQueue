@@ -36,8 +36,7 @@
 					<h5>Download Bumblebee</h5>
 
 					<p>
-						You can use the <a href="http://dl.botqueue.com/bumblebee">official release</a> or run the
-						cutting edge client from <a href="https://github.com/Hoektronics/BotQueue">git.</a>
+						<a href="https://github.com/Hoektronics/Bumblebee">Github repo</a>
 					</p>
 
 					<h5>Install These Libraries / Programs:</h5>
