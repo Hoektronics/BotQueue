@@ -21,7 +21,7 @@ define ('UPLOAD_ERR_EMPTY', 9);
 
 class APIV1Controller extends Controller
 {
-	public static $api_version = "0.4";
+	public static $api_version = "0.5";
 	/* @var $token OAuthToken */
 	private $token;
 	private $consumer;

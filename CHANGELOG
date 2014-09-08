@@ -1,3 +1,24 @@
+v0.5 - September 8th, 2014
+
+* WEB - Made registering a bot easier
+* WEB - Enabled auto-import of slicers from github
+* WEB - Added local storage option
+* WEB - Made BotQueue easier to install
+* WEB - Added bot retirement
+* WEB - Fixed job clock count
+* WEB - Added a patching system for database updates
+* WEB - Fixed dashboard refresh
+* WEB - Fixed UI elements
+* WEB - Moved most libraries to composer
+* WEB - Email works with SMTP or SES
+* WEB - Fixed some race conditions with job grabbing
+* WEB - Added unit testing to some code
+* WEB - Prevented HTML and SQL injection
+* BUMBLEBEE - Moved to a separate repository
+* BUMBLEBEE - Set up Slic3r auto downloading
+* BUMBLEBEE - Now can run on smaller screens like PiTFT
+* BUMBLEBEE/WEB - Fixed many other bugs that can't be documented here
+
 v0.4 - Online Config - July 4th, 2013
 
 * WEB - record local and remote IP when getting bot updates
