@@ -9,7 +9,6 @@
 ?>
 <html>
   <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <link href="/bootstrap/2.1.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
       body {
