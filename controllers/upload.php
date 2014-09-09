@@ -134,7 +134,7 @@ class UploadController extends Controller
 
 		//handle our upload
 		try {
-			$file = FileUploadHandler::fromName($this->get('key'));
+			$file = FileUploadHandler::fromName($this->args('key'));
 			Activity::log("uploaded a new file called " . $file->getLink() . ".");
 
 			//send us to step 2.
