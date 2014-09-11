@@ -371,8 +371,7 @@ class UserController extends Controller
 
 				$text = Controller::byName('email')->renderView('new_user', array('user' => $user));
 				$html = Controller::byName('email')->renderView('new_user_html', array('user' => $user));
-				$email = Email::queue($user, "Welcome to ".RR_PROJECT_NAME."!", $text, $html);
-				$email->send();
+				Email::queue($user, "Welcome to ".RR_PROJECT_NAME."!", $text, $html);
 
 				//automatically log them in.
 				$token = $user->createToken();

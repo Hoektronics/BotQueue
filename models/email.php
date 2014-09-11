@@ -56,8 +56,10 @@ class Email extends Model
 		$email->set('status', 'queued');
 		$email->save();
 
-		//send it right away.
-		//$email->send();
+		//send it right away, or queue it.
+		if(!(defined("QUEUE_EMAIL") && QUEUE_EMAIL)) {
+			$email->send();
+		}
 
 		return $email;
 	}

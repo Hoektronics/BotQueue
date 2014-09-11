@@ -33,12 +33,14 @@ define("RR_DB_NAME", "BotQueue");
 define("STORAGE_METHOD", "S3File");
 define("AMAZON_AWS_KEY", "");
 define("AMAZON_AWS_SECRET", "");
+define("AMAZON_AWS_REGION", "us-west-2");
 define("AMAZON_S3_BUCKET_NAME", "botqueue");
 
 define("EMAIL_METHOD", "SMTP");
 define("SES_USE_DKIM", false);
 define("SES_USE_VERP", true);
 
+define("QUEUE_EMAIL", true);
 define("EMAIL_USERNAME", "mailer@example.com");
 define("EMAIL_NAME", "BotQueue");
 define("EMAIL_PASSWORD", "");

@@ -66,8 +66,7 @@ class AuthController extends Controller
 
 				Activity::log("forgot his/her password. :P", $user);
 
-				$email = Email::queue($user, "Password Reset", $text, $html);
-				$email->send();
+				Email::queue($user, "Password Reset", $text, $html);
 
 				$this->set('status', "We have sent a reset password confirmation email to '" . $this->args('email') . "'.");
 			} else
