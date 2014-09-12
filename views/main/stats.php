@@ -19,7 +19,7 @@
 
 <? if (User::isLoggedIn()): ?>
   <br/><br/>
-  <h1>My BotQueue.com Stats</h1>
+  <h1>My Stats</h1>
   <div class="row">
     <div class="span3">
       <h1><?=$my_total_active_bots?></h1>

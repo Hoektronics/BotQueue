@@ -137,7 +137,7 @@ class MainController extends Controller
 
     public function stats()
     {
-        $this->setTitle("Overall BotQueue.com Stats");
+        $this->setTitle("Overall Stats");
         $this->set('area', 'stats');
 
         //active bots
