@@ -56,16 +56,11 @@
             		</span>
 							<? elseif ($j->get('status') == 'qa'): ?>
 								<div class="manage-job pull-right">
-									<a class="btn btn-success btn-mini" href="<?= $j->getUrl() ?>/qa/pass">PASS</a>
-									<a class="btn btn-primary btn-mini" href="<?= $j->getUrl() ?>/qa">VIEW</a>
-									<a class="btn btn-danger btn-mini" href="<?= $j->getUrl() ?>/qa/fail">FAIL</a>
+									<?= Controller::byName('job')->renderView('qa_widget', array('url' => $j->getUrl()."/qa")) ?>
 								</div>
-							<?
-							elseif ($j->get('status') == 'slicing' && $sj->get('status') == 'pending'): ?>
+							<? elseif ($j->get('status') == 'slicing' && $sj->get('status') == 'pending'): ?>
 								<div class="manage-job pull-right">
-									<a class="btn btn-success btn-mini" href="<?= $sj->getUrl() ?>/pass">PASS</a>
-									<a class="btn btn-primary btn-mini" href="<?= $sj->getUrl() ?>">VIEW</a>
-									<a class="btn btn-danger btn-mini" href="<?= $sj->getUrl() ?>/fail">FAIL</a>
+									<?= Controller::byName('job')->renderView('qa_widget', array('url' => $sj->getUrl()."/qa")) ?>
 								</div>
 							<? endif ?>
 							<div class="clearfix"></div>

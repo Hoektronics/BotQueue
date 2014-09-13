@@ -312,6 +312,11 @@ class JobController extends Controller
 		}
 	}
 
+	public function qa_widget()
+	{
+		$this->setArg('url');
+	}
+
 	public function qa()
 	{
 		$this->assertLoggedIn();
