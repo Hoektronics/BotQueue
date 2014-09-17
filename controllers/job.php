@@ -369,9 +369,7 @@ class JobController extends Controller
 			$this->set('job', $job);
 			$this->set('bot', $bot);
 
-			$bot->set('job_id', 0);
-			$bot->setStatus(BotState::Idle);
-			$bot->save();
+			$bot->reset();
 
 			$job->setStatus('complete');
 			$job->set('verified_time', date("Y-m-d H:i:s"));

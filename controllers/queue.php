@@ -58,7 +58,6 @@ class QueueController extends Controller
                 $q->set('user_id', User::$me->id);
                 $q->save();
 
-                //todo: send a confirmation email.
                 Activity::log("created a new queue named " . $q->getLink() . ".");
 
                 $this->forwardToUrl($q->getUrl());

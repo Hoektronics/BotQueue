@@ -1,49 +1,57 @@
-prepare_jobqueue_drag = function()
-{
-  $(".joblist").sortable({
-  	handle: 'td:first',
-		update: function(event, ui) {
-      jobdata = {'jobs' : $(this).sortable('toArray').toString() };
-      //console.log(jobdata);
-      
-      $.ajax({
-        type: 'POST',
-        url: '/ajax/queue/update_sort',
-        data: jobdata,
-        success: function(data, status, xhr){
-          //console.log(data);
+var Bot = Backbone.Model.extend({
+    initialize: function () {
+    }
+});
+
+var BotCollection = Backbone.Collection.extend({
+    model: Bot,
+    url: 'ajax/main/dashboardbb'
+});
+
+var DashboardView = Backbone.View.extend({
+    el: $('#dashtronView'),
+    templateThumbnail: _.template($('#bot_thumbnail_template').html()),
+    templateList: _.template($('#bot_list_template').html()),
+    template: this.templateThumbnail,
+    initialize: function () {
+        _.bindAll(this, "render");
+        this.listenTo(this.collection, 'sync', this.render);
+        this.collection.fetch();
+    },
+    render: function () {
+        $(this.el).empty();
+        if(window.botSize == 0) {
+            $(this.el).html(this.templateList({collection:this.collection.toJSON()}));
+        } else {
+            this.collection.each(function (bot) {
+                $(this.el).append(this.templateThumbnail(bot.toJSON()));
+            }, this);
+            $(this.el).html("<div class=\"row\">" + $(this.el).html() + "</div>");
         }
-      });
-		}
-	});
-	$(".joblist").disableSelection();
-	$(".jobtable").disableSelection(); 
-}
+    }
+});
 
-$(document).ready(prepare_jobqueue_drag);
+window.botSize = 6;
+var myBots = new BotCollection();
+var myView = new DashboardView({collection: myBots});
+setInterval(function () {
+    if ($('#autoload_dashboard').is(':checked'))
+    {
+        myBots.fetch();
+    }
+}, 5000);
 
-function toggle_bot_status(bot_id, status)
-{
-  console.log(status);
-  
-  if (status == 'idle')
-  {
-    $('#bot_pause_link_' + bot_id).show();
-    $('#bot_play_link_' + bot_id).hide();
-  }
-  else if (status == 'offline')
-  {
-    $('#bot_pause_link_' + bot_id).hide();
-    $('#bot_play_link_' + bot_id).show();
-  }
+function loadDashtron() {
+    var dashboard_style = $("#dashboard_style").val();
+    if(dashboard_style == 'small_thumbnails') {
+        window.botSize = 3;
+    } else if(dashboard_style == 'medium_thumbnails') {
+        window.botSize = 4;
+    } else if(dashboard_style == 'large_thumbnails') {
+        window.botSize = 6;
+    } else if(dashboard_style == 'list') {
+        window.botSize = 0;
+    }
 
-  return false;
-}
-
-function update_slice_config_dropdown(ele)
-{
-  engine_id = $("select#slice_engine_dropdown option:selected").val();
-  $("select#slice_config_dropdown").attr("disabled", "disabled");
-  $(':submit').attr("disabled","disabled");
-  $("select#slice_config_dropdown").load("/ajax/bot/slice_config_select", {"id" : engine_id}, function(){$("select#slice_config_dropdown").removeAttr("disabled");$(':submit').removeAttr("disabled");});
+    myView.render();
 }

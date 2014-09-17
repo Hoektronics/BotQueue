@@ -46,7 +46,7 @@
 				<td class="muted"><?= $j->getEstimatedText() ?></td>
 				<td style="width:250px">
 					<? if ($j->get('status') == 'qa'): ?>
-						<?= Controller::byName('job')->renderView('qa_widget', array('url' => $j->getUrl()."/qa")) ?>
+						<?= Controller::byName('job')->renderView('qa_widget', array('url' => $j->getUrl() . "/qa")) ?>
 					<? elseif ($j->get('status') == 'slicing' && $sj->get('status') == 'pending'): ?>
 						<?= Controller::byName('job')->renderView('qa_widget', array('url' => $sj->getUrl())) ?>
 					<?

@@ -2,9 +2,6 @@
 
 class OAuthConsumer extends Model
 {
-	private $key;
-	private $secret;
-	private $active;
 
 	public function __construct($id = null)
 	{
@@ -89,32 +86,6 @@ class OAuthConsumer extends Model
 			
 			return $n;
 			*/
-	}
-
-	/* setters */
-
-	//todo: nuke this.
-	public function setKey($key)
-	{
-		$this->key = $key;
-	}
-
-	//todo: nuke this.
-	public function setSecret($secret)
-	{
-		$this->secret = $secret;
-	}
-
-	//todo: nuk this.
-	public function setActive($active)
-	{
-		$this->active = $active;
-	}
-
-	//todo: nuke this.
-	public function setId($id)
-	{
-		$this->id = $id;
 	}
 
 	public function delete()

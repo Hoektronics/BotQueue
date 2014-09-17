@@ -62,6 +62,125 @@ class MainController extends Controller
             die('You must be logged in to view this page.');
     }
 
+	public function dashboardbb()
+	{
+		$content = array();
+		$bots = User::$me->getActiveBots()->getAll();
+		//$content['bots'] = array();
+
+		foreach($bots AS $row) {
+			/** @var Bot $bot */
+			$bot = $row['Bot'];
+			/** @var Job $job */
+			$job = $row['Job'];
+			$sliceJob = $job->getSliceJob();
+
+			$botData  = array();
+			$botData['id'] = $bot->id;
+			$botData['name'] = $bot->getName();
+			$botData['status'] = $bot->getStatus();
+			$botData['status_class'] = BotStatus::getStatusHTMLClass($bot);
+			$botData['url'] = $bot->getUrl();
+			$botData['last_seen'] = BotLastSeen::getHTML($bot);
+
+			$webcam = $bot->getWebCamImage();
+			if($webcam->isHydrated()) {
+				$botData['webcam_url'] = $webcam->getDownloadURL();
+			} else {
+				$botData['webcam_url'] = "/img/colorbars.gif";
+			}
+
+			$buttons = $this->_getStatusButtons($bot);
+			$menu = array();
+			$status = $bot->getStatus();
+			if($status == BotState::Working) {
+				$menu[] = $buttons['pause'];
+				$menu[] = $buttons['dropjob'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Paused) {
+				$menu[] = $buttons['play'];
+				$menu[] = $buttons['dropjob'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Slicing) {
+				$menu[] = $buttons['dropjob'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Waiting) {
+				$menu[] = $buttons['qa'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Idle) {
+				$menu[] = $buttons['offline'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Offline) {
+				$menu[] = $buttons['online'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+				$menu[] = $buttons['retire'];
+			} else if($status == BotState::Maintenance) {
+				$menu[] = $buttons['online'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Error) {
+				$menu[] = $buttons['online'];
+				$menu[] = $buttons['edit'];
+				$menu[] = $buttons['delete'];
+			} else if($status == BotState::Retired) {
+				$menu[] = $buttons['delete'];
+			}
+			$botData['menu'] = $menu;
+
+			if($job->isHydrated()) {
+				$jobData = array();
+				$jobData['id'] = $job->id;
+				$jobData['name'] = $job->getName();
+				$jobData['url'] = $job->getUrl();
+				$jobData['status'] = $job->get('status');
+				$jobData['status_class'] = JobStatus::getStatusHTMLClass($job->get('status'));
+				$jobData['elapsed'] = $job->getElapsedText();
+				$jobData['estimated'] = $job->getEstimatedText();
+				if($job->get('status') == 'taken' || $job->get('status') == 'slicing') {
+					$jobData['progress'] = round($job->get('progress'), 2);
+					$jobData['bar_class'] = "";
+				}
+
+				$temps = JSON::decode($bot->get('temperature_data'));
+				error_log($temps);
+				if ($bot->get('status') == BotState::Working && $temps !== NULL) {
+					if(isset($temps->extruder))
+						$botData['temp_extruder'] = $temps->extruder;
+					if(isset($temps->bed))
+						$botData['temp_bed'] = $temps->bed;
+				}
+
+				if($job->get('status') == 'qa') {
+					$jobData['qa_url'] = $job->getUrl()."/qa";
+				}
+
+				if($job->get('status') == 'slicing' &&
+					$sliceJob->get('status') == 'pending') {
+					$jobData['qa_url'] = $sliceJob->getUrl();
+					$jobData['bar_class'] = "bar-warning";
+					// Set it to 100% so it actually displays
+					$jobData['progress'] = 100.00;
+				}
+
+				$botData['job'] = $jobData;
+			}
+
+			if($bot->get('status') == 'error') {
+				$botData['error_text'] = $bot->get('error_text');
+			}
+
+			$content[] = $botData;
+		}
+
+		$this->set('content', JSON::encode($content));
+	}
+
     public function dashboard_list()
     {
         $this->setArg('bots');
@@ -266,4 +385,69 @@ class MainController extends Controller
             }
         }
     }
+
+	/**
+	 * @param Bot $bot
+	 * @return array
+	 */
+	private function _getStatusButtons($bot)
+	{
+		$buttons = array();
+
+		$buttons['pause'] = array(
+			"url" => $bot->getUrl() . "/pause",
+			"icon" => "icon-pause",
+			"text" => "pause job"
+		);
+
+		$buttons['dropjob'] = array(
+			"url" => $bot->getUrl() . "/dropjob",
+			"icon" => "icon-stop",
+			"text" => "stop job"
+		);
+
+		$buttons['edit'] = array(
+			"url" => $bot->getUrl() . "/edit",
+			"icon" => "icon-cog",
+			"text" => "edit bot"
+		);
+
+		$buttons['play'] = array(
+			"url" => $bot->getUrl() . "/play",
+			"icon" => "icon-play",
+			"text" => "resume job"
+		);
+
+		$buttons['qa'] = array(
+			"url" => $bot->getCurrentJob()->getUrl() . "/qa",
+			"icon" => "icon-check",
+			"text" => "verify output"
+		);
+
+		$buttons['offline'] = array(
+			"url" => $bot->getUrl() . "/setstatus/offline",
+			"icon" => "icon-stop",
+			"text" => "take offline"
+		);
+
+		$buttons['online'] = array(
+			"url" => $bot->getUrl() . "/setstatus/idle",
+			"icon" => "icon-play",
+			"text" => "bring online"
+		);
+
+		$buttons['retire'] = array(
+			"url" => $bot->getUrl() . "/retire",
+			"icon" => "icon-lock",
+			"text" => "retire bot"
+		);
+
+		$buttons['delete'] = array(
+			"url" => $bot->getUrl() . "/delete",
+			"icon" => "icon-remove",
+			"text" => "delete bot"
+		);
+
+		return $buttons;
+	}
 }

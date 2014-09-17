@@ -43,8 +43,10 @@ class BotLastSeen {
 		$minutes = floor($elapsed / 60);
 		$seconds = $elapsed - $minutes * 60;
 
+		if ($months > 1)
+			return "{$months} months ago";
 		if ($months)
-			return "{$months} months";
+			return "{$months} month ago";
 		if ($days > 1)
 			return "{$days} days ago";
 		if ($days)
@@ -54,9 +56,9 @@ class BotLastSeen {
 		if ($hours)
 			return "{$hours}:{$minutes}:{$seconds} ago";
 		if ($minutes > 1)
-			return "{$minutes} minutes ago";
+			return "{$minutes} mins ago";
 		if ($minutes)
-			return "{$minutes} minute ago";
+			return "{$minutes} min ago";
 		return "{$seconds}s ago";
 	}
 }

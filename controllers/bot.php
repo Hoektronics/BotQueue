@@ -988,19 +988,9 @@ class BotController extends Controller
 		$this->set('bot', $bot);
 	}
 
-	public function thumbnail()
-	{
-		/* @var $bot Bot */
-		$bot = $this->args('bot');
-		/* @var $job Job */
-		$job = $this->args('job');
+	public function thumbnail() {} // Template
 
-		$this->setArg('size');
-		$this->set('b', $bot);
-		$this->set('j', $job);
-		$this->set('sj', $job->getSliceJob());
-		$this->set('webcam', $bot->getWebcamImage());
-	}
+	public function dashboard_list() {} // Template
 
 	public function live()
 	{

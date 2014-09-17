@@ -8,7 +8,7 @@
     
     <form class="form-inline pull-right muted">
       <label for="autoload_dashboard" style="display: inline">Auto-refresh?</label>
-      <input type="checkbox" id="autoload_dashboard" value="1" checked="1" onchange="loadDashtron()">
+      <input type="checkbox" id="autoload_dashboard" value="1" checked="1">
       <label for="dashboard_style"></label>
       <select id="dashboard_style" onchange="loadDashtron()">
         <option value="large_thumbnails" <?= ($style == 'large_thumbnails') ? 'selected' : ''?>>Large Thumbnails</option>
@@ -20,36 +20,7 @@
     <div class="clearfix"></div>
   </div>
   <div id="Dashtron"><?=Controller::byName('main')->renderView('dashboard')?></div>
-  <div id="DashtronHidden" style="display: none;"></div>
 
-  <script>
-    setInterval(loadDashtron, 10000);
-    
-    function loadDashtron()
-    {
-      if ($('#autoload_dashboard').is(':checked'))
-      {
-        var dashboard_style = $("#dashboard_style").val();
-        var url = "/ajax/main/dashboard/" + dashboard_style;
-        var jqxhr = $.get(url, function(data) {
-          if(dashboard_style == $("#dashboard_style").val()) {
-            $('#DashtronHidden').html(data);
-            $('#DashtronHidden').find('img.webcam').imagesLoaded(dashtronShow);
-          }
-        })
-        .fail(function() { console.log("dashtron fail"); });
-      }
-    }
-    
-    function dashtronShow()
-    {
-      $('#Dashtron').html($('#DashtronHidden').html());
-      //$('#Dashtron img.webcam').fadeOut();
-      //$('#Dashtron img.webcam').fadeIn();
-
-      prepare_jobqueue_drag();
-    }
-  </script>
 <? else: ?>
   <div class="hero-unit">
     <h1>BotQueue has arrived!</h1>

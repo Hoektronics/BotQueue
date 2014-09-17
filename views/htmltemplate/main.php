@@ -30,6 +30,10 @@
 	<script language="javascript" type="text/javascript" src="/js/flot-0.7/jquery.flot.selection.js"></script>
 	<script language="javascript" type="text/javascript" src="/js/jquery.flot.tooltip.min.js"></script>
 
+	<!-- Backbone -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js" type="text/javascript"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js" type="text/javascript"></script>
+
 	<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
@@ -111,6 +115,12 @@
 
 </div>
 
+<script type="text/template" id="bot_thumbnail_template">
+	<?= Controller::byName('bot')->renderView('thumbnail') ?>
+</script>
+<script type="text/template" id="bot_list_template">
+	<?= Controller::byName('bot')->renderView('dashboard_list'); ?>
+</script>
 <script src="/js/botqueue.js"></script>
 <script src="/bootstrap/2.3.0/js/bootstrap.js"></script>
 </body>

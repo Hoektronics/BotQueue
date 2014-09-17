@@ -278,7 +278,7 @@ class Job extends Model
 	public function reset()
 	{
 		if ($this->getSliceJob()->isHydrated()) {
-			// todo Actually delete the old slice job
+			$this->getSliceJob()->delete();
 			$this->set('slice_job_id', 0);
 			$this->set('file_id', 0);
 		}

@@ -60,7 +60,6 @@ class SliceEngine extends Model
 
     public static function getAllEngines()
     {
-		//todo Is anything other than id required here?
         $sql = "SELECT id
 		    	FROM slice_engines
 		    	ORDER BY engine_name ASC";

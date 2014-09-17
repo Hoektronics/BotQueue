@@ -830,7 +830,6 @@ class APIV1Controller extends Controller
 
 		//update our job
 		$job->set('slice_complete_time', date("Y-m-d H:i:s"));
-		$job->set('progress', 100); // todo Fix hack to deal with progress warning bar
 
 		if (!$emptyFile)
 			$job->set('file_id', $data_file->id);
