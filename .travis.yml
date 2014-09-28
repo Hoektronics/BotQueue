@@ -11,7 +11,7 @@ notifications:
 # whitelist
 branches:
   only:
-    - 0.5X-dev
+    - master
 
 before_install:
   - sudo apt-get update > /dev/null
