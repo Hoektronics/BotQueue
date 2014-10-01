@@ -23,6 +23,8 @@ class FileController extends Controller
 	{
 		// Local file upload
 		try {
+			if (empty($_FILES['file']) || !is_uploaded_file($_FILES['file']['tmp_name']))
+				throw new Exception("Something went wrong with uploading this file. The file may be too large to upload.");
 			$tmp_file = $_FILES['file'];
 			$dst = STORAGE_PATH . "/uploads/" . $tmp_file["name"];
 			$this->ensureGoodFile($tmp_file);
