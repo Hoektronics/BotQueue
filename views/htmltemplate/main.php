@@ -59,7 +59,6 @@
 		<? endforeach ?>
 	<? endif ?>
 
-	<?= Controller::$content_for["head"] ?>
 </head>
 <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="50">
 <div class="container">
@@ -115,12 +114,13 @@
 
 </div>
 
-<script type="text/template" id="bot_thumbnail_template">
-	<?= Controller::byName('bot')->renderView('thumbnail') ?>
-</script>
-<script type="text/template" id="bot_list_template">
-	<?= Controller::byName('bot')->renderView('dashboard_list'); ?>
-</script>
+<? if (!empty(Controller::$templates)): ?>
+	<? foreach (Controller::$templates AS $id => $content): ?>
+		<script type="text/template" id="<?= $id ?>">
+			<?= $content ?>
+		</script>
+	<? endforeach ?>
+<? endif ?>
 <script src="/js/botqueue.js"></script>
 <script src="/bootstrap/2.3.0/js/bootstrap.js"></script>
 </body>

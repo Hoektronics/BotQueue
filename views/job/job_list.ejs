@@ -1,0 +1,61 @@
+<h3>
+  <% if (type == "onDeck") { %>
+  On Deck Jobs
+  <% } else { %>
+  Finished Jobs
+  <% } %>
+  ::
+  <% if (total == 0) { %>
+  None
+  <% } else { %>
+  1-<%= count %> of <%= total %>
+  <% } %>
+  ::
+  <% if (type == "onDeck") { %>
+  <a href="/jobs/available">see all</a>
+  <% } else { %>
+  <a href="/jobs/complete">see all</a>
+  <% } %>
+</h3>
+  <% if(count > 0) { %>
+<table class="table table-striped table-bordered table-condensed">
+  <thead>
+  <tr>
+    <% if(type == "onDeck") { %>
+    <th></th>
+    <% } %>
+    <th>Name</th>
+    <% if(type == "onDeck") { %>
+    <th>Queue</th>
+    <th>Age</th>
+    <% } else { %>
+    <th>Duration</th>
+    <% } %>
+    <th>Manage</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% _.each(collection, function(job) { %>
+  <tr id="job_<%= job.id %>">
+    <% if(type == "onDeck") { %>
+    <td><i class="icon-resize-vertical"></i></td>
+    <% } %>
+    <td><a href="<%= job.url %>"><%= job.name %></a></td>
+    <% if(type == "onDeck") { %>
+    <td><a href="<%= job.queue_url %>"><%= job.queue_name %></a></td>
+    <% } %>
+    <td><%= job.elapsed %></td>
+    <% if(type == "onDeck") { %>
+    <td><a class="btn btn-mini" href="<%= job.url %>/cancel"><i class="icon-eject"></i> cancel</a></td>
+    <% } else { %>
+    <td><a class="btn btn-mini" href="/job/create/job:<%= job.id %>"><i class="icon-repeat"></i> re-run</a></td>
+    <% } %>
+  </tr>
+  <% }); %>
+  </tbody>
+</table>
+<% } else { %>
+<div class="alert">
+  <strong>No jobs found!</strong> To get started, <a href="/upload">upload a job</a>.
+</div>
+<% } %>

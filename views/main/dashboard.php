@@ -1,10 +1,3 @@
-<? if (empty($bots)): ?>
-	<div class="alert alert-success">
-		<strong>It looks like you're new here!</strong> Head over to the <a href="/help">help page</a> for information
-		on getting up and running. You're going to like it here.
-	</div>
-<? endif ?>
-
 <? if (count($request_tokens)): ?>
 	<div class="alert alert-info">
 		<div class="row">
@@ -36,17 +29,9 @@
 </div>
 <div class="row">
 	<div class="span6">
-		<h3>
-			On Deck Jobs
-			:: 1-<?= min(5, $on_deck_count) ?> of <?= $on_deck_count ?> :: <a href="/jobs/available">see all</a>
-		</h3>
-		<?= Controller::byName('job')->renderView('draw_on_deck_jobs', array('jobs' => $on_deck)); ?>
+		<div id="onDeckJobs"></div>
 	</div>
 	<div class="span6">
-		<h3>
-			Finished Jobs
-			:: 1-<?= min(5, $finished_count) ?> of <?= $finished_count ?> :: <a href="/jobs/complete">see all</a>
-		</h3>
-		<?= Controller::byName('job')->renderView('draw_finished_jobs', array('jobs' => $finished)); ?>
+		<div id="finishedJobs"></div>
 	</div>
 </div>

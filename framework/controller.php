@@ -21,31 +21,15 @@ class Controller
 {
 	private $view_name;
 	private $controller_name;
-	// Not currently used, but will be in the future
-	// private $mode;
 	private $args;
 	private $data;
 
+	public static $templates = array();
 	public static $rssFeeds = array();
-	public static $content_for = array(
-		'head' => '',
-		'body' => '',
-		'footer' => ''
-	);
 
 	public function __construct($name)
 	{
 		$this->controller_name = $name;
-	}
-
-	public static function makeControllerViewKey($controller_name, $view_name, $params)
-	{
-		return sha1("{$controller_name}.{$view_name}." . serialize($params));
-	}
-
-	public static function isiPhone()
-	{
-		return (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false);
 	}
 
 	public function setTitle($title)
@@ -53,14 +37,8 @@ class Controller
 		$this->set('title', $title);
 	}
 
-	public function getBrowserType()
-	{
-		return $_COOKIE['viewmode'];
-	}
-
-	public function setSidebar($sidebar)
-	{
-		$this->set('sidebar', $sidebar);
+	public function addTemplate($name, $content) {
+		self::$templates[$name] = $content;
 	}
 
 	public function addRssFeed($title, $url)
@@ -129,23 +107,13 @@ class Controller
 			die("Cannot display the view page");
 	}
 
+	public function renderTemplate($template_name) {
+		$template = new Template($this->controller_name, $template_name);
+		return $template->render();
+	}
 
-	public function renderView($view_name, $args = array(), $cache_time = 0, $key = null)
+	public function renderView($view_name, $args = array())
 	{
-		// Check the cache
-		/*
-		if ($cache_time > Cache::TIME_NEVER)
-		{
-			if ($key === null)
-				$key = Controller::makeControllerViewKey($this->controller_name, $view_name, $args);
-
-			$data = CacheBot::get($key);
-
-			if ($data !== false)
-				return $data;
-		}
-		*/
-
 		//save our params, prep for drawing the view.
 		if (!empty($args))
 			$this->args = $args;
@@ -161,15 +129,12 @@ class Controller
 		if (method_exists($this, $view_name) || method_exists($this, "__call"))
 			$this->$view_name();
 
-		//no cache, get down to business
 		//Set the view_name property of this object to the appropriate view name (e.g. draw_log_entries)
 		$this->view_name = $view_name;
 
 		//$this->viewFactory returns a new object of the type View class, setting the appropriate controller and view properties
 		/* @var $view View */
 		$view = $this->viewFactory();
-
-		//do our dirty work.
 
 		//preRender doesn't do anything - its just a placeholder
 		$view->preRender();
@@ -180,12 +145,6 @@ class Controller
 
 		//postRender doesn't do anything - its just a placeholder
 		$view->postRender();
-
-		//do we save it to cache?
-		/*
-		if ($cache_time > Cache::TIME_NEVER)
-			CacheBot::set($output, $key, $cache_time);
-		*/
 
 		//Returns the contents of the output buffer
 		return $output;
@@ -230,23 +189,16 @@ class Controller
 
 	private function getArgs()
 	{
-		//for ease of debug.
-		ob_start();
-
 		//use our already set args.
 		$args = array();
 
 		// GET is the first level of args.
 		if (count($_GET))
 			$args = array_merge($args, $_GET);
-		echo "After GET:\n";
-		print_r($args);
 
 		// POST overrides GET.
 		if (count($_POST))
 			$args = array_merge($args, $_POST);
-		echo "After POST:\n";
-		print_r($args);
 
 		// JSON data overrides GET and POST
 		if (!empty($args['jdata'])) {
@@ -254,17 +206,10 @@ class Controller
 			unset($args['jdata']);
 			$args = array_merge($args, $json_data);
 		}
-		echo "After jdata:\n";
-		print_r($args);
 
 		// user-defined args rule all!
 		if (count($this->args))
 			$args = array_merge($args, $this->args);
-		echo "Finally:\n";
-		print_r($args);
-
-		//for debug;
-		ob_end_clean();
 
 		return $args;
 	}
