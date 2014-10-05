@@ -32,23 +32,17 @@ class MainController extends Controller
 			die('You must be logged in to view this page.');
 		}
 
-		//what style to show?
-		if ($this->args('dashboard_style')) {
-			User::$me->set('dashboard_style', $this->args('dashboard_style'));
-			User::$me->save();
-		}
-
 		//do we need to set a default?
 		if (!User::$me->get('dashboard_style')) {
 			User::$me->set('dashboard_style', 'large_thumbnails');
 			User::$me->save();
 		}
 
-		//are there any apps requesting access?
-		$this->set('request_tokens', OAuthToken::getRequestTokensByIP()->getAll());
-
 		//okay, pull in our dashboard style.
 		$this->set('dashboard_style', User::$me->get('dashboard_style'));
+
+		//are there any apps requesting access?
+		$this->set('request_tokens', OAuthToken::getRequestTokensByIP()->getAll());
 
 		$this->addTemplate(
 			'bot_thumbnail_template',
@@ -115,6 +109,13 @@ class MainController extends Controller
 		}
 
 		$this->set('content', JSON::encode($content));
+	}
+
+	public function dashboard_style() {
+		if($this->args('style')) {
+			User::$me->set('dashboard_style', $this->args('style'));
+			User::$me->save();
+		}
 	}
 
 	public function activity()

@@ -41,6 +41,7 @@ php_value memory_limit 512M
 
 # Dashboard ajax and templates
 RewriteRule ^ajax/main/dashboard$ 		dispatcher.php?mode=ajax&controller=main&view=dashboardbb [NC,L]
+RewriteRule ^ajax/main/dashboard/style/(list|large_thumbnails|medium_thumbnails|small_thumbnails)  dispatcher.php?mode=ajax&controller=main&view=dashboard_style&style=$1 [NC,L]
 
 #random stuff
 RewriteRule ^$					dispatcher.php?controller=main&view=home [NC,L]

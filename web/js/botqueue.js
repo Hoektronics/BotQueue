@@ -82,8 +82,8 @@
     App.onDeckJobsView = new App.Views.JobView({el: $('#onDeckJobs'), type: "onDeck", collection: App.onDeckJobs});
     App.finishedJobs = new App.Collections.JobCollection();
     App.finishedJobsView = new App.Views.JobView({el: $('#finishedJobs'), type: "finished", collection: App.finishedJobs});
+    setStyle();
     App.fetch();
-
 })();
 
 setInterval(function () {
@@ -92,7 +92,7 @@ setInterval(function () {
     }
 }, 5000);
 
-function loadDashtron() {
+function setStyle() {
     var dashboard_style = $("#dashboard_style").val();
     if (dashboard_style == 'small_thumbnails') {
         window.botSize = 3;
@@ -103,6 +103,12 @@ function loadDashtron() {
     } else if (dashboard_style == 'list') {
         window.botSize = 0;
     }
+    return dashboard_style;
+}
 
+function loadDashtron() {
+    var dashboard_style = setStyle();
+
+    $.post("/ajax/main/dashboard/style/"+dashboard_style);
     App.botsView.render();
 }
