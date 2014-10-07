@@ -34,7 +34,7 @@
     </td>
     <td class="muted"><%= bot.last_seen %></td>
     <% if (typeof(bot.job) !== "undefined") { %>
-    <td><a href="<%= bot.job.url %>"><%= bot.job.name %></a></td>
+    <td style="white-space: nowrap"><a href="<%= bot.job.url %>"><%= bot.job.name %></a></td>
     <% if (bot.status == 'working') { %>
     <td>
       <% if (typeof(bot.temp_extruder) !== "undefined") { %>

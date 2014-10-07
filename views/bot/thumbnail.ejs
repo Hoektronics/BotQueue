@@ -5,7 +5,7 @@
       <div class="bot_header">
         <h3>
           <a href="<%= url %>"><%= name %></a>
-					<span class="muted">- <%= last_seen %>
+					<span class="muted">- <%= last_seen %> ago
             <% if (typeof(job) !== "undefined") { %>
             <% if (window.botSize > 3 && job.status == 'taken') { %>
             - Runtime: <%= job.elapsed %>

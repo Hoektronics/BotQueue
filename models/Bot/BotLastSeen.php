@@ -44,21 +44,21 @@ class BotLastSeen {
 		$seconds = $elapsed - $minutes * 60;
 
 		if ($months > 1)
-			return "{$months} months ago";
+			return "{$months} months";
 		if ($months)
-			return "{$months} month ago";
+			return "{$months} month";
 		if ($days > 1)
-			return "{$days} days ago";
+			return "{$days} days";
 		if ($days)
-			return "{$days} day ago";
+			return "{$days} day";
 		if ($hours > 1)
-			return "{$hours} hours ago";
+			return "{$hours} hours";
 		if ($hours)
-			return "{$hours}:{$minutes}:{$seconds} ago";
+			return "{$hours}:{$minutes}:{$seconds}";
 		if ($minutes > 1)
-			return "{$minutes} mins ago";
+			return "{$minutes} mins";
 		if ($minutes)
-			return "{$minutes} min ago";
+			return "{$minutes} min";
 		return "{$seconds}s ago";
 	}
 }
