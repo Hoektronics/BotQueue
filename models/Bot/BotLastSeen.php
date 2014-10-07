@@ -48,17 +48,13 @@ class BotLastSeen {
 		if ($months)
 			return "{$months} month";
 		if ($days > 1)
-			return "{$days} days";
+			return "{$days}d";
 		if ($days)
-			return "{$days} day";
-		if ($hours > 1)
-			return "{$hours} hours";
+			return "{$days}d";
 		if ($hours)
-			return "{$hours}:{$minutes}:{$seconds}";
-		if ($minutes > 1)
-			return "{$minutes} mins";
+			return "{$hours}h";
 		if ($minutes)
-			return "{$minutes} min";
-		return "{$seconds}s ago";
+			return "{$minutes}m";
+		return "{$seconds}s";
 	}
 }
