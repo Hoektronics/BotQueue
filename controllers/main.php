@@ -58,6 +58,12 @@ class MainController extends Controller
 			'job_list_template',
 			Controller::byName('job')->renderTemplate('job_list')
 		);
+
+		$this->addScript(
+			'initial_data',
+			"var initialData = " . Controller::byName('main')->renderView('dashboardbb'),
+			"text/javascript"
+		);
 	}
 
 	public function dashboardbb()

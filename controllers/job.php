@@ -66,7 +66,7 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			if ($status == JobState::Failure)
+			if ($status == JobState::Available)
 				$this->setTitle(User::$me->getName() . "'s Available Jobs");
 			else if ($status == JobState::Taken)
 				$this->setTitle(User::$me->getName() . "'s Working Jobs");

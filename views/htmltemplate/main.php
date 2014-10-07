@@ -114,9 +114,9 @@
 
 </div>
 
-<? if (!empty(Controller::$templates)): ?>
-	<? foreach (Controller::$templates AS $id => $content): ?>
-		<script type="text/template" id="<?= $id ?>">
+<? if (!empty(Controller::$scripts)): ?>
+	<? foreach (Controller::$scripts AS $id => $content): ?>
+		<script type="<?= Controller::$scriptTypes[$id] ?>" id="<?= $id ?>">
 			<?= $content ?>
 		</script>
 	<? endforeach ?>

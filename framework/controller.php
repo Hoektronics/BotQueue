@@ -24,7 +24,8 @@ class Controller
 	private $args;
 	private $data;
 
-	public static $templates = array();
+	public static $scripts = array();
+	public static $scriptTypes = array();
 	public static $rssFeeds = array();
 
 	public function __construct($name)
@@ -38,7 +39,12 @@ class Controller
 	}
 
 	public function addTemplate($name, $content) {
-		self::$templates[$name] = $content;
+		$this->addScript($name, $content, "text/template");
+	}
+
+	public function addScript($name, $content, $type = "text/template") {
+		self::$scriptTypes[$name] = $type;
+		self::$scripts[$name] = $content;
 	}
 
 	public function addRssFeed($title, $url)

@@ -4,13 +4,17 @@
         Models: {},
         Collections: {},
         Views: {},
+        initialData: {},
+        fromJSON: function(data) {
+            App.bots.reset(data["bots"]);
+            App.onDeckJobs.total = data["on_deck"]["total"];
+            App.onDeckJobs.reset(data["on_deck"]["jobs"]);
+            App.finishedJobs.total = data["finished"]["total"];
+            App.finishedJobs.reset(data["finished"]["jobs"]);
+        },
         fetch: function () {
             $.getJSON("/ajax/main/dashboard", function (response) {
-                    App.bots.reset(response["bots"]);
-                    App.onDeckJobs.total = response["on_deck"]["total"];
-                    App.onDeckJobs.reset(response["on_deck"]["jobs"]);
-                    App.finishedJobs.total = response["finished"]["total"];
-                    App.finishedJobs.reset(response["finished"]["jobs"]);
+                    App.fromJSON(response);
                 }
             );
         }
@@ -83,7 +87,7 @@
     App.finishedJobs = new App.Collections.JobCollection();
     App.finishedJobsView = new App.Views.JobView({el: $('#finishedJobs'), type: "finished", collection: App.finishedJobs});
     setStyle();
-    App.fetch();
+    App.fromJSON(initialData);
 })();
 
 setInterval(function () {
