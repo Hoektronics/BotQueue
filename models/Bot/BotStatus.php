@@ -34,13 +34,14 @@ class BotStatus {
 	public static function getStatusHTMLClass($bot)
 	{
 		$s2c = array(
-			'idle' => 'success',
-			'working' => 'info',
-			'slicing' => 'info',
-			'waiting' => 'warning',
-			'error' => 'danger',
-			'offline' => 'inverse',
-			'retired' => 'inverse',
+			BotState::Idle => 'success',
+			BotState::Working => 'info',
+			BotState::Slicing => 'info',
+			BotState::Waiting => 'warning',
+			BotState::Error => 'danger',
+			BotState::Offline => 'inverse',
+			BotState::Retired => 'inverse',
+			BotState::Maintenance => 'info'
 		);
 
 		return $s2c[$bot->getStatus()];

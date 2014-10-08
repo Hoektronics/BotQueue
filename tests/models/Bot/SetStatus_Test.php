@@ -184,7 +184,7 @@ class SetStatusTest extends BotQueue_Unit_Test
 		$this->states[BotState::Error][BotState::Waiting] = false;
 		$this->states[BotState::Error][BotState::Error] = true;
 		$this->states[BotState::Error][BotState::Maintenance] = true;
-		$this->states[BotState::Error][BotState::Offline] = false;
+		$this->states[BotState::Error][BotState::Offline] = true;
 		$this->states[BotState::Error][BotState::Retired] = false;
 	}
 
@@ -196,7 +196,7 @@ class SetStatusTest extends BotQueue_Unit_Test
 		$this->states[BotState::Offline][BotState::Working] = false;
 		$this->states[BotState::Offline][BotState::Paused] = false;
 		$this->states[BotState::Offline][BotState::Waiting] = false;
-		$this->states[BotState::Offline][BotState::Error] = false;
+		$this->states[BotState::Offline][BotState::Error] = true;
 		$this->states[BotState::Offline][BotState::Maintenance] = true;
 		$this->states[BotState::Offline][BotState::Offline] = true;
 		$this->states[BotState::Offline][BotState::Retired] = true;

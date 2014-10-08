@@ -111,6 +111,7 @@ class Bot extends Model
 		} else if ($this->getStatus() == BotState::Error) {
 			switch ($status) {
 				case BotState::Idle:
+				case BotState::Offline:
 				case BotState::Maintenance:
 					break;
 				default:
@@ -127,6 +128,7 @@ class Bot extends Model
 		} else if ($this->getStatus() == BotState::Offline) {
 			switch ($status) {
 				case BotState::Idle:
+				case BotState::Error:
 				case BotState::Retired:
 				case BotState::Maintenance:
 					break;

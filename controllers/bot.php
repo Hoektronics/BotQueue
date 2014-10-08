@@ -88,26 +88,26 @@ class BotController extends Controller
 
 		$form->add(
 			TextField::name('name')
-			->label('Bot Name')
-			->help('What should humans call your bot?')
-			->required(true)
-			->value($bot->get('name'))
+				->label('Bot Name')
+				->help('What should humans call your bot?')
+				->required(true)
+				->value($bot->get('name'))
 		);
 
 		$form->add(
 			TextField::name('manufacturer')
-			->label('Manufacturer')
-			->help('Which company (or person) built your bot?')
-			->required(true)
-			->value($bot->get('manufacturer'))
+				->label('Manufacturer')
+				->help('Which company (or person) built your bot?')
+				->required(true)
+				->value($bot->get('manufacturer'))
 		);
 
 		$form->add(
 			TextField::name('model')
-			->label('Model')
-			->help('What is the model or name of your bot design?')
-			->required(true)
-			->value($bot->get('model'))
+				->label('Model')
+				->help('What is the model or name of your bot design?')
+				->required(true)
+				->value($bot->get('model'))
 		);
 
 		return $form;
@@ -169,16 +169,21 @@ class BotController extends Controller
 			//did we really get someone?
 			if (!$bot->isHydrated())
 				throw new Exception("Could not find that bot.");
+
+			$status = $this->args('status');
+
 			if (!$bot->isMine())
 				throw new Exception("You cannot view that bot.");
-			if ($bot->get('status') == 'retired')
+			if ($bot->get('status') == BotState::Retired)
 				throw new Exception("This bot is retired. You can't change it's status");
-			if (($bot->get('status') == 'working' || $bot->get('status') == 'slicing') && $this->args('status') == 'offline')
+			if (($bot->get('status') == BotState::Working || $bot->get('status') == BotState::Slicing) &&
+				$status == BotState::Offline
+			)
 				throw new Exception("You cannot take a working bot offline through the web interface.  You must stop the job from the client first.");
 
-			if ($this->args('status') == 'offline')
+			if ($status == BotState::Offline)
 				Activity::log("took the bot " . $bot->getLink() . " offline.");
-			else
+			else if ($status == BotState::Idle)
 				Activity::log("brought the bot " . $bot->getLink() . " online.");
 
 			//do we need to drop a job?
@@ -189,7 +194,7 @@ class BotController extends Controller
 			//save it and clear out some junk
 			$bot->set('temperature_data', '');
 			$bot->set('error_text', '');
-			$bot->setStatus($this->args('status'));
+			$bot->setStatus($status);
 			$bot->save();
 
 			$this->forwardToUrl("/");
@@ -330,6 +335,51 @@ class BotController extends Controller
 		} catch (Exception $e) {
 			$this->set('megaerror', $e->getMessage());
 			$this->setTitle("Bot Edit - Error");
+		}
+	}
+
+	public function error()
+	{
+		$this->assertLoggedIn();
+
+		try {
+			//how do we find them?
+			if ($this->args('id'))
+				$bot = new Bot($this->args('id'));
+			else
+				throw new Exception("This shouldn't happen");
+
+			//did we really get someone?
+			if (!$bot->isHydrated())
+				throw new Exception("Could not find that bot.");
+
+			if (!$bot->isMine())
+				throw new Exception("You cannot view that bot.");
+
+			$this->setTitle('Error mode - ' . $bot->getName());
+
+			//load up our form.
+			$form = $this->_createErrorForm($bot);
+			$form->action = $bot->getUrl() . "/error";
+
+			//handle our form
+			if ($form->checkSubmitAndValidate($this->args())) {
+				if ($form->data('failure_reason') == 'Other')
+					$error_text = $form->data('failure_reason_other');
+				else
+					$error_text = $form->data('failure_reason');
+
+				$bot->set('error_text', $error_text);
+				$bot->setStatus(BotState::Error);
+				$bot->save();
+
+				$this->forwardToUrl("/");
+			}
+
+			$this->set('form', $form);
+		} catch (Exception $e) {
+			$this->set('megaerror', $e->getMessage());
+			$this->setTitle("Error setting bot status to Error");
 		}
 	}
 
@@ -482,58 +532,84 @@ class BotController extends Controller
 
 		$form->add(
 			DisplayField::name('bot')
-			->label('Bot Name')
-			->value($bot->getLink())
+				->label('Bot Name')
+				->value($bot->getLink())
 		);
 
 		$form->add(
 			DisplayField::name('job')
-			->label('Job Name')
-			->value($job->getLink())
+				->label('Job Name')
+				->value($job->getLink())
 		);
 
 		$form->add(
 			CheckboxField::name('take_offline')
-			->label('Take Offline')
-			->help('Should the bot be taken offline afterwards?')
-			->value(false)
-		);
-
-		$form->add(
-			CheckboxField::name('take_offline')
-			->label('Take Offline')
-			->help('Should the bot be taken offline afterwards?')
-			->value(false)
+				->label('Take Offline')
+				->help('Should the bot be taken offline afterwards?')
+				->value(false)
 		);
 
 		$form->add(
 			CheckboxField::name('cancel_job')
-			->label('Cancel Job')
-			->help('Do you want to cancel this job?')
-			->value(false)
+				->label('Cancel Job')
+				->help('Do you want to cancel this job?')
+				->value(false)
 		);
 
 		$form->add(
 			CheckboxField::name('job_error')
-			->label('Job/Bot Error')
-			->help('Where there errors with the job or bot?')
-			->value(false)
+				->label('Job/Bot Error')
+				->help('Where there errors with the job or bot?')
+				->value(false)
 		);
 
 		$form->add(
 			SelectField::name('failure_reason')
-			->label('Reason for failure')
-			->help('Please enter a reason for rejecting this print.')
-			->required(true)
-			->options(self::$failure_options)
+				->label('Reason for failure')
+				->help('Please enter a reason for rejecting this print.')
+				->required(true)
+				->options(self::$failure_options)
 		);
 
 		$form->add(
 			TextField::name('failure_reason_other')
-			->label('Other Reason')
-			->help('If you selected "other" above, please enter the reason here.')
-			->required(false)
-			->value("")
+				->label('Other Reason')
+				->help('If you selected "other" above, please enter the reason here.')
+				->required(false)
+				->value("")
+		);
+
+		return $form;
+	}
+
+	/**
+	 * @param $bot Bot
+	 * @return Form the form we return
+	 */
+	public function _createErrorForm($bot)
+	{
+		$form = new Form();
+
+		$form->add(
+			DisplayField::name('bot')
+				->label('Bot Name')
+				->value($bot->getLink())
+		);
+
+		$form->add(
+			SelectField::name('failure_reason')
+				->label('Reason for failure')
+				->help('Please enter a reason for rejecting this print.')
+				->required(true)
+				->options(self::$failure_options)
+		);
+
+		$form->add(
+			TextField::name('failure_reason_other')
+				->label('Other Reason')
+				->help('If you selected "other" above, please enter the reason here.')
+				->required(false)
+				->value("")
 		);
 
 		return $form;
@@ -661,53 +737,53 @@ class BotController extends Controller
 
 		$form->add(
 			DisplayField::name('title')
-			->label('')
-			->value('<h2>Information / Details</h2>')
+				->label('')
+				->value('<h2>Information / Details</h2>')
 		);
 
 		$form->add(
 			TextField::name('name')
-			->label('Bot Name')
-			->help('What should humans call your bot?')
-			->required(true)
-			->value($bot->get('name'))
+				->label('Bot Name')
+				->help('What should humans call your bot?')
+				->required(true)
+				->value($bot->get('name'))
 		);
 
 		$form->add(
 			TextField::name('manufacturer')
-			->label('Manufacturer')
-			->help('Which company (or person) built your bot?')
-			->required(true)
-			->value($bot->get('manufacturer'))
+				->label('Manufacturer')
+				->help('Which company (or person) built your bot?')
+				->required(true)
+				->value($bot->get('manufacturer'))
 		);
 
 		$form->add(
 			TextField::name('model')
-			->label('Model')
-			->help('What is the model or name of your bot design?')
-			->required(true)
-			->value($bot->get('model'))
+				->label('Model')
+				->help('What is the model or name of your bot design?')
+				->required(true)
+				->value($bot->get('model'))
 		);
 
 		$form->add(
 			TextField::name('electronics')
-			->label('Electronics')
-			->help('What electronics are you using to control your bot?')
-			->value($bot->get('electronics'))
+				->label('Electronics')
+				->help('What electronics are you using to control your bot?')
+				->value($bot->get('electronics'))
 		);
 
 		$form->add(
 			TextField::name('firmware')
-			->label('Firmware')
-			->help('What firmware are you running on your electronics?')
-			->value($bot->get('firmware'))
+				->label('Firmware')
+				->help('What firmware are you running on your electronics?')
+				->value($bot->get('firmware'))
 		);
 
 		$form->add(
 			TextField::name('extruder')
-			->label('Extruder')
-			->help('What extruder are you using to print with?')
-			->value($bot->get('extruder'))
+				->label('Extruder')
+				->help('What extruder are you using to print with?')
+				->value($bot->get('extruder'))
 		);
 
 		return $form;
@@ -758,8 +834,8 @@ class BotController extends Controller
 
 		$form->add(
 			DisplayField::name('title')
-			->label('')
-			->value('<h2>Slicing Setup</h2>')
+				->label('')
+				->value('<h2>Slicing Setup</h2>')
 		);
 
 		//load up our queues.
@@ -775,37 +851,37 @@ class BotController extends Controller
 
 		$form->add(
 			CheckboxField::name('can_slice')
-			->label('Client Slicing Enabled?')
-			->help('Is the controlling computer fast enough to slice?')
-			->value($config->can_slice)
+				->label('Client Slicing Enabled?')
+				->help('Is the controlling computer fast enough to slice?')
+				->value($config->can_slice)
 		);
 
 		$form->add(
 			SelectField::name('queue_id')
-			->label('Queue')
-			->help('Which queue does this bot pull jobs from?')
-			->required(true)
-			->value($bot->get('queue_id'))
-			->options($queueList)
+				->label('Queue')
+				->help('Which queue does this bot pull jobs from?')
+				->required(true)
+				->value($bot->get('queue_id'))
+				->options($queueList)
 		);
 
 		$form->add(
 			SelectField::name('slice_engine_id')
-			->id('slice_engine_dropdown')
-			->label('Slice Engine')
-			->help('Which slicing engine does this bot use?')
-			->value($bot->get('slice_engine_id'))
-			->options($engineList)
-			->onchange('update_slice_config_dropdown(this)')
+				->id('slice_engine_dropdown')
+				->label('Slice Engine')
+				->help('Which slicing engine does this bot use?')
+				->value($bot->get('slice_engine_id'))
+				->options($engineList)
+				->onchange('update_slice_config_dropdown(this)')
 		);
 
 		$form->add(
 			SelectField::name('slice_config_id')
-			->id('slice_config_dropdown')
-			->label('Slice Configuration')
-			->help('Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.')
-			->value($bot->get('slice_config_id'))
-			->options($configList)
+				->id('slice_config_dropdown')
+				->label('Slice Configuration')
+				->help('Which slicing configuration to use? <a href="/slicers">click here</a> to view/edit configs.')
+				->value($bot->get('slice_config_id'))
+				->options($configList)
 		);
 
 		return $form;
@@ -826,8 +902,8 @@ class BotController extends Controller
 		} else
 			$configList[0] = "None";
 
-		foreach($configList as $id => $name)
-			echo '<option value="' . $id . '">' . $name. '</option>' . "\n";
+		foreach ($configList as $id => $name)
+			echo '<option value="' . $id . '">' . $name . '</option>' . "\n";
 
 		exit;
 	}
@@ -859,40 +935,34 @@ class BotController extends Controller
 
 		$form->add(
 			DisplayField::name('title')
-			->label('')
-			->value("<h2>Driver Configuration</h2>")
+				->label('')
+				->value("<h2>Driver Configuration</h2>")
 		);
 
 		$form->add(
 			SelectField::name('oauth_token_id')
-			->id('oauth_token_dropdown')
-			->label('Computer')
-			->help('Which computer is this bot connected to? <a href="/apps">Full list in the apps area.</a>')
-			->value($bot->get('oauth_token_id'))
-			->options($apps)
-			->onchange('update_driver_form(this)')
+				->id('oauth_token_dropdown')
+				->label('Computer')
+				->help('Which computer is this bot connected to? <a href="/apps">Full list in the apps area.</a>')
+				->value($bot->get('oauth_token_id'))
+				->options($apps)
+				->onchange('update_driver_form(this)')
 		);
 
 		$form->add(
 			SelectField::name('driver_name')
-			->id('driver_name_dropdown')
-			->label('Driver Name')
-			->help('Which driver to use? <a href="/help">More info available in the help area.</a>')
-			->required(true)
-			->value($bot->get('driver_name'))
-			->options($drivers)
-			->onchange('update_driver_form(this)')
+				->id('driver_name_dropdown')
+				->label('Driver Name')
+				->help('Which driver to use? <a href="/help">More info available in the help area.</a>')
+				->required(true)
+				->value($bot->get('driver_name'))
+				->options($drivers)
+				->onchange('update_driver_form(this)')
 		);
-
-		// $driver_form = Controller::byName('bot')->renderView('driver_form', array(
-		//   'bot_id' => $bot->id,
-		//   'driver' => $bot->get('driver_name'),
-		//   'token_id' => $bot->get('oauth_token_id')
-		// ));
 
 		$form->add(
 			RawField::name("driver_edit_area")
-			->value('<div id="driver_edit_area"></div>')
+				->value('<div id="driver_edit_area"></div>')
 		);
 
 		return $form;
@@ -988,9 +1058,13 @@ class BotController extends Controller
 		$this->set('bot', $bot);
 	}
 
-	public function thumbnail() {} // Template
+	public function thumbnail()
+	{
+	} // Template
 
-	public function dashboard_list() {} // Template
+	public function dashboard_list()
+	{
+	} // Template
 
 	public function live()
 	{

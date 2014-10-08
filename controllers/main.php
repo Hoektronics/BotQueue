@@ -371,6 +371,12 @@ class MainController extends Controller
 			"text" => "delete bot"
 		);
 
+		$buttons['error'] = array(
+			"url" => $bot->getURL() . "/error",
+			"icon" => "icon-exclamation-sign",
+			"text" => "error mode"
+		);
+
 		return $buttons;
 	}
 
@@ -422,18 +428,22 @@ class MainController extends Controller
 		} else if ($status == BotState::Idle) {
 			$menu[] = $buttons['offline'];
 			$menu[] = $buttons['edit'];
+			$menu[] = $buttons['error'];
 			$menu[] = $buttons['delete'];
 		} else if ($status == BotState::Offline) {
 			$menu[] = $buttons['online'];
 			$menu[] = $buttons['edit'];
+			$menu[] = $buttons['error'];
 			$menu[] = $buttons['delete'];
 			$menu[] = $buttons['retire'];
 		} else if ($status == BotState::Maintenance) {
 			$menu[] = $buttons['online'];
+			$menu[] = $buttons['offline'];
 			$menu[] = $buttons['edit'];
 			$menu[] = $buttons['delete'];
 		} else if ($status == BotState::Error) {
 			$menu[] = $buttons['online'];
+			$menu[] = $buttons['offline'];
 			$menu[] = $buttons['edit'];
 			$menu[] = $buttons['delete'];
 		} else if ($status == BotState::Retired) {
