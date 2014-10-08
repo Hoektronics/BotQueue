@@ -284,6 +284,29 @@ class Utility
 //			return "???";
 //	}
 
+	public static function getElapsedShort($datediff) {
+		$min = round($datediff / (60));
+		$hours = round($datediff / (60 * 60), 1);
+		$days = round($datediff / (60 * 60 * 24), 2);
+		$months = round($datediff / (60 * 60 * 24 * 31), 2);
+		$years = round($datediff / (60 * 60 * 24 * 365), 2);
+
+		if ($datediff < 100) { // seconds
+			if ($datediff == 0) return "none";
+			return round($datediff) . "s";
+		} else if ($min < 100) {
+			return "$min" . "m";
+		} else if ($hours < 100) {
+			return "$hours" . "h";
+		} else if ($days < 10) {
+			return "$days" . "d";
+		} else if ($months < 12) {
+			return "$months month" . self::pluralizer($months > 1);
+		} else {
+			return "$years year" . self::pluralizer($years > 1);
+		}
+	}
+
 	public static function getElapsed($datediff)
 	{
 		$min = round($datediff / (60));

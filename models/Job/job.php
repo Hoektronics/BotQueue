@@ -210,7 +210,7 @@ class Job extends Model
 
 	public function getEstimatedText()
 	{
-		return Utility::getElapsed($this->getEstimatedTime());
+		return Utility::getElapsedShort($this->getEstimatedTime());
 	}
 
 	public function logError($error)

@@ -740,6 +740,7 @@ class JobController extends Controller
 			CheckboxField::name('priority')
 				->label('Is this a priority job?')
 				->help('Check this box to push this job to the top of the queue')
+				->checked(false)
 		);
 
 		return $form;

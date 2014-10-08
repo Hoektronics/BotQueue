@@ -52,7 +52,7 @@
 						<input type="text" id="global_qty" value="1" class="input-mini">
 						<input type="button" id="global_qty_btn" class="btn btn-primary" value="Update">
 					</div>
-					<label class="checkbox"><input type="checkbox" id="global_priority" value="1"> Are these all
+					<label class="checkbox"><input type="checkbox" id="global_priority"> Are these all
 						priority jobs?</label>
 					<input type="submit" name="submit" class="btn btn-primary" value="Create the Jobs!">
 				</div>
@@ -78,7 +78,7 @@
 								</td>
 								<td style="font-size: 125%"><?= $kid->getLink() ?></td>
 								<td align="center"><input type="checkbox" class="job_priority"
-														  name="priority[<?= $kid->id ?>]" value="1"></td>
+														  name="priority[<?= $kid->id ?>]"></td>
 								<td>
 									<select class="job_queue" name="queues[<?= $kid->id ?>]">
 										<? foreach ($queues AS $row2): ?>
