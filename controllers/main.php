@@ -466,7 +466,6 @@ class MainController extends Controller
 			}
 
 			$temps = JSON::decode($bot->get('temperature_data'));
-			error_log($temps);
 			if ($bot->get('status') == BotState::Working && $temps !== NULL) {
 				if (isset($temps->extruder))
 					$botData['temp_extruder'] = $temps->extruder;
