@@ -64,6 +64,8 @@ class MainController extends Controller
 			"var initialData = " . Controller::byName('main')->renderView('dashboardbb'),
 			"text/javascript"
 		);
+
+		$this->addScript("js/backbone.js");
 	}
 
 	public function dashboardbb()

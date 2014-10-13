@@ -114,11 +114,16 @@
 
 </div>
 
-<? if (!empty(Controller::$scripts)): ?>
-	<? foreach (Controller::$scripts AS $id => $content): ?>
+<? if (!empty(Controller::$scriptContents)): ?>
+	<? foreach (Controller::$scriptContents AS $id => $content): ?>
 		<script type="<?= Controller::$scriptTypes[$id] ?>" id="<?= $id ?>">
 			<?= $content ?>
 		</script>
+	<? endforeach ?>
+<? endif ?>
+<? if (!empty(Controller::$scripts)): ?>
+	<? foreach (Controller::$scripts AS $src): ?>
+		<script src="<?= $src ?>"></script>
 	<? endforeach ?>
 <? endif ?>
 <script src="/js/botqueue.js"></script>
