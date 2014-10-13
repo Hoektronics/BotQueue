@@ -31,8 +31,8 @@
 	<script language="javascript" type="text/javascript" src="/js/jquery.flot.tooltip.min.js"></script>
 
 	<!-- Backbone -->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js" type="text/javascript"></script>
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js" type="text/javascript"></script>
 
 	<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		<script type="text/javascript">
