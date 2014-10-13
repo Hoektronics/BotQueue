@@ -193,7 +193,7 @@ class Job extends Model
 
 	public function getElapsedText()
 	{
-		return Utility::getElapsed($this->getElapsedTime());
+		return Utility::getElapsedShort($this->getElapsedTime());
 	}
 
 	public function getEstimatedTime()
