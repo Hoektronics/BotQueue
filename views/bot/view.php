@@ -50,7 +50,7 @@
 				<? if ($app->isHydrated()): ?>
 					<tr>
 						<th>Assigned to:</th>
-						<td><a href="<?= $app->getUrl() ?>/edit"><?= $app->getName() ?></a></td>
+						<td><a href="<?= $app->getUrl() ?>"><?= $app->getName() ?></a></td>
 					</tr>
 				<? else: ?>
 					<tr>

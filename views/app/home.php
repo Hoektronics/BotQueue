@@ -94,7 +94,7 @@
 						<? $t = $row['OAuthToken'] ?>
 
 						<tr>
-							<td><?= $t->getName() ?></td>
+							<td><?= $t->getLink() ?></td>
 							<td><?= $a->getLink() ?></td>
 							<td>
 								<a href="<?= $t->getUrl() ?>/edit" class="btn btn-primary btn-mini">manage</a>

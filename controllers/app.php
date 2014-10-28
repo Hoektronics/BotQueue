@@ -74,42 +74,28 @@ class AppController extends Controller
 		$this->set('area', 'app');
 
 		try {
-			$app = new OAuthConsumer($this->args('app_id'));
-			if (!$app->isHydrated())
+			$consumer = new OAuthConsumer($this->args('app_id'));
+			if (!$consumer->isHydrated())
 				throw new Exception("This app does not exist.");
-			if (!User::$me->isAdmin() && $app->get('user_id') != User::$me->id)
+			if (!User::$me->isAdmin() && $consumer->get('user_id') != User::$me->id)
 				throw new Exception("You are not authorized to edit this app.");
 
-			$this->set('app', $app);
-			$this->setTitle('Edit App - ' . $app->getName());
+			$this->setTitle('Edit App - ' . $consumer->getName());
+			$form = $this->_editAppConsumerForm($consumer);
 
-			if ($this->args('submit')) {
-				if (!$this->args('name')) {
-					$errors['name'] = "You must enter a name.";
-					$errorfields['name'] = 'error';
-				}
+			//did they submit it?
+			if ($form->checkSubmitAndValidate($this->args())) {
+				$consumer->set('name', $form->data('name'));
+				$consumer->set('app_url', $form->data('url'));
+				$consumer->save();
 
-				if (!$this->args('app_url')) {
-					$errors['app_url'] = "You must enter a url for the app.";
-					$errorfields['app_url'] = 'error';
-				}
-
-				if (empty($errors) && empty($errorfields)) {
-					$app->set('name', $this->args('name'));
-					$app->set('app_url', $this->args('app_url'));
-					$app->save();
-
-					Activity::log("edited the app named " . $app->getLink() . ".");
-
-					$this->forwardToUrl($app->getUrl());
-				} else {
-					$this->set('errors', $errors);
-					$this->set('errorfields', $errorfields);
-					$this->set('error', "There was an error editing your app.");
-				}
+				$this->forwardToUrl("/app:" . $consumer->id);
 			}
+
+			$this->set('apps', $consumer->getApps()->getAll());
+			$this->set('form', $form);
 		} catch (Exception $e) {
-			$this->setTitle('Edit App - Error');
+			$this->setTitle('Error');
 			$this->set('megaerror', $e->getMessage());
 		}
 	}
@@ -148,13 +134,14 @@ class AppController extends Controller
 		$this->set('area', 'app');
 
 		try {
-			$app = new OAuthConsumer($this->args('app_id'));
-			if (!$app->isHydrated())
+			$consumer = new OAuthConsumer($this->args('app_id'));
+			if (!$consumer->isHydrated())
 				throw new Exception("This app does not exist.");
 
-			$this->setTitle("View App - " . $app->getName());
+			$this->setTitle("View App - " . $consumer->getName());
 
-			$this->set('app', $app);
+			$this->set('apps', $consumer->getApps()->getAll());
+			$this->set('consumer', $consumer);
 		} catch (Exception $e) {
 			$this->setTitle('View App - Error');
 			$this->set('megaerror', $e->getMessage());
@@ -251,6 +238,28 @@ class AppController extends Controller
 		}
 	}
 
+	public function view_token()
+	{
+		$this->assertLoggedIn();
+		$this->set('area', 'app');
+
+		try {
+			$token = new OAuthToken($this->args('id'));
+			if (!$token->isHydrated())
+				throw new Exception("This app does not exist.");
+			if(!User::$me->isHydrated() && $token->get('user_id') != User::$me->id)
+				throw new Exception("You are not authorized to edit this token.");
+
+			$this->setTitle("View App Token - " . $token->getName());
+
+			$this->set('bots', $token->getActiveBots()->getAll());
+			$this->set('token', $token);
+		} catch (Exception $e) {
+			$this->setTitle('View App - Error');
+			$this->set('megaerror', $e->getMessage());
+		}
+	}
+
 	//deletes an access token from an app.
 	public function edit_token()
 	{
@@ -272,7 +281,7 @@ class AppController extends Controller
 				$token->set('name', $form->data('name'));
 				$token->save();
 
-				$this->forwardToUrl("/apps");
+				$this->forwardToUrl("/app/token:" . $token->id);
 			}
 
 			$this->set('bots', $token->getActiveBots()->getAll());
@@ -291,7 +300,7 @@ class AppController extends Controller
 	{
 		$form = new Form();
 		$form->action = $token->getUrl() . "/edit";
-		$form->submitText = "Submit";
+		$form->submitText = "Save";
 
 		$form->add(
 			TextField::name('name')
@@ -316,21 +325,19 @@ class AppController extends Controller
 			if ($token->get('type') == 2 && $token->get('user_id') != User::$me->id)
 				throw new Exception("You are not authorized to delete this app.");
 
-			$app = $token->getConsumer();
 
 			if ($token->get('type') == 2)
-				$this->setTitle('Revoke App Permissions - ' . $app->getName());
+				$this->setTitle('Revoke App Permissions - ' . $token->getName());
 			else
-				$this->setTitle('Deny App - ' . $app->getName());
+				$this->setTitle('Deny App - ' . $token->getName());
 
 			$this->set('token', $token);
-			$this->set('app', $app);
 
 			if ($this->args('submit')) {
 				if ($token->get('type') == 2)
-					Activity::log("removed the app named " . $app->getLink() . ".");
+					Activity::log("removed the app named " . $token->getLink() . ".");
 				else
-					Activity::log("denied the app named " . $app->getLink() . ".");
+					Activity::log("denied the app named " . $token->getLink() . ".");
 
 				$token->delete();
 				$this->forwardToUrl("/apps");
@@ -339,5 +346,32 @@ class AppController extends Controller
 			$this->setTitle('Error');
 			$this->set('megaerror', $e->getMessage());
 		}
+	}
+
+	/**
+	 * @param $consumer OAuthConsumer
+	 * @return Form
+	 */
+	private function _editAppConsumerForm($consumer)
+	{
+		$form = new Form();
+		$form->action = $consumer->getUrl() . "/edit";
+		$form->submitText = "Save";
+
+		$form->add(
+			TextField::name('name')
+				->label('Name')
+				->value($consumer->getName())
+				->help("What do you call your app?")
+		);
+
+		$form->add(
+			TextField::name('url')
+				->label('App URL / Website')
+				->value($consumer->get('app_url'))
+				->help("Homepage with more information about your app.")
+		);
+
+		return $form;
 	}
 }

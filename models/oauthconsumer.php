@@ -98,4 +98,16 @@ class OAuthConsumer extends Model
 
 		parent::delete();
 	}
+
+	public function getApps()
+	{
+		$sql = "SELECT id
+				FROM oauth_token
+				WHERE consumer_id = ?";
+
+		$apps = new Collection($sql, array($this->id));
+		$apps->bindType('id', 'OAuthToken');
+
+		return $apps;
+	}
 }
