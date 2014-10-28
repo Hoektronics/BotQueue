@@ -103,9 +103,10 @@ class OAuthConsumer extends Model
 	{
 		$sql = "SELECT id
 				FROM oauth_token
-				WHERE consumer_id = ?";
+				WHERE consumer_id = ?
+				AND user_id = ?";
 
-		$apps = new Collection($sql, array($this->id));
+		$apps = new Collection($sql, array($this->id, User::$me->id));
 		$apps->bindType('id', 'OAuthToken');
 
 		return $apps;
