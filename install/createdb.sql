@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `bots` (
   `extruder` varchar(255) NOT NULL DEFAULT '',
   `queue_id` int(11) NOT NULL DEFAULT '0',
   `job_id` int(11) NOT NULL DEFAULT '0',
-  `error_text` varchar(255) NOT NULL DEFAULT '',
+  `error_text` text NOT NULL DEFAULT '',
   `slice_config_id` int(11) unsigned NOT NULL,
   `slice_engine_id` int(11) unsigned NOT NULL,
   `temperature_data` longtext NOT NULL,
@@ -349,4 +349,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(12, 'Expanded temperature data fields');
+INSERT INTO patches(patch_num, description) VALUES(13, 'Expanded error_text field');
