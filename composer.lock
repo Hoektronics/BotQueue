@@ -4,32 +4,32 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "22b6e52e657de205200acae7f2d3852a",
+    "hash": "fb9d0b57b2794429d00ebe648e8252ae",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "dev-master",
+            "version": "2.6.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "507edf2d8eae3b5689baee0ad8253e968995682b"
+                "reference": "36434f2cd96ea78844478d897fb568a1866bce5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/507edf2d8eae3b5689baee0ad8253e968995682b",
-                "reference": "507edf2d8eae3b5689baee0ad8253e968995682b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/36434f2cd96ea78844478d897fb568a1866bce5a",
+                "reference": "36434f2cd96ea78844478d897fb568a1866bce5a",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": "~3.7",
+                "guzzle/guzzle": ">=3.7.0,<=3.9.9",
                 "php": ">=5.3.3"
             },
             "require-dev": {
                 "doctrine/cache": "~1.0",
                 "ext-openssl": "*",
-                "monolog/monolog": "~1.4",
-                "phpunit/phpunit": "~4.0",
-                "symfony/yaml": "~2.1"
+                "monolog/monolog": "1.4.*",
+                "phpunit/phpunit": "4.*",
+                "symfony/yaml": "2.*"
             },
             "suggest": {
                 "doctrine/cache": "Adds support for caching of credentials and responses",
@@ -41,7 +41,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.6.x-dev"
                 }
             },
             "autoload": {
@@ -71,7 +71,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2014-10-27 22:12:54"
+            "time": "2014-09-11 22:10:11"
         },
         {
             "name": "cboden/ratchet",
@@ -630,6 +630,8 @@
         "swiftmailer/swiftmailer": 0
     },
     "prefer-stable": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.3"
+    },
     "platform-dev": []
 }
