@@ -389,8 +389,6 @@ class MainController extends Controller
 	 */
 	private function _getBotData($bot, $job)
 	{
-		$sliceJob = $job->getSliceJob();
-
 		$botData = array();
 		$botData['id'] = $bot->id;
 		$botData['name'] = $bot->getName();
@@ -479,9 +477,12 @@ class MainController extends Controller
 				$jobData['qa_url'] = $job->getUrl() . "/qa";
 			}
 
+			$sliceJob = $job->getSliceJob();
+
 			if ($job->get('status') == 'slicing' &&
 				$sliceJob->get('status') == 'pending'
 			) {
+				error_log("Setting qa_url to ".$sliceJob->getUrl());
 				$jobData['qa_url'] = $sliceJob->getUrl();
 				$jobData['bar_class'] = "bar-warning";
 				// Set it to 100% so it actually displays

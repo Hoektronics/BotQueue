@@ -54,14 +54,12 @@
     <td class="muted"><%= bot.job.elapsed %></td>
     <td class="muted"><%= bot.job.estimated %></td>
     <td style="width:250px">
-      <% if (bot.job.status == 'qa') { %>
       <% if (typeof(bot.job.qa_url) !== "undefined") { %>
       <div class="manage-job pull-right">
         <a class="btn btn-success btn-mini" href="<%= bot.job.qa_url %>/pass">PASS</a>
         <a class="btn btn-primary btn-mini" href="<%= bot.job.qa_url %>">VIEW</a>
         <a class="btn btn-danger btn-mini" href="<%= bot.job.qa_url %>/fail">FAIL</a>
       </div>
-      <% } %>
       <% } else { %>
       <div class="progress progress-striped active" style="width: 250px">
         <div class="bar <%= bot.job.bar_class %>"
