@@ -68,6 +68,15 @@ class MainController extends Controller
 		$this->addScript("js/backbone.js");
 	}
 
+	public function dashboard_medium_thumbnails()
+	{
+		$this->setArg('bots');
+	}
+	public function dashboard_small_thumbnails()
+	{
+		$this->setArg('bots');
+	}
+
 	public function dashboardbb()
 	{
 		if (!User::isLoggedIn()) {
@@ -482,7 +491,6 @@ class MainController extends Controller
 			if ($job->get('status') == 'slicing' &&
 				$sliceJob->get('status') == 'pending'
 			) {
-				error_log("Setting qa_url to ".$sliceJob->getUrl());
 				$jobData['qa_url'] = $sliceJob->getUrl();
 				$jobData['bar_class'] = "bar-warning";
 				// Set it to 100% so it actually displays

@@ -5,20 +5,17 @@
 			<th>Name</th>
 			<th>Status</th>
 			<th>Last Seen</th>
-			<th>Queue</th>
 			<th>Job</th>
 		</tr>
 		</thead>
 		<tbody>
 		<? foreach ($bots AS $row): ?>
 			<? $b = $row['Bot'] ?>
-			<? $q = $row['Queue'] ?>
 			<? $j = $row['Job'] ?>
 			<tr>
 				<td><?=$b->getLink()?></td>
 				<td><?=BotStatus::getStatusHTML($b);?></td>
 				<td><?=Utility::relativeTime($b->get('last_seen'))?></td>
-				<td><?=$q->getLink()?></td>
 				<? if ($j->isHydrated()): ?>
 					<td><?=$j->getLink()?></td>
 				<? else: ?>

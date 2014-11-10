@@ -79,7 +79,7 @@ class OAuthToken extends Model
 
 	public function getActiveBots()
 	{
-		$sql = "SELECT id, queue_id, job_id
+		$sql = "SELECT id
 				FROM bots
 				WHERE oauth_token_id = ?
 				AND status != 'retired'
@@ -87,8 +87,6 @@ class OAuthToken extends Model
 
 		$bots = new Collection($sql, array($this->id));
 		$bots->bindType('id', 'Bot');
-		$bots->bindType('queue_id', 'Queue');
-		$bots->bindType('job_id', 'Job');
 
 		return $bots;
 	}

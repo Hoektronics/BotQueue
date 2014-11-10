@@ -59,8 +59,12 @@
 					</tr>
 				<? endif ?>
 				<tr>
-					<th>Queue:</th>
-					<td><?= $queue->getLink() ?></td>
+					<th>Queue(s):<br></th>
+					<td>
+						<? foreach ($queue as $row): ?>
+							<?= $row['Queue']->getLink() ?><br>
+						<? endforeach ?>
+					</td>
 				</tr>
 				<tr>
 					<th>Slice Engine:</th>

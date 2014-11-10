@@ -264,30 +264,13 @@ class User extends Model
 
     public function getBots()
     {
-        $sql = "SELECT id, queue_id, job_id
+        $sql = "SELECT id, job_id
 				FROM bots
 				WHERE user_id = ?
 				ORDER BY name";
 
 		$bots = new Collection($sql, array($this->id));
 		$bots->bindType('id', 'Bot');
-		$bots->bindType('queue_id', 'Queue');
-		$bots->bindType('job_id', 'Job');
-
-		return $bots;
-    }
-
-    public function getRetiredBots()
-    {
-        $sql = "SELECT id, queue_id, job_id
-				FROM bots
-				WHERE user_id = ?
-				AND status = 'retired'
-				ORDER BY name";
-
-		$bots = new Collection($sql, array($this->id));
-		$bots->bindType('id', 'Bot');
-		$bots->bindType('queue_id', 'Queue');
 		$bots->bindType('job_id', 'Job');
 
 		return $bots;
@@ -295,7 +278,7 @@ class User extends Model
 
     public function getActiveBots()
     {
-        $sql = "SELECT id, queue_id, job_id
+        $sql = "SELECT id, job_id
 				FROM bots
 				WHERE user_id = ?
 				AND status != 'retired'
@@ -303,7 +286,6 @@ class User extends Model
 
 		$bots = new Collection($sql, array($this->id));
 		$bots->bindType('id', 'Bot');
-		$bots->bindType('queue_id', 'Queue');
 		$bots->bindType('job_id', 'Job');
 
 		return $bots;

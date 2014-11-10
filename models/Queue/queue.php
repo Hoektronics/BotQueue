@@ -105,13 +105,14 @@ class Queue extends Model
 
     public function getBots()
     {
-        $sql = "SELECT id
-				FROM bots
-				WHERE queue_id = ?
-				ORDER BY last_seen DESC";
+	    $sql = "SELECT bot_id
+	            FROM bot_queues, bots
+	            WHERE bot_queues.queue_id = ?
+	            AND bot_queues.bot_id = bots.id
+	            ORDER BY bots.last_seen DESC";
 
 		$bots = new Collection($sql, array($this->id));
-		$bots->bindType('id', 'Bot');
+		$bots->bindType('bot_id', 'Bot');
 
 		return $bots;
     }
@@ -168,6 +169,9 @@ class Queue extends Model
         $sql = "DELETE FROM error_log
 				WHERE queue_id = ?";
         db()->execute($sql, array($this->id));
+
+	    $sql = "DELETE FROM bot_queues WHERE queue_id = ?";
+	    db()->execute($sql, array($this->id));
 
         parent::delete();
     }

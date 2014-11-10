@@ -663,7 +663,7 @@ class APIV1Controller extends Controller
 	public function api_listbots()
 	{
 		$data = array();
-		$bots = User::$me->getActiveBots()->getRange(0, 100);
+		$bots = User::$me->getActiveBots()->getAll();
 		if (!empty($bots))
 			foreach ($bots AS $row) {
 				/* @var $bot Bot */
@@ -703,7 +703,7 @@ class APIV1Controller extends Controller
 
 		//load up our data.
 		$data = array();
-		$job = $bot->getQueue()->findNewJob($can_slice);
+		$job = $bot->findNewJob($can_slice);
 		if ($job->isHydrated())
 			$data = $job->getAPIData();
 
@@ -714,6 +714,7 @@ class APIV1Controller extends Controller
 		return $data;
 	}
 
+	#todo remove unused api registerbot
 	public function api_registerbot()
 	{
 		if (!$this->args('name'))
@@ -753,11 +754,6 @@ class APIV1Controller extends Controller
 
 		if (!$bot->isMine())
 			throw new Exception("This bot is not yours.");
-
-		//if (!$this->args('manufacturer'))
-		//	throw new Exception('Bot manufacturer is a required parameter.');
-		//if (!$this->args('model'))
-		//	throw new Exception('Bot model is a required parameter.');
 
 		if ($this->args('name'))
 			$bot->set('name', $this->args('name'));
@@ -854,7 +850,7 @@ class APIV1Controller extends Controller
 	public function api_getmybots()
 	{
 		$data = array();
-		$bots = $this->token->getActiveBots()->getRange(0, 100);
+		$bots = $this->token->getActiveBots()->getAll();
 		if (!empty($bots))
 			foreach ($bots AS $row) {
 				/* @var $bot Bot */

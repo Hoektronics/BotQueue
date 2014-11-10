@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS `bots` (
   `electronics` varchar(255) NOT NULL DEFAULT '',
   `firmware` varchar(255) NOT NULL DEFAULT '',
   `extruder` varchar(255) NOT NULL DEFAULT '',
-  `queue_id` int(11) NOT NULL DEFAULT '0',
   `job_id` int(11) NOT NULL DEFAULT '0',
   `error_text` text NOT NULL DEFAULT '',
   `slice_config_id` int(11) unsigned NOT NULL,
@@ -41,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `bots` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `identifier` (`identifier`),
-  KEY `queue_id` (`queue_id`),
   KEY `job_id` (`job_id`),
   KEY `oauth_token_id` (`oauth_token_id`),
   KEY `slice_config_id` (`slice_config_id`),
@@ -342,6 +340,15 @@ CREATE TABLE IF NOT EXISTS `patches` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE IF NOT EXISTS `bot_queues` (
+  `queue_id` int(11) unsigned NOT NULL,
+  `bot_id` int(11) unsigned NOT NULL,
+  `priority` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`queue_id`, `bot_id`, `priority`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = @saved_cs_client */;
 CREATE VIEW stats AS
   SELECT (unix_timestamp(end_date) - unix_timestamp(start_date)) AS seconds,
     bot_id, user_id, status, start_date, end_date
@@ -349,4 +356,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(13, 'Expanded error_text field');
+INSERT INTO patches(patch_num, description) VALUES(14, 'Added bots to queues');

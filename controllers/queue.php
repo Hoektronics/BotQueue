@@ -113,6 +113,7 @@ class QueueController extends Controller
             $this->set('stats', QueueStats::getStats($q));
 
             $bots = $q->getBots();
+	        error_log(print_r($bots->getAll(), true));
             $this->set('bots', $bots->getRange(0, 20));
             $this->set('bot_count', $bots->count());
 

@@ -133,9 +133,8 @@ class BotController extends Controller
 
 			$this->setTitle("View Bot - " . $bot->getName());
 
-			//errors?
 			$this->set('bot', $bot);
-			$this->set('queue', $bot->getQueue());
+			$this->set('queue', $bot->getQueues());
 			$this->set('job', $bot->getCurrentJob());
 			$this->set('engine', $bot->getSliceEngine());
 			$this->set('config', $bot->getSliceConfig());
@@ -271,6 +270,7 @@ class BotController extends Controller
 					$this->forwardToURL($bot->getUrl());
 				}
 			} else if ($slicingForm->checkSubmitAndValidate($this->args())) {
+				// todo: Switch this out with a queue section
 				$bot->set('queue_id', $slicingForm->data('queue_id'));
 				$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 				$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
@@ -1072,13 +1072,12 @@ class BotController extends Controller
 
 		$this->setTitle("Live Bots View");
 
-		$sql = "SELECT id, queue_id, job_id FROM bots WHERE webcam_image_id != 0 AND last_seen > NOW() - 3600 ORDER BY last_seen DESC";
+		$sql = "SELECT id, job_id FROM bots WHERE webcam_image_id != 0 AND last_seen > NOW() - 3600 ORDER BY last_seen DESC";
 		$bots = new Collection($sql);
 		$bots->bindType('id', 'Bot');
-		$bots->bindType('queue_id', 'Queue');
 		$bots->bindType('job_id', 'Job');
 
-		$this->set('bots', $bots->getRange(0, 24));
+		$this->set('bots', $bots->getAll());
 		$this->set('dashboard_style', 'medium_thumbnails');
 	}
 }

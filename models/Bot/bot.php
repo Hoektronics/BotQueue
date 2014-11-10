@@ -155,7 +155,8 @@ class Bot extends Model
 	{
 		$r = array();
 		$r['id'] = $this->id;
-		$r['queue_id'] = $this->get('queue_id'); //todo: implement bot_to_queues and make this better.
+		//todo add this back when we convert the queues to a json object
+		//$r['queues'] = $this->getQueues();
 		$r['identifier'] = $this->get('identifier');
 		$r['name'] = $this->getName();
 		$r['manufacturer'] = $this->get('manufacturer');
@@ -191,6 +192,9 @@ class Bot extends Model
 		//default our slicing value
 		if (!isset($config->can_slice))
 			$config->can_slice = True;
+
+		if(!isset($config->webcam))
+			$config->webcam = new stdClass;
 
 		return $config;
 	}
@@ -478,9 +482,35 @@ class Bot extends Model
 		$this->save();
 	}
 
-	public function getQueue()
+	public function getQueues()
 	{
-		return new Queue($this->get('queue_id'));
+		$sql = "SELECT queue_id
+				FROM bot_queues
+				WHERE bot_id = ?
+				ORDER BY priority ASC";
+		$data = array($this->id);
+
+		$queues = new Collection($sql, $data);
+		$queues->bindType('queue_id', 'Queue');
+
+		return $queues->getAll();
+	}
+
+	/**
+	 * @param bool $can_slice
+	 * @return Job
+	 */
+	public function findNewJob($can_slice = true) {
+		$queues = $this->getQueues();
+		foreach($queues AS $row) {
+			/** @var Queue $queue */
+			$queue = $row['Queue'];
+			$job = $queue->findNewJob($can_slice);
+			if($job->isHydrated()) {
+				return $job;
+			}
+		}
+		return new Job();
 	}
 
 	public function delete()
@@ -499,6 +529,10 @@ class Bot extends Model
 			$job_clock = $row['JobClockEntry'];
 			$job_clock->delete();
 		}
+
+		$sql = "delete from bot_queues where bot_id = ?";
+
+		db()->execute($sql, array($this->id));
 
 		parent::delete();
 	}

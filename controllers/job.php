@@ -722,7 +722,7 @@ class JobController extends Controller
 		$form->add(
 			SelectField::name('queue_id')
 				->label('Queue')
-				->help('Whcih queue are you adding this job to?')
+				->help('Which queue are you adding this job to?')
 				->required(true)
 				->options($qs)
 				->value($queue_id)
