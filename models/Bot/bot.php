@@ -308,6 +308,12 @@ class Bot extends Model
 		)
 			return false;
 
+		$sql = "select DATE_SUB(NOW(), INTERVAL queues.delay SECOND) > MAX(jobs.taken_time)
+			FROM queues, jobs
+			WHERE queues.id = jobs.queue_id";
+		if(db()->getValue($sql) == 0)
+			return false;
+
 		return true;
 	}
 

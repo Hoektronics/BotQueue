@@ -199,6 +199,7 @@ CREATE TABLE IF NOT EXISTS `queues` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
+  `delay` int(11) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -356,4 +357,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(14, 'Added bots to queues');
+INSERT INTO patches(patch_num, description) VALUES(15, 'Added queue delay');
