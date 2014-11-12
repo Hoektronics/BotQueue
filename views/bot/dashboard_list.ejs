@@ -34,9 +34,9 @@
     </td>
     <td class="muted"><%= bot.last_seen %></td>
     <% if (typeof(bot.job) !== "undefined") { %>
-    <td style="white-space: nowrap"><a href="<%= bot.job.url %>"><%= bot.job.name %></a></td>
+    <td style="white-space: nowrap; overflow:hidden; text-overflow:ellipsis"><a href="<%= bot.job.url %>"><%= bot.job.name %></a></td>
     <% if (bot.status == 'working') { %>
-    <td>
+    <td style="white-space: nowrap">
       <% if (typeof(bot.temp_extruder) !== "undefined") { %>
       E: <%= bot.temp_extruder %>C
       <% } %>
@@ -51,8 +51,8 @@
     <td class="muted">n/a</td>
     <% } %>
     <td><span class="label <%= bot.job.status_class %>"><%= bot.job.status %></span></td>
-    <td class="muted"><%= bot.job.elapsed %></td>
-    <td class="muted"><%= bot.job.estimated %></td>
+    <td class="muted" style="white-space: nowrap"><%= bot.job.elapsed %></td>
+    <td class="muted" style="white-space: nowrap"><%= bot.job.estimated %></td>
     <td style="width:250px">
       <% if (typeof(bot.job.qa_url) !== "undefined") { %>
       <div class="manage-job pull-right">
