@@ -156,7 +156,7 @@ class Bot extends Model
 		$r = array();
 		$r['id'] = $this->id;
 		//todo add this back when we convert the queues to a json object
-		//$r['queues'] = $this->getQueues();
+		$r['queue'] = $this->getPrimaryQueue();
 		$r['identifier'] = $this->get('identifier');
 		$r['name'] = $this->getName();
 		$r['manufacturer'] = $this->get('manufacturer');
@@ -501,6 +501,21 @@ class Bot extends Model
 
 		return $queues->getAll();
 	}
+
+	public function getPrimaryQueue()
+{
+	$sql = "SELECT queue_id
+				FROM bot_queues
+				WHERE bot_id = ?
+				ORDER BY priority ASC
+				LIMIT 1";
+	$data = array($this->id);
+
+	$queues = new Collection($sql, $data);
+	$queues->bindType('queue_id', 'Queue');
+
+	return $queues->getAll();
+}
 
 	/**
 	 * @param bool $can_slice
