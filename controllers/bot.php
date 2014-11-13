@@ -307,6 +307,8 @@ class BotController extends Controller
 
 				//did we get webcam info?
 				if ($this->args('webcam_device')) {
+					if(!isset($config->webcam))
+						$config->webcam = new stdClass();
 					$config->webcam->device = $this->args('webcam_device');
 					if ($this->args('webcam_id'))
 						$config->webcam->id = $this->args('webcam_id');

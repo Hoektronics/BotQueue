@@ -155,8 +155,6 @@ class Bot extends Model
 	{
 		$r = array();
 		$r['id'] = $this->id;
-		//todo add this back when we convert the queues to a json object
-		$r['queue'] = $this->getPrimaryQueue();
 		$r['identifier'] = $this->get('identifier');
 		$r['name'] = $this->getName();
 		$r['manufacturer'] = $this->get('manufacturer');
@@ -164,6 +162,17 @@ class Bot extends Model
 		$r['status'] = $this->getStatus();
 		$r['last_seen'] = $this->get('last_seen');
 		$r['error_text'] = $this->get('error_text');
+
+		$queues = $this->getQueues();
+		$data = array();
+		if(!empty($queues)) {
+			foreach($queues AS $row) {
+				/** @var Queue $queue */
+				$queue = $row['Queue'];
+				$data[] = $queue->getAPIData();
+			}
+			$r['queues'] = $data;
+		}
 
 		$webcam = $this->getWebcamImage();
 		if ($webcam->isHydrated())
@@ -192,9 +201,6 @@ class Bot extends Model
 		//default our slicing value
 		if (!isset($config->can_slice))
 			$config->can_slice = True;
-
-		if(!isset($config->webcam))
-			$config->webcam = new stdClass;
 
 		return $config;
 	}
@@ -501,21 +507,6 @@ class Bot extends Model
 
 		return $queues->getAll();
 	}
-
-	public function getPrimaryQueue()
-{
-	$sql = "SELECT queue_id
-				FROM bot_queues
-				WHERE bot_id = ?
-				ORDER BY priority ASC
-				LIMIT 1";
-	$data = array($this->id);
-
-	$queues = new Collection($sql, $data);
-	$queues->bindType('queue_id', 'Queue');
-
-	return $queues->getAll();
-}
 
 	/**
 	 * @param bool $can_slice
