@@ -1,23 +1,23 @@
-<table class="table table-striped table-bordered table-condensed">
+<table class="table table-striped table-bordered table-condensed" style="table-layout: fixed">
   <thead>
   <tr>
-    <th>Name</th>
+    <th class="span1">Name</th>
     <th>Bot Status</th>
-    <th>Last Seen</th>
+    <th class="span1">Last Seen</th>
     <th>Job</th>
     <th>Temps</th>
-    <th>Status</th>
-    <th>Elapsed</th>
-    <th>ETA</th>
-    <th colspan="2">Progress</th>
+    <th class="span1">Status</th>
+    <th class="span1">Elapsed</th>
+    <th class="span1">ETA</th>
+    <th class="span4" colspan="2">Progress</th>
   </tr>
   </thead>
   <tbody>
   <% _.each(collection, function (bot) { %>
   <tr>
     <td><a href="<%= bot.url %>"><%= bot.name %></a></td>
-    <td>
-      <div class="btn-group bot_status_button">
+    <td style="white-space:nowrap">
+      <div class="btn-group bot_status_button" style="white-space:nowrap">
         <a id="bot_status_button_<%= bot.id %>"
            class="btn btn-mini btn-bot-status btn-<%= bot.status_class %> dropdown-toggle"
            data-toggle="dropdown" href="#">
@@ -53,7 +53,7 @@
     <td><span class="label <%= bot.job.status_class %>"><%= bot.job.status %></span></td>
     <td class="muted" style="white-space: nowrap"><%= bot.job.elapsed %></td>
     <td class="muted" style="white-space: nowrap"><%= bot.job.estimated %></td>
-    <td style="width:250px">
+    <td class="span2">
       <% if (typeof(bot.job.qa_url) !== "undefined") { %>
       <div class="manage-job pull-right">
         <a class="btn btn-success btn-mini" href="<%= bot.job.qa_url %>/pass">PASS</a>
@@ -61,13 +61,13 @@
         <a class="btn btn-danger btn-mini" href="<%= bot.job.qa_url %>/fail">FAIL</a>
       </div>
       <% } else { %>
-      <div class="progress progress-striped active" style="width: 250px">
+      <div class="progress progress-striped active">
         <div class="bar <%= bot.job.bar_class %>"
              style="width: <%= bot.job.progress %>%"></div>
       </div>
       <% } %>
     </td>
-    <td class="muted">
+    <td class="muted" style="white-space:nowrap">
       <% if(typeof(bot.job.progress) !== "undefined") { %>
       <%= bot.job.progress %>%
       <% } else { %>
