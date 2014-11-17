@@ -246,3 +246,8 @@ div.install_tabs {
   border-bottom-right-radius: 4px;
 
 }
+
+td.min-width {
+  width: 1%;
+  white-space: nowrap;
+}
