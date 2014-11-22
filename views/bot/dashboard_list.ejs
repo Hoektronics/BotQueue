@@ -1,4 +1,4 @@
-<table class="table table-striped table-bordered table-condensed">
+<table class="table table-striped table-bordered table-condensed" style="display:block">
   <thead>
   <tr>
     <th>Name</th>
@@ -34,7 +34,8 @@
     </td>
     <td class="min-width muted"><%= bot.last_seen %></td>
     <% if (typeof(bot.job) !== "undefined") { %>
-    <td style="white-space: nowrap; overflow:hidden; text-overflow:ellipsis"><a href="<%= bot.job.url %>"><%= bot.job.name %></a></td>
+    <td style="max-width: 200px">
+	<div style="white-space: nowrap; overflow:hidden; text-overflow:ellipsis"><a href="<%= bot.job.url %>"><%= bot.job.name %></a></div></td>
     <% if (bot.status == 'working') { %>
     <td class="min-width">
       <% if (typeof(bot.temp_extruder) !== "undefined") { %>
@@ -51,9 +52,9 @@
     <td class="min-width muted">n/a</td>
     <% } %>
     <td class="min-width"><span class="label <%= bot.job.status_class %>"><%= bot.job.status %></span></td>
-    <td class="min-width muted" style="white-space: nowrap"><%= bot.job.elapsed %></td>
-    <td class="min-width muted" style="white-space: nowrap"><%= bot.job.estimated %></td>
-    <td class="span2">
+    <td class="min-width muted"><%= bot.job.elapsed %></td>
+    <td class="min-width muted"><%= bot.job.estimated %></td>
+    <td class="min-width span2">
       <% if (typeof(bot.job.qa_url) !== "undefined") { %>
       <div class="manage-job pull-right">
         <a class="btn btn-success btn-mini" href="<%= bot.job.qa_url %>/pass">PASS</a>
