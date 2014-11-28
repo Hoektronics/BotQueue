@@ -49,6 +49,8 @@
 				<a class="btn btn-danger" href="<?= $queue->getUrl() ?>/delete">Delete Queue</a>
 			</p>
 
+			<h3>Delay: <? if($queue->get('delay')==0) {echo "none";} else {echo $queue->get('delay')." seconds";} ?></h3>
+
 			<h3>Bots</h3>
 			<?= Controller::byName('bot')->renderView('draw_bots_small', array('bots' => $bots)) ?>
 
