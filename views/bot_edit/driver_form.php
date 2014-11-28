@@ -16,7 +16,7 @@
 				<span class="muted">(in seconds between gcode commands)</span>
 			</div>
 		</div>
-	<? elseif ($driver == 'printcore' || $driver == 's3g'): ?>
+	<? else: ?>
 		<div class="control-group ">
 			<label class="control-label" for="iserial_port"><strong>Serial Port</strong></label>
 
