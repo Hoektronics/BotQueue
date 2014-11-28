@@ -16,7 +16,7 @@
 				<span class="muted">(in seconds between gcode commands)</span>
 			</div>
 		</div>
-	<? elseif ($driver == 'printcore'): ?>
+	<? elseif ($driver == 'printcore' || $driver == 's3g'): ?>
 		<div class="control-group ">
 			<label class="control-label" for="iserial_port"><strong>Serial Port</strong></label>
 
@@ -44,8 +44,6 @@
 				<p class="help-block">Name of the serial port to connect to.</p>
 			</div>
 		</div>
-	<? endif ?>
-	<? if ($driver == 'printcore'): ?>
 		<div class="control-group ">
 			<label class="control-label" for="ibaudrate"><strong>Baudrate</strong></label>
 
@@ -69,7 +67,7 @@
 		</div>
 	<? endif ?>
 
-	<? if ($driver == 'printcore' || $driver == 'dummy'): ?>
+	<? if ($driver == 'printcore' || $driver == 'dummy' || $driver == 's3g'): ?>
 		<input type="hidden" id="webcam_id" name="webcam_id" value="<?= $webcam_id ?>">
 
 		<? if (is_object($devices)): ?>
@@ -146,11 +144,6 @@
 				<span class="muted">%</span>
 			</div>
 		</div>
-	<? endif ?>
-
-	<? if ($driver == 's3g'): ?>
-		I'm sorry, but this isn't currently implemented correctly. If you'd like to help,
-		please offer <a href="https://groups.google.com/forum/#!topic/botqueue/XqAh1JF_Op0">here</a>.
 	<? endif ?>
 
 	<script>

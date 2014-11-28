@@ -163,7 +163,7 @@ class Bot extends Model
 		$r['last_seen'] = $this->get('last_seen');
 		$r['error_text'] = $this->get('error_text');
 
-		$queues = $this->getQueues();
+		$queues = $this->getQueues()->getAll();
 		$data = array();
 		if(!empty($queues)) {
 			foreach($queues AS $row) {
@@ -505,7 +505,7 @@ class Bot extends Model
 		$queues = new Collection($sql, $data);
 		$queues->bindType('queue_id', 'Queue');
 
-		return $queues->getAll();
+		return $queues;
 	}
 
 	/**
@@ -513,7 +513,7 @@ class Bot extends Model
 	 * @return Job
 	 */
 	public function findNewJob($can_slice = true) {
-		$queues = $this->getQueues();
+		$queues = $this->getQueues()->getAll();
 		foreach($queues AS $row) {
 			/** @var Queue $queue */
 			$queue = $row['Queue'];

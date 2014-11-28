@@ -70,7 +70,7 @@ class BotController extends Controller
 
 			Activity::log("registered the bot " . $bot->getLink() . ".");
 
-			$this->forwardToUrl($bot->getUrl() . "/edit/setup:info");
+			$this->forwardToUrl($bot->getUrl() . "/edit/setup");
 		}
 
 		$this->set('form', $form);
@@ -134,7 +134,7 @@ class BotController extends Controller
 			$this->setTitle("View Bot - " . $bot->getName());
 
 			$this->set('bot', $bot);
-			$this->set('queue', $bot->getQueues());
+			$this->set('queue', $bot->getQueues()->getAll());
 			$this->set('job', $bot->getCurrentJob());
 			$this->set('engine', $bot->getSliceEngine());
 			$this->set('config', $bot->getSliceConfig());
@@ -233,26 +233,23 @@ class BotController extends Controller
 
 			$this->setTitle('Edit Bot - ' . $bot->getName());
 
-			//load up our form.
-			$infoForm = $this->_createInfoForm($bot);
-			if ($this->args('setup') != '')
-				$infoForm->setSubmitText('Next');
+			$wizard = new Wizard('bot', $this->args());
 
-			$slicingForm = $this->_createSlicingForm($bot);
-			if ($this->args('setup') != '')
-				$slicingForm->setSubmitText('Next');
-
-			$driverForm = $this->_createDriverForm($bot);
-
-			if ($this->args('setup') != '') {
-				$this->set('active_form', $this->args('setup'));
-				$this->set('setup_mode', true);
-			} else {
-				$this->set('active_form', 'info');
-				$this->set('setup_mode', false);
+			if(!$this->args('setup')) {
+				$wizard->disableWizardMode();
 			}
 
-			//handle our form
+			// Create our forms
+			$infoForm = $this->_createInfoForm($bot);
+			$slicingForm = $this->_createSlicingForm($bot);
+			$driverForm = $this->_createDriverForm($bot);
+
+			// Add them to the wizard
+			$wizard->add("Information / Details", $infoForm);
+			$wizard->add("Slicing Setup", $slicingForm);
+			$wizard->add("Driver Configuration", $driverForm);
+
+			//handle our forms
 			if ($infoForm->checkSubmitAndValidate($this->args())) {
 				$bot->set('name', $infoForm->data('name'));
 				$bot->set('manufacturer', $infoForm->data('manufacturer'));
@@ -263,15 +260,9 @@ class BotController extends Controller
 				$bot->save();
 
 				Activity::log("edited the information for bot " . $bot->getLink() . ".");
-
-				if ($this->args('setup') == 'info') {
-					$this->forwardToURL($bot->getUrl() . "/edit/setup:slicing");
-				} else {
-					$this->forwardToURL($bot->getUrl());
-				}
 			} else if ($slicingForm->checkSubmitAndValidate($this->args())) {
 				// todo: Switch this out with a queue section
-				$bot->set('queue_id', $slicingForm->data('queue_id'));
+				//$bot->set('queue_id', $slicingForm->data('queue_id'));
 				$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 				$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
 
@@ -283,11 +274,6 @@ class BotController extends Controller
 
 				Activity::log("edited the slicing info for bot " . $bot->getLink() . ".");
 
-				if ($this->args('setup') == 'slicing') {
-					$this->forwardToURL($bot->getUrl() . "/edit/setup:driver");
-				} else {
-					$this->forwardToURL($bot->getUrl());
-				}
 			} else if ($driverForm->checkSubmitAndValidate($this->args())) {
 				$bot->set('oauth_token_id', $driverForm->data('oauth_token_id'));
 				$bot->set('driver_name', $driverForm->data('driver_name'));
@@ -299,7 +285,8 @@ class BotController extends Controller
 				if ($bot->get('driver_name') == 'dummy') {
 					if ($this->args('delay'))
 						$config->delay = $this->args('delay');
-				} elseif ($bot->get('driver_name') == 'printcore') {
+				} elseif ($bot->get('driver_name') == 'printcore' ||
+					$bot->get('driver_name') == 's3g') {
 					$config->port = $this->args('serial_port');
 					$config->port_id = $this->args('port_id');
 					$config->baud = $this->args('baudrate');
@@ -326,14 +313,14 @@ class BotController extends Controller
 				$bot->save();
 
 				Activity::log("edited the driver configuration for bot " . $bot->getLink() . ".");
-
-				$this->forwardToUrl($bot->getUrl());
 			}
 
-			$this->set('bot', $bot);
-			$this->set('info_form', $infoForm);
-			$this->set('slicing_form', $slicingForm);
-			$this->set('driver_form', $driverForm);
+			if($wizard->isFinished()) {
+				$this->forwardToURL($bot->getUrl());
+			}
+
+			$this->set('bot_id', $bot->id);
+			$this->set('wizard', $wizard);
 		} catch (Exception $e) {
 			$this->set('megaerror', $e->getMessage());
 			$this->setTitle("Bot Edit - Error");
@@ -731,8 +718,8 @@ class BotController extends Controller
 	{
 
 		$form = new Form('info');
-		if ($this->args('setup') == 'info') {
-			$form->action = $bot->getUrl() . "/edit/setup:info";
+		if ($this->args('setup')) {
+			$form->action = $bot->getUrl() . "/edit/setup";
 		} else {
 			$form->action = $bot->getUrl() . "/edit";
 		}
@@ -828,8 +815,8 @@ class BotController extends Controller
 			$configList[0] = "None";
 
 		$form = new Form('slicing');
-		if ($this->args('setup') == 'slicing') {
-			$form->action = $bot->getUrl() . "/edit/setup:slicing";
+		if ($this->args('setup')) {
+			$form->action = $bot->getUrl() . "/edit/setup";
 		} else {
 			$form->action = $bot->getUrl() . "/edit";
 		}
@@ -916,6 +903,22 @@ class BotController extends Controller
 	 */
 	private function _createDriverForm($bot)
 	{
+		$form = new Form('driver');
+		$form->action = $bot->getUrl() . "/edit";
+
+		switch($bot->getStatus()) {
+			case BotState::Idle:
+			case BotState::Offline:
+			case BotState::Error:
+			case BotState::Waiting:
+				break; // We're okay to edit with these states
+			default:
+				$form->add(
+					ErrorField::name('error')
+					->value("The bot must be in an idle, offline, error, or waiting state in order to edit the driver config.")
+				);
+				return $form;
+		}
 		//load up our apps.
 		$authorized = User::$me->getAuthorizedApps()->getAll();
 		$apps[0] = "None";
@@ -931,9 +934,6 @@ class BotController extends Controller
 			'dummy' => 'Dummy Driver',
 			's3g' => 'Makerbot Driver (Experimental)'
 		);
-
-		$form = new Form('driver');
-		$form->action = $bot->getUrl() . "/edit";
 
 		$form->add(
 			DisplayField::name('title')

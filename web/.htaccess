@@ -43,7 +43,7 @@ php_value memory_limit 512M
 RewriteRule ^ajax/main/dashboard$ 		dispatcher.php?mode=ajax&controller=main&view=dashboardbb [NC,L]
 RewriteRule ^ajax/main/dashboard/style/(list|large_thumbnails|medium_thumbnails|small_thumbnails)  dispatcher.php?mode=ajax&controller=main&view=dashboard_style&style=$1 [NC,L]
 RewriteRule ^ajax/queue/update_sort$  dispatcher.php?mode=ajax&controller=queue&view=update_sort [NC,L]
-RewriteRule ^ajax/bot/slice_config_select$  dispatcher.php?mode=ajax&controller=bot&view=slice_config_select [NC,L]
+RewriteRule ^ajax/bot/slice_config_select$  dispatcher.php?mode=ajax&controller=bot_edit&view=slice_config_select [NC,L]
 
 #random stuff
 RewriteRule ^$					dispatcher.php?controller=main&view=home [NC,L]
@@ -97,10 +97,10 @@ RewriteRule ^bots(/page:([0-9]+))?$												dispatcher.php?controller=bot&vie
 RewriteRule ^bots/live$									    			dispatcher.php?controller=bot&view=live [NC,L]
 RewriteRule ^bot/register$												dispatcher.php?controller=bot&view=register [NC,L]
 RewriteRule ^bot:([0-9]+)$												dispatcher.php?controller=bot&view=view&id=$1 [NC,L]
-RewriteRule ^bot:([0-9]+)/driverform:(dummy|printcore|s3g)/token:([0-9]+)$												dispatcher.php?controller=bot&mode=ajax&view=driver_form&id=$1&driver=$2&token_id=$3 [NC,L]
+RewriteRule ^bot:([0-9]+)/driverform:(dummy|printcore|s3g)/token:([0-9]+)$												dispatcher.php?controller=bot_edit&mode=ajax&view=driver_form&id=$1&driver=$2&token_id=$3 [NC,L]
 RewriteRule ^bot:([0-9]+)/setstatus/(idle|offline)$												dispatcher.php?controller=bot&view=set_status&id=$1&status=$2 [NC,L]
-RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot&view=edit&id=$1 [NC,L]
-RewriteRule ^bot:([0-9]+)/edit/setup:(info|slicing|driver)$												dispatcher.php?controller=bot&view=edit&id=$1&setup=$2 [NC,L]
+RewriteRule ^bot:([0-9]+)/edit$												dispatcher.php?controller=bot_edit&view=edit&id=$1 [NC,L]
+RewriteRule ^bot:([0-9]+)/edit/setup$												dispatcher.php?controller=bot_edit&view=edit&id=$1&setup=true [NC,L]
 RewriteRule ^bot:([0-9]+)/delete$												dispatcher.php?controller=bot&view=delete&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/dropjob$												dispatcher.php?controller=bot&view=dropjob&id=$1 [NC,L]
 RewriteRule ^bot:([0-9]+)/error												dispatcher.php?controller=bot&view=error&id=$1 [NC,L]
