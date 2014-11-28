@@ -281,6 +281,17 @@ class FormField
 	}
 
 	/**
+	 * @param $condition bool
+	 * @param $text string
+	 */
+	public function error($text, $condition = true) {
+		if($condition) {
+			$this->hasError = true;
+			$this->errorText = $text;
+		}
+	}
+
+	/**
 	 * @param $name string
 	 */
 	protected function __construct($name)
@@ -317,8 +328,7 @@ class FormField
 	public function validate($data)
 	{
 		if ($this->required && !array_key_exists($this->name, $data)) {
-			$this->hasError = true;
-			$this->errorText = "The {$this->label} field is required.";
+			$this->error("The {$this->label} field is required.");
 		}
 
 		//no error? pull in our data
@@ -328,8 +338,7 @@ class FormField
 			if ($sanitized_name === $data[$this->name]) {
 				$this->value($data[$this->name]);
 			} else {
-				$this->hasError = true;
-				$this->errorText = "Sorry, no HTML in this field, please";
+				$this->error("Sorry, no HTML in this field, please");
 			}
 		}
 
@@ -372,14 +381,11 @@ class NumericField extends FormField
 	public function validate($data) {
 		$num = $data[$this->name];
 		if(!is_numeric($num)) {
-			$this->hasError = true;
-			$this->errorText = "That is not a valid number.";
+			$this->error("That is not a valid number.");
 		} else if(!is_null($this->min) && $num < $this->min) {
-			$this->hasError = true;
-			$this->errorText = "That number is too small";
+			$this->error("That number is too small");
 		} else if(!is_null($this->max) && $num > $this->max) {
-			$this->hasError = true;
-			$this->errorText = "That number is too large";
+			$this->error("That number is too large");
 		} else {
 			parent::validate($data);
 		}
@@ -398,8 +404,7 @@ class EmailField extends TextField
 		$email = $data[$this->name];
 		$filtered_email = filter_var($email, FILTER_VALIDATE_EMAIL);
 		if($filtered_email != $email) {
-			$this->hasError = true;
-			$this->errorText = "You must supply a valid email.";
+			$this->error("You must supply a valid email.");
 		} else {
 			parent::validate($data);
 		}
@@ -525,8 +530,7 @@ class UploadField extends FormField
 
 		//what did we get?
 		if ($file['error'] && $this->required) {
-			$this->hasError = true;
-			$this->errorText = $upload_errors[$file['error']];
+			$this->error($upload_errors[$file['error']]);
 		}
 
 		//how did we do?
