@@ -316,7 +316,7 @@ class FormField
 
 	public function validate($data)
 	{
-		if ($this->required && !$data[$this->name]) {
+		if ($this->required && !array_key_exists($this->name, $data)) {
 			$this->hasError = true;
 			$this->errorText = "The {$this->label} field is required.";
 		}
@@ -349,6 +349,42 @@ class HiddenField extends FormField
 
 class TextField extends FormField
 {
+}
+
+class NumericField extends FormField
+{
+	private $min = null;
+	private $max = null;
+	public function min($num) {
+		if(!is_numeric($num))
+			throw new Exception("Not a valid minimum");
+		$this->min = $num;
+		return $this;
+	}
+
+	public function max($num) {
+		if(!is_numeric($num))
+			throw new Exception("Not a valid maximum");
+		$this->max = $num;
+		return $this;
+	}
+
+	public function validate($data) {
+		$num = $data[$this->name];
+		if(!is_numeric($num)) {
+			$this->hasError = true;
+			$this->errorText = "That is not a valid number.";
+		} else if(!is_null($this->min) && $num < $this->min) {
+			$this->hasError = true;
+			$this->errorText = "That number is too small";
+		} else if(!is_null($this->max) && $num > $this->max) {
+			$this->hasError = true;
+			$this->errorText = "That number is too large";
+		} else {
+			parent::validate($data);
+		}
+		return !$this->hasError;
+	}
 }
 
 class PasswordField extends TextField

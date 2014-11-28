@@ -1,10 +1,12 @@
 <table class="table table-striped table-bordered table-condensed">
-	<tbody>
+	<thead>
 	<tr>
 		<th>Name</th>
 		<th>Status</th>
 		<th>Last Seen</th>
 	</tr>
+	</thead>
+	<tbody>
 	<? if (!empty($bots)): ?>
 		<? foreach ($bots AS $row): ?>
 			<? $bot = $row['Bot'] ?>
@@ -16,7 +18,7 @@
 		<? endforeach ?>
 	<? else: ?>
 		<tr>
-			<td colspan="2"><strong>No bots found!</strong></td>
+			<td colspan="3"><strong>No bots found!</strong></td>
 		</tr>
 	<? endif ?>
 	</tbody>

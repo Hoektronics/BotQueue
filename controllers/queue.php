@@ -43,29 +43,19 @@ class QueueController extends Controller
         $this->setTitle('Create a New Queue');
         $this->set('area', 'queues');
 
-        if ($this->args('submit')) {
-            //did we get a name?
-            if (!$this->args('name')) {
-                $errors['name'] = "You need to provide a name.";
-                $errorfields['name'] = 'error';
-            }
+	    $queue = new Queue();
+	    $form = $this->_createQueueForm($queue);
+	    $this->set('form', $form);
 
-            //okay, we good?
-            if (empty($errors) && empty($errorfields)) {
-                //woot!
-                $q = new Queue();
-                $q->set('name', $this->args('name'));
-                $q->set('user_id', User::$me->id);
-                $q->save();
+        if ($form->checkSubmitAndValidate($this->args())) {
+	        $queue->set('name', $this->args('name'));
+	        $queue->set('user_id', User::$me->id);
+	        $queue->set('delay', $this->args('delay'));
+	        $queue->save();
 
-                Activity::log("created a new queue named " . $q->getLink() . ".");
+            Activity::log("created a new queue named " . $queue->getLink() . ".");
 
-                $this->forwardToUrl($q->getUrl());
-            } else {
-                $this->set('errors', $errors);
-                $this->set('errorfields', $errorfields);
-                $this->setArg('name');
-            }
+	        $this->forwardToUrl($queue->getUrl());
         }
     }
 
@@ -237,7 +227,7 @@ class QueueController extends Controller
             //did we really get someone?
             if (!$queue->isHydrated())
                 throw new Exception("Could not find that queue.");
-            if ($queue->get('user_id') != User::$me->id)
+            if (!$queue->isMine())
                 throw new Exception("You do not own this queue.");
 
             $this->set('queue', $queue);
@@ -249,9 +239,11 @@ class QueueController extends Controller
 
             //handle our form
             if ($form->checkSubmitAndValidate($this->args())) {
-                $queue->set('name', $form->data('name'));
+                $queue->set('name', $this->args('name'));
+	            $queue->set('delay', $this->args('delay'));
                 $queue->save();
 
+	            error_log("Edited queue");
                 Activity::log("edited the queue " . $queue->getLink() . ".");
 
                 $this->forwardToUrl($queue->getUrl());
@@ -277,8 +269,17 @@ class QueueController extends Controller
 			->label('Name')
 			->help('What is the name of this queue?')
 			->required(true)
-			->value($queue->get('name'))
+			->value($queue->getName())
 		);
+
+	    $form->add(
+		    NumericField::name('delay')
+		    ->label('Delay')
+		    ->help('What is the delay between starting prints in seconds?')
+		    ->required(true)
+			->min(0)
+		    ->value($queue->get('delay'))
+	    );
 
         return $form;
     }
