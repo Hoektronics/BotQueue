@@ -73,7 +73,7 @@ class UploadController extends Controller
 
 					//pull in all our files.
 					foreach ($files AS $row) {
-						if (preg_match("/\\.(stl|obj|amf|gcode)$/i", $row->name)) {
+						if (preg_match("/\\.(".ACCEPTABLE_FILES.")$/i", $row->name)) {
 							$data = Utility::downloadUrl($row->public_url);
 							//echo "downloaded " . $data['realname'] . " to " . $data['localpath'] . "<br/>";
 
@@ -105,7 +105,7 @@ class UploadController extends Controller
 				$data = Utility::downloadUrl($url);
 
 				//does it match?
-				if (!preg_match("/\\.(stl|obj|amf|gcode|zip)$/i", $data['realname']))
+				if (!preg_match("/\\.(".ACCEPTABLE_FILES."|zip)$/i", $data['realname']))
 					throw new Exception("The file <a href=\"" . $url . "\">{$data['realname']}</a> is not valid for printing.");
 
 				$file = Storage::newFile();

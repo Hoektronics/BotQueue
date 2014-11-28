@@ -250,7 +250,7 @@ class APIV1Controller extends Controller
 			$data = Utility::downloadUrl($url);
 
 			//does it match?
-			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $data['realname']))
+			if (!preg_match("/\\.(".ACCEPTABLE_FILES.")$/i", $data['realname']))
 				throw new Exception("The file <a href=\"" . $url . "\">{$data['realname']}</a> is not valid for printing.");
 
 			//create our file object.
@@ -268,7 +268,7 @@ class APIV1Controller extends Controller
 			$this->ensureGoodFile($file);
 
 			//does it match?
-			if (!preg_match("/\\.(stl|obj|amf|gcode)$/i", $file['name']))
+			if (!preg_match("/\\.(".ACCEPTABLE_FILES.")$/i", $file['name']))
 				throw new Exception("The file '$file[name]' is not valid for printing.");
 
 			//okay, we're good.. do it.

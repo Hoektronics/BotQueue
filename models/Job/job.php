@@ -315,6 +315,8 @@ class Job extends Model
 		$job->set('source_file_id', $file->id);
 		if ($file->isGCode())
 			$job->set('file_id', $file->id);
+		if ($file->isMakerbot())
+			$job->set('file_id', $file->id);
 		$job->setName($file->get('path'));
 		$job->setStatus('available');
 		$job->set('created_time', date("Y-m-d H:i:s"));

@@ -7,8 +7,8 @@ class FileUploadHandler
 	public static function fromName($name)
 	{
 		//some basic error checking.
-		if (!preg_match('/(gcode|stl|obj|amf|zip)$/i', $name))
-			throw new Exception("Only .gcode, .stl, .obj, .amf, and .zip files are allowed at this time.");
+		if (!preg_match('/('.ACCEPTABLE_FILES.'|zip)$/i', $name))
+			throw new Exception("Only .gcode, .stl, .obj, .amf, .s3g, .x3g and .zip files are allowed at this time.");
 
 		//make our file.
 		$file = self::_createFile($name);
@@ -55,7 +55,7 @@ class FileUploadHandler
 			$filename = $za->getNameIndex($i);
 
 			//okay, is it a supported file?
-			if (preg_match('/(gcode|stl|obj|amf)$/i', $filename)) {
+			if (preg_match('/('.ACCEPTABLE_FILES.')$/i', $filename)) {
 				$temp_file = tempnam("/tmp", "BQ");
 				copy("zip://" . $zip_path . "#" . $filename, $temp_file);
 

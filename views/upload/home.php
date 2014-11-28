@@ -7,26 +7,29 @@
 			<li>The client software downloads, slices, and executes each job.</li>
 			<li>You take your shiny new stuff and do awesomeness.</li>
 		</ol>
-		
+
 		<h2>Accepted filetypes:</h2>
 		<ul>
-		  <li><strong>.gcode</strong> - will be executed directly with no extra processing.</li>
-		  <li><strong>.stl / .obj / .amf</strong> - will be sliced and executed based on your config.</li>
-		  <li><strong>.zip</strong> - usable files will be extracted and added to your queue.</li>
+			<li><strong>.gcode</strong> - will be executed directly with no extra processing.</li>
+			<li><strong>.stl / .obj / .amf</strong> - will be sliced and executed based on your config.</li>
+			<li><strong>.s3g / .x3g</strong> - WIP - Makerbot format, executed directly</li>
+			<li><strong>.zip</strong> - usable files will be extracted and added to your queue.</li>
 		</ul>
 	</div>
 	<div class="span6">
-	  <h2>Option 1: Upload a File</h2>
+		<h2>Option 1: Upload a File</h2>
 		<?= Controller::byName('upload')->renderView('uploader'); ?>
-    <br/>
-	  <h2>Option 2: Use a URL</h2>
-	  <form class="form-inline" action="/upload/url" method="post">
-      <input type="text" class="input-xlarge" name="url" placeholder="URL to load">
-      <button type="submit" class="btn btn-primary">Go!</button>
-    </form>
+		<br/>
+
+		<h2>Option 2: Use a URL</h2>
+
+		<form class="form-inline" action="/upload/url" method="post">
+			<input type="text" class="input-xlarge" name="url" placeholder="URL to load">
+			<button type="submit" class="btn btn-primary">Go!</button>
+		</form>
 		<ul class="muted">
-		  <li>The URL should point to an acceptable filetype.</li>
-		  <li>thingiverse.com/thing:#### format URLs will work too.</li>
+			<li>The URL should point to an acceptable filetype.</li>
+			<li>thingiverse.com/thing:#### format URLs will work too.</li>
 		</ul>
 	</div>
 </div>

@@ -65,12 +65,17 @@ abstract class StorageInterface extends Model
 
 	public function isKnownType()
 	{
-		return $this->isGCode() || $this->is3DModel();
+		return $this->isGCode() || $this->is3DModel() || $this->isMakerbot();
 	}
 
 	public function isGCode()
 	{
 		return preg_match("/(g|gcode)$/i", $this->get('path'));
+	}
+
+	public function isMakerbot()
+	{
+		return preg_match("/(s3g|x3g)$/i", $this->get('path'));
 	}
 
 	public function is3DModel()
