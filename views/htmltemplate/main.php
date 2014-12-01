@@ -9,7 +9,7 @@
 	<? endif ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
-	<meta name="author" content="Zach Hoeken / BotQueue.com">
+	<meta name="author" content="Zach Hoeken / Justin Nesselrotte">
 	<link rel="icon" href="favicon.gif" type="image/gif">
 
 	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -101,7 +101,7 @@
 			</div>
 			<div class="span6">
 				<h3>Info</h3>
-				Made by <a href="/about">Zach Hoeken and friends</a> especially for you.<br/>
+				Made by Zach Hoeken and Justin Nesselrotte. (<a href="/about">about</a>)<br/>
 				Software licensed under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL v3.0</a>. Code at <a
 					href="https://github.com/Hoektronics/BotQueue">GitHub</a>.<br/>
 				&copy; <?= date("Y") ?> <a href="http://www.hoektronics.com"><?= COMPANY_NAME ?></a>. Powered by <a
