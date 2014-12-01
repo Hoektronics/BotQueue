@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `action_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `bots` (
   KEY `oauth_token_id` (`oauth_token_id`),
   KEY `slice_config_id` (`slice_config_id`),
   KEY `slice_engine_id` (`slice_engine_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   PRIMARY KEY (`id`),
   KEY `content_id` (`content_id`),
   KEY `content_type` (`content_type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `email_queue` (
   UNIQUE KEY `id` (`id`),
   KEY `user_id` (`user_id`),
   KEY `status` (`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `error_log` (
   KEY `job_id` (`job_id`),
   KEY `bot_id` (`bot_id`),
   KEY `queue_id` (`queue_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `job_clock` (
   KEY `bot_id` (`bot_id`),
   KEY `queue_id` (`queue_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   KEY `queue_id` (`queue_id`),
   KEY `status` (`status`),
   KEY `bot_id` (`bot_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer` (
   `user_id` int(11) DEFAULT '0',
   `app_url` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
   `nonce` int(11) unsigned default 0,
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   KEY `user_id` (`user_id`),
   KEY `type` (`type`),
   KEY `ip_address` (`ip_address`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `queues` (
   `delay` int(11) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `s3_files` (
   `source_url` text,
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `shortcodes` (
   `url` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `url` (`url`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS `slice_configs` (
   KEY `fork_id` (`fork_id`),
   KEY `user_id` (`user_id`),
   KEY `engine_id` (`engine_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS `slice_engines` (
   KEY `engine_name` (`engine_name`),
   KEY `is_featured` (`is_featured`),
   KEY `is_public` (`is_public`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -269,7 +269,7 @@ CREATE TABLE IF NOT EXISTS `engine_os` (
   `engine_id` int(11) unsigned NOT NULL,
   `os` enum('osx','linux','win','raspberrypi'),
   PRIMARY KEY (`engine_id`, `os`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -305,7 +305,7 @@ CREATE TABLE IF NOT EXISTS `tokens` (
   PRIMARY KEY (`id`),
   KEY `pass_hash` (`hash`),
   KEY `expire_date` (`expire_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -327,7 +327,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `username` (`username`),
   KEY `pass_hash` (`pass_hash`),
   KEY `email` (`email`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -337,7 +337,7 @@ CREATE TABLE IF NOT EXISTS `patches` (
   `description` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `patch_num` (`patch_num`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -346,7 +346,7 @@ CREATE TABLE IF NOT EXISTS `bot_queues` (
   `bot_id` int(11) unsigned NOT NULL,
   `priority` int(11) unsigned NOT NULL,
   PRIMARY KEY (`queue_id`, `bot_id`, `priority`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -357,4 +357,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(15, 'Added queue delay');
+INSERT INTO patches(patch_num, description) VALUES(16, 'Converted tables to InnoDB');
