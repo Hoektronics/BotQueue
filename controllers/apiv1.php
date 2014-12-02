@@ -36,53 +36,26 @@ class APIV1Controller extends Controller
 		$provider = new MyOAuthProvider();
 
 		//we need to disable a check if it is our first call to requesttoken.
-		$c = strtolower($this->args('api_call'));
-		if ($c == 'requesttoken') {
+		$apiCall = strtolower($this->args('api_call'));
+		if ($apiCall == 'requesttoken') {
 			$provider->oauth->isRequestTokenEndpoint(true);
 			$this->set('provider', $provider);
 		} //accesstoken also needs the class.
-		elseif ($c == 'accesstoken')
+		elseif ($apiCall == 'accesstoken')
 			$this->set('provider', $provider);
 
 		try {
 			$provider->oauth->checkOAuthRequest();
 
-			$calls = array(
-				'requesttoken', //ok
-				'accesstoken', //ok
-				'listqueues', //ok
-				'queueinfo', //ok
-				'createqueue', //ok
-				'listjobs', //ok
-				'jobinfo', //ok
-				'grabjob', //ok
-				'grabslicejob', //ok
-				'findnewjob', //ok
-				'dropjob', //ok
-				'canceljob', //ok
-				'completejob', //ok
-				'completeslicejob', //ok
-				'downloadedjob', //ok
-				'createjob', //ok
-				'updatejobprogress', //ok
-				'listbots', //ok
-				'botinfo', //ok
-				'registerbot', //ok
-				'updatebot', //ok
-				'updateslicejob', //ok
-				'webcamupdate', //ok
-				'getmybots',
-				'devicescanresults'
-			);
-			if (in_array($c, $calls)) {
+			if (method_exists($this, "api_$apiCall")) {
 				$this->token = $provider->token;
 				// TODO Find out if consumer is even needed
 				$this->consumer = $provider->consumer;
 
-				$fname = "api_{$c}";
-				$data = $this->$fname();
+				$functionName = "api_{$apiCall}";
+				$data = $this->$functionName();
 			} else
-				throw new Exception("Specified api_call '{$c}' does not exist.");
+				throw new Exception("Specified api_call '{$apiCall}' does not exist.");
 
 			$result = array('status' => 'success', 'data' => $data);
 		} catch (OAuthException $e) {
@@ -707,35 +680,6 @@ class APIV1Controller extends Controller
 		$this->_markBotAsSeen($bot);
 
 		return $data;
-	}
-
-	#todo remove unused api registerbot
-	public function api_registerbot()
-	{
-		if (!$this->args('name'))
-			throw new Exception('Bot name is a required parameter.');
-		if (!$this->args('identifier'))
-			throw new Exception('Bot identifier is a required parameter.');
-		#if (!$this->args('manufacturer'))
-		#	throw new Exception('Bot manufacturer is a required parameter.');
-		#if (!$this->args('model'))
-		#	throw new Exception('Bot model is a required parameter.');
-
-		$bot = new Bot();
-		$bot->set('user_id', User::$me->id);
-		$bot->set('name', $this->args('name'));
-		$bot->set('identifier', $this->args('identifier'));
-		$bot->set('manufacturer', $this->args('manufacturer'));
-		$bot->set('model', $this->args('model'));
-		$bot->set('electronics', $this->args('electronics'));
-		$bot->set('firmware', $this->args('firmware'));
-		$bot->set('extruder', $this->args('extruder'));
-		$bot->setStatus(BotState::Idle);
-		$bot->save();
-
-		Activity::log("registered the new bot " . $bot->getLink() . " via the API.");
-
-		return $bot->getAPIData();
 	}
 
 	public function api_updatebot()

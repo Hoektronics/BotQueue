@@ -150,7 +150,7 @@ class SlicerController extends Controller
 						$file = Utility::downloadUrl("https://raw.github.com/{$github_url}/" . $tag . "/" . $manifest['configuration']);
 						$config->set('config_data', file_get_contents($file['localpath']));
 						$config->set('engine_id', $engine->id);
-						//$config->set('user_id', User::$me->id); // Config for everyone?
+						$config->set('user_id', null); // Default config is for everyone todo: Check that this doesn't break somewhere else
 						$config->set('add_date', date("Y-m-d H:i:s"));
 						$config->set('edit_date', date("Y-m-d H:i:s"));
 						$config->save();
@@ -516,6 +516,7 @@ class SlicerController extends Controller
 		$this->set('area', 'slicers');
 
 		try {
+			//todo If they choose to edit the default config of an engine, make a copy first
 			//load the data and check for errors.
 			$config = new SliceConfig($this->args('id'));
 			if (!$config->isHydrated())
@@ -584,7 +585,7 @@ class SlicerController extends Controller
 			$config = new SliceConfig($this->args('id'));
 			if (!$config->isHydrated())
 				throw new Exception("That slice config does not exist.");
-			if ($config->get('user_id') != User::$me->id && !User::isAdmin())
+			if ($config->get('user_id') != User::$me->id && !User::isAdmin() && $config->get('user_id') != null)
 				throw new Exception("You do not have access to view this config.");
 
 			//pull in all our data.
@@ -613,7 +614,7 @@ class SlicerController extends Controller
 			if (!$config->isHydrated())
 				throw new Exception("That slice config does not exist.");
 			if ($config->get('user_id') != User::$me->id && !User::isAdmin())
-				throw new Exception("You do not have access to view this config.");
+				throw new Exception("You do not have access to delete this config.");
 
 			$this->setTitle("Delete Slice Config - " . $config->getName());
 

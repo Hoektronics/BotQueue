@@ -67,7 +67,7 @@ class OAuthToken extends Model
 		    	WHERE ip_address = ?
 		     	AND type = 1
 		      	AND verified = 0
-		      	AND (user_id = 0 || user_id = ?)
+		      	AND (user_id IS NULL || user_id = ?)
 		    	ORDER BY id DESC";
 
 		$requests = new Collection($sql, array($_SERVER['REMOTE_ADDR'], User::$me->id));

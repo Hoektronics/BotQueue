@@ -201,7 +201,7 @@ class AppController extends Controller
 			$this->setTitle("Authorize App - " . $app->getName());
 
 			//okay, associate it with our user.
-			if (!$token->get('user_id')) {
+			if (is_null($token->get('user_id'))) {
 				$token->set('user_id', User::$me->id);
 				$token->save();
 			} else if ($token->get('user_id') != User::$me->id)

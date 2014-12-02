@@ -6,14 +6,14 @@ CREATE TABLE IF NOT EXISTS `activities` (
   `activity` text NOT NULL,
   `action_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `bots` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
   `oauth_token_id` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   `client_name` varchar(255) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `bots` (
   `driver_config` text NOT NULL,
   `webcam_image_id` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `identifier` (`identifier`),
   KEY `job_id` (`job_id`),
   KEY `oauth_token_id` (`oauth_token_id`),
@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `comment` text NOT NULL,
   `comment_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `content_id` (`content_id`),
   KEY `content_type` (`content_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -64,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `email_queue` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
   `subject` varchar(255) NOT NULL,
   `text_body` text NOT NULL,
   `html_body` text NOT NULL,
@@ -73,8 +74,8 @@ CREATE TABLE IF NOT EXISTS `email_queue` (
   `queue_date` datetime NOT NULL,
   `sent_date` datetime NOT NULL,
   `status` enum('queued','sent') NOT NULL DEFAULT 'queued',
-  UNIQUE KEY `id` (`id`),
-  KEY `user_id` (`user_id`),
+  PRIMARY KEY `id` (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `error_log` (
   `reason` varchar(255) NOT NULL,
   `error_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `job_id` (`job_id`),
   KEY `bot_id` (`bot_id`),
   KEY `queue_id` (`queue_id`)
@@ -112,14 +113,14 @@ CREATE TABLE IF NOT EXISTS `job_clock` (
   KEY `job_id` (`job_id`),
   KEY `bot_id` (`bot_id`),
   KEY `queue_id` (`queue_id`),
-  KEY `user_id` (`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
   `queue_id` int(11) unsigned NOT NULL DEFAULT '0',
   `source_file_id` int(11) unsigned NOT NULL DEFAULT '0',
   `file_id` int(11) unsigned NOT NULL DEFAULT '0',
@@ -139,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   `webcam_image_id` int(11) unsigned NOT NULL DEFAULT '0',
   `webcam_images` text NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `queue_id` (`queue_id`),
   KEY `status` (`status`),
   KEY `bot_id` (`bot_id`)
@@ -154,9 +155,10 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer` (
   `consumer_secret` varchar(255) NOT NULL,
   `active` tinyint(1) NOT NULL,
   `name` varchar(255) DEFAULT '',
-  `user_id` int(11) DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
   `app_url` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -177,7 +179,7 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   `type` int(11) NOT NULL,
   `name` text NOT NULL,
   `consumer_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) unsigned,
   `ip_address` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `token_secret` varchar(255) NOT NULL,
@@ -188,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   `last_seen` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`),
-  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `type` (`type`),
   KEY `ip_address` (`ip_address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -197,11 +199,11 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `queues` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   `delay` int(11) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -214,11 +216,12 @@ CREATE TABLE IF NOT EXISTS `s3_files` (
   `bucket` varchar(255) NOT NULL,
   `path` varchar(255) NOT NULL,
   `add_date` datetime NOT NULL,
-  `user_id` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL,
   `parent_id` int(11) NOT NULL,
   `source_url` text,
   PRIMARY KEY (`id`),
-  KEY `parent_id` (`parent_id`)
+  KEY `parent_id` (`parent_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -243,7 +246,7 @@ CREATE TABLE IF NOT EXISTS `slice_configs` (
   `edit_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fork_id` (`fork_id`),
-  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `engine_id` (`engine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -290,7 +293,7 @@ CREATE TABLE IF NOT EXISTS `slice_jobs` (
   `finish_date` datetime NOT NULL,
   `uid` char(40) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `job_id` (`job_id`),
   KEY `slice_config_id` (`slice_config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -303,6 +306,7 @@ CREATE TABLE IF NOT EXISTS `tokens` (
   `hash` varchar(40) NOT NULL,
   `expire_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `pass_hash` (`hash`),
   KEY `expire_date` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -357,4 +361,4 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(16, 'Converted tables to InnoDB');
+INSERT INTO patches(patch_num, description) VALUES(16, 'Added user ID constraint');

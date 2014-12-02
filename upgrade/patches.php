@@ -15,12 +15,10 @@ function start_patch()
 function finish_patch($patchNumber, $description) {
   $patch = "INSERT INTO patches (patch_num, description) VALUES(?,?)";
   db()->execute($patch, array($patchNumber, $description));
-  print("Patch ".$patchNumber." applied\n");
+  print("Patch ".$patchNumber." applied: $description\n");
 }
 
 function patch_exists($patchNumber) {
   $patchSQL = "SELECT * from patches where patch_num >= ?";
   return (db()->execute($patchSQL, array($patchNumber)) > 0);
 }
-
-?>
