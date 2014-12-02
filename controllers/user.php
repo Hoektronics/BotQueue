@@ -269,19 +269,19 @@ class UserController extends Controller
 			else
 				throw new Exception("Could not find that user.");
 
-			if($user->id != User::$me->id) {
-				if (!User::isAdmin())
-					throw new Exception("You are not an admin and cannot delete other users.");
-				else
-					throw new Exception("You are not that user");
-			}
-
 			//are we cool?
 			if (!$user->isHydrated())
 				throw new Exception("Could not find that user.");
 			//are we cool to edit
 			if ($user->get('is_admin'))
 				throw new Exception("You cannot delete admins.");
+
+			if($user->id != User::$me->id) {
+				if (!User::isAdmin())
+					throw new Exception("You are not an admin and cannot delete other users.");
+				else
+					throw new Exception("You are not that user");
+			}
 
 			if ($this->args('submit')) {
 				$user->delete();

@@ -3,9 +3,12 @@
 <? elseif ($status): ?>
 	<div class="BaseStatus"><?=$status?></div>
 <? else: ?>
-	<form method="post" action="/user:<?=$user->id?>/delete">
-		<p>Are you sure you want to delete <?=$user->getLink()?>?</p>
-		<p>This is permanent.  We will delete all data including files and activities.  Are you sure you want to do this?</p>
-		<input type="submit" name="submit" value="Yes, delete it!"/>
+	<form class="form-horizontal" method="post" autocomplete="off" action="/user:<?=$user->id?>/delete">
+		<input type="hidden" name="submit" value="1">
+		<div class="alert alert-block">
+			<h4 class="alert-heading">Warning!</h4>
+			This is permanent.  We will delete all data including files and activities.  Are you sure you want to do this?<br/><br/>
+			<button type="submit" class="btn btn-primary">Yes, delete it!</button>
+		</div>
 	</form>
 <? endif ?>
