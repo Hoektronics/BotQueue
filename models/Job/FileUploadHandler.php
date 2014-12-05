@@ -33,13 +33,13 @@ class FileUploadHandler
 
 		//create new file and upload it
 		$file = Storage::newFile();
+		$file->set('user_id', User::$me->id);
+		$file->set('add_date', date('Y-m-d H:i:s'));
 		$file->set('path', $path);
 		$file->moveTo($newPath);
 		$file->getHash();
 		$file->getSize();
 		$file->getType();
-		$file->set('user_id', User::$me->id);
-		$file->set('add_date', date('Y-m-d H:i:s'));
 		$file->save();
 
 		return $file;
