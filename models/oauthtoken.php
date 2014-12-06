@@ -7,7 +7,6 @@ class OAuthToken extends Model
 		parent::__construct($id, "oauth_token");
 
 		$this->consumer = new OAuthConsumer($this->get('consumer_id'));
-		$this->user = new User($this->get('user_id'));
 	}
 
 	public static function findByKey($key)

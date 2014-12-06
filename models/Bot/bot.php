@@ -296,7 +296,6 @@ class Bot extends Model
 		if ($job->get('status') == 'taken' && $job->get('bot_id') == $this->id)
 			return true;
 
-		//todo: fix me once we have the bot_to_queues table
 		if ($this->get('user_id') != $job->getQueue()->get('user_id'))
 			return false;
 
