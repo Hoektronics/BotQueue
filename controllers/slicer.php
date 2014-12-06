@@ -112,7 +112,7 @@ class SlicerController extends Controller
 
 			$response = Utility::downloadUrl("https://api.github.com/repos/{$github_url}/git/refs");
 
-			if ($response == False)
+			if ($response === False)
 				throw new Exception("I'm sorry, I couldn't access github");
 			$json = json_decode(file_get_contents($response['localpath']), True);
 

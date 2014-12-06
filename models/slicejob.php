@@ -46,7 +46,7 @@ class SliceJob extends Model
 		$r['input_file'] = $this->getInputFile()->getAPIData();
 		$r['output_file'] = $this->getOutputFile()->getAPIData();
 		$r['output_log'] = $this->get('output_log');
-		$r['slice_config'] = $this->getSliceConfig()->getAPIData();
+		$r['slice_config'] = $this->getSliceConfig()->getAPIData(true);
 		$r['slice_config_snapshot'] = $this->get('slice_config_snapshot');
 		$r['worker_token'] = $this->get('worker_token');
 		$r['worker_name'] = $this->get('worker_name');
