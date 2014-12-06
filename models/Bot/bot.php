@@ -422,7 +422,7 @@ class Bot extends Model
 		if ($job->get('bot_id') == $this->id && $this->get('job_id') == $job->id)
 			return true;
 		//if nobody has the job, we can safely drop it.  sometimes the web requests will time out and a bot will get stuck trying to drop a job.
-		else if ($job->get('bot_id' == 0) && $job->get('bot_id') == 0)
+		else if ($job->get('bot_id') == 0)
 			return true;
 		else
 			return false;
