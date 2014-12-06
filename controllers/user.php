@@ -427,6 +427,12 @@ class UserController extends Controller
 				->required(true)
 		);
 
+		if(defined('GOOGLE_CAPTCHA_SECRET_KEY') && defined('GOOGLE_CAPTCHA_SITE_KEY')) {
+			$form->add(
+				GoogleCaptcha::name('ignored')
+			);
+		}
+
 		$tos = "By clicking on the \"Create your account\" button below, you certify that you have read and agree to our ";
 		$tos .= "<a href=\"/tos\">Terms of use</a>";
 		$tos .= " and ";

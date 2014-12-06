@@ -128,5 +128,6 @@
 <? endif ?>
 <script src="/js/botqueue.js"></script>
 <script src="/bootstrap/2.3.0/js/bootstrap.js"></script>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 </body>
 </html>

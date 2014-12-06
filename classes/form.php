@@ -557,3 +557,18 @@ class SuccessField extends DisplayField
 class InformationField extends DisplayField
 {
 }
+
+class GoogleCaptcha extends FormField
+{
+	public function validate($data)
+	{
+		error_log("Validate called");
+		$url = "https://www.google.com/recaptcha/api/siteverify".
+		"?secret=".GOOGLE_CAPTCHA_SECRET_KEY.
+		"&response=".$data['g-recaptcha-response'].
+		"&remoteip=".$_SERVER['REMOTE_ADDR'];
+		$result = json_decode(file_get_contents($url), true);
+
+		return $result['success'];
+	}
+}
