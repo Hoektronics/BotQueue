@@ -341,4 +341,24 @@ class Job extends Model
 		}
 	}
 
+
+	public function addWebcamImage($file_id)
+	{
+		$image = new WebcamImage();
+		$image->set('timestamp', date("Y-m-d H:i:s"));
+		$image->set('image_id', $file_id);
+		$image->set('user_id', $this->getUser()->id);
+		$image->set('job_id', $this->id);
+		$bot = $this->getBot();
+		if ($bot->isHydrated()) {
+			$image->set('bot_id', $bot->id);
+			$bot->set('webcam_image_id', $file_id);
+			$bot->save();
+		}
+		$image->save();
+
+		$this->set('webcam_image_id', $file_id);
+		$this->save();
+	}
+
 }

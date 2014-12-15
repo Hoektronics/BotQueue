@@ -8,9 +8,6 @@ CREATE TABLE IF NOT EXISTS `activities` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `bots` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -45,9 +42,6 @@ CREATE TABLE IF NOT EXISTS `bots` (
   KEY `slice_config_id` (`slice_config_id`),
   KEY `slice_engine_id` (`slice_engine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -60,9 +54,6 @@ CREATE TABLE IF NOT EXISTS `comments` (
   KEY `content_id` (`content_id`),
   KEY `content_type` (`content_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `email_queue` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -78,9 +69,6 @@ CREATE TABLE IF NOT EXISTS `email_queue` (
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `error_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -95,9 +83,6 @@ CREATE TABLE IF NOT EXISTS `error_log` (
   KEY `bot_id` (`bot_id`),
   KEY `queue_id` (`queue_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `job_clock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `job_id` int(11) NOT NULL,
@@ -115,9 +100,6 @@ CREATE TABLE IF NOT EXISTS `job_clock` (
   KEY `queue_id` (`queue_id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -145,9 +127,6 @@ CREATE TABLE IF NOT EXISTS `jobs` (
   KEY `status` (`status`),
   KEY `bot_id` (`bot_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `oauth_consumer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `consumer_key` varchar(255) NOT NULL,
@@ -159,9 +138,6 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `consumer_id` int(11) unsigned default 0,
@@ -170,9 +146,6 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
   PRIMARY KEY (`id`),
   KEY `consumer_id` (`consumer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `oauth_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
@@ -193,9 +166,6 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   KEY `type` (`type`),
   KEY `ip_address` (`ip_address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `queues` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -204,9 +174,6 @@ CREATE TABLE IF NOT EXISTS `queues` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `s3_files` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(255) NOT NULL,
@@ -222,18 +189,12 @@ CREATE TABLE IF NOT EXISTS `s3_files` (
   KEY `parent_id` (`parent_id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `shortcodes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `url` (`url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `slice_configs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fork_id` int(11) unsigned NOT NULL,
@@ -248,9 +209,6 @@ CREATE TABLE IF NOT EXISTS `slice_configs` (
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `engine_id` (`engine_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `slice_engines` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `engine_name` varchar(255) NOT NULL,
@@ -264,17 +222,11 @@ CREATE TABLE IF NOT EXISTS `slice_engines` (
   KEY `is_featured` (`is_featured`),
   KEY `is_public` (`is_public`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `engine_os` (
   `engine_id` int(11) unsigned NOT NULL,
   `os` enum('osx','linux','win','raspberrypi'),
   PRIMARY KEY (`engine_id`, `os`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `slice_jobs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -296,9 +248,6 @@ CREATE TABLE IF NOT EXISTS `slice_jobs` (
   KEY `job_id` (`job_id`),
   KEY `slice_config_id` (`slice_config_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `tokens` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -309,9 +258,6 @@ CREATE TABLE IF NOT EXISTS `tokens` (
   KEY `pass_hash` (`hash`),
   KEY `expire_date` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
@@ -331,9 +277,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `pass_hash` (`pass_hash`),
   KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = @saved_cs_client */;
 CREATE TABLE IF NOT EXISTS `patches` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `patch_num` int(11) unsigned NOT NULL,
@@ -341,18 +284,24 @@ CREATE TABLE IF NOT EXISTS `patches` (
   PRIMARY KEY (`id`),
   KEY `patch_num` (`patch_num`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = @saved_cs_client */;
 CREATE TABLE IF NOT EXISTS `bot_queues` (
   `queue_id` int(11) unsigned NOT NULL,
   `bot_id` int(11) unsigned NOT NULL,
   `priority` int(11) unsigned NOT NULL,
   PRIMARY KEY (`queue_id`, `bot_id`, `priority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE IF NOT EXISTS `webcam_images` (
+  `timestamp` datetime NOT NULL,
+  `image_id` bigint(11) unsigned NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  `bot_id` int(11) unsigned NULL,
+  `job_id` int(11) unsigned NULL,
+  PRIMARY KEY (`timestamp`, `image_id`),
+  FOREIGN KEY (`image_id`) REFERENCES s3_files(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`bot_id`) REFERENCES bots(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`job_id`) REFERENCES jobs(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE VIEW stats AS
   SELECT (unix_timestamp(end_date) - unix_timestamp(start_date)) AS seconds,
     bot_id, user_id, status, start_date, end_date
@@ -360,4 +309,6 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(16, 'Added user ID constraint');
+INSERT INTO patches(patch_num, description) VALUES(18, 'Added webcam images table');
+
+/*!40101 SET character_set_client = @saved_cs_client */;

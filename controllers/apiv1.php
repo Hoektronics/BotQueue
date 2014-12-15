@@ -576,18 +576,7 @@ class APIV1Controller extends Controller
 
 			//if we have a job, save our new image.
 			if ($job->isHydrated()) {
-				$job->set('webcam_image_id', $data_file->id);
-
-				$ids = json::decode($job->get('webcam_images'));
-				if ($ids == NULL) {
-					$ids = array();
-					$ids[time()] = $data_file->id;
-				} else {
-					$index = time();
-					$ids->$index = $data_file->id;
-				}
-
-				$job->set('webcam_images', json::encode($ids));
+				$job->addWebcamImage($data_file->id);
 			}
 
 			//always pull the latest image in for the bot.

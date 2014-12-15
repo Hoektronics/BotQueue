@@ -22,3 +22,7 @@ function patch_exists($patchNumber) {
   $patchSQL = "SELECT * from patches where patch_num >= ?";
   return (db()->execute($patchSQL, array($patchNumber)) > 0);
 }
+
+function patch_log($message) {
+  print(" > ".$message."\n");
+}
