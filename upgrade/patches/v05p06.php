@@ -57,7 +57,7 @@ if (!patch_exists($patchNumber)) {
 				}
 			}
 			$count++;
-			patch_progress((int)($count/$total));
+			patch_progress((int)(($count*100)/$total));
 		}
 	}
 

@@ -158,6 +158,7 @@ class S3File extends StorageInterface
 			return false;
 		//todo Fix type
 		$this->set('type', 'application/octet-stream');
+		$this->set('add_date', date("Y-m-d H:i:s"));
 		$this->set('size', filesize($srcPath));
 		$this->set('hash', md5_file($srcPath));
 		$this->set('path', $dstPath);
