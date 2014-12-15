@@ -24,5 +24,9 @@ function patch_exists($patchNumber) {
 }
 
 function patch_log($message) {
-  print(" > ".$message."\n");
+  print(" > $message\n");
+}
+
+function patch_progress($progress) {
+  print " > $progress%\r";
 }

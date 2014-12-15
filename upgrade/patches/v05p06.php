@@ -30,6 +30,9 @@ if (!patch_exists($patchNumber)) {
 
 	$jobs = $jobsCollection->getAll();
 
+	$total = $jobsCollection->count();
+	$count = 0;
+	patch_progress(0);
 	foreach ($jobs as $row) {
 		/** @var Job $job */
 		$job = $row['Job'];
@@ -53,6 +56,8 @@ if (!patch_exists($patchNumber)) {
 					$failCount++;
 				}
 			}
+			$count++;
+			patch_progress((int)($count/$total));
 		}
 	}
 

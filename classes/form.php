@@ -327,7 +327,7 @@ class FormField
 
 	public function validate($data)
 	{
-		if ($this->required && !array_key_exists($this->name, $data)) {
+		if ($this->required && !array_key_exists($this->name, $data) && $data[$this->name] != "") {
 			$this->error("The {$this->label} field is required.");
 		}
 
@@ -562,7 +562,6 @@ class GoogleCaptcha extends FormField
 {
 	public function validate($data)
 	{
-		error_log("Validate called");
 		$url = "https://www.google.com/recaptcha/api/siteverify".
 		"?secret=".GOOGLE_CAPTCHA_SECRET_KEY.
 		"&response=".$data['g-recaptcha-response'].
