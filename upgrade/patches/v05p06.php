@@ -39,23 +39,33 @@ if (!patch_exists($patchNumber)) {
 		$images_json = $job->get('webcam_images');
 		if($job->isHydrated() && $images_json != "") {
 			$images = json_decode($images_json, true);
+
+			// TODO: convert this to use a sql language system with methods and not string manipulation
+			$sql = "INSERT IGNORE INTO webcam_images(`timestamp`, `image_id`, `user_id`, `job_id`, `bot_id`) VALUES";
+			$first = true;
 			foreach ($images as $timestamp => $image_id) {
+				if(!$first)
+					$sql .= ",";
+				$first = false;
+				$sql .= "(";
 				$file = Storage::get($image_id);
 				if ($file->isHydrated() && $file->getUser()->isHydrated()) {
-					$image = new WebcamImage();
-					$image->set('timestamp', date("Y-m-d H:i:s", $timestamp));
-					$image->set('image_id', $image_id);
-					$image->set('user_id', $job->getUser()->id);
-					$image->set('job_id', $job->id);
+					$sql .= "'" . date("Y-m-d H:i:s", $timestamp) . "',";
+					$sql .= $image_id . ",";
+					$sql .= $job->getUser()->id . ",";
+					$sql .= $job->id . ",";
 					$bot = $job->getBot();
 					if ($bot->isHydrated()) {
-						$image->set('bot_id', $bot->id);
+						$sql .= $bot->id;
+					} else {
+						$sql .= "NULL";
 					}
-					$image->save();
+					$sql .= ")";
 				} else {
 					$failCount++;
 				}
 			}
+			db()->execute($sql);
 			$count++;
 			patch_progress((int)(($count*100)/$total));
 		}
