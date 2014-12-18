@@ -7,7 +7,7 @@ start_patch();
 
 if (!patch_exists($patchNumber)) {
 
-	$sql = "CREATE TABLE IF NOT EXISTS `webcam_images` (
+	$rowSql = "CREATE TABLE IF NOT EXISTS `webcam_images` (
 			  `timestamp` datetime NOT NULL,
 			  `image_id` bigint(11) unsigned NOT NULL,
 			  `user_id` int(11) unsigned NOT NULL,
@@ -20,12 +20,12 @@ if (!patch_exists($patchNumber)) {
 			  FOREIGN KEY (`job_id`) REFERENCES jobs(`id`) ON DELETE CASCADE
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-	db()->execute($sql);
+	db()->execute($rowSql);
 
 	$failCount = 0;
 
-	$sql = "SELECT id from jobs";
-	$jobsCollection = new Collection($sql);
+	$rowSql = "SELECT id from jobs where webcam_images!=''";
+	$jobsCollection = new Collection($rowSql);
 	$jobsCollection->bindType('id', 'Job');
 
 	$jobs = $jobsCollection->getAll();
@@ -41,33 +41,28 @@ if (!patch_exists($patchNumber)) {
 			$images = json_decode($images_json, true);
 
 			// TODO: convert this to use a sql language system with methods and not string manipulation
-			$sql = "INSERT IGNORE INTO webcam_images(`timestamp`, `image_id`, `user_id`, `job_id`, `bot_id`) VALUES";
-			$first = true;
+			$rowData = array();
 			foreach ($images as $timestamp => $image_id) {
-				if(!$first)
-					$sql .= ",";
-				$first = false;
-				$sql .= "(";
 				$file = Storage::get($image_id);
 				if ($file->isHydrated() && $file->getUser()->isHydrated()) {
-					$sql .= "'" . date("Y-m-d H:i:s", $timestamp) . "',";
-					$sql .= $image_id . ",";
-					$sql .= $job->getUser()->id . ",";
-					$sql .= $job->id . ",";
+					$user_id = $job->getUser()->id;
+					$rowSql = "('".date("Y-m-d H:i:s", $timestamp)."', ";
+					$rowSql .= "$image_id, $user_id, $job->id, ";
 					$bot = $job->getBot();
 					if ($bot->isHydrated()) {
-						$sql .= $bot->id;
+						$rowSql .= "$bot->id";
 					} else {
-						$sql .= "NULL";
+						$rowSql .= "NULL";
 					}
-					$sql .= ")";
+					$rowSql .= ")";
+					$rowData[] = $rowSql;
 				} else {
 					$failCount++;
 				}
 			}
-			db()->execute($sql);
+			db()->execute("INSERT IGNORE INTO webcam_images(`timestamp`, `image_id`, `user_id`, `job_id`, `bot_id`) VALUES " . implode(",", $rowData));
 			$count++;
-			patch_progress((int)(($count*100)/$total));
+			patch_progress(($count*100)/$total);
 		}
 	}
 

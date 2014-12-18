@@ -28,5 +28,5 @@ function patch_log($message) {
 }
 
 function patch_progress($progress) {
-  print " > $progress%\r";
+  print " > ".number_format($progress,2)."%     \r";
 }
