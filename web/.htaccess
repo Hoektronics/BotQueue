@@ -177,8 +177,9 @@ RewriteRule ^stats$								  		dispatcher.php?controller=main&view=stats [NC,L]
 RewriteRule ^comment/add$												    dispatcher.php?controller=comment&view=add_comment [NC,L]
 
 #thingiverse
-RewriteRule ^thingiverse$												    dispatcher.php?controller=main&view=thingiverse [NC,L]
-RewriteRule ^thingiverse/callback$									dispatcher.php?controller=main&view=thingiverse_callback [NC,L,QSA]
+RewriteRule ^thingiverse$												    dispatcher.php?controller=thingiverse&view=main [NC,L]
+RewriteRule ^thingiverse/url/([A-Za-z0-9+/=]+)$					dispatcher.php?controller=thingiverse&view=main&payload=$1 [NC,L]
+RewriteRule ^thingiverse/callback$									dispatcher.php?controller=thingiverse&view=thingiverse_callback [NC,L,QSA]
 
 #api v1.
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]

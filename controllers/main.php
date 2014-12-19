@@ -282,44 +282,6 @@ class MainController extends Controller
 		}
 	}
 
-	function thingiverse()
-	{
-		$this->assertLoggedIn();
-
-		if (User::$me->get('thingiverse_token')) {
-			$this->setTitle("Thingiverse + BotQueue = :D");
-
-			$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->get('thingiverse_token'));
-
-			$this->set('thing', $api->make_call('/things/82335'));
-			$this->set('files', $api->make_call('/things/82335/files'));
-			$this->set('my_info', $api->make_call('/users/me'));
-		} else {
-			$this->setTitle("Link Thingiverse to BotQueue");
-		}
-	}
-
-	function thingiverse_callback()
-	{
-		$this->assertLoggedIn();
-
-		if ($this->args('code')) {
-			$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET);
-			$token = $api->exchange_token($this->args('code'));
-
-			if ($token) {
-				//save it!
-				User::$me->set('thingiverse_token', $token);
-				User::$me->save();
-
-				//send us to our thingiverse page.
-				$this->forwardToUrl("/thingiverse");
-			} else {
-				die("Failed to exchange token.");
-			}
-		}
-	}
-
 	/**
 	 * @param Bot $bot
 	 * @return array

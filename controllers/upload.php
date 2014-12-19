@@ -43,40 +43,40 @@ class UploadController extends Controller
 		try {
 			//did we get a url?
 			$url = $this->args('url');
-			if (!$url)
-				throw new Exception("You must pass in the URL parameter!");
+			if (!$url) {
+				if($_SESSION['thing_url']) {
+					$url = $_SESSION['thing_url'];
+					unset($_SESSION['thing_url']);
+				}
+				else throw new Exception("You must pass in the URL parameter!");
+			}
 
 			$matches = array();
 			if (preg_match("/thingiverse.com\\/thing:([0-9]+)/i", $url, $matches)) {
 				$thing_id = $matches[1];
 
-				//echo "found: $thing_id<Br/>";
+				if(!defined('THINGIVERSE_API_CLIENT_ID') && !defined('THINGIVERSE_API_CLIENT_SECRET'))
+					throw new Exception("This site has not set up the Thingiverse api.");
 
-				// TODO: We need to define a thingiverse api client ID, or get it when the user
-				// authenticates it.
+				$thingiverse_token = User::$me->getThingiverseToken();
+				if($thingiverse_token === '') {
+					$this->forwardToURL("/thingiverse/url/".base64_encode(serialize($url)));
+				}
+
 				$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());
 
 				//load thingiverse data.
 				$thing = $api->make_call("/things/{$thing_id}");
 				$files = $api->make_call("/things/{$thing_id}/files");
 
-				//echo "<pre>";
-				//print_r($thing);
-				//print_r($files);
-				//echo "</pre>";
-
 				//open zip file.
 				$zip_path = tempnam("/tmp", "BQ");
 				$zip = new ZipArchive();
 				if ($zip->open($zip_path, ZIPARCHIVE::CREATE)) {
-					//echo "opened $zip_path<br/>";
-
 					//pull in all our files.
 					foreach ($files AS $row) {
 						if (preg_match("/\\.(".ACCEPTABLE_FILES.")$/i", $row->name)) {
 							$data = Utility::downloadUrl($row->public_url);
-							//echo "downloaded " . $data['realname'] . " to " . $data['localpath'] . "<br/>";
-
 							$zip->addFile($data['localpath'], $data['realname']);
 						}
 					}
@@ -92,8 +92,6 @@ class UploadController extends Controller
 					$file = Storage::newFile();
 					$file->set('user_id', User::$me->id);
 					$file->set('source_url', $url);
-
-					//echo "uploading $zip_path to $path<br/>";
 
 					$file->upload($zip_path, $path);
 					FileUploadHandler::_handleZipFile($zip_path, $file);
