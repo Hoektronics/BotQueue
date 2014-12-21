@@ -12,7 +12,7 @@
 		<ul>
 			<li><strong>.gcode</strong> - will be executed directly with no extra processing.</li>
 			<li><strong>.stl / .obj / .amf</strong> - will be sliced and executed based on your config.</li>
-			<li><strong>.s3g / .x3g</strong> - WIP - Makerbot format, executed directly</li>
+			<li><strong>.s3g / .x3g / makerbot</strong> - WIP - Makerbot format, executed directly.</li>
 			<li><strong>.zip</strong> - usable files will be extracted and added to your queue.</li>
 		</ul>
 	</div>
@@ -23,10 +23,7 @@
 
 		<h2>Option 2: Use a URL</h2>
 
-		<form class="form-inline" action="/upload/url" method="post">
-			<input type="text" class="input-xlarge" name="url" placeholder="URL to load">
-			<button type="submit" class="btn btn-primary">Go!</button>
-		</form>
+		<?= Controller::byName('upload')->renderView('url'); ?>
 		<ul class="muted">
 			<li>The URL should point to an acceptable filetype.</li>
 			<li>thingiverse.com/thing:#### format URLs will work too.</li>

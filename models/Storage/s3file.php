@@ -131,7 +131,7 @@ class S3File extends StorageInterface
 		//create our various encoded/signed stuff.
 		$policy_json_cleaned = str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $policy_json);
 		$policy_encoded = base64_encode($policy_json_cleaned);
-		$signature = hex2b64(hash_hmac('sha1', $policy_encoded, AMAZON_AWS_SECRET));
+		$signature = $this->hex2b64(hash_hmac('sha1', $policy_encoded, AMAZON_AWS_SECRET));
 
 		$fields = array();
 		$fields["AWSAccessKeyId"] = AMAZON_AWS_KEY;
@@ -145,6 +145,17 @@ class S3File extends StorageInterface
 
 		return $fields;
 	}
+
+	// Function to help sign the policy
+	private function hex2b64($str)
+	{
+		$raw = '';
+		for ($i = 0; $i < strlen($str); $i += 2) {
+			$raw .= chr(hexdec(substr($str, $i, 2)));
+		}
+		return base64_encode($raw);
+	}
+
 
 	/**
 	 * Uploads from a local path to the S3 Bucket

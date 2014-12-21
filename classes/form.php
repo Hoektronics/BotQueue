@@ -413,6 +413,22 @@ class EmailField extends TextField
 	}
 }
 
+class UrlField extends TextField
+{
+
+	public function validate($data) {
+		$url = $data[$this->name];
+		$filtered_url = filter_var($url, FILTER_VALIDATE_URL);
+		if($filtered_url != $url) {
+			$this->error("You must supply a valid URL.");
+		} else {
+			parent::validate($data);
+		}
+
+		return !$this->hasError;
+	}
+}
+
 class TextareaField extends FormField
 {
 	public $width;

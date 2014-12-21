@@ -23,6 +23,10 @@ abstract class StorageInterface extends Model
 
 	public abstract function getDownloadURL();
 
+	public function uploadNice($srcPath, $name, $prefix="") {
+		$this->upload($srcPath, $prefix.StorageInterface::getNiceDir($name));
+	}
+
 	public function getBasename()
 	{
 		return basename($this->get('path'));
@@ -75,7 +79,7 @@ abstract class StorageInterface extends Model
 
 	public function isMakerbot()
 	{
-		return preg_match("/(s3g|x3g)$/i", $this->get('path'));
+		return preg_match("/(s3g|x3g|makerbot)$/i", $this->get('path'));
 	}
 
 	public function is3DModel()

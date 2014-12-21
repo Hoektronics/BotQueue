@@ -30,7 +30,6 @@ class UploadController extends Controller
 	{
 		$form = $this->createFileForm();
 
-		$this->setArg('label');
 		$this->set('form', $form);
 	}
 
@@ -38,91 +37,55 @@ class UploadController extends Controller
 	{
 		$this->assertLoggedIn();
 
+		$form = $this->_createUrlForm();
+		$this->set('form', $form);
+
 		$this->setTitle("Create Job from URL");
 
-		try {
-			//did we get a url?
-			$url = $this->args('url');
-			if (!$url) {
-				if($_SESSION['thing_url']) {
-					$url = $_SESSION['thing_url'];
-					unset($_SESSION['thing_url']);
-				}
-				else throw new Exception("You must pass in the URL parameter!");
-			}
-
-			$matches = array();
-			if (preg_match("/thingiverse.com\\/thing:([0-9]+)/i", $url, $matches)) {
-				$thing_id = $matches[1];
-
-				if(!defined('THINGIVERSE_API_CLIENT_ID') && !defined('THINGIVERSE_API_CLIENT_SECRET'))
-					throw new Exception("This site has not set up the Thingiverse api.");
-
-				$thingiverse_token = User::$me->getThingiverseToken();
-				if($thingiverse_token === '') {
-					$this->forwardToURL("/thingiverse/url/".base64_encode(serialize($url)));
+		if($form->checkSubmitAndValidate($this->args())) {
+			try {
+				//did we get a url?
+				$url = $this->args('url');
+				if (!$url) {
+					if ($_SESSION['thing_url']) {
+						$url = $_SESSION['thing_url'];
+						unset($_SESSION['thing_url']);
+					} else
+						throw new Exception("You didn't give us a URL");
 				}
 
-				$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());
+				if (preg_match("/thingiverse.com\\/thing:([0-9]+)/i", $url, $matches)) {
+					$file = $this->_handleThingiverseLinks($url);
+				} else {
+					$tempFile = ServerFile::downloadFromUrl($url);
 
-				//load thingiverse data.
-				$thing = $api->make_call("/things/{$thing_id}");
-				$files = $api->make_call("/things/{$thing_id}/files");
+					if($tempFile === null)
+						throw new Exception("We can't seem to access that file");
 
-				//open zip file.
-				$zip_path = tempnam("/tmp", "BQ");
-				$zip = new ZipArchive();
-				if ($zip->open($zip_path, ZIPARCHIVE::CREATE)) {
-					//pull in all our files.
-					foreach ($files AS $row) {
-						if (preg_match("/\\.(".ACCEPTABLE_FILES.")$/i", $row->name)) {
-							$data = Utility::downloadUrl($row->public_url);
-							$zip->addFile($data['localpath'], $data['realname']);
-						}
-					}
-					$zip->close();
+					//does it match?
+					if (!$tempFile->isKnownType() && !$tempFile->isZip())
+						throw new Exception("The file <a href=\"" . $url . "\">{$tempFile->getName()}</a> is not valid for printing.");
 
-					//create zip name.
-					$filename = basename($thing->name . ".zip");
-					$filename = str_replace(" ", "_", $filename);
-					$filename = preg_replace("/[^-_.[0-9a-zA-Z]/", "", $filename);
-					$path = "assets/" . StorageInterface::getNiceDir($filename);
-
-					//okay, upload it and handle it.
 					$file = Storage::newFile();
 					$file->set('user_id', User::$me->id);
 					$file->set('source_url', $url);
+					$file->uploadNice($tempFile->getFile(), $tempFile->getName());
 
-					$file->upload($zip_path, $path);
-					FileUploadHandler::_handleZipFile($zip_path, $file);
-
-					$this->forwardToUrl("/job/create/file:{$file->id}");
-				} else
-					throw new Exception("Unable to open zip {$zip_path} for writing.");
-			} else {
-				$data = Utility::downloadUrl($url);
-
-				//does it match?
-				if (!preg_match("/\\.(".ACCEPTABLE_FILES."|zip)$/i", $data['realname']))
-					throw new Exception("The file <a href=\"" . $url . "\">{$data['realname']}</a> is not valid for printing.");
-
-				$file = Storage::newFile();
-				$file->set('user_id', User::$me->id);
-				$file->set('source_url', $url);
-				$file->upload($data['localpath'],
-					StorageInterface::getNiceDir($data['realname']));
-
-				//is it a zip file?  do some magic on it.
-				if (!preg_match("/\\.zip$/i", $data['realname']))
-					FileUploadHandler::_handleZipFile($data['localpath'], $file);
+					//is it a zip file?  do some magic on it.
+					if ($tempFile->isZip()) {
+						FileUploadHandler::_handleZipFile($tempFile->getFile(), $file);
+					}
+				}
 
 				Activity::log("uploaded a new file called " . $file->getLink() . ".");
 
 				//send us to step 2.
 				$this->forwardToUrl("/job/create/file:{$file->id}");
+			} catch (Exception $e) {
+				/** @var FormField $field */
+				$field = $form->get('url');
+				$field->error($e->getMessage());
 			}
-		} catch (Exception $e) {
-			$this->set('megaerror', $e->getMessage());
 		}
 	}
 
@@ -145,11 +108,12 @@ class UploadController extends Controller
 	}
 
 	/**
-	 * @return string
+	 * @return Form
 	 */
 	private function createFileForm()
 	{
-		$form = new Form('form', true);
+		/** @var Form $form */
+		$form = new Form('file', true);
 		/** @var StorageInterface $file */
 		$file = Storage::newFile();
 		$fields = $file->getUploadFields();
@@ -170,14 +134,59 @@ class UploadController extends Controller
 
 		return $form;
 	}
-}
 
-// Function to help sign the policy
-function hex2b64($str)
-{
-	$raw = '';
-	for ($i = 0; $i < strlen($str); $i += 2) {
-		$raw .= chr(hexdec(substr($str, $i, 2)));
+	private function _createUrlForm()
+	{
+		$form = new Form('url');
+
+		$form->add(
+			UrlField::name("url")
+		);
+
+		$form->setSubmitText("Go!");
+		$form->action = "/upload";
+
+		return $form;
 	}
-	return base64_encode($raw);
+
+	/**
+	 * @param $url
+	 * @return StorageInterface
+	 * @throws Exception
+	 */
+	private function _handleThingiverseLinks($url)
+	{
+		$matches = array();
+		if (preg_match("/thingiverse.com\\/thing:([0-9]+)/i", $url, $matches)) {
+			$thing_id = $matches[1];
+
+			if (!defined('THINGIVERSE_API_CLIENT_ID') && !defined('THINGIVERSE_API_CLIENT_SECRET'))
+				throw new Exception("This site has not set up the Thingiverse api.");
+
+			$thingiverse_token = User::$me->getThingiverseToken();
+			if ($thingiverse_token === '') {
+				$this->forwardToURL("/thingiverse/url/" . base64_encode(serialize($url)));
+			}
+
+			$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());
+
+			//load thingiverse file
+			$zip_file = $api->download_thing($thing_id);
+
+			if($zip_file !== null && $zip_file->isZip()) {
+				$storage_file = Storage::newFile();
+				$storage_file->set('user_id', User::$me->id);
+				$storage_file->set('source_url', $url);
+				$storage_file->uploadNice($zip_file->getFile(), $zip_file->getName());
+
+				FileUploadHandler::_handleZipFile($zip_file->getFile(), $storage_file);
+
+				return $storage_file;
+			} else {
+				throw new Exception("We can't seem to access that file");
+			}
+		} else {
+			throw new Exception("That is not a valid Thingiverse link");
+		}
+	}
 }

@@ -17,7 +17,8 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-define("ACCEPTABLE_FILES", "stl|obj|amf|s3g|x3g|gcode");
+define("ACCEPTABLE_FILES", "stl|obj|amf|s3g|x3g|makerbot|gcode");
+
 class File
 {
 	var $tempFolder;

@@ -14,29 +14,16 @@ class ThingiverseAPI
 
     public function exchange_token($code)
     {
-        //our parameters for the call
-        $data = array(
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
-            'code' => $code
-        );
 
-        //url-ify the data for the POST
-        $fields_string = "";
-        $fieldsCount = 0;
-        foreach ($data as $key => $value) {
-            $fields_string .= $key . '=' . $value . '&';
-            $fieldsCount++;
-        }
-        rtrim($fields_string, '&');
+        $fields = $this->getFields();
 
         //open connection
         $ch = curl_init();
 
         //set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $this->oauth_url);
-        curl_setopt($ch, CURLOPT_POST, $fieldsCount);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+        curl_setopt($ch, CURLOPT_POST, count($fields));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, implode('&', $fields));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         //execute post
@@ -55,19 +42,9 @@ class ThingiverseAPI
 
     public function make_call($path, $data = array(), $method = "GET")
     {
-        //our parameters for the call
-        $data['client_id'] = $this->client_id;
-        $data['client_secret'] = $this->client_secret;
-        $data['access_token'] = $this->user_token;
+        $fields = $this->getFields($data);
 
-        //url-ify the data for the call
-        $fields_string = "";
-        $fieldsCount = 0;
-        foreach ($data as $key => $value) {
-            $fields_string .= $key . '=' . $value . '&';
-            $fieldsCount++;
-        }
-        rtrim($fields_string, '&');
+        $field_string = implode('&', $fields);
 
         //open connection
         $ch = curl_init();
@@ -75,7 +52,7 @@ class ThingiverseAPI
 
         //what type of request?
         if ($method == "GET") {
-            curl_setopt($ch, CURLOPT_URL, $this->api_url . $path . '?' . $fields_string);
+            curl_setopt($ch, CURLOPT_URL, $this->api_url . $path . '?' . $field_string);
         } elseif ($method == "POST" || $method == "PATCH" || $method == "DELETE") {
             if ($method == "PATCH")
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
@@ -83,13 +60,12 @@ class ThingiverseAPI
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
 
             curl_setopt($ch, CURLOPT_URL, $this->api_url . $path);
-            curl_setopt($ch, CURLOPT_POST, $fieldsCount);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+            curl_setopt($ch, CURLOPT_POST, count($fields));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
         }
 
         //execute post
         $result = curl_exec($ch);
-        //$info = curl_getinfo($ch);
 
         //close connection
         curl_close($ch);
@@ -97,6 +73,31 @@ class ThingiverseAPI
         //send our data back
         return json::decode($result);
     }
-}
 
-?>
+    public function download_thing($thing_id) {
+        $path = "/things/{$thing_id}/packageurl";
+
+        $url = $this->make_call($path)->public_url;
+
+        return ServerFile::downloadFromUrl($url);
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    private function getFields($data = array())
+    {
+        //our parameters for the call
+        $data['client_id'] = $this->client_id;
+        $data['client_secret'] = $this->client_secret;
+        $data['access_token'] = $this->user_token;
+
+        //url-ify the data for the call
+        $fields = array();
+        foreach ($data as $key => $value) {
+            $fields[] = $key . '=' . $value;
+        }
+        return $fields;
+    }
+}

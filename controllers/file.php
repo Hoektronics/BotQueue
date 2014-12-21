@@ -55,8 +55,11 @@ class FileController extends Controller
 			$path = $this->args('id');
 			$file = STORAGE_PATH . "/" . $path;
 
-			if (!is_file($file))
-				throw new Exception("path does not exist");
+			// If the file isn't there, kill the request with fire.
+			if (!is_file($file)) {
+				http_response_code(404);
+				die();
+			}
 
 			//get our headers ready.
 			header('Content-Description: File Transfer');
