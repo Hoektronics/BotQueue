@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 10;
-start_patch();
+$patch = new Patch(10);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
     $statsViewSQL = "
         CREATE VIEW stats AS
         SELECT (unix_timestamp(end_date) - unix_timestamp(start_date)) AS seconds,
@@ -16,5 +14,5 @@ if (!patch_exists($patchNumber)) {
     ";
 	db()->execute($statsViewSQL);
 
-	finish_patch($patchNumber, "Adding stats view");
+	$patch->finish("Adding stats view");
 }

@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 18;
-start_patch();
+$patch = new Patch(18);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 
 	$rowSql = "CREATE TABLE IF NOT EXISTS `webcam_images` (
 			  `timestamp` datetime NOT NULL,
@@ -32,7 +30,15 @@ if (!patch_exists($patchNumber)) {
 
 	$total = $jobsCollection->count();
 	$count = 0;
-	patch_progress(0);
+	$patch->progress(0);
+
+	// Get the current webcam images in an array, so we can quickly skip those.
+	$pdoStatement = db()->query("SELECT image_id from webcam_images");
+	$existingImages = array();
+	foreach ($pdoStatement->fetchAll(PDO::FETCH_ASSOC) as $row) {
+		$existingImages[$row['image_id']] = true;
+	}
+
 	foreach ($jobs as $row) {
 		/** @var Job $job */
 		$job = $row['Job'];
@@ -40,35 +46,40 @@ if (!patch_exists($patchNumber)) {
 		if($job->isHydrated() && $images_json != "") {
 			$images = json_decode($images_json, true);
 
-			// TODO: convert this to use a sql language system with methods and not string manipulation
 			$rowData = array();
 			foreach ($images as $timestamp => $image_id) {
-				$file = Storage::get($image_id);
-				if ($file->isHydrated() && $file->getUser()->isHydrated()) {
-					$user_id = $job->getUser()->id;
-					$rowSql = "('".date("Y-m-d H:i:s", $timestamp)."', ";
-					$rowSql .= "$image_id, $user_id, $job->id, ";
-					$bot = $job->getBot();
-					if ($bot->isHydrated()) {
-						$rowSql .= "$bot->id";
+				if(!array_key_exists($image_id, $existingImages)) {
+					$file = Storage::get($image_id);
+					if ($file->isHydrated() && $file->getUser()->isHydrated()) {
+						$user_id = $job->getUser()->id;
+						$rowSql = "('" . date("Y-m-d H:i:s", $timestamp) . "', ";
+						$rowSql .= "$image_id, $user_id, $job->id, ";
+						$bot = $job->getBot();
+						if ($bot->isHydrated()) {
+							$rowSql .= "$bot->id";
+						} else {
+							$rowSql .= "NULL";
+						}
+						$rowSql .= ")";
+						$rowData[] = $rowSql;
 					} else {
-						$rowSql .= "NULL";
+						$failCount++;
 					}
-					$rowSql .= ")";
-					$rowData[] = $rowSql;
 				} else {
-					$failCount++;
+					// Remove it from the array to save memory
+					unset($existingImages[$image_id]);
 				}
 			}
-			db()->execute("INSERT IGNORE INTO webcam_images(`timestamp`, `image_id`, `user_id`, `job_id`, `bot_id`) VALUES " . implode(",", $rowData));
+			if(count($rowData) > 0)
+				db()->execute("INSERT IGNORE INTO webcam_images(`timestamp`, `image_id`, `user_id`, `job_id`, `bot_id`) VALUES " . implode(",", $rowData));
 			$count++;
-			patch_progress(($count*100)/$total);
+			$patch->progress(($count*100)/$total);
 		}
 	}
 
 	if($failCount > 0) {
-		patch_log($failCount . " images no longer exist in the database");
+		$patch->log($failCount . " images no longer exist in the database");
 	}
 
-	finish_patch($patchNumber, "Added webcam images table");
+	$patch->finish("Added webcam images table");
 }

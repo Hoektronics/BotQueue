@@ -1,17 +1,13 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 3;
-start_patch();
+$patch = new Patch(3);
 
-if(!patch_exists($patchNumber)) {
-  $addCanceledSQL = "alter table jobs
-  modify column status
-  enum('available','taken','slicing','downloading','qa','complete','failure','canceled') NOT NULL DEFAULT 'available'";
-  db()->execute($addCanceledSQL);
+if (!$patch->exists()) {
+	$addCanceledSQL = "ALTER TABLE jobs
+  MODIFY COLUMN status
+  ENUM('available','taken','slicing','downloading','qa','complete','failure','canceled') NOT NULL DEFAULT 'available'";
+	db()->execute($addCanceledSQL);
 
-  finish_patch($patchNumber, "Allowing a job to be canceled");
+	$patch->finish("Allowing a job to be canceled");
 }
-
-?>

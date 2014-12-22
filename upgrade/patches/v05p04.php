@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 16;
-start_patch();
+$patch = new Patch(16);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 
 	$tables = array(
 		'activities',
@@ -36,5 +34,5 @@ if (!patch_exists($patchNumber)) {
 		db()->execute($sql);
 	}
 
-	finish_patch($patchNumber, "Converted tables to InnoDB");
+	$patch->finish("Converted tables to InnoDB");
 }

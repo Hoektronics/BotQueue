@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 14;
-start_patch();
+$patch = new Patch(14);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `bot_queues` (
 		        `queue_id` INT(11) UNSIGNED NOT NULL,
@@ -34,5 +32,5 @@ if (!patch_exists($patchNumber)) {
 	$sql = "ALTER TABLE bots DROP COLUMN queue_id";
 	db()->execute($sql);
 
-	finish_patch($patchNumber, "Added bots to queues");
+	$patch->finish("Added bots to queues");
 }

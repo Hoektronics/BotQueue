@@ -1,18 +1,14 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 2;
-start_patch();
+$patch = new Patch(2);
 
-if(!patch_exists($patchNumber)) {
-  $addRetirementSQL = "alter table bots
-  modify column status
-  enum('idle','slicing','working','waiting','error','maintenance','offline','retired')
-  default 'idle'";
-  db()->execute($addRetirementSQL);
+if (!$patch->exists()) {
+	$addRetirementSQL = "ALTER TABLE bots
+  MODIFY COLUMN status
+  ENUM('idle','slicing','working','waiting','error','maintenance','offline','retired')
+  DEFAULT 'idle'";
+	db()->execute($addRetirementSQL);
 
-  finish_patch($patchNumber, "Allowing a bot to be retired");
+	$patch->finish("Allowing a bot to be retired");
 }
-
-?>

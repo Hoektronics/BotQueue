@@ -1,32 +1,43 @@
 <?
+$base_dir = dirname(__FILE__) . "/..";
+$base_dir = realpath($base_dir);
+require($base_dir . "/extensions/global.php");
 
-function start_patch()
+class Patch
 {
-  $createPatches = "CREATE TABLE IF NOT EXISTS `patches` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `patch_num` int(11) unsigned NOT NULL,
-  `description` text NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `patch_num` (`patch_num`)
-  ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-  db()->execute($createPatches);
-}
+	private $patchNumber;
+	private $startTime;
+	private $endTime;
 
-function finish_patch($patchNumber, $description) {
-  $patch = "INSERT INTO patches (patch_num, description) VALUES(?,?)";
-  db()->execute($patch, array($patchNumber, $description));
-  print("Patch ".$patchNumber." applied: $description\n");
-}
+	public function __construct($patchNumber)
+	{
+		$this->patchNumber = $patchNumber;
+		$this->startTime = microtime(true);
+	}
 
-function patch_exists($patchNumber) {
-  $patchSQL = "SELECT * from patches where patch_num >= ?";
-  return (db()->execute($patchSQL, array($patchNumber)) > 0);
-}
+	public function finish($description) {
+		$patch = "INSERT INTO patches (patch_num, description) VALUES(?,?)";
+		db()->execute($patch, array($this->patchNumber, $description));
+		$this->endTime = microtime(true);
+		$totalTime = round($this->endTime - $this->startTime, 3);
 
-function patch_log($message) {
-  print(" > $message\n");
-}
+		print "Patch $this->patchNumber applied in $totalTime s: $description\n";
+	}
 
-function patch_progress($progress) {
-  print " > ".number_format($progress,2)."%     \r";
+	function exists()
+	{
+		$patchSQL = "SELECT * FROM patches WHERE patch_num >= ?";
+		return (db()->execute($patchSQL, array($this->patchNumber)) > 0);
+	}
+
+	function log($message)
+	{
+		print(" > $message\n");
+	}
+
+	function progress($progress)
+	{
+		$currentTime = round(microtime(true) - $this->startTime, 3);
+		print " > " . number_format($progress, 2) . "% $currentTime seconds elapsed      \r";
+	}
 }

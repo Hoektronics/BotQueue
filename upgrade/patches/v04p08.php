@@ -1,15 +1,11 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 8;
-start_patch();
+$patch = new Patch(8);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
     $removeSlicerDescription = "alter table slice_engines drop column engine_description";
 	db()->execute($removeSlicerDescription);
 
-	finish_patch($patchNumber, "Removing the engine_description");
+	$patch->finish("Removing the engine_description");
 }
-
-?>

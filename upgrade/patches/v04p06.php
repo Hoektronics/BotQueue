@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 6;
-start_patch();
+$patch = new Patch(6);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 	$createTable = "CREATE TABLE `engine_os` (
 		`engine_id` INT(11) UNSIGNED NOT NULL,
 		`os` ENUM('osx','linux','win','raspberrypi'),
@@ -14,7 +12,5 @@ if (!patch_exists($patchNumber)) {
 
 	db()->execute($createTable);
 
-	finish_patch($patchNumber, "Creating Engine OS table");
+	$patch->finish("Creating Engine OS table");
 }
-
-?>

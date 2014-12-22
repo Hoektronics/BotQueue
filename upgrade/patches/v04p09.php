@@ -1,15 +1,13 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 9;
-start_patch();
+$patch = new Patch(9);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 	$addDroppedSQL = "ALTER TABLE job_clock
   		MODIFY COLUMN status
   		ENUM('idle','slicing','working','waiting','error','maintenance','offline', 'dropped')";
 	db()->execute($addDroppedSQL);
 
-	finish_patch($patchNumber, "Adding dropped to the job_clock");
+	$patch->finish("Adding dropped to the job_clock");
 }

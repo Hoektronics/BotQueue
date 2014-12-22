@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 17;
-start_patch();
+$patch = new Patch(17);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 
 	$tables = array(
 		'activities',
@@ -70,5 +68,5 @@ if (!patch_exists($patchNumber)) {
 		db()->execute($sql);
 	}
 
-	finish_patch($patchNumber, "Added user ID constraint");
+	$patch->finish("Added user ID constraint");
 }

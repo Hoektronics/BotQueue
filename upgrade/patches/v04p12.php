@@ -1,11 +1,9 @@
 <?
-include("../../extensions/global.php");
 include("../patches.php");
 
-$patchNumber = 12;
-start_patch();
+$patch = new Patch(12);
 
-if (!patch_exists($patchNumber)) {
+if (!$patch->exists()) {
 
 	// Fix the temperature fields:
 	$rs = db()->query("SELECT * from jobs");
@@ -35,7 +33,7 @@ if (!patch_exists($patchNumber)) {
   		MODIFY COLUMN temperature_data longtext NOT NULL";
 
 
-	finish_patch($patchNumber, "Expanded temperature data fields");
+	$patch->finish("Expanded temperature data fields");
 }
 
 function fix_temp_data($data) {
