@@ -19,26 +19,27 @@
 
 class HTMLTemplateController extends Controller
 {
-    public function main()
-    {
-        $this->setArg('content');
-        $this->setArg('title');
-        $this->setArg('area');
-        $this->setArg('sidebar');
-    }
+	public function main()
+	{
+		$this->setArg('content');
+		$this->setArg('title');
+		$this->setArg('area');
+		$this->setArg('sidebar');
+	}
 
-    public function statusbar()
-    {
-        $this->setArg('message');
-    }
+	public function statusbar()
+	{
+		$this->setArg('message');
+	}
 
-    public function errorbar()
-    {
-        $this->setArg('message');
-    }
+	public function errorbar()
+	{
+		$this->setArg('message');
+	}
 
 	public function menubar()
 	{
+		$this->set('notifications', Notification::getCount());
 		$this->setArg('area');
 	}
 }

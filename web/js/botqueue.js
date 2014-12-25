@@ -18,3 +18,20 @@ prepare_job_sort = function () {
 };
 
 $(document).ready(prepare_job_sort);
+
+update_notification_count = function() {
+    $.ajax({
+        url: '/notification/count',
+        success: function(count) {
+            var icon = $("#notification-icon");
+            icon.html(count);
+            if(count == 0) {
+                icon.removeClass('active');
+            } else {
+                icon.addClass('active');
+            }
+        }
+    });
+};
+
+setInterval(update_notification_count, 60000);

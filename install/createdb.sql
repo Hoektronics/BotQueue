@@ -1,5 +1,25 @@
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(32) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `pass_hash` varchar(40) NOT NULL,
+  `pass_reset_hash` char(40) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `birthday` date NOT NULL,
+  `last_active` datetime NOT NULL,
+  `registered_on` datetime NOT NULL,
+  `last_notification` int(11) NOT NULL DEFAULT 0,
+  `dashboard_style` enum('list','large_thumbnails','medium_thumbnails','small_thumbnails') NOT NULL DEFAULT 'large_thumbnails',
+  `thingiverse_token` varchar(40) NOT NULL DEFAULT '',
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `last_active` (`last_active`),
+  KEY `username` (`username`),
+  KEY `pass_hash` (`pass_hash`),
+  KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS `activities` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -258,25 +278,6 @@ CREATE TABLE IF NOT EXISTS `tokens` (
   KEY `pass_hash` (`hash`),
   KEY `expire_date` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(32) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `pass_hash` varchar(40) NOT NULL,
-  `pass_reset_hash` char(40) NOT NULL,
-  `location` varchar(255) NOT NULL,
-  `birthday` date NOT NULL,
-  `last_active` datetime NOT NULL,
-  `registered_on` datetime NOT NULL,
-  `dashboard_style` enum('list','large_thumbnails','medium_thumbnails','small_thumbnails') NOT NULL DEFAULT 'large_thumbnails',
-  `thingiverse_token` varchar(40) NOT NULL DEFAULT '',
-  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `last_active` (`last_active`),
-  KEY `username` (`username`),
-  KEY `pass_hash` (`pass_hash`),
-  KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS `patches` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `patch_num` int(11) unsigned NOT NULL,
@@ -302,6 +303,17 @@ CREATE TABLE IF NOT EXISTS `webcam_images` (
   FOREIGN KEY (`bot_id`) REFERENCES bots(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`job_id`) REFERENCES jobs(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `timestamp` datetime NOT NULL,
+  `from_user_id` int(11) unsigned NULL,
+  `to_user_id` int(11) unsigned NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`from_user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`to_user_id`) REFERENCES users(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE VIEW stats AS
   SELECT (unix_timestamp(end_date) - unix_timestamp(start_date)) AS seconds,
     bot_id, user_id, status, start_date, end_date
@@ -309,6 +321,6 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(18, 'Added webcam images table');
+INSERT INTO patches(patch_num, description) VALUES(19, 'Added notifications table');
 
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -185,20 +185,10 @@ class Model
 	/**
 	 * This function handles saving the object.
 	 *
-	 * @param $force bool
 	 * @return true on success, false on failure.
 	 */
-	public function save($force = false)
+	public function save()
 	{
-		//force just sets all fields to dirty to make sure they get saved.
-		if ($force) {
-			if (!empty($this->data)) {
-				foreach ($this->data AS $key => $value) {
-					$this->dirtyFields[$key] = 1;
-				}
-			}
-		}
-
 		//we should do any cleanup if possible
 		if ($this->isDirty())
 			$this->clean();

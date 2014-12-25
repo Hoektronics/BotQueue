@@ -88,8 +88,6 @@
 
 	</section>
 
-	<hr>
-
 	<footer>
 		<div class="row">
 			<div class="span6">

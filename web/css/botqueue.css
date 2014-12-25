@@ -6,8 +6,8 @@
 #page_signin #signin .control-group,#page_signin #signin .clearfix.error{width:auto!important;padding-top:0!important;margin-left:0!important;margin-right:0!important;padding-left:30px!important;padding-right:30px!important;}
 #page_signin #signin label{font-weight:bold;}
 #page_signin #signin div.input label{font-weight:normal!important;}
-#page_signin #signin p.reset{margin: 15px 0px 0px 0px;}
-#page_signin #signin label.lrememberme {display: inline;}
+#page_signin #signin p.reset{margin: 15px 0 0 0;}
+#page_signin #signin label.remember_me {display: inline;}
 
 #page_signin #signup{margin-top:0;}
 #page_signin #signup .title{width:auto;letter-spacing:-1px;margin:0;border:1px solid #ddd;background:#f7f7f7 url("/img/darkgrain.png");padding:15px 30px;font-size:22px;color:#444;-moz-border-radius-topleft:6px;-moz-border-radius-topright:6px;}
@@ -24,7 +24,7 @@
 #page_signin .help-block a,#page_signin .help-inline a{color:#777;text-decoration:none;}
 #page_signin .help-block a:hover,#page_signin .help-inline a:hover{color:#444;text-decoration:underline;}
 
-.progress {margin-bottom: 0px;}
+.progress {margin-bottom: 0;}
 
 .btn-bot-status {width: 60px;}
 
@@ -52,7 +52,7 @@ div.comment_meta h4 {
   padding: 0;
 }
 
-div.comment_meta muted {
+div.comment_meta h4.muted {
   font-size: 75%;
 }
 
@@ -66,8 +66,8 @@ div.comment_body {
 }
 
 div.comments div.controls, div.comments div.form-actions {
-  margin-left: 0px;
-  padding-left: 0px;
+  margin-left: 0;
+  padding-left: 0;
   border: none;
 }
 
@@ -111,8 +111,8 @@ div.bot_thumbnail div.bot_header div.bot_status_button {
 
 div.bot_thumbnail div.bot_header {
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 31px;
   background-color:rgba(255, 255, 255, 0.75);
@@ -122,7 +122,7 @@ div.bot_thumbnail div.bot_header {
 
 div.bot_header h3 {
   font-size: 20px;
-  margin: 0px;
+  margin: 0;
   padding: 3px;
   line-height: normal;
 }
@@ -137,12 +137,12 @@ div.bot_thumbnail_3 h3 {
 
 div.bot_thumbnail div.bot_info_container {
   position: absolute;
-  margin: 0px;
+  margin: 0;
   width: 100%;
-  padding: 0px;
+  padding: 0;
   line-height: normal;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0;
+  left: 0;
   background: #ddd; 
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -158,7 +158,7 @@ div.bot_thumbnail h3 span.muted {
 
 div.bot_thumbnail div.progress {
   height: 15px;
-  margin: 3px 0px;
+  margin: 3px 0;
 }
 
 div.bot_thumbnail_6 div.bot_info span.muted {
@@ -187,7 +187,7 @@ div.approve-app div.controls {
 
 div.approve-app div.form-actions, div.deny-app div.form-actions {
   background-color: transparent !important;
-  border-top: 0px !important;
+  border-top: 0 !important;
 }
 
 div.approve-app h4, div.deny-app h4 {
@@ -225,13 +225,13 @@ span.webcam_name {
 }
 
 div.webcam_preview.span3 {
-  margin-left: 0px;
+  margin-left: 0;
   margin-right: 30px;
   margin-bottom: 30px;
 }
 
 ul.install_tabs {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 div.install_tabs {
@@ -250,4 +250,25 @@ div.install_tabs {
 td.min-width {
   width: 1%;
   white-space: nowrap;
+}
+
+div.notification {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #444444;
+  text-align: center;
+  text-decoration: none;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+div.notification.active {
+  background-color: #d54b48;
+}
+
+hr {
+  display: block;
+  margin: 0.5em auto;
+  border: 1px inset;
 }

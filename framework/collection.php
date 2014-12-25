@@ -40,6 +40,12 @@ class Collection
 		$this->obj_data = array();
 	}
 
+	public static function none()
+	{
+		// Dummy SQL statement returns no rows.
+		return new Collection("select 1 from dual where false");
+	}
+
 	public function bindType($key, $value)
 	{
 		$this->obj_types[$key] = $value;
@@ -129,6 +135,19 @@ class Collection
 	public function count()
 	{
 		return $this->total;
+	}
+
+	public function getMax($column) {
+		$this->setMap();
+		$max = null;
+
+		foreach($this->map AS $unused => $row) {
+			if($max === null || $max < $row[$column]) {
+				$max = $row[$column];
+			}
+		}
+
+		return $max;
 	}
 
 	public function getAll()

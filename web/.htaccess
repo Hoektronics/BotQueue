@@ -185,6 +185,11 @@ RewriteRule ^thingiverse/callback$									dispatcher.php?controller=thingiverse
 RewriteRule ^api/v1$												    dispatcher.php?controller=apiv1&view=home [NC,L]
 RewriteRule ^api/v1/endpoint$										apiv1.php [NC,L,QSA]
 
+#notifications
+RewriteRule ^notifications$                     dispatcher.php?controller=notifications&view=home [NC,L]
+RewriteRule ^notifications/all$                 dispatcher.php?controller=notifications&view=all [NC,L]
+RewriteRule ^notification/count$               dispatcher.php?mode=ajax&controller=notifications&view=count [NC,L]
+
 #username wildcard pages.  must be at the very end to avoid conflicting with other pages
 RewriteRule ^([-_a-zA-Z0-9]+)$											dispatcher.php?controller=user&view=profile&username=$1 [NC,L]
 RewriteRule ^([-_a-zA-Z0-9]+)/edit$										dispatcher.php?controller=user&view=edit&username=$1 [NC,L]

@@ -5,7 +5,7 @@ $patch = new Patch(18);
 
 if (!$patch->exists()) {
 
-	$rowSql = "CREATE TABLE IF NOT EXISTS `webcam_images` (
+	$createSql = "CREATE TABLE IF NOT EXISTS `webcam_images` (
 			  `timestamp` datetime NOT NULL,
 			  `image_id` bigint(11) unsigned NOT NULL,
 			  `user_id` int(11) unsigned NOT NULL,
@@ -18,7 +18,7 @@ if (!$patch->exists()) {
 			  FOREIGN KEY (`job_id`) REFERENCES jobs(`id`) ON DELETE CASCADE
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-	db()->execute($rowSql);
+	db()->execute($createSql);
 
 	$failCount = 0;
 

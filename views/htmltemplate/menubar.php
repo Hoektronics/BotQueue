@@ -2,11 +2,22 @@
 	<div class="navbar">
 		<div class="navbar-inner">
 			<div class="container" style="width: auto;">
-				<a class="btn btn-navbar" data-toggle="collapse" data-target="#menu-bar">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</a>
+				<div class="pull-right">
+					<ul class="nav navbar pull-left">
+						<li>
+							<a href="/notifications">
+								<div id="notification-icon" class="notification<?=($notifications > 0 ? ' active' : '')  ?>">
+									<?=$notifications?>
+								</div>
+							</a>
+						</li>
+					</ul>
+					<button type="button"  class="btn btn-navbar" data-toggle="collapse" data-target="#menu-bar">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
 				<a class="brand" href="/"><?= RR_PROJECT_NAME ?></a>
 
 				<div id="menu-bar" class="nav-collapse collapse">
@@ -61,11 +72,6 @@
 							<li><a href="/register">Sign up</a></li>
 						<? endif ?>
 					</ul>
-					<!--
-					<form class="navbar-search pull-right" action="">
-						<input type="text" class="search-query span2" placeholder="Search">
-					</form>
-					-->
 				</div>
 			</div>
 		</div>
