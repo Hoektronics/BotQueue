@@ -1,3 +1,22 @@
+v0.5.1 - December 25th, 2014
+* WEB - Added notification system to notify users of new features
+* WEB - Added optional google captcha system
+* WEB - Multiple queues per bot support, with priority
+* WEB - Queues can have a delay before another job is taken
+* WEB - Reduce Amazon requirements for non-amazon / non-public installs
+* WEB - simple script for installing botqueue onto a standalone Ubuntu machine
+* WEB - Cleaned up the app and token pages
+* WEB - Updated the dashboard to be more lightweight and responsive
+* BUMBLEBEE - s3g python library for MakerBot machines
+* BUMBLEBEE - Some amount of Cura support. Still ongoing
+* BUMBLEBEE - Fixed OAuth signatures with python errors
+* BUMBLEBEE - Actually log if it can't connect to the serial port
+* BUMBLEBEE - Fixed log files growing out of control
+* BUMBLEBEE - Moved to using pip to install
+* BUMBLEBEE - Automatic updates from pip version.
+* BUMBLEBEE - Drivers automatically download and install
+* BUMBLEBEE - Automatically run without curses if there's no display
+
 v0.5 - September 8th, 2014
 
 * WEB - Made registering a bot easier

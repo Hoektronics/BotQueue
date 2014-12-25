@@ -85,10 +85,6 @@ Long term wants:
 
 * WEB - full page statistics for bot / queue with graphs
 
-* BUMBLEBEE - s3g python library for MakerBot machines
-
-* WEB - Reduce Amazon requirements for non-amazon / non-public installs.
-* WEB - simple script for installing botqueue onto a standalone ubuntu machine
 * WEB - 100% working Amazon bootup script.
 
 ------------------------------------------------------------------------------------
