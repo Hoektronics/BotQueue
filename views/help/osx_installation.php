@@ -2,7 +2,7 @@
 <p>
 	You can use the <a href="https://github.com/Hoektronics/Bumblebee">Github repo</a>
 </p>
-<h5>Verify python version is at least > 2.6.3, preferably 2.7</h5>
+<h5>Verify python version is at least 2.7. Python 3 is not tested and is likely not to work.</h5>
 <pre>python --version</pre>
 <h5>If it is not the correct version, then follow these steps:</h5>
 <ol>
@@ -15,12 +15,11 @@
 	<li>In a terminal, run "sudo python ez_setup.py" in the directory where you stored ez_setup.py</li>
 	<li>Your python version should be correct. Simply run the commands below</li>
 </ol>
-<h5>Install These Libraries:</h5>
-<pre>sudo easy_install pip
-sudo pip install Pygments pyserial requests requests-oauth</pre>
+<h5>Install pip:</h5>
+<pre>sudo easy_install pip</pre>
 
-<h5>Download other modules</h5>
-<pre>git submodule update --init</pre>
+<h5>Install The Client:</h5>
+<pre>pip install bqclient</pre>
 
 <h5>Run it!</h5>
-<pre>python -m bumblebee</pre>
+<pre>bumblebee</pre>

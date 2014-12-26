@@ -1,8 +1,8 @@
 Welcome <?=$user->getName() ?>,
 
-We're glad that you have decided to try BotQueue. If you have any questions, please file a GitHub issue, or visit our google groups.
+We're glad that you have decided to try BotQueue. If you have any questions, check out the help page, or visit our Google groups
 
-GitHub: https://github.com/Hoektronics/BotQueue/issues
+Help page: https://<?=SITE_HOSTNAME?>
 Google groups: https://groups.google.com/forum/#!forum/botqueue
 
 If you didn't request an account at <?=SITE_HOSTNAME?>, you should probably let us know in the google groups.

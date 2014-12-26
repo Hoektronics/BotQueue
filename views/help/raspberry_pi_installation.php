@@ -53,17 +53,12 @@ sudo apt-get upgrade -qy
 sudo apt-get install fswebcam uvcdynctrl v4l-utils python-picamera
 
 #get Botqueue linked up and working on boot.
-sudo apt-get install -qy git-core vim screen python-pip
+sudo apt-get install -qy git-core screen python-pip
 sudo usermod -a -G dialout pi
-sudo pip install pyserial Pygments requests requests-oauth
 
-#make botqueue start on boot
-sudo /bin/sh -c 'cat /home/pi/bumblebee/raspi/inittab >> /etc/inittab'
-cat $HOME/bumblebee/raspi/profile >> $HOME/.profile
-
-cd ..
-git submodule update --init
+#Install the client
+pip install bqclient
 
 #authorize our app now.
-screen -dR botqueue python -m bumblebee
+screen -dR botqueue bumblebee
 </pre>

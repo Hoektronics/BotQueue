@@ -33,20 +33,14 @@
 
 			<div class="tab-content install_tabs">
 				<div class="tab-pane active" id="linux_install">
-					<h5>Download Bumblebee</h5>
+					<h5>Install These Programs:</h5>
+					<pre>sudo apt-get install fswebcam uvcdynctrl v4l-utils</pre>
 
-					<p>
-						<a href="https://github.com/Hoektronics/Bumblebee">Github repo</a>
-					</p>
-
-					<h5>Install These Libraries / Programs:</h5>
-<pre>sudo pip install Pygments pyserial requests requests-oauth
-sudo apt-get install fswebcam uvcdynctrl v4l-utils</pre>
-					<h5>Download other modules</h5>
-					<pre>git submodule update --init</pre>
+					<h5>Install The Client:</h5>
+					<pre>pip install bqclient</pre>
 
 					<h5>Run it!</h5>
-					<pre>python -m bumblebee</pre>
+					<pre>bumblebee</pre>
 				</div>
 
 				<div class="tab-pane" id="osx_install">
@@ -65,8 +59,7 @@ sudo apt-get install fswebcam uvcdynctrl v4l-utils</pre>
 
 		<h4>Step <?= $i++ ?>: Authorize the client software</h4>
 
-		<p>From the command line, navigate to the <strong>Bumblebee</strong> folder and run this command: <strong>python
-				bumblebee.py</strong></p>
+		<p>From the command line, run this command: <strong>bumblebee</strong></p>
 
 		<p>If you are on the same internet-facing IP (such as on most home networks) then when you visit the main
 			botqueue.com dashboard, it will show you that an app is requesting access. Accept it and give the app a name
@@ -118,20 +111,18 @@ sudo apt-get install fswebcam uvcdynctrl v4l-utils</pre>
 		<h2>Getting Further Help</h2>
 
 		<p>
-			This project is a labor of love by yours truly, <a href="http://www.zachhoeken.com">Zach Hoeken</a>. Both
-			the website and client code are 100% open source.
+			This project is a labor of love by <a href="http://www.zachhoeken.com">Zach Hoeken</a> and <a href="http://blog.jnesselr.org/">Justin Nesselrotte</a>. Both the website and client code are 100% open source.
 		</p>
 
-		<p>It is a relatively new project, but it's mostly stable at this point. If you are stuck and can't get it
-			working, try some of the places below for help. If you're a dev and don't mind getting your hands dirty, I'm
-			happy to take commits and pull requests.
+		<p>
+			This project is considered mostly stable, but new changes can always break things. If you are stuck and can't get it
+			working, try some of the places below for help. You'll probably have better luck getting in touch with Justin (jnesselr)
+			than with Zach (hoeken).
 		</p>
 		<ul>
 			<li><a href="https://groups.google.com/d/forum/botqueue">Google Group / Mailing List</a></li>
 			<li><a href="irc://irc.freenode.net/botqueue">irc.freenode.net #botqueue</a></li>
-			<li><a href="https://github.com/Hoektronics/BotQueue">Github</a></li>
-			<li><a href="http://twitter.com/hoeken">Hit me up on Twitter: @hoeken</a></li>
-			<li><a href="http://www.hoektronics.com">Follow the blog to keep up to date</a></li>
+			<li>Follow us on twitter, <a href="http://twitter.com/hoeken">@hoeken</a> and <a href="http://twitter.com/jnesselr">@jnesselr</a></li>
 		</ul>
 	</div>
 </div>
