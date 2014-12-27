@@ -327,7 +327,7 @@ class FormField
 
 	public function validate($data)
 	{
-		if ($this->required && !array_key_exists($this->name, $data) && $data[$this->name] != "") {
+		if ($this->required && (!array_key_exists($this->name, $data) || $data[$this->name] === '')) {
 			$this->error("The {$this->label} field is required.");
 		}
 
