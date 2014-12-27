@@ -8,6 +8,19 @@ class OAuthConsumer extends Model
 		parent::__construct($id, "oauth_consumer");
 	}
 
+	public static function create($name, $app_url)
+	{
+		$app = new OAuthConsumer();
+		$app->set('name', $name);
+		$app->set('app_url', $app_url);
+		$app->set('user_id', User::$me->id);
+		$app->set('consumer_key', MyOAuthProvider::generateToken());
+		$app->set('consumer_secret', MyOAuthProvider::generateToken());
+		$app->set('active', 1);
+		$app->save();
+		return $app;
+	}
+
 	public function canEdit()
 	{
 		if (User::$me->isAdmin())

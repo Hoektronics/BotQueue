@@ -64,10 +64,10 @@ class MyOAuthProvider
 
 		if (!$this->token->isHydrated())
 			return OAUTH_TOKEN_REJECTED;
-		elseif ($this->token->get('type') == 1 && !$this->token->get('verified'))
+		elseif ($this->token->get('type') == OauthToken::$REQUEST)
 			return OAUTH_VERIFIER_INVALID;
 		else {
-			if ($this->token->get('type') == 2) {
+			if ($this->token->get('type') == OauthToken::$ACCESS) {
 				/* if this is an access token we register the user to the provider for use in our api */
 				$this->user = $this->token->getUser();
 				User::$me = $this->user;

@@ -32,39 +32,29 @@ class AppController extends Controller
 
 	public function register_app()
 	{
-		$this->assertLoggedIn();
+		try {
+			$this->assertLoggedIn();
 
-		$this->setTitle("Register your App");
-		$this->set('area', 'app');
+			$this->setTitle("Register your App");
+			$this->set('area', 'app');
 
-		if ($this->args('submit')) {
-			if (!$this->args('name')) {
-				$errors['name'] = 'You must enter a name.';
-				$errorfields['name'] = 'error';
-			}
-			if (!$this->args('app_url')) {
-				$errors['app_url'] = 'You must enter an app URL.';
-				$errorfields['app_url'] = 'error';
-			}
+			$app = new OAuthConsumer();
+			$form = $this->_AppConsumerForm($app);
+			$form->action = "/app/register";
+			$form->submitText = "Register App";
 
-			if (empty($errors) && empty($errorfields)) {
+			$this->set('form', $form);
 
-				$app = new OAuthConsumer();
-				$app->set('name', $this->args('name'));
-				$app->set('app_url', $this->args('app_url'));
-				$app->set('user_id', User::$me->id);
-				$app->set('consumer_key', MyOAuthProvider::generateToken());
-				$app->set('consumer_secret', MyOAuthProvider::generateToken());
-				$app->set('active', 1);
-				$app->save();
+			if ($form->checkSubmitAndValidate($this->args())) {
+				$app = OAuthConsumer::create($this->args('name'), $this->args('app_url'));
 
 				Activity::log("registered a new app named " . $app->getLink() . ".");
 
 				$this->forwardToUrl($app->getUrl());
-			} else {
-				$this->set('errors', $errors);
-				$this->set('errorfields', $errorfields);
 			}
+		} catch (Exception $e) {
+			$this->setTitle('Error');
+			$this->set('megaerror', $e->getMessage());
 		}
 	}
 
@@ -81,7 +71,9 @@ class AppController extends Controller
 				throw new Exception("You are not authorized to edit this app.");
 
 			$this->setTitle('Edit App - ' . $consumer->getName());
-			$form = $this->_editAppConsumerForm($consumer);
+			$form = $this->_AppConsumerForm($consumer);
+			$form->action = $consumer->getUrl() . "/edit";
+			$form->submitText = "Save";
 
 			//did they submit it?
 			if ($form->checkSubmitAndValidate($this->args())) {
@@ -221,7 +213,7 @@ class AppController extends Controller
 					throw new Exception("Invalid verifier.");
 
 				$token->set('name', $form->data('name'));
-				$token->set('verified', 1);
+				$token->set('type', OauthToken::$VERIFIED);
 				$token->save();
 
 				Activity::log("installed the app named " . $app->getLink() . ".");
@@ -247,7 +239,7 @@ class AppController extends Controller
 			$token = new OAuthToken($this->args('id'));
 			if (!$token->isHydrated())
 				throw new Exception("This app does not exist.");
-			if(!User::$me->isHydrated() && $token->get('user_id') != User::$me->id)
+			if (!User::$me->isHydrated() && $token->get('user_id') != User::$me->id)
 				throw new Exception("You are not authorized to edit this token.");
 
 			$this->setTitle("View App Token - " . $token->getName());
@@ -322,19 +314,29 @@ class AppController extends Controller
 			$token = new OAuthToken($this->args('id'));
 			if (!$token->isHydrated())
 				throw new Exception("This app does not exist.");
-			if ($token->get('type') == 2 && $token->get('user_id') != User::$me->id)
+			/** @var User $user */
+			$user = new User($token->get('user_id'));
+			if ($user->isHydrated() && $user->id != User::$me->id)
 				throw new Exception("You are not authorized to delete this app.");
 
+			$form = new Form();
 
-			if ($token->get('type') == 2)
+			$field = WarningField::name('warning');
+			if ($token->isVerified()) {
 				$this->setTitle('Revoke App Permissions - ' . $token->getName());
-			else
+				$form->submitText = "Revoke App Permissions";
+				$field->value("Are you sure you want to revoke access to this app? Any apps currently using these credentials to print will be broken");
+			} else {
 				$this->setTitle('Deny App - ' . $token->getName());
+				$form->submitText = "Deny App";
+				$field->value("Are you sure you want to deny access to this app?");
+			}
+			$form->add($field);
 
-			$this->set('token', $token);
+			$this->set('form', $form);
 
-			if ($this->args('submit')) {
-				if ($token->get('type') == 2)
+			if ($form->checkSubmitAndValidate($this->args())) {
+				if ($token->isVerified())
 					Activity::log("removed the app named " . $token->getLink() . ".");
 				else
 					Activity::log("denied the app named " . $token->getLink() . ".");
@@ -352,7 +354,7 @@ class AppController extends Controller
 	 * @param $consumer OAuthConsumer
 	 * @return Form
 	 */
-	private function _editAppConsumerForm($consumer)
+	private function _AppConsumerForm($consumer)
 	{
 		$form = new Form();
 		$form->action = $consumer->getUrl() . "/edit";
@@ -362,6 +364,7 @@ class AppController extends Controller
 			TextField::name('name')
 				->label('Name')
 				->value($consumer->getName())
+				->required(true)
 				->help("What do you call your app?")
 		);
 

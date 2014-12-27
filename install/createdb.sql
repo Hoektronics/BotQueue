@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `oauth_consumer_nonce` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS `oauth_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL,
+  `type` enum('request', 'verified', 'access'),
   `name` text NOT NULL,
   `consumer_id` int(11) NOT NULL,
   `user_id` int(11) unsigned,
@@ -177,7 +177,6 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   `token_secret` varchar(255) NOT NULL,
   `callback_url` text NOT NULL,
   `verifier` varchar(255) NOT NULL,
-  `verified` int(11) NOT NULL,
   `device_data` text NOT NULL DEFAULT '',
   `last_seen` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -321,6 +320,6 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(19, 'Added notifications table');
+INSERT INTO patches(patch_num, description) VALUES(21, 'Converting oauth token codes');
 
 /*!40101 SET character_set_client = @saved_cs_client */;

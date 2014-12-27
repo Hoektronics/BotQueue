@@ -18,7 +18,7 @@
 				</tr>
 				<tr>
 					<th>Verified:</th>
-					<td><?= ($token->get('verified') == 1) ? 'yes' : 'no' ?></td>
+					<td><?= $token->isVerified() ? 'yes' : 'no' ?></td>
 				</tr>
 				<tr>
 					<th>Consumer:</th>

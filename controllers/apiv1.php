@@ -106,7 +106,7 @@ class APIV1Controller extends Controller
 
 		//okay, save it to the db.
 		$t = new OAuthToken();
-		$t->set('type', 1);
+		$t->set('type', OauthToken::$REQUEST);
 		$t->set('consumer_id', $provider->consumer->id);
 		$t->set('token', $token_key);
 		$t->set('token_secret', $token_secret);

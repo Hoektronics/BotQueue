@@ -2,7 +2,6 @@
 /**
  * @package botqueue_app
  * @var string $megaerror
- * @var OAuthConsumer $app
  * @var Form $form
  * @var array $apps
  * @var OAuthToken $app

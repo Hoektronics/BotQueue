@@ -315,10 +315,10 @@ class User extends Model
         $sql = "SELECT id, consumer_id
 				FROM oauth_token
 				WHERE user_id = ?
-				AND type = 2
+				AND type = ?
 				ORDER BY id";
 
-		$apps = new Collection($sql, array($this->id));
+		$apps = new Collection($sql, array($this->id, OAuthToken::$ACCESS));
 		$apps->bindType('id', 'OAuthToken');
 		$apps->bindType('consumer_id', 'OAuthConsumer');
 

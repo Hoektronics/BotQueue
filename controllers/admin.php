@@ -27,5 +27,3 @@ class AdminController extends Controller
 		$this->set('setup_mode', false);
     }
 }
-
-?>
