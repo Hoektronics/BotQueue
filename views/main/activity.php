@@ -1,19 +1,18 @@
 <?
 	echo Controller::byName('browse')->renderView('pagination_info', array(
-		'page' => $page,
-		'per_page' => $per_page,
-		'total' => $total,
-		'word' => 'activitie'
+		'collection' => $activities,
+		'word' => 'activity'
 	));
 ?>
 
-<?= Controller::byName('main')->renderView('draw_activities', array('activities' => $activities)); ?>
+<?= Controller::byName('main')->renderView('draw_activities', array(
+	'activities' => $activities->getAll(),
+	'user' => $user
+)); ?>
 
 <?
 	echo Controller::byName('browse')->renderView('pagination', array(
-		'page' => $page,
-		'per_page' => $per_page,
-		'base_url' => '/activity',
-		'total' => $total
+		'collection' => $activities,
+		'base_url' => '/activity'
 	));
 ?>

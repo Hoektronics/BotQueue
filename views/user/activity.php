@@ -3,19 +3,18 @@
 <? else: ?>	
 <?
 		echo Controller::byName('browse')->renderView('pagination_info', array(
-			'page' => $page,
-			'per_page' => $per_page,
-			'total' => $total,
+			'collection' => $activities,
 			'word' => 'activity'
 		));
 	?>
-	<?= Controller::byName('main')->renderView('draw_activities', array('activities' => $activities)); ?>
+	<?= Controller::byName('main')->renderView('draw_activities', array(
+		'activities' => $activities->getAll(),
+		'user' => $user
+	)); ?>
 	<?
 		echo Controller::byName('browse')->renderView('pagination', array(
-			'page' => $page,
-			'per_page' => $per_page,
-			'base_url' => '/user:' . $user->id . '/activity',
-			'total' => $total
+			'collection' => $activities,
+			'base_url' => '/user:' . $user->id . '/activity'
 		));
 	?>
 <? endif ?>

@@ -51,9 +51,9 @@ class UserController extends Controller
 			//$this->set('photo', $user->getProfileImage());
 
 			//figure out our info.
-			$collection = $user->getActivityStream();
-			$this->set('activities', $collection->getRange(0, 25));
-			$this->set('activity_total', $collection->count());
+			/** @var Collection $collection */
+			$collection = $user->getActivityStream()->getPage(1, 25);
+			$this->set('activities', $collection);
 		} catch (Exception $e) {
 			$this->setTitle('View User - Error');
 			$this->set('megaerror', $e->getMessage());
@@ -85,14 +85,13 @@ class UserController extends Controller
 
 			//figure out our info.
 			$collection = $user->getActivityStream();
-			$per_page = 25;
-			$page = $collection->putWithinBounds($this->args('page'), $per_page);
 
-			//all our meta stuff.
-			$this->set('per_page', $per_page);
-			$this->set('total', $collection->count());
-			$this->set('page', $page);
-			$this->set('activities', $collection->getPage($page, $per_page));
+			$this->set('activities',
+				$collection->getPage(
+					$this->args('page'),
+					20
+				)
+			);
 		} catch (Exception $e) {
 			$this->setTitle('View User - Error');
 			$this->set('megaerror', $e->getMessage());

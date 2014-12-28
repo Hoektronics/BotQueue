@@ -38,13 +38,13 @@ class BotController extends Controller
 		$this->set('area', 'bots');
 
 		$collection = User::$me->getBots();
-		$per_page = 20;
-		$page = $collection->putWithinBounds($this->args('page'), $per_page);
 
-		$this->set('per_page', $per_page);
-		$this->set('total', $collection->count());
-		$this->set('page', $page);
-		$this->set('bots', $collection->getPage($page, $per_page));
+		$this->set('bots',
+			$collection->getPage(
+				$this->args('page'),
+				20
+			)
+		);
 	}
 
 	public function register()
@@ -235,7 +235,7 @@ class BotController extends Controller
 
 			$wizard = new Wizard('bot', $this->args());
 
-			if(!$this->args('setup')) {
+			if (!$this->args('setup')) {
 				$wizard->disableWizardMode();
 			}
 
@@ -286,7 +286,8 @@ class BotController extends Controller
 					if ($this->args('delay'))
 						$config->delay = $this->args('delay');
 				} elseif ($bot->get('driver_name') == 'printcore' ||
-					$bot->get('driver_name') == 's3g') {
+					$bot->get('driver_name') == 's3g'
+				) {
 					$config->port = $this->args('serial_port');
 					$config->port_id = $this->args('port_id');
 					$config->baud = $this->args('baudrate');
@@ -294,7 +295,7 @@ class BotController extends Controller
 
 				//did we get webcam info?
 				if ($this->args('webcam_device')) {
-					if(!isset($config->webcam))
+					if (!isset($config->webcam))
 						$config->webcam = new stdClass();
 					$config->webcam->device = $this->args('webcam_device');
 					if ($this->args('webcam_id'))
@@ -315,7 +316,7 @@ class BotController extends Controller
 				Activity::log("edited the driver configuration for bot " . $bot->getLink() . ".");
 			}
 
-			if($wizard->isFinished()) {
+			if ($wizard->isFinished()) {
 				$this->forwardToURL($bot->getUrl());
 			}
 
@@ -697,13 +698,13 @@ class BotController extends Controller
 			$this->setTitle("Bot Jobs - " . $bot->getName());
 
 			$collection = $bot->getJobs();
-			$per_page = 20;
-			$page = $collection->putWithinBounds($this->args('page'), $per_page);
 
-			$this->set('per_page', $per_page);
-			$this->set('total', $collection->count());
-			$this->set('page', $page);
-			$this->set('jobs', $collection->getPage($page, $per_page));
+			$this->set('jobs',
+				$collection->getPage(
+					$this->args('page'),
+					20
+				)
+			);
 		} catch (Exception $e) {
 			$this->set('megaerror', $e->getMessage());
 			$this->setTitle("View Bot - Error");
@@ -906,7 +907,7 @@ class BotController extends Controller
 		$form = new Form('driver');
 		$form->action = $bot->getUrl() . "/edit";
 
-		switch($bot->getStatus()) {
+		switch ($bot->getStatus()) {
 			case BotState::Idle:
 			case BotState::Offline:
 			case BotState::Error:
@@ -915,7 +916,7 @@ class BotController extends Controller
 			default:
 				$form->add(
 					ErrorField::name('error')
-					->value("The bot must be in an idle, offline, error, or waiting state in order to edit the driver config.")
+						->value("The bot must be in an idle, offline, error, or waiting state in order to edit the driver config.")
 				);
 				return $form;
 		}

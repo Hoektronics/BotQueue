@@ -27,13 +27,13 @@ class QueueController extends Controller
         $this->set('area', 'queues');
 
         $collection = User::$me->getQueues();
-        $per_page = 20;
-        $page = $collection->putWithinBounds($this->args('page'), $per_page);
 
-        $this->set('per_page', $per_page);
-        $this->set('total', $collection->count());
-        $this->set('page', $page);
-        $this->set('queues', $collection->getPage($page, $per_page));
+        $this->set('queues',
+            $collection->getPage(
+                $this->args('page'),
+                20
+            )
+        );
     }
 
     public function create()
@@ -195,14 +195,13 @@ class QueueController extends Controller
             } else
                 throw new Exception("That is not a valid status!");
 
-            $per_page = 20;
-            $page = $collection->putWithinBounds($this->args('page'), $per_page);
-
-            $this->set('per_page', $per_page);
-            $this->set('total', $collection->count());
-            $this->set('page', $page);
-            $this->set('jobs', $collection->getPage($page, $per_page));
             $this->set('status', $status);
+            $this->set('jobs',
+                $collection->getPage(
+                    $this->args('page'),
+                    20
+                )
+            );
         } catch (Exception $e) {
             $this->setTitle('View Queue - Error');
             $this->set('megaerror', $e->getMessage());

@@ -139,18 +139,20 @@ class MainController extends Controller
 	{
 		$this->setTitle('Activity Log');
 
-		$collection = Activity::getStream(User::$me);
-		$per_page = 20;
-		$page = $collection->putWithinBounds($this->args('page'), $per_page);
+		$collection = User::$me->getActivityStream();
 
-		$this->set('per_page', $per_page);
-		$this->set('total', $collection->count());
-		$this->set('page', $page);
-		$this->set('activities', $collection->getPage($page, $per_page));
+		$this->set('user', User::$me);
+		$this->set('activities',
+			$collection->getPage(
+				$this->args('page'),
+				20
+			)
+		);
 	}
 
 	public function draw_activities()
 	{
+		$this->setArg('user');
 		$this->setArg('activities');
 	}
 

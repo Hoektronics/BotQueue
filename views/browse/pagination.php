@@ -9,24 +9,32 @@
  * @var int $max_page
  * @var int $page
  * @var int $next_page
- * @var string $fragment
  */
 ?>
-<?  if ($total > $per_page): ?>
+<?
+// Display a maximum of 5 to the left and right
+$min_page = max($page - 4, 1);
+$max_page = min($page + 4, ceil($total / $per_page));
+?>
+<? if ($total > $per_page): ?>
 	<div class="pagination">
 		<ul>
-		<? if ($prev_page > 0): ?>
-			<li><a href="<?=$base_url?>/page:<?=$prev_page?><?=$fragment?>">&laquo; prev</a></li>
-		<? endif ?>
-		<? for ($i=$min_page; $i<$max_page+1; $i++): ?>
-			<? if ($i == $page): ?>
-				<li class="active"><a href="<?=$base_url?>/page:<?=$i?><?=$fragment?>"><?=$i?></a></li>
-			<? else: ?>
-				<li><a href="<?=$base_url?>/page:<?=$i?><?=$fragment?>"><?=$i?></a></li>
+			<? if ($page > 1): ?>
+				<li><a href="<?= $base_url ?>/page:<?= $page - 1 ?>">&laquo; prev</a></li>
 			<? endif ?>
-		<? endfor ?>
-		<? if ($next_page <= $max_page): ?>
-			<li><a href="<?=$base_url?>/page:<?=$next_page?><?=$fragment?>">next &raquo;</a></li>
-		<? endif ?>
+
+			<? for ($i = $min_page; $i < $max_page + 1; $i++): ?>
+				<? if ($i == $page): ?>
+					<li class="active">
+				<? else: ?>
+					<li>
+				<? endif ?>
+				<a href="<?= $base_url ?>/page:<?= $i ?>"><?= $i ?></a>
+				</li>
+			<? endfor ?>
+
+			<? if ($page < $max_page): ?>
+				<li><a href="<?= $base_url ?>/page:<?= $page + 1 ?>">next &raquo;</a></li>
+			<? endif ?>
 	</div>
 <? endif ?>

@@ -26,16 +26,14 @@ class Activity extends Model
 
 	public static function getStream(User $user)
 	{
-		$sql = "SELECT activity, action_date
+		$sql = "SELECT id
 				FROM activities
 				WHERE user_id = ?
 				ORDER BY id DESC
 			";
 
 		$stream = new Collection($sql, array($user->id));
-		$stream->bindValue('activity');
-		$stream->bindType('action_date', 'DateTime');
-		$stream->bindData('user_link', $user->getLink());
+		$stream->bindType('id', 'Activity');
 
 		return $stream;
 	}

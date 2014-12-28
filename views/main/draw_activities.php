@@ -9,11 +9,12 @@
 		</thead>
 		<tbody>
 		<? foreach ($activities AS $row): ?>
-			<? $datetime = $row['DateTime'] ?>
+			<? $activity = $row['Activity'] ?>
+			<? $datetime = $activity->get('action_date') ?>
 			<tr>
-				<td><?= $row['user_link'] ?></td>
-				<td><?= $row['activity'] ?></td>
-				<td><span class="muted"><?= Utility::getTimeAgo($datetime->format("Y-m-d H:i:s")) ?></span></td>
+				<td><?= $user->getLink() ?></td>
+				<td><?= $activity->get('activity') ?></td>
+				<td><span class="muted"><?= Utility::getTimeAgo($datetime) ?></span></td>
 			</tr>
 		<? endforeach ?>
 		</tbody>

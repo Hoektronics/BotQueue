@@ -81,13 +81,13 @@ class JobController extends Controller
 				$collection = User::$me->getJobs($status, 'finished_time', 'DESC');
 			else
 				$collection = User::$me->getJobs($status);
-			$per_page = 20;
-			$page = $collection->putWithinBounds($this->args('page'), $per_page);
 
-			$this->set('per_page', $per_page);
-			$this->set('total', $collection->count());
-			$this->set('page', $page);
-			$this->set('jobs', $collection->getPage($page, $per_page));
+			$this->set('jobs',
+				$collection->getPage(
+					$this->args('page'),
+					20
+				)
+			);
 			$this->set('status', $status);
 		} catch (Exception $e) {
 			$this->setTitle('View Jobs - Error');
@@ -807,13 +807,12 @@ class JobController extends Controller
 			$this->setTitle($file->getLink() . " Jobs");
 			$collection = $file->getJobs();
 
-			$per_page = 20;
-			$page = $collection->putWithinBounds($this->args('page'), $per_page);
-
-			$this->set('per_page', $per_page);
-			$this->set('total', $collection->count());
-			$this->set('page', $page);
-			$this->set('jobs', $collection->getPage($page, $per_page));
+			$this->set('jobs',
+				$collection->getPage(
+					$this->args('page'),
+					20
+				)
+			);
 		} catch (Exception $e) {
 			$this->setTitle('File Jobs - Error');
 			$this->set('megaerror', $e->getMessage());

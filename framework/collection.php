@@ -21,23 +21,38 @@ class Collection
 {
 	private $query;
 	private $bind_data;
-	private $query_total;
 	private $obj_types;
-	private $obj_values;
-	private $obj_data;
 	private $map;
+
 	private $total;
+	private $page;
+	private $start;
+	private $end;
+	private $perPage;
+	private $startPage;
+	private $endPage;
 
 	public function __construct($query, $bind_data = array())
 	{
 		$this->query = preg_replace("/\\;/", '', $query);
 		$this->bind_data = $bind_data;
-		$this->query_total = "SELECT count(*) FROM ({$this->query}) AS subq";
-		$this->total = db()->getValue($this->query_total, $bind_data);
-		//set the object types for this object, e.g. array('InventoryLogEntry' => 'id')
-		$this->obj_types = array();
-		$this->obj_values = array();
-		$this->obj_data = array();
+		$query_total = "SELECT count(*) FROM ({$this->query}) AS subq";
+		$this->total = db()->getValue($query_total, $this->bind_data);
+
+		// Set the object types for this object, e.g. array('InventoryLogEntry' => 'id')
+		$this->obj_types = array()
+		;
+		// Assume the page starts out at 1, and there is only one page
+		$this->page = 1;
+		$this->startPage = 1;
+		$this->endPage = 1;
+		// If there's any entries at all, they start at 1
+		if($this->total == 0)
+			$this->start = 0;
+		else
+			$this->start = 1;
+		$this->end = $this->total;
+		$this->perPage = $this->total;
 	}
 
 	public static function none()
@@ -51,18 +66,6 @@ class Collection
 		$this->obj_types[$key] = $value;
 	}
 
-	public function bindValue($key, $value = null)
-	{
-		if ($value == null)
-			$value = $key;
-		$this->obj_values[$key] = $value;
-	}
-
-	public function bindData($key, $data)
-	{
-		$this->obj_data[$key] = $data;
-	}
-
 	private function setMap()
 	{
 		if (!$this->map) {
@@ -70,48 +73,36 @@ class Collection
 		}
 	}
 
-	//This function makes sure the user doesn't ask for a page which doesn't exist (too big)
-	public function putWithinBounds($page, $per_page = 15)
+	// This function makes sure the user doesn't ask for a page which doesn't exist (too big or too small)
+	private function putWithinBounds($page, $per_page)
 	{
-		//Cast $page to an integer
-		$page = (int)$page;
-		//$page has to be at least 1
-		$page = max($page, 1);
-
-		//max number of pages = [# of rows in MySQL results array] / $pagesize
+		// Max number of pages = [# of rows in MySQL results array] / [page size]
 		$maxPage = (int)ceil($this->total / $per_page);
-		//$page has to be at least zero?
-		$page = max(0, $page);
-		//$page is either the page specified by the user or the biggest page number
+		// Except it has to be at least 1
+		$maxPage = max($maxPage, 1);
+		// $page has to be at least 1
+		$page = max($page, 1);
+		// $page has to be no larger than the max page
 		$page = min($page, $maxPage);
 
 		return $page;
 	}
 
-	public function implodeMap($type)
-	{
-		if (is_array($this->map)) {
-			return implode(', ', $this->getMap($type));
-		}
-
-		return '';
-	}
-
-	public function getMap($type = null)
-	{
-		$this->setMap();
-		return $this->map;
-	}
-
 	public function getPage($page, $per_page = 15)
 	{
-		$start = ($page - 1) * $per_page;
-		$start = $start < 0 ? 0 : $start;
+		// No negative numbers
+		$this->perPage = abs($per_page);
+		$page = $this->putWithinBounds($page, $this->perPage);
 
-		return $this->getRange($start, $per_page);
+		// The start for the query is 0 based
+		$start = ($page - 1) * $this->perPage;
+
+		$this->subRange($start, $this->perPage);
+
+		return $this;
 	}
 
-	public function getRange($start, $length)
+	private function subRange($start, $length)
 	{
 		// might need to make this smarter
 		$this->query = preg_replace("/LIMIT.*/i", "", $this->query);
@@ -119,20 +110,64 @@ class Collection
 		$limit = "LIMIT {$start}, {$length}";
 		$this->query .= " {$limit}";
 
-		$this->setMap();
+		// Reset the map, just in case
+		$this->map = null;
 
-		if (is_array($this->map)) {
-			//call the buildObjectArray function to build an array of objects (e.g. items) of the specified length
-			//function array_slice() extracts a segment of the $map array
-			return $this->buildObjectArray();
+		// If there's no entries, start and end are 0
+		// $start is 0 based for MySql, $this->start
+		// is 1 based for the paging functions
+		$this->page = (int)(($start + 1) / $length) + 1;
+		$this->startPage = 1;
+
+		if($this->total == 0) {
+			$this->start = 0;
+			$this->end = 0;
+			$this->endPage = 1;
 		} else {
-			//returns a slice of the array of objects (e.g. items) retrieved from MySQL
-			return array();
+			$this->start = $start + 1;
+			$this->end = min($start + $length, $this->total());
+			$this->endPage = ceil($this->total() / $length);
 		}
 	}
 
-	//Counts the number of rows in the map property (MySQL results array)
+	public function getRange($start, $length)
+	{
+		$this->subRange($start, $length);
+		$this->setMap();
+
+		return $this->buildObjectArray();
+	}
+
+	public function start()
+	{
+		return $this->start;
+	}
+
+	public function end()
+	{
+		return $this->end;
+	}
+
+	public function page()
+	{
+		return $this->page;
+	}
+
+	public function perPage()
+	{
+		return $this->perPage;
+	}
+
+	// Counts the number of rows in the subset
 	public function count()
+	{
+		if($this->total == 0)
+			return 0;
+		return $this->end - $this->start + 1;
+	}
+
+	// Total number of rows, subset or not
+	public function total()
 	{
 		return $this->total;
 	}
@@ -152,19 +187,15 @@ class Collection
 
 	public function getAll()
 	{
-		$this->setMap();
-
 		return $this->buildObjectArray();
 	}
 
 	//builds an array of objects from the MySQL database, e.g. an array of items
-	private function buildObjectArray($map = null)
+	private function buildObjectArray()
 	{
-		if ($map === null) {
-			$map = $this->map;
-		}
+		$this->setMap();
 
-		if (!is_array($map)) {
+		if (!is_array($this->map)) {
 			return array();
 		}
 
@@ -176,7 +207,7 @@ class Collection
 		//  $map[1] = array('id' => '2', 'user_id' => '6', ...)
 		//  ...
 
-		foreach ($map AS $key => $row) {
+		foreach ($this->map AS $key => $row) {
 			//An example of the collection->obj_types property is array("id" => "Item")
 			foreach ($this->obj_types AS $id => $type) {
 				//$data is an array of objects
@@ -187,14 +218,6 @@ class Collection
 				} else {
 					$data[$key][$type] = new $type($row[$id]);
 				}
-			}
-
-			foreach ($this->obj_values AS $id => $name) {
-				$data[$key][$name] = $row[$id];
-			}
-
-			foreach ($this->obj_data AS $id => $value) {
-				$data[$key][$id] = $value;
 			}
 		}
 

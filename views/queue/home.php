@@ -1,17 +1,13 @@
 <?
 	echo Controller::byName('browse')->renderView('pagination_info', array(
-		'page' => $page,
-		'per_page' => $per_page,
-		'total' => $total,
+		'collection' => $queues,
 		'word' => 'queue'
 	));
 ?>
-<?= Controller::byName('queue')->renderView('draw_queues', array('queues' => $queues)); ?>
+<?= Controller::byName('queue')->renderView('draw_queues', array('queues' => $queues->getAll())); ?>
 <?
 	echo Controller::byName('browse')->renderView('pagination', array(
-		'page' => $page,
-		'per_page' => $per_page,
-		'total' => $total,
-		'base_url' => '/queues',
+		'collection' => $queues,
+		'base_url' => '/queues'
 	));
 ?>

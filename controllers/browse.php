@@ -21,59 +21,24 @@ class BrowseController extends Controller
 {
     public function pagination_info()
     {
-        //a little bit of prep.
-        $per_page = $this->args('per_page');
-        if (!$per_page)
-            $per_page = 15;
+        /** @var Collection $collection */
+        $collection = $this->args('collection');
 
-        //whats our noun?
-        $word = $this->args('word');
-        if (!$word)
-            $word = 'thing';
-
-        //figure out all the stuff.
-        $start = (($this->args('page') - 1) * $per_page) + 1;
-        if ($start < 0)
-            $start = 0;
-
-        $end = $this->args('page') * $per_page;
-        $end = min($end, $this->args('total'));
-
-        //pass thru our args.
-        $this->setArg('total');
-        $this->setArg('page');
-        $this->setArg('per_page');
-        $this->set('start', $start);
-        $this->set('end', $end);
-        $this->set('word', $word);
+        //pass through our args.
+        $this->set('total', $collection->total());
+        $this->set('start', $collection->start());
+        $this->set('end', $collection->end());
+        $this->setArg('word');
     }
 
     public function pagination()
     {
-        //a little bit of prep.
-        $per_page = $this->args('per_page');
-        if (!$per_page)
-            $per_page = 15;
+        /** @var Collection $collection */
+        $collection = $this->args('collection');
 
-        //pass thru our args.
-        $this->setArg('total');
-        $this->setArg('page');
+        $this->set('page', $collection->page());
+        $this->set('total', $collection->total());
+        $this->set('per_page', $collection->perPage());
         $this->setArg('base_url');
-        $this->setArg('fragment');
-
-        $total_pages = ceil($this->get('total') / $per_page);
-        $min_page = max(1, $this->args('page') - 5);
-        $max_page = min($total_pages, $this->args('page') + 5);
-
-        //send new vars.
-        $this->set('per_page', $per_page);
-        $this->set('prev_page', $this->get('page') - 1);
-        $this->set('next_page', $this->get('page') + 1);
-        $this->set('total_pages', $total_pages);
-        $this->set('min_page', $min_page);
-        $this->set('max_page', $max_page);
-        $this->set('fragment', $this->get('fragment'));
     }
 }
-
-?>
