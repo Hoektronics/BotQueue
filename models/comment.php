@@ -19,6 +19,13 @@
 
 class Comment extends Model
 {
+	// todo: modify the database so we can refactor this out.
+	// Types as key => Class name
+	private static $types = array(
+		'job' => 'Job',
+		'bot' => 'Bot'
+	);
+
 	public function __construct($id = null)
 	{
 		parent::__construct($id, "comments");
@@ -26,34 +33,36 @@ class Comment extends Model
 
 	public static function byContentAndType($id, $type)
 	{
-		//some validation
-		$id = (int)$id;
-		if (!in_array($type, array('job', 'bot')))
-			return new Comment();
-
-		//look up the comments
-		$sql = "SELECT id, user_id
+		if (!array_key_exists($type, self::$types)) {
+			$comments = Collection::none();
+		} else {
+			//look up the comments
+			$sql = "SELECT id, user_id
 				FROM comments
 				WHERE content_id = ?
 				AND content_type = ?
-        		ORDER BY comment_date ASC
+				ORDER BY comment_date ASC
 			";
 
-		$comments = new Collection($sql, array($id, $type));
+			$comments = new Collection($sql, array($id, $type));
+		}
 		$comments->bindType('id', 'Comment');
 		$comments->bindType('user_id', 'User');
 
 		return $comments;
 	}
 
+	/**
+	 * @param $id
+	 * @param $type
+	 * @return Bot|Job|null
+	 */
 	public static function getContent($id, $type)
 	{
-		if ($type == 'bot')
-			return new Bot($id);
-		elseif ($type == 'job')
-			return new Job($id);
-		else
-			return null;
+		if (array_key_exists($type, self::$types)) {
+			return new self::$types[$type]($id);
+		}
+		return null;
 	}
 
 	public function getUser()
@@ -66,10 +75,9 @@ class Comment extends Model
 		return "/comment:{$this->id}";
 	}
 
+	// todo: Figure out what this function was designed for since comment_data doesn't exist
 	public function getName()
 	{
 		return substr($this->get('comment_data'), 0, 32);
 	}
 }
-
-?>

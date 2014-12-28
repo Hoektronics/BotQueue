@@ -128,7 +128,7 @@ class JobController extends Controller
 				$this->set('bot', $job->getBot());
 				$this->set('creator', $job->getUser());
 				$this->set('errors', $job->getErrorLog()->getAll());
-				$this->set('comments', $job->getComments()->getAll());
+				$this->set('comment_count', $job->getComments()->count());
 				$this->set('webcam', $job->getWebcamImage());
 			}
 		} catch (Exception $e) {

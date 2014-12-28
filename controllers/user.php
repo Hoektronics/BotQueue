@@ -37,10 +37,6 @@ class UserController extends Controller
 			else
 				$user = new User();
 
-			//redirects!
-			if ($_COOKIE['viewmode'] == 'iphone')
-				$this->forwardToUrl($user->getiPhoneUrl());
-
 			//did we really get someone?
 			if (!$user->isHydrated())
 				throw new Exception("Could not find that user.");

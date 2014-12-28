@@ -505,15 +505,12 @@ class Model
 
 	public function getUrl()
 	{
-	}
-
-	public function getiPhoneUrl()
-	{
+		return '';
 	}
 
 	public function getName()
 	{
-		return '???';
+		return '';
 	}
 
 	public function copy()

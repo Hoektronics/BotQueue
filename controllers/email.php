@@ -19,24 +19,24 @@
 
 class EmailController extends Controller
 {
+    // Automatically handles HTML version of function
+    public function __call($name, $arguments) {
+        if(strlen($name) < 5)
+            return;
+        if (substr($name, -5) === "_html") {
+            $fn = substr($name, 0, -5);
+            $this->$fn();
+        }
+    }
+
     public function lost_pass()
     {
         $this->setArg('user');
         $this->setArg('link');
     }
 
-    public function lost_pass_html()
-    {
-        $this->lost_pass();
-    }
-
 	public function new_user()
 	{
 		$this->setArg('user');
-	}
-
-	public function new_user_html()
-	{
-		$this->new_user();
 	}
 }
