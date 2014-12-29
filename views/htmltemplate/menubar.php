@@ -11,6 +11,7 @@
 		<div class="navbar-inner">
 			<div class="container">
 				<div class="pull-right">
+					<? if(User::isLoggedIn()): ?>
 					<ul class="nav navbar pull-left">
 						<li>
 							<a href="/notifications">
@@ -21,6 +22,7 @@
 							</a>
 						</li>
 					</ul>
+					<? endif ?>
 					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target="#menu-bar">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
