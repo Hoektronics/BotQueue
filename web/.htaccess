@@ -67,16 +67,6 @@ RewriteRule ^admin$														dispatcher.php?controller=admin&view=home [NC,L
 RewriteRule ^local$                           dispatcher.php?controller=file&view=local [NC,L]
 RewriteRule ^local/(.*)$                  dispatcher.php?controller=file&view=download&id=$1 [NC,L]
 
-#user profile stuff.
-RewriteRule ^user:([0-9]+)$												dispatcher.php?controller=user&view=profile&id=$1 [NC,L]
-RewriteRule ^user/edit														dispatcher.php?controller=user&view=edit [NC,L]		
-RewriteRule ^user/changepass$												dispatcher.php?controller=user&view=changepass [NC,L]		
-RewriteRule ^user:([0-9]+)/changepass$									dispatcher.php?controller=user&view=changepass&id=$1 [NC,L]		
-RewriteRule ^user:([0-9]+)/edit$											dispatcher.php?controller=user&view=edit&id=$1 [NC,L]
-RewriteRule ^user:([0-9]+)/delete$										dispatcher.php?controller=user&view=delete&id=$1 [NC,L]
-RewriteRule ^user:([0-9]+)/resetpass:([0-9a-zA-Z]{40})$					dispatcher.php?controller=user&view=resetpass&id=$1&hash=$2 [NC,L]
-RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?$						dispatcher.php?controller=user&view=activity&id=$1&page=$3 [NC,L]
-
 #queue stuff.
 RewriteRule ^queues(/page:([0-9]+))?$												dispatcher.php?controller=queue&view=home&page=$2 [NC,L]
 RewriteRule ^queue/create$												dispatcher.php?controller=queue&view=create [NC,L]
@@ -189,7 +179,20 @@ RewriteRule ^notifications$                     dispatcher.php?controller=notifi
 RewriteRule ^notifications/all$                 dispatcher.php?controller=notifications&view=all [NC,L]
 RewriteRule ^notification/count$               dispatcher.php?mode=ajax&controller=notifications&view=count [NC,L]
 
+#user profile stuff.
+RewriteRule ^user:([0-9]+)$												dispatcher.php?controller=user&view=profile&id=$1 [NC,L]
+RewriteRule ^user/edit														dispatcher.php?controller=user&view=edit [NC,L]
+RewriteRule ^user/changepass$												dispatcher.php?controller=user&view=changepass [NC,L]
+RewriteRule ^user:([0-9]+)/changepass$									dispatcher.php?controller=user&view=changepass&id=$1 [NC,L]
+RewriteRule ^user:([0-9]+)/edit$											dispatcher.php?controller=user&view=edit&id=$1 [NC,L]
+RewriteRule ^user:([0-9]+)/delete$										dispatcher.php?controller=user&view=delete&id=$1 [NC,L]
+RewriteRule ^user:([0-9]+)/resetpass:([0-9a-zA-Z]{40})$					dispatcher.php?controller=user&view=resetpass&id=$1&hash=$2 [NC,L]
+RewriteRule ^user:([0-9]+)/activity(/page:([0-9]+))?$						dispatcher.php?controller=user&view=activity&id=$1&page=$3 [NC,L]
+
 #username wildcard pages.  must be at the very end to avoid conflicting with other pages
 RewriteRule ^([-_a-zA-Z0-9]+)$											dispatcher.php?controller=user&view=profile&username=$1 [NC,L]
+RewriteRule ^([-_a-zA-Z0-9]+)/changepass$             dispatcher.php?controller=user&view=changepass&username=$1 [NC,L]
 RewriteRule ^([-_a-zA-Z0-9]+)/edit$										dispatcher.php?controller=user&view=edit&username=$1 [NC,L]
+RewriteRule ^([-_a-zA-Z0-9]+)/delete$										dispatcher.php?controller=user&view=delete&username=$1 [NC,L]
 RewriteRule ^([-_a-zA-Z0-9]+)/resetpass:([0-9a-zA-Z]{40})$				dispatcher.php?controller=user&view=resetpass&username=$1&hash=$2 [NC,L]
+RewriteRule ^([-_a-zA-Z0-9]+)/activity(/page:([0-9]+))?$						dispatcher.php?controller=user&view=activity&id=username&page=$3 [NC,L]

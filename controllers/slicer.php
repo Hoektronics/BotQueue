@@ -150,7 +150,7 @@ class SlicerController extends Controller
 						$file = Utility::downloadUrl("https://raw.github.com/{$github_url}/" . $tag . "/" . $manifest['configuration']);
 						$config->set('config_data', file_get_contents($file['localpath']));
 						$config->set('engine_id', $engine->id);
-						$config->set('user_id', null); // Default config is for everyone todo: Check that this doesn't break somewhere else
+						$config->set('user_id', null); // Default config is for everyone
 						$config->set('add_date', date("Y-m-d H:i:s"));
 						$config->set('edit_date', date("Y-m-d H:i:s"));
 						$config->save();
@@ -419,6 +419,7 @@ class SlicerController extends Controller
 			$e = $row['SliceEngine'];
 			$engines[$e->id] = $e->getName();
 		}
+
 		$form->add(
 			SelectField::name('engine_id')
 				->label('Slice Engine')
@@ -516,11 +517,22 @@ class SlicerController extends Controller
 		$this->set('area', 'slicers');
 
 		try {
-			//todo If they choose to edit the default config of an engine, make a copy first
-			//load the data and check for errors.
-			$config = new SliceConfig($this->args('id'));
+			$id = $this->args('id');
+			/** @var SliceConfig $config */
+			$config = new SliceConfig($id);
 			if (!$config->isHydrated())
 				throw new Exception("That slice config does not exist.");
+
+			// Make a copy if it's the default
+			$default_config = $config->getEngine()->getDefaultConfig();
+			if($config->id == $default_config->id) {
+				$config = new SliceConfig();
+				$config->set('config_data', $default_config->get('config_data'));
+				$config->set('engine_id', $default_config->get('engine_id'));
+				$config->set('add_date', date("Y-m-d H:i:s"));
+				$config->set('user_id', User::$me->id);
+				$config->set('fork_id', $default_config->id);
+			}
 
 			if (User::$me->id != $config->get('user_id') && !User::isAdmin())
 				throw new Exception("You cannot edit this slice config.");
@@ -528,42 +540,48 @@ class SlicerController extends Controller
 			$this->setTitle("Edit Slice Config - " . $config->getName());
 
 			//setup some objects
-			$rawform = $this->_createSliceConfigRawForm($config);
-			$rawform->action = $config->getUrl() . "/edit";
-			$this->set('rawform', $rawform);
+			$raw_form = $this->_createSliceConfigRawForm($config);
+			if($id == $default_config->id)
+				$raw_form->action = $default_config->getUrl() . "/edit";
+			else
+				$raw_form->action = $config->getUrl() . "/edit";
+			$this->set('rawform', $raw_form);
 
 			//setup some objects
-			$uploadform = $this->_createSliceConfigUploadForm($config);
-			$uploadform->action = $config->getUrl() . "/edit";
-			$this->set('uploadform', $uploadform);
+			$upload_form = $this->_createSliceConfigUploadForm($config);
+			if($id == $default_config->id)
+				$upload_form->action = $default_config->getUrl() . "/edit";
+			else
+				$upload_form->action = $config->getUrl() . "/edit";
+			$this->set('uploadform', $upload_form);
 
 			//check our form
-			if ($rawform->checkSubmitAndValidate($this->args())) {
+			if ($raw_form->checkSubmitAndValidate($this->args())) {
 				//edit the config object
-				$config->set('engine_id', $rawform->data('engine_id'));
-				$config->set('config_name', $rawform->data('config_name'));
-				$config->set('config_data', $rawform->data('default_config'));
+				$config->set('engine_id', $raw_form->data('engine_id'));
+				$config->set('config_name', $raw_form->data('config_name'));
+				$config->set('config_data', $raw_form->data('default_config'));
 				$config->set('edit_date', date("Y-m-d H:i:s"));
 				$config->save();
 
 				//are we expiring the old slice jobs?
-				if ($rawform->data('expire_slicejobs'))
+				if ($raw_form->data('expire_slicejobs'))
 					$config->expireSliceJobs();
 
 				//send us to view the engine.
 				$this->forwardToUrl($config->getUrl());
-			} else if ($uploadform->checkSubmitAndValidate($this->args())) {
+			} else if ($upload_form->checkSubmitAndValidate($this->args())) {
 				//edit the config object
-				$config->set('config_name', $uploadform->data('config_name'));
-				$config->set('engine_id', $uploadform->data('engine_id'));
+				$config->set('config_name', $upload_form->data('config_name'));
+				$config->set('engine_id', $upload_form->data('engine_id'));
 
-				$file = $uploadform->data('config_file');
+				$file = $upload_form->data('config_file');
 				$config->set('config_data', file_get_contents($file['tmp_name']));
 				$config->set('edit_date', date("Y-m-d H:i:s"));
 				$config->save();
 
 				//are we expiring the old slice jobs?
-				if ($uploadform->data('expire_slicejobs'))
+				if ($upload_form->data('expire_slicejobs'))
 					$config->expireSliceJobs();
 
 				//send us to view the engine.

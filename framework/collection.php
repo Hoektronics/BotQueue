@@ -213,7 +213,8 @@ class Collection
 				//$data is an array of objects
 				//for example: This creates a new object (of the type Item class) for each row in the MySQL results
 				//example: $data[0]['Item'] = new Item($row('id'))
-				if (is_subclass_of($type, "StorageInterface")) {
+				if (is_subclass_of($type, "StorageInterface") ||
+				$type == "StorageInterface") {
 					$data[$key]["StorageInterface"] = Storage::get($row[$id]);
 				} else {
 					$data[$key][$type] = new $type($row[$id]);

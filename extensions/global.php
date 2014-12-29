@@ -22,25 +22,7 @@ $base_dir = realpath($base_dir);
 
 include($base_dir . "/framework/global.php");
 
-$php_config_file = EXTENSIONS_DIR . "config.php";
-// $ini_config_file = EXTENSIONS_DIR . "config.ini";
-if (file_exists($php_config_file)) {
-	include($php_config_file);
-//	$keys = ConfigConverter::convertDefines(file_get_contents($php_config_file));
-//	/** @var Config $config */
-//	$config = new Config(ConfigConverter::convertKeys($keys));
-//
-//	$config->save($ini_config_file);
-//
-//	//todo: Delete the config.php file
-//	//todo: Replace all of the defines
-//} else if (file_exists($ini_config_file)) {
-//	$config = Config::load($ini_config_file);
-//} else {
-//	// Umm. Site setup mode?
-//	// It should be in setup mode for tests, though.
-//	// Or should tests even notice it's in setup mode?
-}
+include(EXTENSIONS_DIR . "config.php");
 
 // Decides which include path delimiter to use.  Windows should be using a semi-colon
 // and everything else should be using a colon.  If this isn't working on your system,

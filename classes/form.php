@@ -73,15 +73,15 @@ class Form
 
 	public function validate($data)
 	{
-		$rval = true;
+		$valid = true;
 
 		if (!empty($this->fields))
 			foreach ($this->fields AS $field)
 				/* @var $field FormField */
 				if (!$field->validate($data))
-					$rval = false;
+					$valid = false;
 
-		return $rval;
+		return $valid;
 	}
 
 	public function hasError()
@@ -101,13 +101,13 @@ class Form
 
 	public function renderFields()
 	{
-		$html = "";
+		$rendered = array();
 		if (!empty($this->fields))
 			foreach ($this->fields AS $field)
 				/* @var $field FormField */
-				$html .= $field->render();
+				$rendered[] = $field->render();
 
-		return $html;
+		return implode("", $rendered);
 	}
 
 	/**
@@ -352,13 +352,9 @@ class FormField
 	}
 }
 
-class HiddenField extends FormField
-{
-}
+class HiddenField extends FormField {}
 
-class TextField extends FormField
-{
-}
+class TextField extends FormField {}
 
 class NumericField extends FormField
 {
@@ -393,13 +389,10 @@ class NumericField extends FormField
 	}
 }
 
-class PasswordField extends TextField
-{
-}
+class PasswordField extends TextField {}
 
 class EmailField extends TextField
 {
-
 	public function validate($data) {
 		$email = $data[$this->name];
 		$filtered_email = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -415,7 +408,6 @@ class EmailField extends TextField
 
 class UrlField extends TextField
 {
-
 	public function validate($data) {
 		$url = $data[$this->name];
 		$filtered_url = filter_var($url, FILTER_VALIDATE_URL);
@@ -455,7 +447,6 @@ class TextareaField extends FormField
 
 class CheckboxField extends FormField
 {
-
 	public $is_checked = true;
 
 	//checkboxes have only 2 states and are valid no matter what.
@@ -521,32 +512,17 @@ class UploadField extends FormField
 		//upload our file
 		$file = $_FILES[$this->name];
 
-		//default to no error.
-		$this->hasError = false;
-
 		//double check for errors.
 		if ($file['size'] == 0 && $file['error'] == 0)
-			$file['error'] = UPLOAD_ERR_EMPTY;
+			// todo: Move the error code so we can use UPLOAD_ERR_EMPTY
+			$file['error'] = 9; // UPLOAD_ERR_EMPTY
 
 		//set our value for future reference.
 		$this->value($file);
 
-		//these our are english translations of errors.
-		$upload_errors = array(
-			UPLOAD_ERR_OK => "No errors.",
-			UPLOAD_ERR_INI_SIZE => "File uploaded larger than allowed.",
-			UPLOAD_ERR_FORM_SIZE => "File uploaded larger than allowed..",
-			UPLOAD_ERR_PARTIAL => "File upload failed during transfer.",
-			UPLOAD_ERR_NO_FILE => "No file uploaded.",
-			UPLOAD_ERR_NO_TMP_DIR => "No temporary directory.",
-			UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
-			UPLOAD_ERR_EXTENSION => "File upload stopped by extension.",
-			UPLOAD_ERR_EMPTY => "File is empty." // add this to avoid an offset
-		);
-
 		//what did we get?
 		if ($file['error'] && $this->required) {
-			$this->error($upload_errors[$file['error']]);
+			$this->error(Utility::$upload_errors[$file['error']]);
 		}
 
 		//how did we do?
@@ -554,25 +530,15 @@ class UploadField extends FormField
 	}
 }
 
-class RawField extends DisplayField
-{
-}
+class RawField extends DisplayField {}
 
-class WarningField extends DisplayField
-{
-}
+class WarningField extends DisplayField {}
 
-class ErrorField extends DisplayField
-{
-}
+class ErrorField extends DisplayField {}
 
-class SuccessField extends DisplayField
-{
-}
+class SuccessField extends DisplayField {}
 
-class InformationField extends DisplayField
-{
-}
+class InformationField extends DisplayField {}
 
 class GoogleCaptcha extends FormField
 {

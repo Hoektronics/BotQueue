@@ -65,7 +65,7 @@
 
 	<?= Controller::byName('htmltemplate')->renderView('menubar', array('area' => $area)); ?>
 
-	<section id="content">
+	<section id="content" style="margin-top:60px">
 		<? if ($title): ?>
 			<div class="page-header">
 				<h1><?= $title ?></h1>

@@ -2,7 +2,7 @@
 	<? if ($field->label): ?>
   	<label class="control-label" for="<?=$field->id?>"><strong><?=$field->label?></strong></label>
   <? endif ?>
-	<div class="controls">
+	<div class="controls" style="margin-top: 5px">
     <?=$field->getValue()?>
 		<? if ($field->help): ?>
     	<p class="help-block"><?=$field->help?></p>

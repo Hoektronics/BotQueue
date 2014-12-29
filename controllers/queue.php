@@ -177,23 +177,23 @@ class QueueController extends Controller
 
             //what sort of jobs to view?
             $status = $this->args('status');
-            if ($status == 'available') {
-                $this->setTitle($queue->getName() . "'s Available Jobs");
+            $titles = array(
+                JobState::Available => 'Available',
+                JobState::Taken => 'Working',
+                JobState::Complete => 'Finished',
+                JobState::Failure => 'Failed'
+            );
+
+            if(array_key_exists($status, $titles)) {
+                $title = $queue->getName() . "'s {$titles[$status]} Jobs";
                 $collection = $queue->getJobs($status);
-            } else if ($status == 'taken') {
-                $this->setTitle($queue->getName() . "'s Working Jobs");
-                $collection = $queue->getJobs($status);
-            } else if ($status == 'complete') {
-                $this->setTitle($queue->getName() . "'s Finished Jobs");
-                $collection = $queue->getJobs($status);
-            } else if ($status == 'failure') {
-                $this->setTitle($queue->getName() . "'s Failed Jobs");
-                $collection = $queue->getJobs($status);
-            } else if ($status == 'all') {
-                $this->setTitle($queue->getName() . "'s Jobs");
-                $collection = $queue->getJobs(null);
-            } else
+            } else if($status == 'all') {
+                $title = $queue->getName() . "'s Jobs";
+                $collection = $queue->getJobs();
+            } else {
                 throw new Exception("That is not a valid status!");
+            }
+            $this->setTitle($title);
 
             $this->set('status', $status);
             $this->set('jobs',

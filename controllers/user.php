@@ -120,48 +120,50 @@ class UserController extends Controller
 			else if (!$user->isMe() && !User::isAdmin())
 				throw new Exception("You do not have permission to edit this user.");
 
+			/** @var Form $form */
+			$form = $this->_createProfileEditForm($user);
+
 			//did we get a form submission?
-			if ($this->args('submit')) {
-				// birthday boy?
+			if ($form->checkSubmitAndValidate($this->args())) {
+				error_log("We were submitted");
+
 				if ($this->args('birthday')) {
 					if (strtotime($this->args('birthday')))
 						$user->set('birthday', date("Y-m-d H:i:s", strtotime($this->args('birthday'))));
-					else
-						$errors['birthday'] = "We couldn't understand your birthday.  Try using MM/DD/YYY.";
+					else {
+						/** @var FormField $birthday_field */
+						$birthday_field = $form->get('birthday');
+						$birthday_field->error("We couldn't understand your birthday.  Try using MM/DD/YYY");
+					}
 				}
 
 				// email change?
 				if (Verify::email($this->args('email')))
 					$user->set('email', $this->args('email'));
-				else
-					$errors['email'] = "Your email address is invalid.";
-
-				// password change?
-				if ($this->args('changepass1') && $this->args('changepass2')) {
-					if ($this->args('changepass1') == $this->args('changepass2'))
-						$user->set('pass_hash', User::hashPass($this->args('changepass1')));
-					else
-						$errors['password'] = "Your passwords did not match.";
+				else {
+					/** @var EmailField $email_field */
+					$email_field = $form->get('email');
+					$email_field->error("Your email address is invalid");
 				}
 
-				$user->set('first_name', stripslashes($this->args('first_name')));
-				$user->set('last_name', stripslashes($this->args('last_name')));
+				// WARNING Be careful with this, it's perfect for
+				// privilege elevation if done incorrectly.
+				if(User::$me->isAdmin()) {
+					$user->set('is_admin', $form->data('admin'));
+				}
 
-				if (empty($errors)) {
+				if (!$form->hasError()) {
 					if ($user->isMe())
 						Activity::log("edited their profile.");
 					else
 						Activity::log("edited " . $this->args('username') . "'s profile.");
 
 					$user->save();
-					$this->set('status', "Your " . $user->getLink("profile information") . " has been updated.");
-				} else {
-					$this->set('errors', $errors);
-					$this->set('error', "Uh oh, there was an error!");
+					$this->forwardToURL($user->getUrl());
 				}
-
-				$this->set('user', $user);
 			}
+
+			$this->set('form', $form);
 		} catch (Exception $e) {
 			$this->setTitle('Edit User - Error');
 			$this->set('megaerror', $e->getMessage());
@@ -190,28 +192,29 @@ class UserController extends Controller
 			if (!$user->isMe() && !User::isAdmin())
 				throw new Exception("You do not have permission to edit this user.");
 
-			if ($this->args('submit')) {
-				if (!$this->args('changepass1') || !$this->args('changepass2'))
-					$error = "You must enter a password.";
-				else if ($user->get('pass_hash') == User::hashPass($this->args('changepass1')))
-					$error = "The new password must be different from your old password.";
-				else if ($this->args('changepass1') != $this->args('changepass2'))
-					$error = "The passwords did not match.";
-				else if (strlen($this->args('changepass1')) < 8)
-					$error = "The password must be at least 8 characters long.";
-				else
-					$error = "";
+			$form = $this->_createChangePasswordForm();
 
-				if ($error != "") {
+			if ($form->checkSubmitAndValidate($this->args())) {
+				if($user->get('pass_hash') != User::hashPass($this->args('current'))) {
+					/** @var PasswordField $field */
+					$field = $form->get('current');
+					$field->error("This does not match your old password");
+				}
+				if ($this->args('changepass1') != $this->args('changepass2')) {
+					/** @var PasswordField $field */
+					$field = $form->get('changepass2');
+					$field->error("The passwords did not match");
+				}
+
+				if (!$form->hasError()) {
 					$user->set('pass_hash', User::hashPass($this->args('changepass1')));
-					//$user->set('force_password_change', 0); //pass updated.
 					$user->save();
-					$this->set('status', "Your password has been updated.");
-				} else
-					$this->set('error', $error);
+
+					$this->forwardToURL($user->getUrl());
+				}
 			}
 
-			$this->set('user', $user);
+			$this->set('form', $form);
 		} catch (Exception $e) {
 			$this->setTitle('Edit User - Error');
 			$this->set('megaerror', $e->getMessage());
@@ -239,7 +242,6 @@ class UserController extends Controller
 
 			//one time use only.
 			$user->set('pass_reset_hash', '');
-			//$user->set('force_password_change', 1);
 			$user->save();
 
 			User::createLogin($user);
@@ -261,21 +263,21 @@ class UserController extends Controller
 			//how do we find them?
 			if ($this->args('id'))
 				$user = new User($this->args('id'));
+			else if ($this->args('username'))
+				$user = User::byUsername($this->args('username'));
 			else
 				throw new Exception("Could not find that user.");
 
-			//are we cool?
 			if (!$user->isHydrated())
 				throw new Exception("Could not find that user.");
-			//are we cool to edit
-			if ($user->get('is_admin'))
-				throw new Exception("You cannot delete admins.");
 
 			if($user->id != User::$me->id) {
-				if (!User::isAdmin())
+				if (User::isAdmin()) {
+					if ($user->get('is_admin'))
+						throw new Exception("You cannot delete admins.");
+				} else {
 					throw new Exception("You are not an admin and cannot delete other users.");
-				else
-					throw new Exception("You are not that user");
+				}
 			}
 
 			if ($this->args('submit')) {
@@ -323,15 +325,11 @@ class UserController extends Controller
 		$this->set('register_form', $registerForm);
 
 		if ($registerForm->checkSubmitAndValidate($this->args())) {
-			$registrationSuccess = true;
-			//todo Fix at least email so that it can validate itself
 			$username = $this->args('username');
 			if (!Verify::username($username, $reason)) {
 				/** @var FormField $field */
 				$field = $registerForm->get('username');
-				$field->hasError = true;
-				$field->errorText = $reason;
-				$registrationSuccess = false;
+				$field->error($reason);
 			}
 
 			$email = $this->args('email');
@@ -339,20 +337,16 @@ class UserController extends Controller
 			if ($testUser->isHydrated()) {
 				/** @var FormField $emailField */
 				$emailField = $registerForm->get('email');
-				$emailField->hasError = true;
-				$emailField->errorText = "That email is already being used";
-				$registrationSuccess = false;
+				$emailField->error("That email is already being used");
 			}
 
 			if ($this->args('pass1') != $this->args('pass2')) {
 				/** @var FormField $field */
 				$field = $registerForm->get('pass2');
-				$field->hasError = true;
-				$field->errorText = "Your passwords do not match";
-				$registrationSuccess = false;
+				$field->error("Your passwords do not match");
 			}
 
-			if ($registrationSuccess) {
+			if (!$registerForm->hasError()) {
 				//woot!
 				$user = new User();
 				$user->set('username', $username);
@@ -386,27 +380,17 @@ class UserController extends Controller
 	{
 		$form = new Form('register');
 
-		if (!$this->args('username'))
-			$username = '';
-		else
-			$username = $this->args('username');
-
-		if (!$this->args('email'))
-			$email = '';
-		else
-			$email = $this->args('email');
-
 		$form->add(
 			TextField::name('username')
 				->label("Username")
-				->value($username)
+				->value($this->args('username'))
 				->required(true)
 		);
 
 		$form->add(
 			EmailField::name('email')
 				->label("Email address")
-				->value($email)
+				->value($this->args('email'))
 				->required(true)
 		);
 
@@ -519,5 +503,86 @@ class UserController extends Controller
 	public function draw_users()
 	{
 		$this->setArg('users');
+	}
+
+	/**
+	 * @param User $user
+	 * @return Form
+	 */
+	private function _createProfileEditForm($user)
+	{
+		$form = new Form();
+
+		$form->add(
+			DisplayField::name('username')
+				->label("Username")
+				->value($user->get('username'))
+		);
+
+		$form->add(
+			EmailField::name('email')
+				->label("Email")
+				->value($user->get('email'))
+				->required(true)
+		);
+
+		if(User::$me->isAdmin()) {
+			$form->add(
+				CheckboxField::name('admin')
+					->label("Is admin?")
+					->value($user->isAdmin())
+					->help("Is this user an admin?")
+			);
+		}
+
+		// todo add DateField
+		/**
+		$form->add(
+			DateField::name('birthday')
+				->label("Birthday")
+				->value($user->get('birthday'))
+		);
+		*/
+
+		$password_page = $user->getUrl() . "/changepass";
+		$form->add(
+			DisplayField::name('changepass')
+				->label("Change Password")
+				->value("Please visit the <a href=\"$password_page\">change password</a> page.")
+		);
+
+		return $form;
+	}
+
+	/**
+	 * @return Form
+	 */
+	private function _createChangePasswordForm()
+	{
+		$form = new Form();
+		$form->submitText = "Update password";
+
+		$form->add(
+			PasswordField::name('current')
+				->label("Enter Password")
+				->help("Your current password")
+				->required(true)
+		);
+
+		$form->add(
+			PasswordField::name('changepass1')
+				->label("New Password")
+				->help("Your new password")
+				->required(true)
+		);
+
+		$form->add(
+			PasswordField::name('changepass2')
+				->label("Password again")
+				->help("Your new password again")
+				->required(true)
+		);
+
+		return $form;
 	}
 }

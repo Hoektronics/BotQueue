@@ -26,19 +26,19 @@ class JobController extends Controller
 		$this->setTitle(User::$me->getName() . "'s Jobs");
 		$this->set('area', 'jobs');
 
-		$available = User::$me->getJobs('available');
+		$available = User::$me->getJobs(JobState::Available);
 		$this->set('available', $available->getRange(0, 10));
 		$this->set('available_count', $available->count());
 
-		$taken = User::$me->getJobs('taken');
+		$taken = User::$me->getJobs(JobState::Taken);
 		$this->set('taken', $taken->getRange(0, 10));
 		$this->set('taken_count', $taken->count());
 
-		$complete = User::$me->getJobs('complete', 'finished_time', 'DESC');
+		$complete = User::$me->getJobs(JobState::Complete, 'finished_time', 'DESC');
 		$this->set('complete', $complete->getRange(0, 10));
 		$this->set('complete_count', $complete->count());
 
-		$failure = User::$me->getJobs('failure');
+		$failure = User::$me->getJobs(JobState::Failure);
 		$this->set('failure', $failure->getRange(0, 10));
 		$this->set('failure_count', $failure->count());
 	}
@@ -49,11 +49,10 @@ class JobController extends Controller
 
 		$this->setTitle("Latest Completed Jobs");
 
-		//$available = User::$me->getJobs('complete', 'finished_time', 'DESC');
 		$sql = "SELECT id, webcam_image_id FROM jobs WHERE webcam_image_id != 0 AND status = 'complete' ORDER BY finished_time DESC";
 		$available = new Collection($sql);
 		$available->bindType('id', 'Job');
-		$available->bindType('webcam_image_id', STORAGE_METHOD);
+		$available->bindType('webcam_image_id', 'StorageInterface');
 
 		$this->set('jobs', $available->getRange(0, 24));
 	}
@@ -66,16 +65,19 @@ class JobController extends Controller
 		$this->set('area', 'jobs');
 
 		try {
-			if ($status == JobState::Available)
-				$this->setTitle(User::$me->getName() . "'s Available Jobs");
-			else if ($status == JobState::Taken)
-				$this->setTitle(User::$me->getName() . "'s Working Jobs");
-			else if ($status == JobState::Complete)
-				$this->setTitle(User::$me->getName() . "'s Finished Jobs");
-			else if ($status == JobState::Failure)
-				$this->setTitle(User::$me->getName() . "'s Failed Jobs");
-			else
+			$titles = array(
+				JobState::Available => 'Available',
+				JobState::Taken => 'Working',
+				JobState::Complete => 'Finished',
+				JobState::Failure => 'Failed'
+			);
+
+			if(array_key_exists($status, $titles)) {
+				$title = User::$me->getName() . "'s {$titles[$status]} Jobs";
+				$this->setTitle($title);
+			} else {
 				throw new Exception("That is not a valid status!");
+			}
 
 			if ($status == JobState::Complete)
 				$collection = User::$me->getJobs($status, 'finished_time', 'DESC');
@@ -120,8 +122,10 @@ class JobController extends Controller
 				$this->set('source_file', $sf);
 				$this->set('parent_file', $sf->getParent());
 				$this->set('slicejob', $job->getSliceJob());
+
 				/* @var $sliceJob SliceJob */
 				$sliceJob = $this->get('slicejob');
+
 				$this->set('sliceengine', $sliceJob->getSliceEngine());
 				$this->set('sliceconfig', $sliceJob->getSliceConfig());
 				$this->set('queue', $job->getQueue());
@@ -150,7 +154,7 @@ class JobController extends Controller
 				throw new Exception("Could not find that job.");
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to edit this job.");
-			if ($job->get('status') != 'available')
+			if ($job->get('status') != JobState::Available)
 				throw new Exception("You can only edit jobs that have not been taken yet.");
 
 			$this->setTitle('Edit Job - ' . $job->getName());
@@ -234,9 +238,9 @@ class JobController extends Controller
 			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to delete this job.");
-			if ($job->get('status') == 'taken')
+			if ($job->get('status') == JobState::Taken)
 				throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
-			if ($job->get('status') == 'slicing')
+			if ($job->get('status') == JobState::Slicing)
 				throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
 
 			$this->set('job', $job);
@@ -267,10 +271,6 @@ class JobController extends Controller
 			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to cancel this job.");
-			// if ($job->get('status') == 'taken')
-			//  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
-			// if ($job->get('status') == 'slicing')
-			//  throw new Exception("You cannot delete jobs that are in progress from the web.  Cancel it from the client software instead.");
 
 			$this->set('job', $job);
 			$this->setTitle('Cancel Job - ' . $job->getName());
@@ -323,7 +323,7 @@ class JobController extends Controller
 			$this->ensureJobExists($job);
 			if (!$job->canEdit())
 				throw new Exception("You do not have permission to edit this job.");
-			if ($job->get('status') != 'qa')
+			if ($job->get('status') != JobState::QA)
 				throw new Exception("You cannot do QA on this job.");
 
 			$bot = $job->getBot();
@@ -366,7 +366,7 @@ class JobController extends Controller
 
 			$bot->reset();
 
-			$job->setStatus('complete');
+			$job->setStatus(JobState::Complete);
 			$job->set('verified_time', date("Y-m-d H:i:s"));
 			$job->save();
 
@@ -610,13 +610,6 @@ class JobController extends Controller
 					$qty = $this->args('qty');
 					$queues = $this->args('queues');
 					$priority = $this->args('priority');
-
-					// echo "<pre>";
-					// var_dump($this->args());
-					// var_dump($qty);
-					// var_dump($queues);
-					// var_dump($priority);
-					// echo "</pre>";
 
 					//what ones do we want to actually add?
 					foreach ($use AS $id => $value) {

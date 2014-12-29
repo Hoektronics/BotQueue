@@ -261,8 +261,6 @@ class BotController extends Controller
 
 				Activity::log("edited the information for bot " . $bot->getLink() . ".");
 			} else if ($slicingForm->checkSubmitAndValidate($this->args())) {
-				// todo: Switch this out with a queue section
-				//$bot->set('queue_id', $slicingForm->data('queue_id'));
 				$bot->set('slice_engine_id', $slicingForm->data('slice_engine_id'));
 				$bot->set('slice_config_id', $slicingForm->data('slice_config_id'));
 

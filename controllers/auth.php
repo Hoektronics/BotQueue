@@ -64,7 +64,7 @@ class AuthController extends Controller
 				$text = Controller::byName('email')->renderView('lost_pass', array('user' => $user, 'link' => $link));
 				$html = Controller::byName('email')->renderView('lost_pass_html', array('user' => $user, 'link' => $link));
 
-				Activity::log("forgot his/her password. :P", $user);
+				Activity::log("forgot their password. :P", $user);
 
 				Email::queue($user, "Password Reset", $text, $html);
 
