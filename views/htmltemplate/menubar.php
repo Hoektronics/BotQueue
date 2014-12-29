@@ -1,5 +1,10 @@
-<? if(!User::isLoggedIn()): ?>
-	<img style="position: absolute; top: 40px; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+<? if (!User::isLoggedIn()): ?>
+	<a href="https://github.com/Hoektronics/BotQueue">
+		<img style="position: absolute; top: 40px; right: 0; border: 0;"
+		     src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+		     alt="Fork me on GitHub"
+		     data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+	</a>
 <? endif ?>
 <section id="navbar">
 	<div class="navbar navbar-fixed-top">
@@ -9,19 +14,20 @@
 					<ul class="nav navbar pull-left">
 						<li>
 							<a href="/notifications">
-								<div id="notification-icon" class="notification<?=($notifications > 0 ? ' active' : '')  ?>">
-									<?=$notifications?>
+								<div id="notification-icon"
+								     class="notification<?= ($notifications > 0 ? ' active' : '') ?>">
+									<?= $notifications ?>
 								</div>
 							</a>
 						</li>
 					</ul>
-					<button type="button"  class="btn btn-navbar" data-toggle="collapse" data-target="#menu-bar">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target="#menu-bar">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
 				</div>
-				<a class="brand" style="margin-left:0"  href="/"><?= RR_PROJECT_NAME ?></a>
+				<a class="brand" style="margin-left:0" href="/"><?= RR_PROJECT_NAME ?></a>
 
 				<div id="menu-bar" class="nav-collapse collapse">
 					<ul class="nav">
