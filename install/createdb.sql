@@ -320,6 +320,6 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(21, 'Converting oauth token codes');
+INSERT INTO patches(patch_num, description) VALUES(22, 'Cleaning up user_sort for jobs');
 
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -125,8 +125,6 @@ class UserController extends Controller
 
 			//did we get a form submission?
 			if ($form->checkSubmitAndValidate($this->args())) {
-				error_log("We were submitted");
-
 				if ($this->args('birthday')) {
 					if (strtotime($this->args('birthday')))
 						$user->set('birthday', date("Y-m-d H:i:s", strtotime($this->args('birthday'))));
@@ -530,8 +528,8 @@ class UserController extends Controller
 			$form->add(
 				CheckboxField::name('admin')
 					->label("Is admin?")
-					->value($user->isAdmin())
 					->help("Is this user an admin?")
+					->checked($user->isAdmin())
 			);
 		}
 

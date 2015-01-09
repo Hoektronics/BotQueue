@@ -258,7 +258,7 @@ class FormField
 
 	public function value($value)
 	{
-		$this->value =$value;
+		$this->value = $value;
 		return $this;
 	}
 

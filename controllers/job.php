@@ -425,6 +425,7 @@ class JobController extends Controller
 
 				if ($form->data('job_error')) {
 					$job->setStatus(JobState::Failure);
+					$job->set('user_sort', 0);
 					$job->set('verified_time', date("Y-m-d H:i:s"));
 					$job->save();
 				} else {

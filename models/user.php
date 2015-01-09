@@ -112,11 +112,6 @@ class User extends Model
         }
     }
 
-    public function isBeta()
-    {
-        return User::$me->isAdmin();
-    }
-
     public static function isLoggedIn()
     {
         return (self::$me instanceOf User && self::$me->isHydrated());
@@ -231,7 +226,7 @@ class User extends Model
 
     public function getActivityStream()
     {
-        return Activity::getStream(User::$me);
+        return Activity::getStream($this);
     }
 
     public function getQueues()

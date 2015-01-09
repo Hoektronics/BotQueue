@@ -152,6 +152,7 @@ class Job extends Model
 		}
 
 		$this->setStatus('canceled');
+		$this->set('user_sort', 0);
 		$this->set('bot_id', 0);
 		$this->set('finished_time', date("Y-m-d H:i:s"));
 		$this->save();
@@ -302,7 +303,8 @@ class Job extends Model
 	 */
 	public static function addFileToQueue($queue_id, $file)
 	{
-		$sort = db()->getValue("SELECT max(id)+1 FROM jobs");
+		$sortSQL = "SELECT max(id)+1 FROM jobs WHERE user_id = ?";
+		$sort = db()->getValue($sortSQL, array(User::$me->id));
 
 		// Special case for first sort value
 		if ($sort == "") {
@@ -331,6 +333,7 @@ class Job extends Model
 		$this->setStatus('qa');
 		$this->set('progress', 100);
 		$this->set('finished_time', date('Y-m-d H:i:s'));
+		$this->set('user_sort', 0);
 		$this->save();
 
 		$log = $this->getLatestTimeLog();

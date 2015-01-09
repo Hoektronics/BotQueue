@@ -113,7 +113,6 @@ class QueueController extends Controller
         }
     }
 
-    //TODO refactor this function
     //ajax function
     public function update_sort()
     {
@@ -127,38 +126,32 @@ class QueueController extends Controller
             die("Error: You need to pass in at least 2 jobs.");
 
         //load up our ids.
-        $jobIds = array();
-		$sqlParams = "";
+        $jobIds = preg_filter('/^job_(\d+)$/', '$1', $jobs);
+        $jobs = array();
 
-        foreach ($jobs AS $job) {
-            $jobArray = explode("_", $job);
-
-			if(count($jobArray) == 2) {
-				$jobIds[] = (int) $jobArray[1];
-				if($sqlParams != "")
-					$sqlParams .= ",";
-				$sqlParams .= "?";
-			} else {
-				die("Error: format must be a csv of job_### where ### is the job id.");
-			}
+        // Only grab jobs that exist and are ours
+        foreach($jobIds AS $id) {
+            /** @var Job $job */
+            $job = new Job($id);
+            if($job->isHydrated() && $job->isMine()) {
+                $jobs[$id] = $job->get('user_sort');
+            }
         }
 
-        //find our our current max
-        $sql = "SELECT min(user_sort) FROM jobs WHERE id IN (". $sqlParams .")";
-        $min = (int)db()->getValue($sql, $jobIds);
+        // Sort the values, but not the keys
+        $values = array_values($jobs);
+        sort($values);
+        $jobs = array_combine(array_keys($jobs), $values);
 
-        //now actually update.
-        foreach ($jobIds AS $jid) {
-            $job = new Job($jid);
-            if ($job->get('user_id') == User::$me->id) {
-                $job->set('user_sort', $min);
-                $job->save();
-                $min++;
-            } else
-                die("Error: Job {$jid} is not your job.");
+        // Now actually update
+        foreach($jobs AS $id => $sort) {
+            /** @var Job $job */
+            $job = new Job($id);
+            $job->set('user_sort', $sort);
+            $job->save();
         }
 
-        die("OK");
+        die(print_r($jobs, true));
     }
 
     public function listjobs()

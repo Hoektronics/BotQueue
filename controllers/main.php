@@ -129,6 +129,8 @@ class MainController extends Controller
 	}
 
 	public function dashboard_style() {
+		if(!User::$me->isLoggedIn())
+			return;
 		if($this->args('style')) {
 			User::$me->set('dashboard_style', $this->args('style'));
 			User::$me->save();
@@ -137,6 +139,8 @@ class MainController extends Controller
 
 	public function activity()
 	{
+		$this->assertLoggedIn();
+
 		$this->setTitle('Activity Log');
 
 		$collection = User::$me->getActivityStream();
