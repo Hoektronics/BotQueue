@@ -146,15 +146,9 @@ class Controller
 		/* @var $view View */
 		$view = $this->viewFactory();
 
-		//preRender doesn't do anything - its just a placeholder
-		$view->preRender();
-
 		//The $view->render function returns the output of the view {controller}.{view}.php file, e.g. htmltemplate.header.php
 		//The function returns the error handling output (if any)
 		$output = $view->render($this->data);
-
-		//postRender doesn't do anything - its just a placeholder
-		$view->postRender();
 
 		//Returns the contents of the output buffer
 		return $output;
@@ -209,13 +203,6 @@ class Controller
 		// POST overrides GET.
 		if (count($_POST))
 			$args = array_merge($args, $_POST);
-
-		// JSON data overrides GET and POST
-		if (!empty($args['jdata'])) {
-			$json_data = json_decode(stripslashes($args['jdata']), true);
-			unset($args['jdata']);
-			$args = array_merge($args, $json_data);
-		}
 
 		// user-defined args rule all!
 		if (count($this->args))

@@ -61,7 +61,7 @@ class MainController extends Controller
 
 		$this->addScript(
 			'initial_data',
-			"var initialData = " . Controller::byName('main')->renderView('dashboardbb'),
+			"var initialData = " . Controller::byName('main')->renderView('dashboard_data'),
 			"text/javascript"
 		);
 
@@ -77,7 +77,7 @@ class MainController extends Controller
 		$this->setArg('bots');
 	}
 
-	public function dashboardbb()
+	public function dashboard_data()
 	{
 		if (!User::isLoggedIn()) {
 			die('You must be logged in to view this page.');
@@ -95,35 +95,11 @@ class MainController extends Controller
 			$content['bots'][] = $this->_getBotData($bot, $job);
 		}
 
-		$content['on_deck'] = array();
-		$on_deck = User::$me->getJobs('available', 'user_sort', 'ASC');
-		$content['on_deck']['total'] = $on_deck->count();
-		$content['on_deck']['jobs'] = array();
-		foreach ($on_deck->getRange(0, 5) AS $row) {
-			/** @var Job $job */
-			$job = $row['Job'];
-			$jobData = $this->_getJobData($job);
-			$jobData['managed_url'] = $job->getUrl() . "/cancel";
-			$jobData['managed_icon'] = "icon-eject";
-			$jobData['managed_text'] = "cancel";
+		$on_deck = User::$me->getJobs(JobState::Available, 'user_sort', 'ASC');
+		$content['on_deck'] = $this->_populateJobs($on_deck);
 
-			$content['on_deck']['jobs'][] = $jobData;
-		}
-
-		$content['finished'] = array();
-		$finished = User::$me->getJobs('complete', 'verified_time', 'DESC');
-		$content['finished']['total'] = $finished->count();
-		$content['finished']['jobs'] = array();
-		foreach ($finished->getRange(0, 5) AS $row) {
-			/** @var Job $job */
-			$job = $row['Job'];
-			$jobData = $this->_getJobData($job);
-			$jobData['managed_url'] = "/job/create/job:" . $job->id;
-			$jobData['managed_icon'] = "icon-repeat";
-			$jobData['managed_text'] = "re-run";
-
-			$content['finished']['jobs'][] = $jobData;
-		}
+		$finished = User::$me->getJobs(JobState::Complete, 'verified_time', 'DESC');
+		$content['finished'] = $this->_populateJobs($finished);
 
 		$this->set('content', JSON::encode($content));
 	}
@@ -164,17 +140,6 @@ class MainController extends Controller
 	{
 		$this->setArg('errors');
 		$this->setArg('hide');
-	}
-
-	public function sidebar()
-	{
-	}
-
-	public function viewmode()
-	{
-		$mode = $this->args('view_mode');
-		setcookie('viewmode', $mode, time() + 60 * 60 * 24 * 30, '/', SITE_HOSTNAME, FORCE_SSL, true);
-		$this->forwardToUrl('/');
 	}
 
 	public function shortcode()
@@ -220,7 +185,7 @@ class MainController extends Controller
 		else
 			$this->set('total_printing_time', 0);
 
-		//user leaderboard - all time
+		//user leader board - all time
 		$sql = "
             SELECT CEIL(SUM(seconds)/3600) AS hours, user_id
             FROM stats
@@ -230,7 +195,7 @@ class MainController extends Controller
         ";
 		$this->set('user_leaderboard', db()->getArray($sql));
 
-		//user leaderboard - last month
+		//user leader board - last month
 		$sql = "
             SELECT CEIL(SUM(seconds)/3600) AS hours, user_id
             FROM stats
@@ -241,7 +206,7 @@ class MainController extends Controller
         ";
 		$this->set('user_leaderboard_30', db()->getArray($sql));
 
-		//bot leaderboard - all time
+		//bot leader board - all time
 		$sql = "
             SELECT CEIL(SUM(seconds)/3600) AS hours, bot_id
             FROM stats
@@ -251,7 +216,7 @@ class MainController extends Controller
         ";
 		$this->set('bot_leaderboard', db()->getArray($sql));
 
-		//bot leaderboard - all time
+		//bot leader board - all time
 		$sql = "
             SELECT CEIL(SUM(seconds)/3600) AS hours, bot_id
             FROM stats
@@ -473,6 +438,36 @@ class MainController extends Controller
 			return $botData;
 		}
 		return $botData;
+	}
+
+	/**
+	 * @param $jobs Collection
+	 * @return array
+	 */
+	private function _populateJobs($jobs)
+	{
+		$content = array();
+
+		$content['total'] = $jobs->count();
+		$content['jobs'] = array();
+		foreach ($jobs->getRange(0, 5) AS $row) {
+			/** @var Job $job */
+			$job = $row['Job'];
+			$jobData = $this->_getJobData($job);
+			if($job->get('status') == JobState::Available) {
+				$jobData['managed_url'] = $job->getUrl() . "/cancel";
+				$jobData['managed_icon'] = "icon-eject";
+				$jobData['managed_text'] = "cancel";
+			} else if($job->get('status') == JobState::Complete) {
+				$jobData['managed_url'] = "/job/create/job:" . $job->id;
+				$jobData['managed_icon'] = "icon-repeat";
+				$jobData['managed_text'] = "re-run";
+			}
+
+			$content['jobs'][] = $jobData;
+		}
+
+		return $content;
 	}
 
 	/**

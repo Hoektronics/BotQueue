@@ -24,7 +24,6 @@ class HTMLTemplateController extends Controller
 		$this->setArg('content');
 		$this->setArg('title');
 		$this->setArg('area');
-		$this->setArg('sidebar');
 	}
 
 	public function statusbar()

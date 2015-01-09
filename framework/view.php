@@ -30,15 +30,6 @@ class View
 		$this->view = $view;
 	}
 
-	//placeholder functions for any special stuff you gotta do.
-	public function preRender()
-	{
-	}
-
-	public function postRender()
-	{
-	}
-
 	public function render($data = array())
 	{
 		//get our data variables into the local scope
@@ -48,7 +39,6 @@ class View
 		//Turn on output buffering - no output is sent from the script. Output is instead stored in an internal buffer.
 		ob_start();
 
-		//include the appropriate {controller}.{view}.php file, e.g. item.newest.php
 		//include the appropriate {controller}.{view}.php file, e.g. item.newest.php
 		$view_file = VIEWS_DIR . strtolower("{$this->controller}/{$this->view}.php");
 		if (file_exists($view_file))
