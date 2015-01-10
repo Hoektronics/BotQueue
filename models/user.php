@@ -188,12 +188,7 @@ class User extends Model
         return "/" . $this->get('username');
     }
 
-    public function getiPhoneUrl()
-    {
-        return '/iphone/user:' . $this->id;
-    }
-
-    public function getName($short = false)
+    public function getName()
     {
         return $this->get('username');
     }

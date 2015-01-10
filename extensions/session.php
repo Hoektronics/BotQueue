@@ -17,6 +17,11 @@
   */
 
 session_start();
+// Create the CSRF token if it doesn't exist
+if(!array_key_exists('CSRFToken', $_SESSION)) {
+	$_SESSION['CSRFToken'] =  md5(uniqid(rand(), true));
+}
+
 User::authenticate();
 
 //handle any login payloads.
@@ -30,4 +35,3 @@ if (User::isLoggedIn()) {
 		}
 	}
 }
-?>

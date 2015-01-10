@@ -34,6 +34,7 @@ class AuthController extends Controller
 			//unset specific variables.
 			setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
 			unset($_SESSION['userid']);
+			unset($_SESSION['CSRFToken']);
 
 			//nuke the session.
 			if (isset($_COOKIE[session_name()]))

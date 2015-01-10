@@ -1,0 +1,1 @@
+<input type="hidden" <?=$field->getAttributes()?> value="<?=htmlentities($field->getValue())?>"/>

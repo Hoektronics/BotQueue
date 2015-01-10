@@ -34,9 +34,17 @@ class Form
 		$this->externalForm = $externalForm;
 
 		if(!$externalForm) {
+			// Submission token in case of multiple forms
 			$this->add(
 				HiddenField::name($this->name."_is_submitted")
 				->value(1)
+				->required(true)
+			);
+
+			// CSRF token
+			$this->add(
+				CSRFTokenField::name("CSRFToken")
+				->value($_SESSION['CSRFToken'])
 				->required(true)
 			);
 		}
@@ -551,5 +559,13 @@ class GoogleCaptcha extends FormField
 		$result = json_decode(file_get_contents($url), true);
 
 		return $result['success'];
+	}
+}
+
+class CSRFTokenField extends HiddenField
+{
+	public function validate($data)
+	{
+		return $data[$this->name] == $_SESSION['CSRFToken'];
 	}
 }
