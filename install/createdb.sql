@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS `bots` (
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `identifier` (`identifier`),
   KEY `job_id` (`job_id`),
+  KEY `status` (`status`),
   KEY `oauth_token_id` (`oauth_token_id`),
   KEY `slice_config_id` (`slice_config_id`),
   KEY `slice_engine_id` (`slice_engine_id`)
@@ -183,6 +184,7 @@ CREATE TABLE IF NOT EXISTS `oauth_token` (
   KEY `consumer_id` (`consumer_id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `type` (`type`),
+  KEY `token` (`token`),
   KEY `ip_address` (`ip_address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS `queues` (
@@ -320,6 +322,6 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(22, 'Cleaning up user_sort for jobs');
+INSERT INTO patches(patch_num, description) VALUES(24, 'Adding MySQL keys');
 
 /*!40101 SET character_set_client = @saved_cs_client */;
