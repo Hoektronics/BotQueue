@@ -157,6 +157,8 @@ class APIV1Controller extends Controller
 
 		if (!$queue->isHydrated())
 			throw new Exception("Could not find a queue.");
+		if (!$queue->isMine())
+			throw new Exception("This is not your queue.");
 
 		$data = $queue->getAPIData();
 
@@ -284,6 +286,8 @@ class APIV1Controller extends Controller
 
 		if (!$queue->isHydrated())
 			throw new Exception("Could not find a queue.");
+		if (!$queue->isMine())
+			throw new Exception("This is not your queue.");
 
 		$data = array();
 
