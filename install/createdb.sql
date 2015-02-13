@@ -58,10 +58,11 @@ CREATE TABLE IF NOT EXISTS `bots` (
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
   KEY `identifier` (`identifier`),
   KEY `job_id` (`job_id`),
-  KEY `status` (`status`),
   KEY `oauth_token_id` (`oauth_token_id`),
   KEY `slice_config_id` (`slice_config_id`),
-  KEY `slice_engine_id` (`slice_engine_id`)
+  KEY `slice_engine_id` (`slice_engine_id`),
+  KEY `status` (`status`),
+  KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -322,6 +323,6 @@ CREATE VIEW stats AS
   WHERE status != 'working'
   ORDER by seconds DESC;
 
-INSERT INTO patches(patch_num, description) VALUES(24, 'Adding MySQL keys');
+INSERT INTO patches(patch_num, description) VALUES(25, 'Adding MySQL keys');
 
 /*!40101 SET character_set_client = @saved_cs_client */;
