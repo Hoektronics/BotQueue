@@ -56,7 +56,7 @@
                 $(this.el).html("<div class=\"row\">" + $(this.el).html() + "</div>");
             }
             if(window['ajax_click'] != undefined) {
-                $(".btn-qa-pass").click(ajax_click);
+                $(".btn-ajax-click").click(ajax_click);
             }
         }
     });
