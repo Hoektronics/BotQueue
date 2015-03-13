@@ -1,29 +1,30 @@
 (function () {
 
-    window.App = {
-        Models: {},
-        Collections: {},
-        Views: {},
-        fromJSON: function (data) {
-            if (App.shouldRefresh()) {
-                App.bots.reset(data["bots"]);
-                App.onDeckJobs.total = data["on_deck"]["total"];
-                App.onDeckJobs.reset(data["on_deck"]["jobs"]);
-                App.finishedJobs.total = data["finished"]["total"];
-                App.finishedJobs.reset(data["finished"]["jobs"]);
-            }
-        },
-        fetch: function () {
-            $.getJSON("/ajax/main/dashboard", function (response) {
-                    App.fromJSON(response);
-                }
-            );
-        },
-        shouldRefresh: function () {
-            if ($(".bot_status_button.open").length != 0)
-                return false;
-            return $(".ui-sortable-helper").length == 0;
+    if (window.App == undefined) {
+        window.App = {};
+    }
+    window.App.Models = {};
+    window.App.Collections = {};
+    window.App.Views = {};
+    App.fromJson = function (data) {
+        if (App.shouldRefresh()) {
+            App.bots.reset(data["bots"]);
+            App.onDeckJobs.total = data["on_deck"]["total"];
+            App.onDeckJobs.reset(data["on_deck"]["jobs"]);
+            App.finishedJobs.total = data["finished"]["total"];
+            App.finishedJobs.reset(data["finished"]["jobs"]);
         }
+    };
+    App.fetch = function () {
+        $.getJSON("/ajax/main/dashboard", function (response) {
+                App.fromJson(response);
+            }
+        );
+    };
+    App.shouldRefresh = function () {
+        if ($(".bot_status_button.open").length != 0)
+            return false;
+        return $(".ui-sortable-helper").length == 0;
     };
 
     App.Models.Bot = Backbone.Model.extend({
@@ -53,6 +54,9 @@
                     $(this.el).append(this.templateThumbnail(bot.toJSON()));
                 }, this);
                 $(this.el).html("<div class=\"row\">" + $(this.el).html() + "</div>");
+            }
+            if(window['ajax_click'] != undefined) {
+                $(".btn-qa-pass").click(ajax_click);
             }
         }
     });
@@ -119,7 +123,7 @@
         collection: App.finishedJobs
     });
     setStyle();
-    App.fromJSON(initialData);
+    App.fromJson(initialData);
 })();
 
 setInterval(function () {

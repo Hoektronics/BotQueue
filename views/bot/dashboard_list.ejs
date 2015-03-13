@@ -57,7 +57,7 @@
     <td class="min-width span2">
       <% if (typeof(bot.job.qa_url) !== "undefined") { %>
       <div class="manage-job pull-right">
-        <a class="btn btn-success btn-mini" href="<%= bot.job.qa_url %>/pass">PASS</a>
+        <a class="btn btn-success btn-mini btn-ajax-click" href="<%= bot.job.qa_url %>/pass">PASS</a>
         <a class="btn btn-primary btn-mini" href="<%= bot.job.qa_url %>">VIEW</a>
         <a class="btn btn-danger btn-mini" href="<%= bot.job.qa_url %>/fail">FAIL</a>
       </div>
