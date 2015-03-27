@@ -12,6 +12,7 @@ notifications:
 branches:
   only:
     - master
+    - cakephp
 
 before_install:
   - sudo apt-get update > /dev/null
