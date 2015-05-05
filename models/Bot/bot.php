@@ -315,8 +315,10 @@ class Bot extends Model
 
 		$sql = "select DATE_SUB(NOW(), INTERVAL queues.delay SECOND) > MAX(jobs.taken_time)
 			FROM queues, jobs
-			WHERE queues.id = jobs.queue_id";
-		if(db()->getValue($sql) == 0)
+			WHERE queues.id = jobs.queue_id
+			AND queues.id IN
+			(SELECT queue_id from bot_queues where bot_id = ?)";
+		if(db()->getValue($sql, array($this->id)) == 0)
 			return false;
 
 		return true;
