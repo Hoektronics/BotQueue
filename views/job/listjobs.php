@@ -18,7 +18,7 @@
 			'word' => 'job'
 		));
 	?>
-	<?= Controller::byName('job')->renderView('draw_jobs', array('jobs' => $jobs->getAll())); ?>
+	<?= Controller::byName('job')->renderView('draw_jobs'.($status == JobState::Available ? '_available' : ''), array('jobs' => $jobs->getAll())); ?>
 	<?
 	echo Controller::byName('browse')->renderView('pagination', array(
 		'collection' => $jobs,

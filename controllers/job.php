@@ -565,6 +565,11 @@ class JobController extends Controller
 		$this->setArg('jobs');
 	}
 
+	public function draw_jobs_available()
+	{
+		$this->setArg('jobs');
+	}
+
 	public function draw_jobs_small()
 	{
 		$this->setArg('jobs');
