@@ -161,9 +161,13 @@ class Queue extends Model
 
     public function delete()
     {
+        /** @var Bot $bot */
+        foreach ($this->getBots()->getAll() as $bot) {
+            $bot->reset();
+        }
+
         $sql = "DELETE FROM jobs
 				WHERE queue_id = ?";
-
         db()->execute($sql, array($this->id));
 
         $sql = "DELETE FROM error_log
