@@ -27,7 +27,7 @@ if (!$patch->exists()) {
 		db()->execute($sql, $data);
 	}
 
-	$sql = "DROP INDEX queue_id ON botqueue.bots";
+	$sql = "DROP INDEX queue_id ON bots";
 	db()->execute($sql);
 	$sql = "ALTER TABLE bots DROP COLUMN queue_id";
 	db()->execute($sql);
