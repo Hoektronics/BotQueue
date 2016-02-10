@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `job_clock` (
   `job_id` int(11) NOT NULL,
   `bot_id` int(11) NOT NULL,
   `queue_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
   `status` enum('working','waiting', 'complete', 'dropped'),
   `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `taken_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
