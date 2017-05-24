@@ -27,6 +27,11 @@
 
                 <div class="collapse navbar-collapse" id="main-navbar-collapse">
                     <ul class="nav navbar-nav">
+                        @if (Auth::check())
+                            <li>
+                                <a href="/bot">Bots</a>
+                            </li>
+                        @endif
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
