@@ -13,7 +13,7 @@
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect('/dashboard');
+        return redirect('dashboard');
     }
 
     return view('welcome');
@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/dashboard', 'HomeController@index')
+Route::get('dashboard', 'HomeController@index')
     ->name('dashboard');
 
-Route::get('/bot', 'BotController@index');
+Route::resource('bot', 'BotController');

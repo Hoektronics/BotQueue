@@ -15,7 +15,8 @@ class CreateBotsTable extends Migration
     {
         Schema::create('bots', function (Blueprint $table) {
             $table->increments('id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('creator_id')->unsigned();
+            $table->foreign('creator_id')->references('id')->on('users');
             $table->string('name');
             $table->timestamp('seen_at')->nullable();
             $table->timestamps();
