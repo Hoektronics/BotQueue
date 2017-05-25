@@ -37,6 +37,9 @@
                     <ul class="nav navbar-nav navbar-right">
                         @if (Auth::guest())
                             <li>
+                                <a href="/register">Register</a>
+                            </li>
+                            <li>
                                 <a href="/login">Login</a>
                             </li>
                         @else
