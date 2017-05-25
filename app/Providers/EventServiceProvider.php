@@ -15,6 +15,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\BotCreating' => [
             'App\Listeners\AssignBotToUser',
+            'App\Listeners\SetBotToOffline',
         ],
     ];
 

@@ -2,10 +2,10 @@
 
 namespace App\Listeners;
 
+use App\Enums\BotStatusEnum;
 use App\Events\BotCreating;
-use Illuminate\Support\Facades\Auth;
 
-class AssignBotToUser
+class SetBotToOffline
 {
     /**
      * Create the event listener.
@@ -20,11 +20,11 @@ class AssignBotToUser
     /**
      * Handle the event.
      *
-     * @param  BotCreating $event
+     * @param  BotCreating  $event
      * @return void
      */
     public function handle(BotCreating $event)
     {
-        $event->bot->creator_id = Auth::user()->id;
+        $event->bot->status = BotStatusEnum::Offline;
     }
 }
