@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property int $creator_id
  * @method static \Illuminate\Database\Query\Builder|\App\Bot whereCreatorId($value)
+ * @property string $status
+ * @method static \Illuminate\Database\Query\Builder|\App\Bot whereStatus($value)
  */
 class Bot extends Model
 {

@@ -7,4 +7,15 @@
         </div>
         <h1>Bots</h1>
     </div>
+
+    @foreach($bots as $bot)
+        <div class="row">
+            <div class="col-md-3">
+                {{ $bot->name }}
+            </div>
+            <div class="col-md-3">
+                {{ $bot->status }}
+            </div>
+        </div>
+    @endforeach
 @endsection

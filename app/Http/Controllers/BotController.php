@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Bot;
 use App\Http\Requests\BotCreationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BotController extends Controller
 {
@@ -25,7 +26,8 @@ class BotController extends Controller
      */
     public function index()
     {
-        return view('bot.index');
+        $bots = Auth::user()->bots;
+        return view('bot.index', compact('bots'));
     }
     /**
      * Show the form for creating a new resource.
