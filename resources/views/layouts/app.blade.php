@@ -31,6 +31,9 @@
                             <li>
                                 <a href="/bot">Bots</a>
                             </li>
+                            <li>
+                                <a href="/cluster">Clusters</a>
+                            </li>
                         @endif
                     </ul>
 
