@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Events\UserCreated;
+use App\Events\UserCreating;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -25,6 +27,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\User whereUsername($value)
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Cluster[] $clusters
  */
 class User extends Authenticatable
 {
@@ -48,7 +51,15 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    protected $events = [
+        'created' => UserCreated::class,
+    ];
+
     public function bots() {
         return $this->hasMany(Bot::class, 'creator_id');
+    }
+
+    public function clusters() {
+        return $this->hasMany(Cluster::class, 'creator_id');
     }
 }

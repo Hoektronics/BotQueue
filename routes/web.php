@@ -25,3 +25,4 @@ Route::get('dashboard', 'HomeController@index')
     ->name('dashboard');
 
 Route::resource('bot', 'BotController');
+Route::resource('cluster', 'ClusterController');
