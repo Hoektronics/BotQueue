@@ -8,6 +8,9 @@ ssl-cert.int
 ssl-cert.key
 composer.phar
 /node_modules
+/public/fonts
+/public/css
+/public/js
 /public/hot
 /public/storage
 /storage/*.key
