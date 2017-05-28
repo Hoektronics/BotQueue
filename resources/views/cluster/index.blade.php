@@ -9,7 +9,7 @@
     </div>
 
     @foreach($clusters as $cluster)
-        <div class="row">
+        <div class="row table-bordered">
             <div class="col-md-3">
                 {{ $cluster->name }}
             </div>

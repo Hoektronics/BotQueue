@@ -24,6 +24,15 @@
                                 </div>
                             </div>
 
+                            <div class="form-group{{ $errors->has('type') ? ' has-error' : '' }}">
+                                <label for="type" class="col-md-4 control-label">Bot Type</label>
+                                <div class="col-md-6">
+                                    <select name="type" id="type" class="form-control">
+                                        <option value="3d_printer">3D Printer</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <div class="col-md-8 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">

@@ -10,10 +10,10 @@
 
     @foreach($bots as $bot)
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 table-bordered">
                 {{ $bot->name }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 table-bordered">
                 {{ $bot->status }}
             </div>
         </div>
