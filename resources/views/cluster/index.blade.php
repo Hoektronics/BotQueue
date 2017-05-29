@@ -9,9 +9,12 @@
     </div>
 
     @foreach($clusters as $cluster)
-        <div class="row table-bordered">
-            <div class="col-md-3">
+        <div class="row">
+            <div class="col-md-3 table-bordered">
                 {{ $cluster->name }}
+            </div>
+            <div class="col-md-3 table-bordered">
+                {{ $cluster->bots_count }}
             </div>
         </div>
     @endforeach

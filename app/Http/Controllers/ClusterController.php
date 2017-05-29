@@ -25,7 +25,7 @@ class ClusterController extends Controller
      */
     public function index()
     {
-        $clusters = Auth::user()->clusters;
+        $clusters = Auth::user()->clusters()->withCount('bots')->get();
         return view('cluster.index', compact('clusters'));
     }
 

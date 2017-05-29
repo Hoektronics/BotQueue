@@ -29,4 +29,8 @@ class Cluster extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function bots() {
+        return $this->belongsToMany(Bot::class);
+    }
 }

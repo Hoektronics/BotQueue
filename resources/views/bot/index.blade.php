@@ -16,6 +16,13 @@
             <div class="col-md-3 table-bordered">
                 {{ $bot->status }}
             </div>
+            <div class="col-md-6 table-bordered">
+                @foreach($bot->clusters as $cluster)
+                    <div class="button">
+                        {{ $cluster->name }}
+                    </div>
+                @endforeach
+            </div>
         </div>
     @endforeach
 @endsection

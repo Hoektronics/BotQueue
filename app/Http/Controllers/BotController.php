@@ -38,8 +38,10 @@ class BotController extends Controller
      */
     public function create()
     {
+        $clusters = Auth::user()->bots()->with('clusters')->get();
+
         return view('bot.create', [
-            'clusters' => Auth::user()->clusters
+            'clusters' => $clusters
         ]);
     }
 
