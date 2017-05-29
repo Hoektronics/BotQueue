@@ -28,7 +28,7 @@ class SetupDefaultCluster
     public function handle(UserCreated $event)
     {
         $cluster = new Cluster([
-            'name' => 'Default'
+            'name' => 'My Cluster'
         ]);
 
         $cluster->creator_id = $event->user->id;

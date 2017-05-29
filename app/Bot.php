@@ -40,4 +40,8 @@ class Bot extends Model
     protected $events = [
         'creating' => BotCreating::class,
     ];
+
+    public function clusters() {
+        return $this->belongsToMany(Cluster::class);
+    }
 }

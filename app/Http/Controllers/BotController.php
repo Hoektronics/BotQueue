@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Bot;
+use App\Cluster;
 use App\Http\Requests\BotCreationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,8 +27,9 @@ class BotController extends Controller
      */
     public function index()
     {
-        $bots = Auth::user()->bots;
-        return view('bot.index', compact('bots'));
+        return view('bot.index', [
+            'bots' => Auth::user()->bots
+        ]);
     }
     /**
      * Show the form for creating a new resource.
@@ -36,7 +38,9 @@ class BotController extends Controller
      */
     public function create()
     {
-        return view('bot.create');
+        return view('bot.create', [
+            'clusters' => Auth::user()->clusters
+        ]);
     }
 
     /**
@@ -47,7 +51,11 @@ class BotController extends Controller
      */
     public function store(BotCreationRequest $request)
     {
+        /** @var Bot $bot */
         $bot = Bot::create($request->all());
+        $cluster = Cluster::find($request->get('cluster'));
+
+        $bot->clusters()->save($cluster);
 
         return redirect()->route('bot.show', [$bot]);
     }

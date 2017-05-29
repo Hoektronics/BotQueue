@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class BotCreationRequest extends FormRequest
 {
@@ -25,7 +26,17 @@ class BotCreationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:255'
+            'name' => 'required|max:255',
+            'type' => [
+                'required',
+                Rule::in(['3d_printer'])
+            ],
+            'cluster' => [
+                'required',
+                Rule::exists('clusters', 'id')->where(function($query) {
+                    $query->where('creator_id', Auth::user()->id);
+                })
+            ],
         ];
     }
 }
