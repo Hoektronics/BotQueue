@@ -1,32 +1,39 @@
 language: php
 php:
-  - "5.5"
-  - "5.4"
-  - "5.3"
+  - "5.6"
 
 notifications:
   email:
     - jnesselr@harding.edu
 
+services:
+  - mysql
+
 # whitelist
 branches:
   only:
-    - master
-    - cakephp
+    - laravel2
 
 before_install:
   - sudo apt-get update > /dev/null
+  - mysql -e 'CREATE DATABASE botqueue;'
 
 install:
   # Install the packages we need
-  - sudo apt-get install -y --force-yes php5-mysql php-pear build-essential php5-curl php5-dev libmagic-dev
+#  - sudo apt-get install -y --force-yes
 
   # Install composer
   - composer self-update
-  - composer install
-  
+  - composer install --no-interaction
+
+  # Install NPM scripts
+  - npm install
+  - php artisan key:generate
+  - php artisan migrate
+
 before_script:
-  - cp extensions/config-travis.php extensions/config.php
+  - touch database/database.sqlite
+  - cp .env.travis .env
 
 script:
-  - phpunit --bootstrap extensions/global.php tests
+  - vendor/bin/phpunit
