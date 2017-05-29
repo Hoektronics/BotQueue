@@ -31,12 +31,14 @@ install:
 
   # Install NPM scripts
   - npm install
+
+  # Setting up the laravel framework
+  - cp .env.travis .env
   - php artisan key:generate
   - php artisan migrate
 
 before_script:
   - touch database/database.sqlite
-  - cp .env.travis .env
 
 script:
   - vendor/bin/phpunit
