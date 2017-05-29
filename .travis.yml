@@ -17,6 +17,9 @@ branches:
 before_install:
   - sudo apt-get update > /dev/null
   - mysql -e 'CREATE DATABASE botqueue;'
+  - npm install -g npm@2
+  - node -v
+  - npm -v
 
 install:
   # Install the packages we need
