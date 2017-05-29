@@ -16,7 +16,7 @@ class CreateClustersTable extends Migration
         Schema::create('clusters', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('creator_id');
+            $table->integer('creator_id')->unsigned();
             $table->foreign('creator_id')->references('id')->on('users');
             $table->timestamps();
         });
