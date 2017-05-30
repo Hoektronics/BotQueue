@@ -70,7 +70,10 @@ class BotController extends Controller
      */
     public function show(Bot $bot)
     {
-        dd($bot);
+        $bot->load(['clusters', 'creator']);
+        return view('bot.show', [
+            'bot' => $bot
+        ]);
     }
 
     /**

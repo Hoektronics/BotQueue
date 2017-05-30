@@ -21,16 +21,17 @@
         @foreach($bots as $bot)
             <tr>
                 <th>
-                    {{ $bot->name }}
+                    <a href="{{ route('bot.show', [$bot]) }}">{{ $bot->name }}</a>
                 </th>
                 <th>
                     {!! $bot_status->label($bot->status) !!}
                 </th>
                 <th>
                     @foreach($bot->clusters as $cluster)
-                        <span class="label label-info">
+                        <a class="label label-info"
+                           href="{{ route('cluster.show', [$cluster]) }}">
                             {{ $cluster->name }}
-                        </span>
+                        </a>
                     @endforeach
                 </th>
             </tr>

@@ -41,6 +41,10 @@ class Bot extends Model
         'creating' => BotCreating::class,
     ];
 
+    public function creator() {
+        return $this->belongsTo(User::class);
+    }
+
     public function clusters() {
         return $this->belongsToMany(Cluster::class);
     }
