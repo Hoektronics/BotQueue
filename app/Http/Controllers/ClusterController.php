@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cluster;
+use App\Enums\BotStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +26,17 @@ class ClusterController extends Controller
      */
     public function index()
     {
-        $clusters = Auth::user()->clusters()->withCount('bots')->get();
+        $clusters = Auth::user()->clusters()->withCount([
+            'bots AS offline_bots' => function ($query) {
+                $query->where('status', BotStatusEnum::Offline);
+            },
+            'bots AS idle_bots' => function ($query) {
+                $query->where('status', BotStatusEnum::Idle);
+            },
+            'bots AS working_bots' => function ($query) {
+                $query->where('status', BotStatusEnum::Working);
+            }
+        ])->get();
         return view('cluster.index', compact('clusters'));
     }
 
@@ -42,7 +53,7 @@ class ClusterController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -53,7 +64,7 @@ class ClusterController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Cluster  $cluster
+     * @param  \App\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function show(Cluster $cluster)
@@ -64,7 +75,7 @@ class ClusterController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Cluster  $cluster
+     * @param  \App\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function edit(Cluster $cluster)
@@ -75,8 +86,8 @@ class ClusterController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Cluster  $cluster
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Cluster $cluster)
@@ -87,7 +98,7 @@ class ClusterController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Cluster  $cluster
+     * @param  \App\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function destroy(Cluster $cluster)

@@ -1,0 +1,5 @@
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+.label-inverse {
+  @include label-variant(#000)
+}
