@@ -30,6 +30,10 @@ class Cluster extends Model
         'name',
     ];
 
+    public function creator() {
+        return $this->belongsTo(User::class);
+    }
+
     public function bots() {
         return $this->belongsToMany(Bot::class);
     }

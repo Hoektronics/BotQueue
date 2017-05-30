@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
+@inject('bot_status', 'App\Services\BotStatusService')
+
 @section('content')
     <div class="page-header">
-        <h1>{{ $bot->name }}</h1>
+        <h1>{{ $cluster->name }}</h1>
     </div>
 
     <div class="row">
@@ -15,22 +17,22 @@
                     Info
                 </div>
                 <div class="panel-body">
-                    Creator: {{ $bot->creator->username }}
+                    Creator: {{ $cluster->creator->username }}
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Clusters
+                    Bots
                 </div>
                 <div class="panel-body">
-                    @foreach($bot->clusters as $cluster)
+                    @foreach($cluster->bots as $bot)
                         <div class="row">
                             <div class="col-md-12">
                                 <h4>
-                                    <a class="label label-default"
-                                       href="{{ route('cluster.show', [$cluster]) }}">
-                                        {{ $cluster->name }}
+                                    <a class="label {{ $bot_status->label_class($bot->status) }}"
+                                       href="{{ route('bot.show', [$bot]) }}">
+                                        {{ $bot->name }}
                                     </a>
                                 </h4>
                             </div>

@@ -69,7 +69,11 @@ class ClusterController extends Controller
      */
     public function show(Cluster $cluster)
     {
-        //
+        $cluster->load(['bots', 'creator']);
+
+        return view('cluster.show', [
+            'cluster' => $cluster
+        ]);
     }
 
     /**

@@ -22,9 +22,22 @@ class BotStatusService
         BotStatusEnum::Working => 'Working',
     ];
 
+    /**
+     * @param $status
+     * @return string
+     */
     public function label($status) {
-        $labelClass = $this->statusToLabelClass[$status];
+        $labelClass = $this->label_class($status);
 
         return "<span class=\"label $labelClass\">$status</span>";
+    }
+
+    /**
+     * @param $status
+     * @return mixed
+     */
+    public function label_class($status)
+    {
+        return $this->statusToLabelClass[$status];
     }
 }

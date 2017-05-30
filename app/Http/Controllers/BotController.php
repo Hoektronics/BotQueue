@@ -38,7 +38,7 @@ class BotController extends Controller
      */
     public function create()
     {
-        $clusters = Auth::user()->bots()->with('clusters')->get();
+        $clusters = Auth::user()->clusters;
 
         return view('bot.create', [
             'clusters' => $clusters
@@ -71,6 +71,7 @@ class BotController extends Controller
     public function show(Bot $bot)
     {
         $bot->load(['clusters', 'creator']);
+        
         return view('bot.show', [
             'bot' => $bot
         ]);
