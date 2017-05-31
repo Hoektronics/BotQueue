@@ -12,7 +12,8 @@
         <thead>
             <tr>
                 <th class="col-md-6">Name</th>
-                <th class="col-md-6">Size</th>
+                <th class="col-md-3">Size</th>
+                <th class="col-md-3">Download Link</th>
             </tr>
         </thead>
         @foreach($files as $file)
@@ -22,6 +23,9 @@
                 </th>
                 <th>
                     {{ $file->size }}
+                </th>
+                <th>
+                    <a href="{{ Storage::url($file->path) }}">Download</a>
                 </th>
             </tr>
         @endforeach

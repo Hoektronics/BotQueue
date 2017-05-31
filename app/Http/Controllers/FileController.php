@@ -52,7 +52,7 @@ class FileController extends Controller
     public function store(Request $request)
     {
         $originalFile = $request->file('file');
-        $uploadedFilePath = $originalFile->store('uploads/'.Auth::user()->id);
+        $uploadedFilePath = $originalFile->storePublicly('uploads/'.Auth::user()->id);
 
         $file = File::create([
             'path' => $uploadedFilePath,
