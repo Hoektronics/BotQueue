@@ -17,8 +17,12 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\AssignBotToUser',
             'App\Listeners\SetBotToOffline',
         ],
+        'App\Events\FileCreating' => [
+            'App\Listeners\AssignFileToUser',
+            'App\Listeners\SetFileSize',
+        ],
         'App\Events\UserCreated' => [
-            'App\Listeners\SetupDefaultCluster'
+            'App\Listeners\SetupDefaultCluster',
         ],
     ];
 

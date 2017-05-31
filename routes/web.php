@@ -26,3 +26,4 @@ Route::get('dashboard', 'HomeController@index')
 
 Route::resource('bot', 'BotController');
 Route::resource('cluster', 'ClusterController');
+Route::resource('file', 'FileController');
