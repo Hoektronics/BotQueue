@@ -62,4 +62,8 @@ class User extends Authenticatable
     public function clusters() {
         return $this->hasMany(Cluster::class, 'creator_id');
     }
+
+    public function files() {
+        return $this->hasMany(File::class, 'uploader_id');
+    }
 }

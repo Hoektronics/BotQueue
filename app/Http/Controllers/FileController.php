@@ -26,7 +26,11 @@ class FileController extends Controller
      */
     public function index()
     {
-        return view('file.index');
+        $files = Auth::user()->files;
+
+        return view('file.index', [
+            'files' => $files,
+        ]);
     }
 
     /**

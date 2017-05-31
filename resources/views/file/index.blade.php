@@ -7,4 +7,23 @@
         </div>
         <h1>Files</h1>
     </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="col-md-6">Name</th>
+                <th class="col-md-6">Size</th>
+            </tr>
+        </thead>
+        @foreach($files as $file)
+            <tr>
+                <th>
+                    <a href="{{ route('file.show', [$file]) }}">{{ $file->name }}</a>
+                </th>
+                <th>
+                    {{ $file->size }}
+                </th>
+            </tr>
+        @endforeach
+    </table>
 @endsection
