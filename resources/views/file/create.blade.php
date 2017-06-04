@@ -10,7 +10,7 @@
                         <form class="form-horizontal" role="form" method="POST" action="{{ route('file.store') }}" enctype="multipart/form-data">
                             {{ csrf_field() }}
 
-                            <div class="col-md-12 form-group{{ $errors->has('type') ? ' has-error' : '' }}">
+                            <div class="col-md-12 form-group{{ $errors->has('file') ? ' has-error' : '' }}">
                                 <div class="input-group">
                                     <label class="input-group-btn">
                                         <span class="btn btn-primary">
@@ -18,13 +18,13 @@
                                         </span>
                                     </label>
                                     <input name="file_name" type="text" class="form-control" readonly>
+                                </div>
 
-                                    @if ($errors->has('file'))
-                                        <span class="help-block">
+                                @if ($errors->has('file'))
+                                    <span class="help-block">
                                             <strong>{{ $errors->first('file') }}</strong>
                                         </span>
-                                    @endif
-                                </div>
+                                @endif
                             </div>
 
                             <div class="form-group">

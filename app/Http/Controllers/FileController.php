@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
+use App\File as File;
+use App\Http\Requests\FileUploadRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FileController extends Controller
 {
@@ -49,14 +52,17 @@ class FileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FileUploadRequest $request)
     {
         $originalFile = $request->file('file');
-        $uploadedFilePath = $originalFile->storePublicly('uploads/'.Auth::user()->id);
+        $clientOriginalName = $originalFile->getClientOriginalName();
+
+        $newName = Str::random(40) . '.' . FileFacade::extension($clientOriginalName);
+        $uploadedFilePath = $originalFile->storePubliclyAs('uploads/'.Auth::user()->id, $newName);
 
         $file = File::create([
             'path' => $uploadedFilePath,
-            'name' => $originalFile->getClientOriginalName(),
+            'name' => $clientOriginalName,
             'filesystem' => config('filesystems.default'),
         ]);
 
