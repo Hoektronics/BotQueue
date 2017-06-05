@@ -19,6 +19,7 @@ class CreateFilesTable extends Migration
             $table->string('filesystem');
             $table->string('name');
             $table->integer('size')->unsigned();
+            $table->string('type');
             $table->integer('uploader_id')->unsigned();
             $table->foreign('uploader_id')->references('id')->on('users');
             $table->timestamps();

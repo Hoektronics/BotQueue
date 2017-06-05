@@ -27,3 +27,10 @@ Route::get('dashboard', 'HomeController@index')
 Route::resource('bot', 'BotController');
 Route::resource('cluster', 'ClusterController');
 Route::resource('file', 'FileController');
+
+Route::get('job/create/file/{file}', 'JobController@createFromFile')
+    ->name('job.create.file');
+
+Route::post('job/file', function ($request) {
+    dd($request);
+})->name('job.file.store');

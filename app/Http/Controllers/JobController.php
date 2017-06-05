@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\File;
 use App\Job;
 use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,6 +36,12 @@ class JobController extends Controller
     public function create()
     {
         //
+    }
+
+    public function createFromFile(File $file) {
+        return view('job.create.file', [
+            'file' => $file,
+        ]);
     }
 
     /**

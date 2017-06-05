@@ -3,3 +3,7 @@
 .label-inverse {
   @include label-variant(#000)
 }
+
+.panel-indent {
+  margin-left: 30px;
+}

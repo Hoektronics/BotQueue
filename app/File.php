@@ -16,6 +16,7 @@ class File extends Model
         'name',
         'path',
         'filesystem',
+        'type',
         'size',
         'uploader_id'
     ];
@@ -23,4 +24,8 @@ class File extends Model
     protected $events = [
         'creating' => FileCreating::class,
     ];
+
+    public function uploader() {
+        return $this->belongsTo(User::class);
+    }
 }
