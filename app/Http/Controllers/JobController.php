@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\File;
 use App\Job;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
@@ -41,6 +42,8 @@ class JobController extends Controller
     public function createFromFile(File $file) {
         return view('job.create.file', [
             'file' => $file,
+            'bots' => Auth::user()->bots,
+            'clusters' => Auth::user()->clusters,
         ]);
     }
 

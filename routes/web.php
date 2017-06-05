@@ -31,6 +31,6 @@ Route::resource('file', 'FileController');
 Route::get('job/create/file/{file}', 'JobController@createFromFile')
     ->name('job.create.file');
 
-Route::post('job/file', function ($request) {
+Route::post('job/file', function (\Illuminate\Http\Request $request) {
     dd($request);
 })->name('job.file.store');
