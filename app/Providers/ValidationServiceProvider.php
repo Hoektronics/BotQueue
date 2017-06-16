@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App;
-use App\Validation\ValidationRule;
+use App\Validation\Validators\CustomValidator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -11,7 +11,7 @@ class ValidationServiceProvider extends ServiceProvider
 {
 
     protected $rules = [
-        'extension' => App\Validation\ExtensionRule::class,
+        'extension' => App\Validation\Validators\ExtensionValidator::class,
     ];
 
     /**
@@ -21,7 +21,7 @@ class ValidationServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /** @var ValidationRule $rule_class */
+        /** @var CustomValidator $rule_class */
         foreach ($this->rules as $rule_name => $rule_class) {
             $instance = $this->app->make($rule_class);
 

@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Validation;
+namespace App\Validation\Validators;
 
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 
-class ExtensionRule implements ValidationRule
+class ExtensionValidator implements CustomValidator
 {
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Validation;
+namespace App\Validation\Validators;
 
 
-interface ValidationRule
+interface CustomValidator
 {
     public function passes($attribute, $value, $parameters, $validator);
 
