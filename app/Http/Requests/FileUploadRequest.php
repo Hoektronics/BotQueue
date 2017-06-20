@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Validation\Validators\ExtensionValidator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +26,11 @@ class FileUploadRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|file|extension:gcode,stl'
+            'file' => [
+                'required',
+                'file',
+                new ExtensionValidator(['gcode', 'stl']),
+            ]
         ];
     }
 }

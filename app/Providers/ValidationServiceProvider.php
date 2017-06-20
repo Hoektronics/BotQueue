@@ -23,14 +23,18 @@ class ValidationServiceProvider extends ServiceProvider
     {
         /** @var CustomValidator $rule_class */
         foreach ($this->rules as $rule_name => $rule_class) {
-            $instance = $this->app->make($rule_class);
+            Validator::extend($rule_name, function ($attribute, $value, $parameters, $validator) {
+                /** @var CustomValidator $instance */
+                $instance = unserialize($parameters[0]);
 
-            Validator::extend($rule_name, function ($attribute, $value, $parameters, $validator) use ($instance) {
-                return $instance->passes($attribute, $value, $parameters, $validator);
+                return $instance->passes($attribute, $value);
             });
 
-            Validator::replacer($rule_name, function ($message, $attribute, $rule, $parameters) use ($instance) {
-                return $instance->replacer($message, $attribute, $rule, $parameters);
+            Validator::replacer($rule_name, function ($message, $attribute, $rule, $parameters) {
+                /** @var CustomValidator $instance */
+                $instance = unserialize($parameters[0]);
+
+                return $instance->message($attribute);
             });
         }
     }

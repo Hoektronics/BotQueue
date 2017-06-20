@@ -9,7 +9,15 @@ use Illuminate\Support\Facades\File;
 
 class ExtensionValidator implements CustomValidator
 {
+    /**
+     * @var array
+     */
+    private $extensions;
 
+    public function __construct($extensions) {
+
+        $this->extensions = $extensions;
+    }
     /**
      * @param $attribute
      * @param $value UploadedFile
@@ -17,14 +25,20 @@ class ExtensionValidator implements CustomValidator
      * @param $validator
      * @return bool
      */
-    public function passes($attribute, $value, $parameters, $validator)
+    public function passes($attribute, $value)
     {
         $originalName = $value->getClientOriginalName();
-        return in_array(File::extension($originalName), $parameters);
+        return in_array(File::extension($originalName), $this->extensions);
     }
 
-    public function replacer($message, $attribute, $rule, $parameters)
+    public function message($attribute)
     {
-        return str_replace(':values', implode(', ', $parameters), $message);
+        $values = implode(', ', $this->extensions);
+        return "The ${attribute} must be a file with extension: ${values}.";
+    }
+
+    public function __toString()
+    {
+        return 'extension:'.serialize($this);
     }
 }
