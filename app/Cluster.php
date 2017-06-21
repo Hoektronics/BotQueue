@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * App\Cluster
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
  * @property-read \App\User $creator
+ * @method static \Illuminate\Database\Query\Builder|\App\Cluster mine()
  */
 class Cluster extends Model
 {
@@ -38,5 +40,15 @@ class Cluster extends Model
 
     public function bots() {
         return $this->belongsToMany(Bot::class);
+    }
+
+    /**
+     * Scope to only include clusters belonging to the currently authenticated user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMine($query) {
+        return $query->where('creator_id', Auth::user()->id);
     }
 }

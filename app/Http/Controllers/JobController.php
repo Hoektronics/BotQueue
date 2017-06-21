@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\File;
+use App\Http\Requests\JobFileCreationRequest;
 use App\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,11 @@ class JobController extends Controller
             'bots' => Auth::user()->bots,
             'clusters' => Auth::user()->clusters,
         ]);
+    }
+
+    public function storeFile(JobFileCreationRequest $request)
+    {
+        dd($request);
     }
 
     /**

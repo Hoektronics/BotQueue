@@ -37,7 +37,7 @@ class MatchExists implements CustomValidator
 
     public function message($attribute)
     {
-        // TODO: Implement message() method.
+        return "The selected ${attribute} is invalid.";
     }
 }
 

@@ -54,7 +54,7 @@ class Bot extends Model
     }
 
     /**
-     * Scope to only include bots belonging to the currently authed user
+     * Scope to only include bots belonging to the currently authenticated user
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder

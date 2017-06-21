@@ -47,7 +47,7 @@
                         </div>
 
                         <div class="panel-body">
-                            <div class="form-group{{ $errors->has('bot_cluster') ? ' has-error' : '' }}">
+                            <div class="form-group{{ $errors->has('file_type') ? ' has-error' : '' }}">
                                 <label for="file_type" class="col-md-2 control-label">File Type</label>
                                 <div class="col-md-10">
                                     <input type="text" id="file_type" class="form-control" value="{{ $file->type }}" disabled>
@@ -61,7 +61,7 @@
                                         @if(count($clusters) > 0)
                                             <optgroup label="Clusters">
                                                 @foreach($clusters as $cluster)
-                                                    <option value="bots_{{ $cluster->id }}">{{ $cluster->name }}</option>
+                                                    <option value="clusters_{{ $cluster->id }}">{{ $cluster->name }}</option>
                                                 @endforeach
                                             </optgroup>
                                         @endif
@@ -70,7 +70,7 @@
                                         @if(count($bots) > 0)
                                             <optgroup label="Bots">
                                                 @foreach($bots as $bot)
-                                                    <option value="clusters_{{ $bot->id }}">{{ $bot->name }}</option>
+                                                    <option value="bots_{{ $bot->id }}">{{ $bot->name }}</option>
                                                 @endforeach
                                             </optgroup>
                                         @endif
