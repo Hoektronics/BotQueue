@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Validation\Validators\ExtensionValidator;
+use App\Validation\ExtensionValidator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
