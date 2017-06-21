@@ -17,6 +17,9 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\AssignBotToUser',
             'App\Listeners\SetBotToOffline',
         ],
+        'App\Events\JobCreating' => [
+            'App\Listeners\AssignJobToUser',
+        ],
         'App\Events\FileCreating' => [
             'App\Listeners\AssignFileToUser',
             'App\Listeners\SetFileSize',

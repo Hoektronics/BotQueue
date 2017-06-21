@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App;
 use App\Http\Requests\JobFileCreationRequest;
+use Illuminate\Support\Facades\Auth;
 
 class JobFileController extends Controller
 {
@@ -26,6 +27,17 @@ class JobFileController extends Controller
 
     public function store(App\File $file, JobFileCreationRequest $request)
     {
-        dd(compact('file', 'request'));
+        /** @var App\Job $job */
+        $job = App\Job::make([
+            'name' => $request->get('job_name'),
+            'status' => App\Enums\JobStatusEnum::Queued,
+            'creator_id' => Auth::user()->id,
+        ]);
+
+        $worker = $request->get('bot_cluster');
+        $job->worker()->associate($worker);
+        $job->save();
+
+        dd($file, $job, $worker);
     }
 }

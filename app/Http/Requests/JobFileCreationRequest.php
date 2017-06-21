@@ -51,6 +51,7 @@ class JobFileCreationRequest extends FormRequest
         ]);
 
         return [
+            'job_name' => 'required',
             'bot_cluster' => [
                 'required',
                 $this->matchExists,

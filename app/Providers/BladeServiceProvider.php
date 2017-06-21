@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\BotStatusService;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class BladeServiceProvider extends ServiceProvider

@@ -17,10 +17,19 @@ class CreateJobsTable extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+
             $table->string('status')->default(JobStatusEnum::Queued);
             $table->index('status');
+
             $table->integer('creator_id')->unsigned();
             $table->foreign('creator_id')->references('id')->on('users');
+
+            $table->integer('worker_id')->unsigned();
+            $table->string('worker_type');
+
+            $table->integer('bot_id')->unsigned()->nullable();
+            $table->foreign('bot_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

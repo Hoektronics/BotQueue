@@ -36,14 +36,20 @@
             <div class="col-md-9">
                 <div class="panel-group">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
+                        <div class="panel-heading{{ $errors->has('job_name') ? ' has-error' : '' }}">
                             <div class="input-group">
-                            <span class="input-group-addon">
-                                <input type="checkbox" name="add_to_job" checked>
-                            </span>
-                                <input type="text" value="{{ pathinfo($file->name, PATHINFO_FILENAME) }}"
-                                       class="form-control">
+                                <span class="input-group-addon">
+                                    <input type="checkbox" name="add_to_job" checked>
+                                </span>
+                                    <input type="text" value="{{ old('job_name', pathinfo($file->name, PATHINFO_FILENAME)) }}"
+                                           name="job_name" class="form-control">
                             </div>
+
+                            @if ($errors->has('job_name'))
+                                <span class="help-block">
+                                <strong>{{ $errors->first('job_name') }}</strong>
+                            </span>
+                            @endif
                         </div>
 
                         <div class="panel-body">
@@ -61,7 +67,11 @@
                                         @if(count($clusters) > 0)
                                             <optgroup label="Clusters">
                                                 @foreach($clusters as $cluster)
-                                                    <option value="clusters_{{ $cluster->id }}">{{ $cluster->name }}</option>
+                                                    <option value="clusters_{{ $cluster->id }}"
+                                                        @if(old('bot_cluster') == "clusters_".$cluster->id) selected @endif
+                                                    >
+                                                        {{ $cluster->name }}
+                                                    </option>
                                                 @endforeach
                                             </optgroup>
                                         @endif
@@ -70,7 +80,11 @@
                                         @if(count($bots) > 0)
                                             <optgroup label="Bots">
                                                 @foreach($bots as $bot)
-                                                    <option value="bots_{{ $bot->id }}">{{ $bot->name }}</option>
+                                                    <option value="bots_{{ $bot->id }}"
+                                                        @if(old('bot_cluster') == "bots_".$bot->id) selected @endif
+                                                    >
+                                                        {{ $bot->name }}
+                                                    </option>
                                                 @endforeach
                                             </optgroup>
                                         @endif

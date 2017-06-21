@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\JobCreating;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,8 +21,31 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereStatus($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $worker_id
+ * @property string $worker_type
+ * @property int $bot_id
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $worker
+ * @method static \Illuminate\Database\Query\Builder|\App\Job whereBotId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerType($value)
  */
 class Job extends Model
 {
-    //
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'status',
+    ];
+
+    protected $events = [
+        'creating' => JobCreating::class,
+    ];
+
+    public function worker() {
+        return $this->morphTo();
+    }
 }
