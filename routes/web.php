@@ -28,8 +28,8 @@ Route::resource('bot', 'BotController');
 Route::resource('cluster', 'ClusterController');
 Route::resource('file', 'FileController');
 
-Route::get('job/create/file/{file}', 'JobController@createFromFile')
+Route::get('job/create/file/{file}', 'JobFileController@create')
     ->name('job.create.file');
 
-Route::post('job/file', 'JobController@storeFile')
+Route::post('job/file', 'JobFileController@store')
     ->name('job.file.store');

@@ -13,7 +13,6 @@ class JobController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -38,19 +37,6 @@ class JobController extends Controller
     public function create()
     {
         //
-    }
-
-    public function createFromFile(File $file) {
-        return view('job.create.file', [
-            'file' => $file,
-            'bots' => Auth::user()->bots,
-            'clusters' => Auth::user()->clusters,
-        ]);
-    }
-
-    public function storeFile(JobFileCreationRequest $request)
-    {
-        dd($request);
     }
 
     /**
