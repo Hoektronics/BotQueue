@@ -9,6 +9,25 @@ use Illuminate\Support\Facades\Auth;
 
 class JobFileCreationRequest extends FormRequest
 {
+    /** @var MatchExists $matchExists */
+    private $matchExists;
+
+    /**
+     * Validate the class instance.
+     *
+     * @return void
+     */
+    public function validate()
+    {
+        parent::validate();
+
+        $original_value = $this->get('bot_cluster');
+
+        $this->merge([
+            'bot_cluster' => $this->matchExists->getModel($original_value)
+        ]);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -26,13 +45,15 @@ class JobFileCreationRequest extends FormRequest
      */
     public function rules()
     {
+        $this->matchExists = new MatchExists([
+            'bots_{id}' => App\Bot::mine(),
+            'clusters_{id}' => App\Cluster::mine(),
+        ]);
+
         return [
             'bot_cluster' => [
                 'required',
-                new MatchExists([
-                    'bots_{id}' => App\Bot::mine(),
-                    'clusters_{id}' => App\Cluster::mine(),
-                ]),
+                $this->matchExists,
             ]
         ];
     }

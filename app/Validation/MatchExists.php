@@ -39,6 +39,16 @@ class MatchExists implements CustomValidator
     {
         return "The selected ${attribute} is invalid.";
     }
+
+    public function getModel($value)
+    {
+        /** @var MatchFieldSet $field */
+        foreach ($this->fields as $field) {
+            if ($field->matches($value)) {
+                return $field->getModel($value);
+            }
+        }
+    }
 }
 
 class MatchFieldSet {
@@ -67,6 +77,12 @@ class MatchFieldSet {
 
     public function exists($value)
     {
+        $model = $this->getModel($value);
+
+        return ! is_null($model);
+    }
+
+    public function getModel($value) {
         $matches = $this->getMatches($value);
 
         $keyed_match = array_combine($this->attributes, $matches);
@@ -78,14 +94,14 @@ class MatchFieldSet {
         } elseif (is_a($this->type, \Illuminate\Database\Eloquent\Builder::class)) {
             $builder = $this->type;
         } else {
-            return false;
+            return null;
         }
 
         foreach ($keyed_match as $key => $match) {
             $builder->where($key, $match);
         }
 
-        return $builder->count() > 0;
+        return $builder->first();
     }
 
     /**

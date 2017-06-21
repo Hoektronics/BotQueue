@@ -18,68 +18,85 @@ class MatchExistsTest extends TestCase
     {
         $bot = factory(App\Bot::class)->create();
 
+        $fieldValue = 'foo_' . $bot->id;
         $fields = [
-            'field' => 'foo_' . $bot->id
+            'field' => $fieldValue
         ];
 
+        $matchExists = new MatchExists([
+            'foo_{id}' => App\Bot::class
+        ]);
+
         $validator = Validator::make($fields, [
-            'field' => new MatchExists([
-                'foo_{id}' => App\Bot::class
-            ])
+            'field' => $matchExists
         ]);
 
         $this->assertTrue($validator->passes());
+        $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
     }
 
     public function testWhenNothingMatches()
     {
         $bot = factory(App\Bot::class)->create();
 
+        $fieldValue = 'foo_' . ($bot->id + 1);
         $fields = [
-            'field' => 'foo_' . ($bot->id + 1)
+            'field' => $fieldValue
         ];
 
+        $matchExists = new MatchExists([
+            'foo_{id}' => App\Bot::class
+        ]);
+
         $validator = Validator::make($fields, [
-            'field' => new MatchExists([
-                'foo_{id}' => App\Bot::class
-            ])
+            'field' => $matchExists
         ]);
 
         $this->assertFalse($validator->passes());
+        $this->assertNull($matchExists->getModel($fieldValue));
     }
 
     public function testMultipleFieldMatches()
     {
         $bot = factory(App\Bot::class)->create();
 
+        $fieldValue = 'bar_' . $bot->id;
         $fields = [
-            'field' => 'bar_' . $bot->id
+            'field' => $fieldValue
         ];
 
+        $matchExists = new MatchExists([
+            'foo_{id}' => App\Bot::class,
+            'bar_{id}' => App\Bot::class,
+        ]);
+
         $validator = Validator::make($fields, [
-            'field' => new MatchExists([
-                'foo_{id}' => App\Bot::class,
-                'bar_{id}' => App\Bot::class,
-            ])
+            'field' => $matchExists
         ]);
 
         $this->assertTrue($validator->passes());
+        $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
     }
 
     public function testFieldMatchesWithScope()
     {
         $bot = factory(App\Bot::class)->create();
 
+        $fieldValue = 'foo_' . $bot->id;
+
         $fields = [
-            'field' => 'foo_' . $bot->id
+            'field' => $fieldValue
         ];
 
+        $matchExists = new MatchExists([
+            'foo_{id}' => App\Bot::mine(),
+        ]);
+
         $validator = Validator::make($fields, [
-            'field' => new MatchExists([
-                'foo_{id}' => App\Bot::mine(),
-            ])
+            'field' => $matchExists
         ]);
 
         $this->assertTrue($validator->passes());
+        $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
     }
 }
