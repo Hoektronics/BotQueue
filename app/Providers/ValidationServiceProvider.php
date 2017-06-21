@@ -3,17 +3,12 @@
 namespace App\Providers;
 
 use App;
-use App\Validation\Validators\CustomValidator;
+use App\Validation\CustomValidator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
 class ValidationServiceProvider extends ServiceProvider
 {
-
-    protected $rules = [
-        'extension' => App\Validation\Validators\ExtensionValidator::class,
-    ];
-
     /**
      * Bootstrap the application services.
      *
@@ -21,22 +16,21 @@ class ValidationServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /** @var CustomValidator $rule_class */
-        foreach ($this->rules as $rule_name => $rule_class) {
-            Validator::extend($rule_name, function ($attribute, $value, $parameters, $validator) {
-                /** @var CustomValidator $instance */
-                $instance = unserialize($parameters[0]);
+        /** @var ValidationHolder $holder */
+        $holder = app(ValidationHolder::class);
+        Validator::extend('custom_validator', function ($attribute, $value, $parameters, $validator) use ($holder) {
+            /** @var CustomValidator $instance */
+            $instance = $holder->get($parameters[0]);
 
-                return $instance->passes($attribute, $value);
-            });
+            return $instance->passes($attribute, $value);
+        });
 
-            Validator::replacer($rule_name, function ($message, $attribute, $rule, $parameters) {
-                /** @var CustomValidator $instance */
-                $instance = unserialize($parameters[0]);
+        Validator::replacer('custom_validator', function ($message, $attribute, $rule, $parameters) use ($holder) {
+            /** @var CustomValidator $instance */
+            $instance = $holder->get($parameters[0]);
 
-                return $instance->message($attribute);
-            });
-        }
+            return $instance->message($attribute);
+        });
     }
 
     /**
@@ -46,6 +40,27 @@ class ValidationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(ValidationHolder::class, function($app) {
+            return new ValidationHolder();
+        });
+    }
+}
+
+class ValidationHolder
+{
+    protected $rules;
+
+    public function __construct() {
+        $this->rules = [];
+    }
+
+    public function add($rule, $id)
+    {
+        $this->rules[$id] = $rule;
+    }
+
+    public function get($id)
+    {
+        return isset($this->rules[$id]) ? $this->rules[$id] : null;
     }
 }

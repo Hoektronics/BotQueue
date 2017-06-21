@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Cluster whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Cluster whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
+ * @property-read \App\User $creator
  */
 class Cluster extends Model
 {

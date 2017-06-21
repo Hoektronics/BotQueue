@@ -4,6 +4,7 @@ namespace App;
 
 use App\Events\BotCreating;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * App\Bot
@@ -25,6 +26,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Bot whereCreatorId($value)
  * @property string $status
  * @method static \Illuminate\Database\Query\Builder|\App\Bot whereStatus($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Cluster[] $clusters
+ * @property-read \App\User $creator
+ * @method static \Illuminate\Database\Query\Builder|\App\Bot mine()
  */
 class Bot extends Model
 {
@@ -47,5 +51,15 @@ class Bot extends Model
 
     public function clusters() {
         return $this->belongsToMany(Cluster::class);
+    }
+
+    /**
+     * Scope to only include bots belonging to the currently authed user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMine($query) {
+        return $query->where('creator_id', Auth::user()->id);
     }
 }

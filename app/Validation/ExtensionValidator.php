@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Validation\Validators;
+namespace App\Validation;
 
 
 use Illuminate\Http\UploadedFile;
@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\File;
 
 class ExtensionValidator implements CustomValidator
 {
+    use CustomValidatorTrait;
+
     /**
      * @var array
      */
@@ -21,8 +23,6 @@ class ExtensionValidator implements CustomValidator
     /**
      * @param $attribute
      * @param $value UploadedFile
-     * @param $parameters
-     * @param $validator
      * @return bool
      */
     public function passes($attribute, $value)
@@ -35,10 +35,5 @@ class ExtensionValidator implements CustomValidator
     {
         $values = implode(', ', $this->extensions);
         return "The ${attribute} must be a file with extension: ${values}.";
-    }
-
-    public function __toString()
-    {
-        return 'extension:'.serialize($this);
     }
 }

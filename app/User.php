@@ -28,6 +28,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Cluster[] $clusters
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\File[] $files
  */
 class User extends Authenticatable
 {

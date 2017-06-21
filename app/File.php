@@ -5,6 +5,30 @@ namespace App;
 use App\Events\FileCreating;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\File
+ *
+ * @property int $id
+ * @property string $path
+ * @property string $filesystem
+ * @property string $name
+ * @property int $size
+ * @property string $type
+ * @property int $uploader_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\User $uploader
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereCreatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereFilesystem($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereName($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File wherePath($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereSize($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereType($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\File whereUploaderId($value)
+ * @mixin \Eloquent
+ */
 class File extends Model
 {
     /**

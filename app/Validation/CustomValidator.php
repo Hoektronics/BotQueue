@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Validation\Validators;
+namespace App\Validation;
 
 
 interface CustomValidator
