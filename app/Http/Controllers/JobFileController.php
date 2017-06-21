@@ -19,13 +19,13 @@ class JobFileController extends Controller
     public function create(App\File $file) {
         return view('job.create.file', [
             'file' => $file,
-            'bots' => App\Bot::mine(),
-            'clusters' => App\Cluster::mine(),
+            'bots' => App\Bot::mine()->get(),
+            'clusters' => App\Cluster::mine()->get(),
         ]);
     }
 
-    public function store(JobFileCreationRequest $request)
+    public function store(App\File $file, JobFileCreationRequest $request)
     {
-        dd($request);
+        dd(compact('file', 'request'));
     }
 }
