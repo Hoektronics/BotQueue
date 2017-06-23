@@ -68,7 +68,7 @@ class FileController extends Controller
             'type' => FileTypeEnum::fromExtension($extension),
         ]);
 
-        return redirect()->route('job.create.file', [$file]);
+        return redirect()->route('jobs.create.file', [$file]);
     }
 
     /**

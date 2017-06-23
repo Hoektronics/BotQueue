@@ -59,7 +59,7 @@ class BotController extends Controller
 
         $bot->clusters()->save($cluster);
 
-        return redirect()->route('bot.show', [$bot]);
+        return redirect()->route('bots.show', [$bot]);
     }
 
     /**

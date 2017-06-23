@@ -5,7 +5,7 @@
 @section('content')
     <div class="page-header">
         <div class="btn-toolbar pull-right">
-            <a role="button" class="btn btn-primary btn-lg" href="/bot/create">Create a Bot</a>
+            <a role="button" class="btn btn-primary btn-lg" href="{{ route('bots.create') }}">Create a Bot</a>
         </div>
         <h1>Bots</h1>
     </div>
@@ -29,7 +29,7 @@
             @foreach($bots as $bot)
                 <tr>
                     <th>
-                        <a href="{{ route('bot.show', [$bot]) }}">{{ $bot->name }}</a>
+                        <a href="{{ route('bots.show', [$bot]) }}">{{ $bot->name }}</a>
                     </th>
                     <th>
                         {!! $bot_status->label($bot->status) !!}
@@ -37,7 +37,7 @@
                     <th>
                         @foreach($bot->clusters as $cluster)
                             <a class="label label-info"
-                               href="{{ route('cluster.show', [$cluster]) }}">
+                               href="{{ route('clusters.show', [$cluster]) }}">
                                 {{ $cluster->name }}
                             </a>
                         @endforeach

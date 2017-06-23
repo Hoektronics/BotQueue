@@ -29,7 +29,7 @@
                             <div class="col-md-12">
                                 <h4>
                                     <a class="label label-default"
-                                       href="{{ route('cluster.show', [$cluster]) }}">
+                                       href="{{ route('clusters.show', [$cluster]) }}">
                                         {{ $cluster->name }}
                                     </a>
                                 </h4>

@@ -7,7 +7,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Upload a file</div>
                     <div class="panel-body">
-                        <form class="form-horizontal" role="form" method="POST" action="{{ route('file.store') }}" enctype="multipart/form-data">
+                        <form class="form-horizontal" role="form" method="POST" action="{{ route('files.store') }}" enctype="multipart/form-data">
                             {{ csrf_field() }}
 
                             <div class="col-md-12 form-group{{ $errors->has('file') ? ' has-error' : '' }}">

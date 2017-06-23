@@ -31,7 +31,7 @@
                             <div class="col-md-12">
                                 <h4>
                                     <a class="label {{ $bot_status->label_class($bot->status) }}"
-                                       href="{{ route('bot.show', [$bot]) }}">
+                                       href="{{ route('bots.show', [$bot]) }}">
                                         {{ $bot->name }}
                                     </a>
                                 </h4>

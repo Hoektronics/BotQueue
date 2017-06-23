@@ -24,12 +24,12 @@ Auth::routes();
 Route::get('dashboard', 'HomeController@index')
     ->name('dashboard');
 
-Route::resource('bot', 'BotController');
-Route::resource('cluster', 'ClusterController');
-Route::resource('file', 'FileController');
+Route::resource('bots', 'BotController');
+Route::resource('clusters', 'ClusterController');
+Route::resource('files', 'FileController');
 
-Route::get('job/create/file/{file}', 'JobFileController@create')
-    ->name('job.create.file');
+Route::get('jobs/create/file/{file}', 'JobFileController@create')
+    ->name('jobs.create.file');
 
-Route::post('job/file/{file}', 'JobFileController@store')
-    ->name('job.file.store');
+Route::post('jobs/file/{file}', 'JobFileController@store')
+    ->name('jobs.file.store');

@@ -11,14 +11,14 @@
         <div class="btn-toolbar pull-right">
             <a role="button"
                class="btn btn-primary btn-lg"
-               href="{{ route('job.file.store', $file) }}"
+               href="{{ route('jobs.file.store', $file) }}"
                onclick="event.preventDefault(); document.getElementById('job-create-form').submit();">
                 Create Job
             </a>
         </div>
         <h1>Create Job</h1>
     </div>
-    <form class="form-horizontal" id="job-create-form" role="form" method="POST" action="{{ route('job.file.store', $file) }}">
+    <form class="form-horizontal" id="job-create-form" role="form" method="POST" action="{{ route('jobs.file.store', $file) }}">
         {{ csrf_field() }}
 
         <div class="row">

@@ -28,13 +28,13 @@
                     <ul class="nav navbar-nav">
                         @if (Auth::check())
                             <li>
-                                <a href="/bot">Bots</a>
+                                <a href="{{ route('bots.index') }}">Bots</a>
                             </li>
                             <li>
-                                <a href="/cluster">Clusters</a>
+                                <a href="{{ route('clusters.index') }}">Clusters</a>
                             </li>
                             <li>
-                                <a href="/file">Files</a>
+                                <a href="{{ route('files.index') }}">Files</a>
                             </li>
                         @endif
                     </ul>
@@ -42,10 +42,10 @@
                     <ul class="nav navbar-nav navbar-right">
                         @if (Auth::guest())
                             <li>
-                                <a href="/register">Register</a>
+                                <a href="{{ route('register') }}">Register</a>
                             </li>
                             <li>
-                                <a href="/login">Login</a>
+                                <a href="{{ route('login') }}">Login</a>
                             </li>
                         @else
                             <li class="dropdown">
@@ -56,13 +56,13 @@
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
-                                        <a href="{{ url('/logout') }}"
+                                        <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
                                                  document.getElementById('logout-form').submit();">
                                             Logout
                                         </a>
 
-                                        <form id="logout-form" action="{{ url('/logout') }}" method="POST"
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                               style="display: none;">
                                             {{ csrf_field() }}
                                         </form>
