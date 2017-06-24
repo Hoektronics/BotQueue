@@ -27,6 +27,7 @@ Route::get('dashboard', 'HomeController@index')
 Route::resource('bots', 'BotController');
 Route::resource('clusters', 'ClusterController');
 Route::resource('files', 'FileController');
+Route::resource('jobs', 'JobController');
 
 Route::get('jobs/create/file/{file}', 'JobFileController@create')
     ->name('jobs.create.file');

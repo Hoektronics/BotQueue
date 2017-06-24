@@ -4,6 +4,7 @@ namespace App;
 
 use App\Events\JobCreating;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * App\Job
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereBotId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerType($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Job mine()
  */
 class Job extends Model
 {
@@ -47,5 +49,15 @@ class Job extends Model
 
     public function worker() {
         return $this->morphTo();
+    }
+
+    /**
+     * Scope to only include jobs belonging to the currently authenticated user
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMine($query) {
+        return $query->where('creator_id', Auth::user()->id);
     }
 }

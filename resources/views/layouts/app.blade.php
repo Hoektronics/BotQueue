@@ -34,6 +34,9 @@
                                 <a href="{{ route('clusters.index') }}">Clusters</a>
                             </li>
                             <li>
+                                <a href="{{ route('jobs.index') }}">Jobs</a>
+                            </li>
+                            <li>
                                 <a href="{{ route('files.index') }}">Files</a>
                             </li>
                         @endif

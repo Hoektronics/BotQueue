@@ -19,7 +19,7 @@
         @foreach($files as $file)
             <tr>
                 <th>
-                    <a href="{{ route('file.show', [$file]) }}">{{ $file->name }}</a>
+                    <a href="{{ route('files.show', [$file]) }}">{{ $file->name }}</a>
                 </th>
                 <th>
                     {{ $file->size }}
