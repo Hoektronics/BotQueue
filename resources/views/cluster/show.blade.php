@@ -28,14 +28,12 @@
                 <div class="panel-body">
                     @foreach($cluster->bots as $bot)
                         <div class="row">
-                            <div class="col-md-12">
-                                <h4>
-                                    <a class="label {{ $bot_status->label_class($bot->status) }}"
-                                       href="{{ route('bots.show', [$bot]) }}">
-                                        {{ $bot->name }}
-                                    </a>
-                                </h4>
-                            </div>
+                            <h4>
+                                <a class="label {{ $bot_status->label_class($bot->status) }}"
+                                   href="{{ route('bots.show', [$bot]) }}">
+                                    {{ $bot->name }}
+                                </a>
+                            </h4>
                         </div>
                     @endforeach
                 </div>

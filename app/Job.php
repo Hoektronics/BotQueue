@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerType($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Job mine()
+ * @property-read \App\User $creator
  */
 class Job extends Model
 {
@@ -46,6 +47,10 @@ class Job extends Model
     protected $events = [
         'creating' => JobCreating::class,
     ];
+
+    public function creator() {
+        return $this->belongsTo(User::class);
+    }
 
     public function worker() {
         return $this->morphTo();
