@@ -31,13 +31,12 @@ class JobFileController extends Controller
         $job = App\Job::make([
             'name' => $request->get('job_name'),
             'status' => App\Enums\JobStatusEnum::Queued,
-            'creator_id' => Auth::user()->id,
         ]);
 
         $worker = $request->get('bot_cluster');
         $job->worker()->associate($worker);
         $job->save();
 
-        dd($file, $job, $worker);
+        return redirect()->route('jobs.show', $job);
     }
 }
