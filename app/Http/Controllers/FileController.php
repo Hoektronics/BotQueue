@@ -66,6 +66,7 @@ class FileController extends Controller
             'name' => $clientOriginalName,
             'filesystem' => config('filesystems.default'),
             'type' => FileTypeEnum::fromExtension($extension),
+            'uploader_id' => Auth::id(),
         ]);
 
         return redirect()->route('jobs.create.file', [$file]);

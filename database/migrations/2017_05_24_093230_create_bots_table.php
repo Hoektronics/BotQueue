@@ -18,6 +18,7 @@ class CreateBotsTable extends Migration
             $table->integer('creator_id')->unsigned();
             $table->foreign('creator_id')->references('id')->on('users');
             $table->string('name');
+            $table->string('type');
             $table->timestamp('seen_at')->nullable();
             $table->timestamps();
         });

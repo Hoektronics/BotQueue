@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Events\BotCreating;
+use App\Enums\BotStatusEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,10 +39,12 @@ class Bot extends Model
      */
     protected $fillable = [
         'name',
+        'type',
+        'creator_id',
     ];
 
-    protected $events = [
-        'creating' => BotCreating::class,
+    protected $attributes = [
+        'status' => BotStatusEnum::Offline,
     ];
 
     public function creator() {

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -13,17 +12,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\BotCreating' => [
-            'App\Listeners\AssignBotToUser',
-            'App\Listeners\SetBotToOffline',
-        ],
-        'App\Events\JobCreating' => [
-            'App\Listeners\AssignJobToUser',
-        ],
-        'App\Events\FileCreating' => [
-            'App\Listeners\AssignFileToUser',
-            'App\Listeners\SetFileSize',
-        ],
         'App\Events\UserCreated' => [
             'App\Listeners\SetupDefaultCluster',
         ],

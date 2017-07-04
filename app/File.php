@@ -2,8 +2,8 @@
 
 namespace App;
 
-use App\Events\FileCreating;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * App\File
@@ -45,11 +45,13 @@ class File extends Model
         'uploader_id'
     ];
 
-    protected $events = [
-        'creating' => FileCreating::class,
-    ];
-
     public function uploader() {
         return $this->belongsTo(User::class);
+    }
+
+    public function setPathAttribute($path)
+    {
+        $this->attributes['path'] = $path;
+        $this->attributes['size'] = Storage::size($path);
     }
 }

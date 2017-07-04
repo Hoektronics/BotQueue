@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Events\JobCreating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,10 +41,7 @@ class Job extends Model
     protected $fillable = [
         'name',
         'status',
-    ];
-
-    protected $events = [
-        'creating' => JobCreating::class,
+        'creator_id',
     ];
 
     public function creator() {
