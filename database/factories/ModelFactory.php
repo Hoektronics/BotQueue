@@ -27,5 +27,6 @@ $factory->define(App\Bot::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'seen_at' => $faker->dateTime,
+        'type' => '3d_printer',
     ];
 });

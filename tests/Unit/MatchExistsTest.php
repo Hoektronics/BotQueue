@@ -16,7 +16,9 @@ class MatchExistsTest extends TestCase
 
     public function testMatchingOnModelIdAttribute()
     {
-        $bot = factory(App\Bot::class)->create();
+        $bot = factory(App\Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
 
         $fieldValue = 'foo_' . $bot->id;
         $fields = [
@@ -37,7 +39,9 @@ class MatchExistsTest extends TestCase
 
     public function testWhenNothingMatches()
     {
-        $bot = factory(App\Bot::class)->create();
+        $bot = factory(App\Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
 
         $fieldValue = 'foo_' . ($bot->id + 1);
         $fields = [
@@ -58,7 +62,9 @@ class MatchExistsTest extends TestCase
 
     public function testMultipleFieldMatches()
     {
-        $bot = factory(App\Bot::class)->create();
+        $bot = factory(App\Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
 
         $fieldValue = 'bar_' . $bot->id;
         $fields = [
@@ -80,7 +86,9 @@ class MatchExistsTest extends TestCase
 
     public function testFieldMatchesWithScope()
     {
-        $bot = factory(App\Bot::class)->create();
+        $bot = factory(App\Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
 
         $fieldValue = 'foo_' . $bot->id;
 

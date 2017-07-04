@@ -17,7 +17,6 @@ class BotTest extends TestCase
         /** @var App\Bot $bot */
         $bot = factory(App\Bot::class)->create([
             'creator_id' => $user->id,
-            'type' => '3d_printer',
         ]);
 
         $this->assertEquals(App\Enums\BotStatusEnum::Offline, $bot->status);
