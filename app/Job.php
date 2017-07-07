@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\JobCreated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,6 +43,10 @@ class Job extends Model
         'name',
         'status',
         'creator_id',
+    ];
+
+    protected $events = [
+        'created' => JobCreated::class,
     ];
 
     public function creator() {

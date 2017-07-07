@@ -15,6 +15,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\UserCreated' => [
             'App\Listeners\SetupDefaultCluster',
         ],
+        'App\Events\JobCreated' => [
+            'App\Listeners\JobCreatedDispatchJobAssignment'
+        ],
     ];
 
     /**
