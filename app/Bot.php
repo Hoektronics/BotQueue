@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Enums\BotStatusEnum;
+use App\Events\BotCreated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,6 +42,10 @@ class Bot extends Model
         'name',
         'type',
         'creator_id',
+    ];
+
+    protected $events = [
+        'created' => BotCreated::class,
     ];
 
     protected $attributes = [
