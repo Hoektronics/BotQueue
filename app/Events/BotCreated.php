@@ -3,8 +3,6 @@
 namespace App\Events;
 
 use App\Bot;
-use App\Cluster;
-use App\Job;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -13,23 +11,22 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Support\Facades\Auth;
 
-class JobCreated implements HasRelatedBots, ShouldBroadcast
+class BotCreated implements HasRelatedBots, ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     /**
-     * @var Job
+     * @var Bot
      */
-    public $job;
+    public $bot;
 
     /**
      * Create a new event instance.
      *
-     * @param Job $job
+     * @param Bot $bot
      */
-    public function __construct(Job $job)
+    public function __construct(Bot $bot)
     {
-
-        $this->job = $job;
+        $this->bot = $bot;
     }
 
     /**
@@ -46,11 +43,6 @@ class JobCreated implements HasRelatedBots, ShouldBroadcast
 
     public function bots()
     {
-        $worker = $this->job->worker;
-        if ($worker instanceof Bot) {
-            return [$worker];
-        } elseif ($worker instanceof Cluster) {
-            return $worker->bots;
-        }
+        return [$this->bot];
     }
 }

@@ -15,8 +15,14 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\UserCreated' => [
             'App\Listeners\SetupDefaultCluster',
         ],
+        'App\Events\BotCanGrabJob' => [
+
+        ],
+        'App\Events\BotCreated' => [
+            'App\Listeners\NotifyEligibleBots'
+        ],
         'App\Events\JobCreated' => [
-            'App\Listeners\JobCreatedDispatchJobAssignment'
+            'App\Listeners\NotifyEligibleBots'
         ],
     ];
 
