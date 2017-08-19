@@ -2,41 +2,18 @@ const Redis = require('ioredis');
 const Server = require('socket.io');
 const config = require('../config');
 
-console.log(config);
-
-let socket_port = 8080;
-if (config.hasOwnProperty('SOCKET_PORT')) {
-    socket_port = config.SOCKET_PORT;
+if (config.APP_DEBUG) {
+    console.log('Application is in debug mode');
+    console.log('Events will be printed to the screen');
 }
 
-let debug = false;
-if (config.hasOwnProperty('APP_DEBUG')) {
-    debug = config.APP_DEBUG;
-}
+console.log(`Starting Socket IO server on port ${config.SOCKET_PORT}`);
 
-let redis_host = '127.0.0.1';
-let redis_port = '6379';
-let redis_password = null;
-
-if (config.hasOwnProperty('REDIS_HOST')) {
-    redis_host = config.REDIS_HOST;
-}
-
-if (config.hasOwnProperty('REDIS_PORT')) {
-    redis_port = config.REDIS_PORT;
-}
-
-if (config.hasOwnProperty('REDIS_PASSWORD')) {
-    redis_password = config.REDIS_PASSWORD;
-}
-
-console.log(`Starting Socket IO server on port ${socket_port}`);
-
-const io = Server(socket_port);
+const io = Server(config.SOCKET_PORT);
 const redis = Redis({
-    host: redis_host,
-    port: redis_port,
-    password: redis_password
+    host: config.REDIS_HOST,
+    port: config.REDIS_PORT,
+    password: config.REDIS_PASSWORD
 });
 
 // TODO Setup io.use middleware for auth
@@ -61,7 +38,7 @@ io.on('connection', (socket) => {
     redis.psubscribe('*', (err, count) => {
         if(err) {
             console.log('Redis could not subscribe.');
-            return;
+            process.exit(1);
         }
 
         console.log('Listening for redis events...');
