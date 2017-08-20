@@ -9,6 +9,7 @@
         "barryvdh/laravel-ide-helper": "^2.3",
         "doctrine/dbal": "~2.3",
         "laravel/framework": "5.4.*",
+        "laravel/passport": "^3.0",
         "laravel/tinker": "~1.0",
         "predis/predis": "^1.1",
         "stechstudio/laravel-vfs-adapter": "^1.0"
