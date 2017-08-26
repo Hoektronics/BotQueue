@@ -30,6 +30,8 @@ use Illuminate\Support\Facades\Auth;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Cluster[] $clusters
  * @property-read \App\User $creator
  * @method static \Illuminate\Database\Query\Builder|\App\Bot mine()
+ * @property string $type
+ * @method static \Illuminate\Database\Query\Builder|\App\Bot whereType($value)
  */
 class Bot extends Model
 {

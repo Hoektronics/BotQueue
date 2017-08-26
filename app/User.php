@@ -29,6 +29,8 @@ use Laravel\Passport\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Cluster[] $clusters
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\File[] $files
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  */
 class User extends Authenticatable
 {
