@@ -30,3 +30,9 @@ $factory->define(App\Bot::class, function (Faker\Generator $faker) {
         'type' => '3d_printer',
     ];
 });
+
+$factory->define(App\Job::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+    ];
+});

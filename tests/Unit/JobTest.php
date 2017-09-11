@@ -3,11 +3,11 @@
 namespace Tests\Unit;
 
 use App;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class BotTest extends TestCase
+class JobTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -17,23 +17,19 @@ class BotTest extends TestCase
 
         /** @var App\User $user */
         $user = factory(App\User::class)->create();
+
         /** @var App\Bot $bot */
         $bot = factory(App\Bot::class)->create([
             'creator_id' => $user->id,
         ]);
 
-        Event::assertDispatched(App\Events\BotCreated::class);
-    }
-
-    public function testBotIsByDefaultOffline()
-    {
-        /** @var App\User $user */
-        $user = factory(App\User::class)->create();
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
+        /** @var App\Job $bot */
+        $job = factory(App\Job::class)->make([
             'creator_id' => $user->id,
         ]);
+        $job->worker()->associate($bot);
+        $job->save();
 
-        $this->assertEquals(App\Enums\BotStatusEnum::Offline, $bot->status);
+        Event::assertDispatched(App\Events\JobCreated::class);
     }
 }

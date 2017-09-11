@@ -44,7 +44,7 @@ class Bot extends Model
         'creator_id',
     ];
 
-    protected $events = [
+    protected $dispatchesEvents = [
         'created' => BotCreated::class,
     ];
 
