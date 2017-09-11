@@ -55,6 +55,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'testing' => [
+            'driver' => env('STORAGE_DATA_DRIVER', 'local'),
+            'root' => storage_path('app/testing'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_KEY'),

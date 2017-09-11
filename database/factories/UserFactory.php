@@ -1,18 +1,20 @@
 <?php
 
+use Faker\Generator as Faker;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
 |--------------------------------------------------------------------------
 |
-| Here you may define all of your model factories. Model factories give
-| you a convenient way to create models for testing and seeding your
-| database. Just tell the factory how a default model should look.
+| This directory should contain each of the model factory definitions for
+| your application. Factories provide a convenient way to generate new
+| model instances for testing / seeding your application's database.
 |
 */
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(App\User::class, function (Faker $faker) {
     static $password;
 
     return [
@@ -23,10 +25,16 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Bot::class, function (Faker\Generator $faker) {
+$factory->define(App\Bot::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'seen_at' => $faker->dateTime,
         'type' => '3d_printer',
+    ];
+});
+
+$factory->define(App\Job::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
     ];
 });
