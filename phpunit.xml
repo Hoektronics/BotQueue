@@ -29,5 +29,7 @@
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="DB_CONNECTION" value="sqlite_memory"/>
         <env name="STORAGE_DATA_DRIVER" value="vfs"/>
+        <env name="BROADCAST_DRIVER" value="log"/>
+        <env name="FILESYSTEM_DRIVER" value="testing"/>
     </php>
 </phpunit>
