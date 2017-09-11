@@ -28,7 +28,7 @@ class JobFileController extends Controller
     public function store(App\File $file, JobFileCreationRequest $request)
     {
         /** @var App\Job $job */
-        $job = App\Job::make([
+        $job = new App\Job([
             'name' => $request->get('job_name'),
             'status' => App\Enums\JobStatusEnum::Queued,
             'creator_id' => Auth::id(),

@@ -54,13 +54,14 @@ class BotController extends Controller
     public function store(BotCreationRequest $request)
     {
         /** @var Bot $bot */
-        $bot = Bot::create([
+        $bot = new Bot([
             'name' => $request->get('name'),
             'type' => $request->get('type'),
             'creator_id' => Auth::id(),
         ]);
         $cluster = Cluster::find($request->get('cluster'));
 
+        $bot->save();
         $bot->clusters()->save($cluster);
 
         return redirect()->route('bots.show', [$bot]);
