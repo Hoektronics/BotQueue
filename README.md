@@ -5,6 +5,11 @@ Control your 3D Printer over the Internet.  Out of the box support for slicing, 
 
 The main BotQueue site is at www.botqueue.com
 
+Is this project dead?
+-------------
+
+Nope! I took a hiatus for a little while, but am back to working on this project. I'm working on the [laravel2](https://github.com/Hoektronics/BotQueue/tree/laravel2) branch. What I'll be doing most of the time is branching off of laravel2 and then submitting pull requests to make sure everything builds correctly. Once I'm satisfied with the full upgrade/redesign, I'll land the laravel2 branch onto master and deploy to the [main site](www.botqueue.com). If you're a registered user at that site, you'll get an email when the beta site goes live as well as when the main site is live with the new version. Look forward to it!
+
 Philosophy and Goals
 -------------
 
