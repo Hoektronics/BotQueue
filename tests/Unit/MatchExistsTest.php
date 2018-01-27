@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App;
-use App\Validation\MatchExists;
+use App\Rules\MatchExists;
 use Illuminate\Support\Facades\Validator;
 use Tests\AuthsUser;
 use Tests\TestCase;
