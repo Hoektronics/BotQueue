@@ -14,6 +14,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\UserCreated' => [
             'App\Listeners\SetupDefaultCluster',
+            'App\Listeners\EmailNewUser',
         ],
         'App\Events\BotCanGrabJob' => [
 
