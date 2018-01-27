@@ -17,7 +17,6 @@ branches:
     - laravel2
 
 before_install:
-  - sudo apt-get update > /dev/null
   - mysql -e 'CREATE DATABASE botqueue;'
   - npm install -g npm@2
   - node -v
@@ -25,7 +24,6 @@ before_install:
 
 install:
   # Install the packages we need
-#  - sudo apt-get install -y --force-yes
 
   # Install composer
   - composer self-update
