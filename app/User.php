@@ -55,7 +55,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    protected $events = [
+    protected $dispatchesEvents = [
         'created' => UserCreated::class,
     ];
 

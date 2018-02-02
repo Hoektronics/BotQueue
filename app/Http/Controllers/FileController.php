@@ -61,13 +61,15 @@ class FileController extends Controller
         $newName = Str::random(40) . '.' . $extension;
         $uploadedFilePath = $originalFile->storePubliclyAs('uploads/'.Auth::user()->id, $newName);
 
-        $file = File::create([
+        $file = new File([
             'path' => $uploadedFilePath,
             'name' => $clientOriginalName,
             'filesystem' => config('filesystems.default'),
             'type' => FileTypeEnum::fromExtension($extension),
             'uploader_id' => Auth::id(),
         ]);
+
+        $file->save();
 
         return redirect()->route('jobs.create.file', [$file]);
     }
