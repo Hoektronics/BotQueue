@@ -34,10 +34,9 @@ class ClientRequestTest extends TestCase
         ]);
 
         $response->assertJson([
-            'status' => ClientRequestStatusEnum::Requested,
-            'local_ip' => $this->localIpv4,
-            'remote_ip' => $this->ipv4,
-            'hostname' => $this->hostname,
+            'data' => [
+                'status' => ClientRequestStatusEnum::Requested
+            ]
         ]);
     }
 
@@ -46,10 +45,9 @@ class ClientRequestTest extends TestCase
         $response = $this->json('POST', '/api/v2/client/request');
 
         $response->assertJson([
-            'status' => ClientRequestStatusEnum::Requested,
-            'local_ip' => null,
-            'remote_ip' => null,
-            'hostname' => null,
+            'data' => [
+                'status' => ClientRequestStatusEnum::Requested
+            ]
         ]);
     }
 }

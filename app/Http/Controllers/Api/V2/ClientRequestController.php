@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\ClientRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ClientRequestResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,6 @@ class ClientRequestController extends Controller
 
         $client_request->expires_at = Carbon::now()->addDay();
 
-        return $client_request;
+        return new ClientRequestResource($client_request);
     }
 }
