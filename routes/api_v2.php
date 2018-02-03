@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('client/request', 'ClientRequestController@create');
+
+Route::middleware('auth:api')->group(function() {
+    Route::get('/users/{user}', 'UserController@show')->middleware('can:view,user');
+
+    Route::get('/bots', 'BotController@index');
+    Route::get('/bots/{bot}', 'BotController@show')->middleware('can:view,bot');
 });
