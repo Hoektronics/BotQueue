@@ -18,4 +18,5 @@ Route::post('client/request', 'ClientRequestController@create');
 
 Route::middleware('auth:api')->group(function() {
     Route::get('/bots', 'BotController@index');
+    Route::get('/bots/{bot}', 'BotController@show')->middleware('can:view,bot');
 });

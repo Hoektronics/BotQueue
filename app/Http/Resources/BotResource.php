@@ -19,6 +19,10 @@ class BotResource extends Resource
             'name' => $this->name,
             'status' => $this->status,
             'type' => $this->type,
+            'creator' => [
+                'id' => $this->creator->id,
+                'username' => $this->creator->username,
+            ],
         ];
     }
 }

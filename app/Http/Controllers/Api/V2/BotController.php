@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V2;
 
+use App\Bot;
 use App\Http\Resources\BotResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +13,13 @@ class BotController extends Controller
     {
         $user = Auth::user();
 
-        return BotResource::collection($user->bots);
+        $bots = $user->bots()->with('creator')->get();
+
+        return BotResource::collection($bots);
+    }
+
+    public function show(Bot $bot)
+    {
+        return new BotResource($bot);
     }
 }
