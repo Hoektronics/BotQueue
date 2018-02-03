@@ -1,21 +1,21 @@
 <?php
 
+namespace App\Rules;
 
-namespace App\Validation;
-
-
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 
-class MatchExists implements CustomValidator
+class MatchExists implements Rule
 {
-    use CustomValidatorTrait;
-
-    /**
-     * @var array
-     */
     protected $fields;
 
-    public function __construct($fields) {
+    /**
+     * Create a new rule instance.
+     *
+     * @return void
+     */
+    public function __construct($fields)
+    {
         $this->fields = [];
 
         foreach ($fields as $key => $type) {
@@ -23,6 +23,13 @@ class MatchExists implements CustomValidator
         }
     }
 
+    /**
+     * Determine if the validation rule passes.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @return bool
+     */
     public function passes($attribute, $value)
     {
         /** @var MatchFieldSet $field */
@@ -35,9 +42,14 @@ class MatchExists implements CustomValidator
         return false;
     }
 
-    public function message($attribute)
+    /**
+     * Get the validation error message.
+     *
+     * @return string
+     */
+    public function message()
     {
-        return "The selected ${attribute} is invalid.";
+        return "The selected :attribute is invalid.";
     }
 
     public function getModel($value)

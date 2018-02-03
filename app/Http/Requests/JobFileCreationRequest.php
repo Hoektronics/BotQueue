@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App;
-use App\Validation\MatchExists;
+use App\Rules\MatchExists;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
