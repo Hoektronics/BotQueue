@@ -22,6 +22,7 @@ class BotResource extends Resource
             'creator' => [
                 'id' => $this->creator->id,
                 'username' => $this->creator->username,
+                'link' => url('/api/v2/users', $this->creator->id),
             ],
         ];
     }
