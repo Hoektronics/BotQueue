@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait AuthsUser
 {
+    /** @var App\User $user */
     protected $user;
 
     public function loginTestUser() {

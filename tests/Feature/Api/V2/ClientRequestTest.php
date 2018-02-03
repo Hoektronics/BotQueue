@@ -10,6 +10,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ClientRequestTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /** @var $faker \Faker\Generator */
     private $faker;
     private $localIpv4;

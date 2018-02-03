@@ -15,6 +15,7 @@ class ClientRequestController extends Controller
         $client_request = new ClientRequest($request->only(['local_ip', 'remote_ip', 'hostname']));
 
         $client_request->expires_at = Carbon::now()->addDay();
+        $client_request->save();
 
         return new ClientRequestResource($client_request);
     }
