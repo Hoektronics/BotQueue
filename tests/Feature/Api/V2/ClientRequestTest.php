@@ -3,14 +3,12 @@
 namespace Tests\Feature\Api\V2;
 
 use App\Enums\ClientRequestStatusEnum;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ClientRequestTest extends TestCase
 {
-    use DatabaseMigrations;
+    use RefreshDatabase;
 
     /** @var $faker \Faker\Generator */
     private $faker;

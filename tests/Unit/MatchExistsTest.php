@@ -4,15 +4,15 @@ namespace Tests\Unit;
 
 use App;
 use App\Validation\MatchExists;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\AuthsUser;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class MatchExistsTest extends TestCase
 {
     use AuthsUser;
-    use DatabaseMigrations;
+    use RefreshDatabase;
 
     public function testMatchingOnModelIdAttribute()
     {
