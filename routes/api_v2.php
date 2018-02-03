@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('client/request', 'ClientRequestController@create');
+
+Route::middleware('auth:api')->group(function() {
+    Route::get('/bots', 'BotController@index');
+});
