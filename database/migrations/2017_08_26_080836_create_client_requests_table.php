@@ -17,7 +17,7 @@ class CreateClientRequestsTable extends Migration
         Schema::create('client_requests', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->nullable();
 
             $table->string('local_ip')->nullable();
             $table->string('remote_ip')->nullable();
