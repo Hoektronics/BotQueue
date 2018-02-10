@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-class HostRequestTest extends TestCase
+class RequestTest extends TestCase
 {
     use RefreshDatabase;
 
