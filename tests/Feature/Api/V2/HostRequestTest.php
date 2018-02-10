@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\Api\V2;
 
-use App\Enums\ClientRequestStatusEnum;
+use App\Enums\HostRequestStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
-class ClientRequestTest extends TestCase
+class HostRequestTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -27,26 +28,30 @@ class ClientRequestTest extends TestCase
     }
 
     public function testClientRequestHasStatusOfRequested() {
-        $response = $this->json('POST', '/api/v2/client/request', [
+        $response = $this->json('POST', '/api/v2/hosts/request', [
             'local_ip' => $this->localIpv4,
             'remote_ip' => $this->ipv4,
             'hostname' => $this->hostname,
         ]);
 
-        $response->assertJson([
+        $response
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJson([
             'data' => [
-                'status' => ClientRequestStatusEnum::Requested
+                'status' => HostRequestStatusEnum::Requested
             ]
         ]);
     }
 
     public function testNoInformationIsNeededForRequest()
     {
-        $response = $this->json('POST', '/api/v2/client/request');
+        $response = $this->json('POST', '/api/v2/hosts/request');
 
-        $response->assertJson([
+        $response
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJson([
             'data' => [
-                'status' => ClientRequestStatusEnum::Requested
+                'status' => HostRequestStatusEnum::Requested
             ]
         ]);
     }

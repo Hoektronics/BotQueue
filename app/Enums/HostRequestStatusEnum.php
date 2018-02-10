@@ -4,7 +4,7 @@
 namespace App\Enums;
 
 
-class ClientRequestStatusEnum
+class HostRequestStatusEnum
 {
     const Requested = 'requested';
     const Rejected = 'rejected';

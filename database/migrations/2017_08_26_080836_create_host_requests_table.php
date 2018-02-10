@@ -1,11 +1,11 @@
 <?php
 
-use App\Enums\ClientRequestStatusEnum;
+use App\Enums\HostRequestStatusEnum;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateClientRequestsTable extends Migration
+class CreateHostRequestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateClientRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('client_requests', function (Blueprint $table) {
+        Schema::create('host_requests', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->timestamp('expires_at')->nullable();
@@ -23,7 +23,7 @@ class CreateClientRequestsTable extends Migration
             $table->string('remote_ip')->nullable();
             $table->string('hostname')->nullable();
 
-            $table->string('status')->default(ClientRequestStatusEnum::Requested);
+            $table->string('status')->default(HostRequestStatusEnum::Requested);
         });
     }
 
@@ -34,6 +34,6 @@ class CreateClientRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('client_requests');
+        Schema::dropIfExists('host_requests');
     }
 }
