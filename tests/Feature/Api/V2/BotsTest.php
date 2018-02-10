@@ -8,18 +8,16 @@ use App\Enums\BotStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
-use Tests\AuthsUser;
+use Tests\PassportUser;
 use Tests\TestCase;
 
 class BotsTest extends TestCase
 {
-    use AuthsUser;
+    use PassportUser;
     use RefreshDatabase;
 
     public function testBotsIndex()
     {
-        Passport::actingAs($this->user);
-
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -48,8 +46,6 @@ class BotsTest extends TestCase
 
     public function testBotsThatAreNotMineAreNotVisibleInIndex()
     {
-        Passport::actingAs($this->user);
-
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -85,8 +81,6 @@ class BotsTest extends TestCase
 
     public function testCanSeeMyOwnBot()
     {
-        Passport::actingAs($this->user);
-
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -115,8 +109,6 @@ class BotsTest extends TestCase
 
     public function testCannotSeeOtherBot()
     {
-        Passport::actingAs($this->user);
-
         $other_user = factory(User::class)->create();
         $other_bot = factory(Bot::class)->create([
             'creator_id' => $other_user,

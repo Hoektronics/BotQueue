@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Laravel\Passport\ClientRepository;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -15,6 +16,12 @@ abstract class TestCase extends BaseTestCase
 
         if (isset($uses[AuthsUser::class])) {
             $this->loginTestUser();
+        }
+
+        if (isset($uses[PassportUser::class])) {
+            $client_repository = app(ClientRepository::class);
+
+            $this->loginTestUser($client_repository);
         }
     }
 }
