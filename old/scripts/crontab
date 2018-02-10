@@ -1,2 +1,0 @@
-*/2 * * * * /usr/bin/php ~/BotQueue/scripts/send-emails.php
-0 * * * * /usr/bin/php ~/BotQueue/scripts/delete-nonces.php

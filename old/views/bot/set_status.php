@@ -1,3 +1,0 @@
-<? if ($megaerror): ?>
-	<?= $megaerror ?>
-<? endif ?>

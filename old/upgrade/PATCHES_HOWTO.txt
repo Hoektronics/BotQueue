@@ -1,9 +1,0 @@
-Patches are a simple way to change the sql database of a production/test system without hurting the data in it.
-To run it, simply run "./apply_patches.sh" in a terminal.
-
-Every commit that changes the sql database needs to do three things:
-1. Create a patch with a unique patch number and description
-2. Update the createdb.sql database
-3. Change the insert statement at the bottom of createdb.sql to match the one in the patch (Just change the number and description)
-
-This way, any new users will be able to run the createdb.sql database like normal. Any users with existing databases can simply run apply_patches after pulling. (Note, this doesn't reverse anything and should only be used when moving forward)

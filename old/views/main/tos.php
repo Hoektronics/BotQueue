@@ -1,1 +1,0 @@
-Try not to break my site.  Don't post illegal crap.  Don't sue me if something goes wrong.
