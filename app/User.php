@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enums\HostRequestStatusEnum;
 use App\Events\UserCreated;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -61,15 +62,9 @@ class User extends Authenticatable
 
     public function claim(HostRequest $request, $name)
     {
-        $token = $this->createToken($name);
-
-        $host = new Host([
-            'local_ip' => $request->local_ip,
-            'remote_ip' => $request->remote_ip,
-            'hostname' => $request->hostname,
-            'owner_id' => $this->id,
-            'name' => $name,
-        ]);
+        $request->claimer_id = $this->id;
+        $request->status = HostRequestStatusEnum::Claimed;
+        $request->save();
     }
 
     public function bots() {

@@ -49,4 +49,8 @@ class HostRequest extends Model
     protected $attributes = [
         'status' => HostRequestStatusEnum::Requested,
     ];
+
+    public function claimer() {
+        return $this->belongsTo(User::class);
+    }
 }

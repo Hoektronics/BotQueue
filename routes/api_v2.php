@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('hosts/request', 'HostRequestController@create');
-Route::get('hosts/request/{request}', 'HostRequestController@show');
+Route::post('host_requests', 'HostRequestController@create');
+Route::get('host_requests/{host_request}', 'HostRequestController@show');
+Route::post('host_requests/{host_request}/access', 'HostRequestController@access');
 
 Route::middleware('auth:api')->group(function() {
     Route::get('/users/{user}', 'UserController@show')->middleware('can:view,user');

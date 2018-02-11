@@ -38,6 +38,7 @@ class BotsTest extends TestCase
                         'creator' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
+                            'link' => url('/api/v2/users', $this->user->id),
                         ]
                     ]
                 ]
@@ -71,7 +72,7 @@ class BotsTest extends TestCase
                         'creator' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
-                            'link' => url('/api/v2/users', $this->user),
+                            'link' => url('/api/v2/users', $this->user->id),
                         ]
                     ]
                 ]
@@ -101,7 +102,7 @@ class BotsTest extends TestCase
                     'creator' => [
                         'id' => $this->user->id,
                         'username' => $this->user->username,
-                        'link' => url('/api/v2/users', $this->user),
+                        'link' => url('/api/v2/users', $this->user->id),
                     ]
                 ]
             ]);

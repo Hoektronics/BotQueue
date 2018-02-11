@@ -29,7 +29,7 @@ class RequestTest extends TestCase
 
     public function testClientRequestHasStatusOfRequested()
     {
-        $response = $this->json('POST', '/api/v2/hosts/request', [
+        $response = $this->json('POST', '/api/v2/host_requests', [
             'local_ip' => $this->localIpv4,
             'hostname' => $this->hostname,
         ]);
@@ -40,18 +40,32 @@ class RequestTest extends TestCase
                 'data' => [
                     'status' => HostRequestStatusEnum::Requested
                 ]
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'status',
+                    'expires_at',
+                ]
             ]);
     }
 
     public function testNoInformationIsNeededForRequest()
     {
-        $response = $this->json('POST', '/api/v2/hosts/request');
+        $response = $this->json('POST', '/api/v2/host_requests');
 
         $response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
                 'data' => [
                     'status' => HostRequestStatusEnum::Requested
+                ]
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'status',
+                    'expires_at',
                 ]
             ]);
     }

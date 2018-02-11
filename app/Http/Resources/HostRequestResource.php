@@ -17,6 +17,14 @@ class HostRequestResource extends Resource
         return [
             'id' => $this->id,
             'status' => $this->status,
+            'expires_at' => $this->expires_at,
+            'claimer' => $this->when($this->claimer_id !== null, function() {
+                return [
+                    'id' => $this->claimer->id,
+                    'username' => $this->claimer->username,
+                    'link' => url('/api/v2/users', $this->claimer->id),
+                ];
+            }),
         ];
     }
 }
