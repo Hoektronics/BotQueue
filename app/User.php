@@ -59,6 +59,19 @@ class User extends Authenticatable
         'created' => UserCreated::class,
     ];
 
+    public function claim(HostRequest $request, $name)
+    {
+        $token = $this->createToken($name);
+
+        $host = new Host([
+            'local_ip' => $request->local_ip,
+            'remote_ip' => $request->remote_ip,
+            'hostname' => $request->hostname,
+            'owner_id' => $this->id,
+            'name' => $name,
+        ]);
+    }
+
     public function bots() {
         return $this->hasMany(Bot::class, 'creator_id');
     }

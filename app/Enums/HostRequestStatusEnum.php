@@ -8,6 +8,6 @@ class HostRequestStatusEnum
 {
     const Requested = 'requested';
     const Rejected = 'rejected';
-    const Accepted = 'accepted';
+    const Claimed = 'claimed';
     const Expired = 'expired';
 }

@@ -30,6 +30,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class HostRequest extends Model
 {
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
         'local_ip',
         'remote_ip',

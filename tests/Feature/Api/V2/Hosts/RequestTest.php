@@ -27,20 +27,20 @@ class RequestTest extends TestCase
         parent::setUp();
     }
 
-    public function testClientRequestHasStatusOfRequested() {
+    public function testClientRequestHasStatusOfRequested()
+    {
         $response = $this->json('POST', '/api/v2/hosts/request', [
             'local_ip' => $this->localIpv4,
-            'remote_ip' => $this->ipv4,
             'hostname' => $this->hostname,
         ]);
 
         $response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
-            'data' => [
-                'status' => HostRequestStatusEnum::Requested
-            ]
-        ]);
+                'data' => [
+                    'status' => HostRequestStatusEnum::Requested
+                ]
+            ]);
     }
 
     public function testNoInformationIsNeededForRequest()
@@ -50,9 +50,9 @@ class RequestTest extends TestCase
         $response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
-            'data' => [
-                'status' => HostRequestStatusEnum::Requested
-            ]
-        ]);
+                'data' => [
+                    'status' => HostRequestStatusEnum::Requested
+                ]
+            ]);
     }
 }

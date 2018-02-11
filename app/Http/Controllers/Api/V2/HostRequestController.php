@@ -12,7 +12,7 @@ class HostRequestController extends Controller
 {
     public function create(Request $request)
     {
-        $host_request = new HostRequest($request->only(['local_ip', 'remote_ip', 'hostname']));
+        $host_request = new HostRequest($request->only(['local_ip', 'hostname']));
 
         $host_request->expires_at = Carbon::now()->addDay();
         $host_request->save();

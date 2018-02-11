@@ -15,7 +15,7 @@ class CreateHostRequestsTable extends Migration
     public function up()
     {
         Schema::create('host_requests', function (Blueprint $table) {
-            $table->increments('id');
+            $table->string('id', 100)->primary();
             $table->timestamps();
             $table->timestamp('expires_at')->nullable();
 
@@ -24,6 +24,9 @@ class CreateHostRequestsTable extends Migration
             $table->string('hostname')->nullable();
 
             $table->string('status')->default(HostRequestStatusEnum::Requested);
+
+            $table->integer('claimer_id')->unsigned()->nullable();
+            $table->foreign('claimer_id')->references('id')->on('users');
         });
     }
 
