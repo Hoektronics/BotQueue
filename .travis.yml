@@ -37,6 +37,7 @@ install:
   - cp .env.travis .env
   - php artisan key:generate
   - php artisan migrate
+  - php artisan passport:keys
 
 before_script:
   - touch database/database.sqlite
