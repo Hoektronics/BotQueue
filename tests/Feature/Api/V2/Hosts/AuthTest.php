@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Tests\PassportUser;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Lcobucci\JWT\Parser as JwtParser;
 
 class AuthTest extends TestCase
 {
@@ -68,5 +69,35 @@ class AuthTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    public function testRefresh()
+    {
+        $jwt = app(JwtParser::class);
+
+        $full_token = $this->user->createToken('Test', ['host']);
+        $first_expire_time = $jwt->parse($full_token->accessToken)->getClaim('exp');
+
+        sleep(1);
+
+        $refresh_response = $this
+            ->json(
+                'POST',
+                '/api/v2/hosts/refresh',
+                $data = [],
+                $headers = [
+                    'Authorization' => 'Bearer ' . $full_token->accessToken,
+                ]
+            );
+
+        $refresh_response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'access_token',
+            ]);
+
+        $new_token = $refresh_response->json()['access_token'];
+        $later_expire_time = $jwt->parse($new_token)->getClaim('exp');
+        $this->assertGreaterThan($first_expire_time, $later_expire_time);
     }
 }
