@@ -80,6 +80,7 @@ class TokenController extends Controller
 
         $jti = $parsed_jwt->getClaim('jti');
         $token = $this->tokenRepository->find($jti);
+
         return $token;
     }
 
@@ -108,6 +109,7 @@ class TokenController extends Controller
         $accessToken->setIdentifier($token_id);
         $accessToken->setUserIdentifier($sub);
         $accessToken->setExpiryDateTime($new_expiration);
+
         return $accessToken;
     }
 }
