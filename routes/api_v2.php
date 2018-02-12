@@ -24,5 +24,5 @@ Route::middleware('auth:api')->group(function() {
     Route::get('/bots', 'BotController@index');
     Route::get('/bots/{bot}', 'BotController@show')->middleware('can:view,bot');
 
-    Route::post('hosts/refresh', 'TokenController@refresh');
+    Route::post('hosts/refresh', 'TokenController@refresh')->middleware('scope:host');
 });

@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\V2\Hosts;
 use App\Enums\HostRequestStatusEnum;
 use App\HostRequest;
 use Illuminate\Http\Response;
+use Laravel\Passport\Passport;
 use Tests\PassportUser;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -73,10 +74,13 @@ class AuthTest extends TestCase
 
     public function testRefresh()
     {
+        Passport::actingAs($this->user, ['host']);
         $jwt = app(JwtParser::class);
 
         $full_token = $this->user->createToken('Test', ['host']);
-        $first_expire_time = $jwt->parse($full_token->accessToken)->getClaim('exp');
+        $first_access_token = $full_token->accessToken;
+
+        $first_expire_time = $jwt->parse($first_access_token)->getClaim('exp');
 
         sleep(1);
 
