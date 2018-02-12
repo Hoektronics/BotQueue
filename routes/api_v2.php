@@ -14,15 +14,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('host_requests', 'HostRequestController@create');
-Route::get('host_requests/{host_request}', 'HostRequestController@show');
-Route::post('host_requests/{host_request}/access', 'HostRequestController@access');
+Route::prefix('host_requests')
+    ->group(function () {
+        Route::post('/', 'HostRequestController@create');
+        Route::get('{host_request}', 'HostRequestController@show');
+        Route::post('{host_request}/access', 'HostRequestController@access');
+    });
 
-Route::middleware('auth:api')->group(function() {
-    Route::get('/users/{user}', 'UserController@show')->middleware('can:view,user');
+Route::middleware('auth:api')
+    ->group(function () {
+        Route::get('users/{user}', 'UserController@show')->middleware('can:view,user');
 
-    Route::get('/bots', 'BotController@index');
-    Route::get('/bots/{bot}', 'BotController@show')->middleware('can:view,bot');
+        Route::get('bots', 'BotController@index');
+        Route::get('bots/{bot}', 'BotController@show')->middleware('can:view,bot');
+    });
 
-    Route::post('hosts/refresh', 'TokenController@refresh')->middleware('scope:host');
-});
+Route::prefix('hosts')
+    ->middleware('auth:api')
+    ->middleware('scope:host')
+    ->group(function () {
+        Route::post('refresh', 'TokenController@refresh');
+    });
