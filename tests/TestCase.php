@@ -14,14 +14,14 @@ abstract class TestCase extends BaseTestCase
 
         $uses = array_flip(class_uses_recursive(static::class));
 
-        if (isset($uses[AuthsUser::class])) {
-            $this->loginTestUser();
+        if (isset($uses[HasUser::class])) {
+            $this->createTestUser();
         }
 
-        if (isset($uses[PassportUser::class])) {
+        if (isset($uses[PassportHelper::class])) {
             $client_repository = app(ClientRepository::class);
 
-            $this->loginTestUser($client_repository);
+            $this->setUpPersonalAccessClient($client_repository);
         }
     }
 }

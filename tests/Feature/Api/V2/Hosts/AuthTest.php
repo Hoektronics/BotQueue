@@ -6,14 +6,16 @@ use App\Enums\HostRequestStatusEnum;
 use App\HostRequest;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
-use Tests\PassportUser;
+use Tests\HasUser;
+use Tests\PassportHelper;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Lcobucci\JWT\Parser as JwtParser;
 
 class AuthTest extends TestCase
 {
-    use PassportUser;
+    use HasUser;
+    use PassportHelper;
     use RefreshDatabase;
 
     public function testFullWorkflow()
@@ -78,21 +80,15 @@ class AuthTest extends TestCase
         $jwt = app(JwtParser::class);
 
         $full_token = $this->user->createToken('Test', ['host']);
-        $first_access_token = $full_token->accessToken;
+        $original_access_token = $full_token->accessToken;
 
-        $first_expire_time = $jwt->parse($first_access_token)->getClaim('exp');
+        $first_expire_time = $jwt->parse($original_access_token)->getClaim('exp');
 
         sleep(1);
 
         $refresh_response = $this
-            ->json(
-                'POST',
-                '/api/v2/hosts/refresh',
-                $data = [],
-                $headers = [
-                    'Authorization' => 'Bearer ' . $full_token->accessToken,
-                ]
-            );
+            ->withAccessToken($original_access_token)
+            ->json('POST', '/api/v2/hosts/refresh');
 
         $refresh_response
             ->assertStatus(Response::HTTP_OK)

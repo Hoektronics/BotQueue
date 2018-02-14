@@ -8,12 +8,14 @@ use App\Enums\BotStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
-use Tests\PassportUser;
+use Tests\HasUser;
+use Tests\PassportHelper;
 use Tests\TestCase;
 
 class BotsTest extends TestCase
 {
-    use PassportUser;
+    use HasUser;
+    use PassportHelper;
     use RefreshDatabase;
 
     public function testBotsIndex()
@@ -24,6 +26,7 @@ class BotsTest extends TestCase
         ]);
 
         $response = $this
+            ->withTokenFromUser($this->user)
             ->json('GET', '/api/v2/bots');
 
         $response
@@ -58,6 +61,7 @@ class BotsTest extends TestCase
         ]);
 
         $response = $this
+            ->withTokenFromUser($this->user)
             ->json('GET', '/api/v2/bots');
 
         $response
@@ -89,6 +93,7 @@ class BotsTest extends TestCase
 
         $bot_id = $bot->id;
         $response = $this
+            ->withTokenFromUser($this->user)
             ->json('GET', "/api/v2/bots/${bot_id}");
 
         $response
@@ -117,6 +122,7 @@ class BotsTest extends TestCase
 
         $bot_id = $other_bot->id;
         $response = $this
+            ->withTokenFromUser($this->user)
             ->json('GET', "/api/v2/bots/${bot_id}");
 
         $response

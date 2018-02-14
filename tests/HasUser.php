@@ -6,14 +6,12 @@ namespace Tests;
 use App;
 use Illuminate\Support\Facades\Auth;
 
-trait AuthsUser
+trait HasUser
 {
     /** @var App\User $user */
     protected $user;
 
-    public function loginTestUser() {
+    public function createTestUser() {
         $this->user = factory(App\User::class)->create();
-
-        Auth::login($this->user);
     }
 }

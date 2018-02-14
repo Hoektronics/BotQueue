@@ -5,13 +5,14 @@ namespace Tests\Unit;
 use App;
 use App\Rules\MatchExists;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Tests\AuthsUser;
+use Tests\HasUser;
 use Tests\TestCase;
 
 class MatchExistsTest extends TestCase
 {
-    use AuthsUser;
+    use HasUser;
     use RefreshDatabase;
 
     public function testMatchingOnModelIdAttribute()
@@ -86,6 +87,8 @@ class MatchExistsTest extends TestCase
 
     public function testFieldMatchesWithScope()
     {
+        Auth::login($this->user);
+
         $bot = factory(App\Bot::class)->create([
             'creator_id' => $this->user->id,
         ]);
