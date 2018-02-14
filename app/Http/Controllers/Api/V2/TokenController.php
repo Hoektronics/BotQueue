@@ -8,10 +8,8 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\ClientRepository;
 use Laravel\Passport\Bridge\Scope;
-use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser as JwtParser;
-use League\OAuth2\Server\CryptKey;
 
 class TokenController extends Controller
 {
@@ -47,25 +45,10 @@ class TokenController extends Controller
         $token->expires_at = $accessToken->getExpiryDateTime();
         $token->save();
 
-        $jwtToken = $accessToken->convertToJWT($this->makeCryptKey('oauth-private.key'));
+        $jwtToken = $accessToken->convertToJWT(passport_private_key());
         return response()->json([
             'access_token' => (string)$jwtToken,
         ]);
-    }
-
-    /**
-     * Create a CryptKey instance without permissions check
-     *
-     * @param string $key
-     * @return \League\OAuth2\Server\CryptKey
-     */
-    protected function makeCryptKey($key)
-    {
-        return new CryptKey(
-            'file://'.Passport::keyPath($key),
-            null,
-            false
-        );
     }
 
     /**
@@ -96,7 +79,7 @@ class TokenController extends Controller
 
         $client = $this->clientRepository->getClientEntity(
             $token->client_id,
-            'personal_access',
+            'host',
             null,
             false
         );

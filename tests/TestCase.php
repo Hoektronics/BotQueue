@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
         if (isset($uses[PassportHelper::class])) {
             $client_repository = app(ClientRepository::class);
 
-            $this->setUpPersonalAccessClient($client_repository);
+            $this->setUpClients($client_repository);
         }
     }
 }

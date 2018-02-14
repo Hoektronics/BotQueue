@@ -46,3 +46,11 @@ $factory->define(App\HostRequest::class, function (Faker $faker) {
         'hostname' => $faker->domainWord,
     ];
 });
+
+$factory->define(App\Host::class, function (Faker $faker) {
+    return [
+        'local_ip' => $faker->localIpv4,
+        'remote_ip' => $faker->ipv4,
+        'name' => $faker->name,
+    ];
+});

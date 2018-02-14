@@ -30,8 +30,10 @@ Route::middleware('auth:api')
     });
 
 Route::prefix('hosts')
-    ->middleware('auth:api')
-    ->middleware('scope:host')
+    ->middleware([
+        'scope:host',
+        'auth:api',
+    ])
     ->group(function () {
         Route::post('refresh', 'TokenController@refresh');
     });

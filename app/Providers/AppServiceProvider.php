@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\HostRequest;
-use App\Observers\HostRequestObserver;
+use App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        HostRequest::observe(HostRequestObserver::class);
+        App\Host::observe(App\Observers\HostObserver::class);
+        App\HostRequest::observe(App\Observers\HostRequestObserver::class);
     }
 
     /**

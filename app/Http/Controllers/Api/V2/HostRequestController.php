@@ -31,20 +31,16 @@ class HostRequestController extends Controller
     public function access(HostRequest $host_request)
     {
         $name = "Host";
-        $claimer = User::find($host_request->claimer_id);
-
-        $full_token = $claimer->createToken("${name} Token", ['host']);
 
         $host = new Host([
             'local_ip' => $host_request->local_ip,
             'remote_ip' => $host_request->remote_ip,
             'name' => $name,
-            'owner_id' => $claimer->id,
-            'token_id' => $full_token->token->id,
+            'owner_id' => $host_request->claimer_id,
         ]);
 
         $host->save();
 
-        return new HostResource($host, $full_token->accessToken);
+        return new HostResource($host, $host->getAccessToken());
     }
 }
