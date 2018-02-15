@@ -21,6 +21,16 @@ class AuthServiceProvider extends ServiceProvider
         App\User::class => App\Policies\UserPolicy::class,
     ];
 
+    public function register()
+    {
+        $this->app->extend(AuthorizationServer::class, function($server) {
+            /** @var $server AuthorizationServer */
+            $server->enableGrantType(new HostGrant, new DateInterval('P1Y'));
+
+            return $server;
+        });
+    }
+
     /**
      * Register any authentication / authorization services.
      *
@@ -29,11 +39,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        tap(app(AuthorizationServer::class), function($server) {
-            /** @var $server AuthorizationServer */
-            $server->enableGrantType(new HostGrant, new DateInterval('P1Y'));
-        });
 
         Passport::tokensCan([
             'host' => 'Be a host',
