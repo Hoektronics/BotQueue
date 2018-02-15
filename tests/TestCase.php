@@ -23,5 +23,9 @@ abstract class TestCase extends BaseTestCase
 
             $this->setUpClients($client_repository);
         }
+
+        if (isset($uses[HasHost::class])) {
+            $this->createTestHost();
+        }
     }
 }

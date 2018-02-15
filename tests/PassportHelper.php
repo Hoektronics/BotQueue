@@ -47,8 +47,12 @@ trait PassportHelper
      * @param array $scopes
      * @return $this
      */
-    public function withTokenFromUser($user, $scopes = [])
+    public function withTokenFromUser($user, $scopes = ['*'])
     {
+        if(! is_array($scopes)) {
+            $scopes = [$scopes];
+        }
+
         $token = $user->createToken('Test Token', $scopes);
 
         $this->withAccessToken($token->accessToken);

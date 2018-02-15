@@ -23,17 +23,20 @@ Route::prefix('host_requests')
 
 Route::middleware('auth:api')
     ->group(function () {
-        Route::get('users/{user}', 'UserController@show')->middleware('can:view,user');
+        Route::get('users/{user}', 'UserController@show')
+            ->middleware('can:view,user')
+            ->middleware('scope:users');
 
-        Route::get('bots', 'BotController@index');
-        Route::get('bots/{bot}', 'BotController@show')->middleware('can:view,bot');
+        Route::get('bots', 'BotController@index')
+            ->middleware('scope:bots');
+        Route::get('bots/{bot}', 'BotController@show')
+            ->middleware('can:view,bot')
+            ->middleware('scope:bots');
     });
 
 Route::prefix('hosts')
-    ->middleware([
-        'scope:host',
-        'auth:api',
-    ])
+    ->middleware('scope:host')
+    ->middleware('auth:api')
     ->group(function () {
         Route::post('refresh', 'TokenController@refresh');
     });

@@ -34,6 +34,23 @@ class UsersTest extends TestCase
             ]);
     }
 
+    public function testCanSeeMyUserGivenExplicitScope()
+    {
+        $user_id = $this->user->id;
+        $response = $this
+            ->withTokenFromUser($this->user, 'users')
+            ->json('GET', "/api/v2/users/${user_id}");
+
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'data' => [
+                    'id' => $this->user->id,
+                    'username' => $this->user->username
+                ]
+            ]);
+    }
+
     public function testCannotSeeOtherUser()
     {
         $other_user = factory(User::class)->create();
@@ -41,6 +58,19 @@ class UsersTest extends TestCase
         $user_id = $other_user->id;
         $response = $this
             ->withTokenFromUser($this->user)
+            ->json('GET', "/api/v2/users/${user_id}");
+
+        $response
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testCannotSeeMyUserIfMissingCorrectScope()
+    {
+        $other_user = factory(User::class)->create();
+
+        $user_id = $other_user->id;
+        $response = $this
+            ->withTokenFromUser($this->user, [])
             ->json('GET', "/api/v2/users/${user_id}");
 
         $response

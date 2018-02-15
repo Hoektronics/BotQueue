@@ -113,6 +113,35 @@ class BotsTest extends TestCase
             ]);
     }
 
+    public function testCanSeeMyOwnBotGivenExplicitScope()
+    {
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $bot_id = $bot->id;
+        $response = $this
+            ->withTokenFromUser($this->user, 'bots')
+            ->json('GET', "/api/v2/bots/${bot_id}");
+
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'data' => [
+                    'id' => $bot->id,
+                    'name' => $bot->name,
+                    'type' => '3d_printer',
+                    'status' => BotStatusEnum::Offline,
+                    'creator' => [
+                        'id' => $this->user->id,
+                        'username' => $this->user->username,
+                        'link' => url('/api/v2/users', $this->user->id),
+                    ]
+                ]
+            ]);
+    }
+
     public function testCannotSeeOtherBot()
     {
         $other_user = factory(User::class)->create();
@@ -123,6 +152,22 @@ class BotsTest extends TestCase
         $bot_id = $other_bot->id;
         $response = $this
             ->withTokenFromUser($this->user)
+            ->json('GET', "/api/v2/bots/${bot_id}");
+
+        $response
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testCannotSeeMyBotIfMissingCorrectScope()
+    {
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $bot_id = $bot->id;
+        $response = $this
+            ->withTokenFromUser($this->user, [])
             ->json('GET', "/api/v2/bots/${bot_id}");
 
         $response
