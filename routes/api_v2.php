@@ -27,16 +27,18 @@ Route::middleware('auth:api')
             ->middleware('can:view,user')
             ->middleware('scope:users');
 
-        Route::get('bots', 'BotController@index')
-            ->middleware('scope:bots');
-        Route::get('bots/{bot}', 'BotController@show')
-            ->middleware('can:view,bot')
-            ->middleware('scope:bots');
-    });
+        Route::prefix('bots')
+            ->middleware('scope:bots')
+            ->group(function() {
+                Route::get('/', 'BotController@index');
 
-Route::prefix('hosts')
-    ->middleware('scope:host')
-    ->middleware('auth:api')
-    ->group(function () {
-        Route::post('refresh', 'TokenController@refresh');
+                Route::get('{bot}', 'BotController@show')
+                    ->middleware('can:view,bot');
+            });
+
+        Route::prefix('hosts')
+            ->middleware('scope:host')
+            ->group(function() {
+                Route::post('refresh', 'TokenController@refresh');
+            });
     });
