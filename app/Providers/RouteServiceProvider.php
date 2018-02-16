@@ -27,6 +27,7 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot();
 
         Route::model('bot', App\Bot::class);
+        Route::model('host', App\Host::class);
         Route::model('host_request', App\HostRequest::class);
         Route::model('user', App\User::class);
     }

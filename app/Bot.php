@@ -71,4 +71,11 @@ class Bot extends Model
     public function scopeMine($query) {
         return $query->where('creator_id', Auth::user()->id);
     }
+
+    public function assignTo($host)
+    {
+        $this->host_id = $host->id;
+
+        $this->save();
+    }
 }

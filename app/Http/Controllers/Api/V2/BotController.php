@@ -20,6 +20,8 @@ class BotController extends Controller
 
     public function show(Bot $bot)
     {
+        $bot->load('creator');
+
         return new BotResource($bot);
     }
 }

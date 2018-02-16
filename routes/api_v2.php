@@ -40,5 +40,7 @@ Route::middleware('auth:api')
             ->middleware('scope:host')
             ->group(function() {
                 Route::post('refresh', 'TokenController@refresh');
+
+                Route::get('{host}/bots', 'HostController@bots');
             });
     });

@@ -29,6 +29,11 @@ class Host extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function bots()
+    {
+        return $this->hasMany(Bot::class);
+    }
+
     protected $accessToken;
 
     public function getAccessToken()
