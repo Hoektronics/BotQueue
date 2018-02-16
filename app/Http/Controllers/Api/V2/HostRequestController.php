@@ -25,6 +25,8 @@ class HostRequestController extends Controller
 
     public function show(HostRequest $host_request)
     {
+        $host_request->load('claimer');
+
         return new HostRequestResource($host_request);
     }
 

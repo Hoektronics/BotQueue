@@ -18,7 +18,7 @@ class HostRequestResource extends Resource
             'id' => $this->id,
             'status' => $this->status,
             'expires_at' => $this->expires_at,
-            'claimer' => $this->when($this->claimer_id !== null, function() {
+            'claimer' => $this->whenLoaded('claimer', function() {
                 return [
                     'id' => $this->claimer->id,
                     'username' => $this->claimer->username,
