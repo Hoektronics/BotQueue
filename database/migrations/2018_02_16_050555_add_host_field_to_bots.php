@@ -15,7 +15,7 @@ class AddHostFieldToBots extends Migration
     {
         Schema::table('bots', function (Blueprint $table) {
             $table->integer('host_id')->unsigned()->nullable();
-            $table->foreign('host_id')->references('host')->on('hosts');
+            $table->foreign('host_id')->references('id')->on('hosts');
         });
     }
 
