@@ -19,10 +19,9 @@ class UsersTest extends TestCase
 
     public function testHostCanNotAccessSpecificUserEvenIfUserOwnsHost()
     {
-        $user_id = $this->user->id;
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/v2/users/${user_id}");
+            ->json('GET', "/api/v2/users/{$this->user->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }

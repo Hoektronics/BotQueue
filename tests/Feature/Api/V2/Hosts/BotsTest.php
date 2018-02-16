@@ -34,10 +34,9 @@ class BotsTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $bot_id = $bot->id;
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/v2/bots/${bot_id}");
+            ->json('GET', "/api/v2/bots/{$bot->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }

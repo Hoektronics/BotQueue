@@ -26,7 +26,7 @@ class AuthTest extends TestCase
 
         $host_request = HostRequest::find($host_request_id);
 
-        $before_claim = $this->json('GET', "/api/v2/host_requests/${host_request_id}");
+        $before_claim = $this->json('GET', "/api/v2/host_requests/{$host_request->id}");
 
         $before_claim
             ->assertStatus(Response::HTTP_OK)
@@ -39,13 +39,13 @@ class AuthTest extends TestCase
 
         $this->user->claim($host_request, 'Test name');
 
-        $after_claim = $this->json('GET', "/api/v2/host_requests/${host_request_id}");
+        $after_claim = $this->json('GET', "/api/v2/host_requests/{$host_request->id}");
 
         $after_claim
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    'id' => $host_request_id,
+                    'id' => $host_request->id,
                     'status' => HostRequestStatusEnum::Claimed,
                     'claimer' => [
                         'id' => $this->user->id,
@@ -55,7 +55,7 @@ class AuthTest extends TestCase
                 ]
             ]);
 
-        $host_access_response = $this->json('POST', "/api/v2/host_requests/${host_request_id}/access");
+        $host_access_response = $this->json('POST', "/api/v2/host_requests/{$host_request->id}/access");
 
         $host_access_response
             ->assertStatus(Response::HTTP_CREATED)
