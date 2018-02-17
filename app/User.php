@@ -67,15 +67,18 @@ class User extends Authenticatable
         $request->save();
     }
 
-    public function bots() {
+    public function bots()
+    {
         return $this->hasMany(Bot::class, 'creator_id');
     }
 
-    public function clusters() {
+    public function clusters()
+    {
         return $this->hasMany(Cluster::class, 'creator_id');
     }
 
-    public function files() {
+    public function files()
+    {
         return $this->hasMany(File::class, 'uploader_id');
     }
 }

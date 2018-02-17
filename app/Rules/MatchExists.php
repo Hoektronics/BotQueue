@@ -63,12 +63,14 @@ class MatchExists implements Rule
     }
 }
 
-class MatchFieldSet {
+class MatchFieldSet
+{
     protected $regex_pattern;
     protected $attributes;
     protected $type;
 
-    public function __construct($key, $type) {
+    public function __construct($key, $type)
+    {
         $matches = [];
         preg_match_all('/\{(\w+)\}/', $key, $matches);
 
@@ -81,7 +83,8 @@ class MatchFieldSet {
         $this->type = $type;
     }
 
-    public function matches($value) {
+    public function matches($value)
+    {
         $matches = $this->getMatches($value);
 
         return ! is_null($matches);
@@ -94,7 +97,8 @@ class MatchFieldSet {
         return ! is_null($model);
     }
 
-    public function getModel($value) {
+    public function getModel($value)
+    {
         $matches = $this->getMatches($value);
 
         $keyed_match = array_combine($this->attributes, $matches);
@@ -125,11 +129,13 @@ class MatchFieldSet {
         $matches = [];
         $patternMatched = preg_match_all($this->regex_pattern, $value, $matches);
 
-        if ($patternMatched == false)
+        if ($patternMatched == false) {
             return null;
+        }
 
-        if (! isset($matches[1]))
+        if (! isset($matches[1])) {
             return null;
+        }
 
         return $matches[1];
     }

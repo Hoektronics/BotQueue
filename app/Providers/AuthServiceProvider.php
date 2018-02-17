@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->extend(AuthorizationServer::class, function($server) {
+        $this->app->extend(AuthorizationServer::class, function ($server) {
             /** @var $server AuthorizationServer */
             $server->enableGrantType(new HostGrant, new DateInterval('P1Y'));
 

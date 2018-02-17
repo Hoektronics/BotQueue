@@ -25,7 +25,8 @@ class Host extends Model
         'name',
     ];
 
-    public function owner() {
+    public function owner()
+    {
         return $this->belongsTo(User::class);
     }
 
@@ -38,8 +39,9 @@ class Host extends Model
 
     public function getAccessToken()
     {
-        if ($this->accessToken !== null)
+        if ($this->accessToken !== null) {
             return $this->accessToken;
+        }
 
         $client = $this->client();
 

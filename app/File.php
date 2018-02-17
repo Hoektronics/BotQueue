@@ -45,7 +45,8 @@ class File extends Model
         'uploader_id'
     ];
 
-    public function uploader() {
+    public function uploader()
+    {
         return $this->belongsTo(User::class);
     }
 

@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 use App\Enums\BotStatusEnum;
 
 class BotStatusService
@@ -26,7 +25,8 @@ class BotStatusService
      * @param $status
      * @return string
      */
-    public function label($status) {
+    public function label($status)
+    {
         $labelClass = $this->label_class($status);
 
         return "<span class=\"label $labelClass\">$status</span>";

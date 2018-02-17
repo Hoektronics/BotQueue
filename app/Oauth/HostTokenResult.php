@@ -3,7 +3,6 @@
 
 namespace App\Oauth;
 
-
 class HostTokenResult implements Arrayable, Jsonable
 {
     /**

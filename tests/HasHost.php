@@ -11,7 +11,8 @@ trait HasHost
     /** @var App\Host $user */
     protected $host;
 
-    public function createTestHost() {
+    public function createTestHost()
+    {
         $this->host = factory(App\Host::class)->create([
             'owner_id' => $this->user->id,
         ]);

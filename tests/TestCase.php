@@ -9,7 +9,8 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    public function setUpTraits() {
+    public function setUpTraits()
+    {
         parent::setUpTraits();
 
         $uses = array_flip(class_uses_recursive(static::class));

@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 class BotStatusEnum
 {
     const Idle = 'idle';

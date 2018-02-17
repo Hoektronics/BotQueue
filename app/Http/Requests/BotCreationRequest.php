@@ -33,7 +33,7 @@ class BotCreationRequest extends FormRequest
             ],
             'cluster' => [
                 'required',
-                Rule::exists('clusters', 'id')->where(function($query) {
+                Rule::exists('clusters', 'id')->where(function ($query) {
                     $query->where('creator_id', Auth::user()->id);
                 })
             ],

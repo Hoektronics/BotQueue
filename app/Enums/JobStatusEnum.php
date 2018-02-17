@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 class JobStatusEnum
 {
     const Queued = 'queued';

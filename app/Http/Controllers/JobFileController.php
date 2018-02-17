@@ -17,7 +17,8 @@ class JobFileController extends Controller
         $this->middleware('auth');
     }
 
-    public function create(App\File $file) {
+    public function create(App\File $file)
+    {
         return view('job.create.file', [
             'file' => $file,
             'bots' => App\Bot::mine()->get(),

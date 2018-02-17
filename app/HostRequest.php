@@ -50,7 +50,8 @@ class HostRequest extends Model
         'status' => HostRequestStatusEnum::Requested,
     ];
 
-    public function claimer() {
+    public function claimer()
+    {
         return $this->belongsTo(User::class);
     }
 }

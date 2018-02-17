@@ -29,7 +29,7 @@ Route::middleware('auth:api')
 
         Route::prefix('bots')
             ->middleware('scope:bots')
-            ->group(function() {
+            ->group(function () {
                 Route::get('/', 'BotController@index');
 
                 Route::get('{bot}', 'BotController@show')
@@ -38,7 +38,7 @@ Route::middleware('auth:api')
 
         Route::prefix('hosts')
             ->middleware('scope:host')
-            ->group(function() {
+            ->group(function () {
                 Route::post('refresh', 'TokenController@refresh');
 
                 Route::get('{host}/bots', 'HostController@bots');
