@@ -3,7 +3,6 @@
 
 namespace App\Observers;
 
-
 use App\HostRequest;
 
 class HostRequestObserver

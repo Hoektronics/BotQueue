@@ -49,7 +49,7 @@ trait PassportHelper
      */
     public function withTokenFromUser($user, $scopes = ['*'])
     {
-        if(! is_array($scopes)) {
+        if (! is_array($scopes)) {
             $scopes = [$scopes];
         }
 

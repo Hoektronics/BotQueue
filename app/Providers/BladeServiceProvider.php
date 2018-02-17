@@ -16,7 +16,7 @@ class BladeServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->singleton('App\Services\BotStatusService', function ($app) {
+        $this->app->singleton(\App\Services\BotStatusService::class, function ($app) {
             return new BotStatusService();
         });
     }

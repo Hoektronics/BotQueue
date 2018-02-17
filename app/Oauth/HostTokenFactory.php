@@ -3,7 +3,6 @@
 
 namespace App\Oauth;
 
-
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
@@ -51,11 +50,13 @@ class HostTokenFactory
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                ClientRepository $clients,
-                                TokenRepository $tokens,
-                                JwtParser $jwt)
-    {
+    public function __construct(
+        AuthorizationServer $server,
+        ClientRepository $clients,
+        TokenRepository $tokens,
+        JwtParser $jwt
+    ) {
+    
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
@@ -85,7 +86,8 @@ class HostTokenFactory
         });
 
         return new HostTokenResult(
-            $response['access_token'], $token
+            $response['access_token'],
+            $token
         );
     }
 
@@ -117,7 +119,8 @@ class HostTokenFactory
     protected function dispatchRequestToAuthorizationServer(ServerRequest $request)
     {
         return json_decode($this->server->respondToAccessTokenRequest(
-            $request, new Response
+            $request,
+            new Response
         )->getBody()->__toString(), true);
     }
 

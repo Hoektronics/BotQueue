@@ -54,11 +54,13 @@ class Bot extends Model
         'status' => BotStatusEnum::Offline,
     ];
 
-    public function creator() {
+    public function creator()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function clusters() {
+    public function clusters()
+    {
         return $this->belongsToMany(Cluster::class);
     }
 
@@ -68,7 +70,8 @@ class Bot extends Model
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeMine($query) {
+    public function scopeMine($query)
+    {
         return $query->where('creator_id', Auth::user()->id);
     }
 

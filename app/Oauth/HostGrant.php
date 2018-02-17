@@ -3,7 +3,6 @@
 
 namespace App\Oauth;
 
-
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,8 +16,8 @@ class HostGrant extends AbstractGrant
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
-    )
-    {
+    ) {
+    
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
@@ -28,8 +27,10 @@ class HostGrant extends AbstractGrant
 
         // Issue and persist access token
         $accessToken = $this->issueAccessToken(
-            $accessTokenTTL, $client,
-            $this->getRequestParameter('user_id', $request), $scopes
+            $accessTokenTTL,
+            $client,
+            $this->getRequestParameter('user_id', $request),
+            $scopes
         );
 
         // Inject access token into response type

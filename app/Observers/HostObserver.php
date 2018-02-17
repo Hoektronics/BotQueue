@@ -3,7 +3,6 @@
 
 namespace App\Observers;
 
-
 use App\Host;
 use App\Oauth\OauthHostClient;
 use DateInterval;
@@ -28,9 +27,11 @@ class HostObserver
      */
     private $jwt;
 
-    public function __construct(ClientRepository $clientRepository,
-                                TokenRepository $tokenRepository,
-                                JwtParser $jwt) {
+    public function __construct(
+        ClientRepository $clientRepository,
+        TokenRepository $tokenRepository,
+        JwtParser $jwt
+    ) {
 
         $this->clientRepository = $clientRepository;
         $this->tokenRepository = $tokenRepository;

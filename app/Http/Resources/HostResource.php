@@ -9,7 +9,8 @@ class HostResource extends Resource
 {
     protected $access_token;
 
-    public function __construct(Host $host, $access_token) {
+    public function __construct(Host $host, $access_token)
+    {
         parent::__construct($host);
 
         $this->access_token = $access_token;

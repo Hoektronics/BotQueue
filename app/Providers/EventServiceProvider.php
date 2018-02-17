@@ -12,18 +12,18 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\UserCreated' => [
-            'App\Listeners\SetupDefaultCluster',
-            'App\Listeners\EmailNewUser',
+        \App\Events\UserCreated::class => [
+            \App\Listeners\SetupDefaultCluster::class,
+            \App\Listeners\EmailNewUser::class,
         ],
-        'App\Events\BotCanGrabJob' => [
+        \App\Events\BotCanGrabJob::class => [
 
         ],
-        'App\Events\BotCreated' => [
-            'App\Listeners\NotifyEligibleBots'
+        \App\Events\BotCreated::class => [
+            \App\Listeners\NotifyEligibleBots::class
         ],
-        'App\Events\JobCreated' => [
-            'App\Listeners\NotifyEligibleBots'
+        \App\Events\JobCreated::class => [
+            \App\Listeners\NotifyEligibleBots::class
         ],
     ];
 

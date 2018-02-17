@@ -3,7 +3,6 @@
 
 namespace App\Enums;
 
-
 class HostRequestStatusEnum
 {
     const Requested = 'requested';
