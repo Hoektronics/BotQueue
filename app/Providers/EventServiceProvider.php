@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events;
+use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -12,18 +14,18 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        \App\Events\UserCreated::class => [
-            \App\Listeners\SetupDefaultCluster::class,
-            \App\Listeners\EmailNewUser::class,
+        Events\UserCreated::class => [
+            Listeners\SetupDefaultCluster::class,
+            Listeners\EmailNewUser::class,
         ],
-        \App\Events\BotCanGrabJob::class => [
+        Events\BotCanGrabJob::class => [
 
         ],
-        \App\Events\BotCreated::class => [
-            \App\Listeners\NotifyEligibleBots::class
+        Events\BotCreated::class => [
+            Listeners\NotifyEligibleBots::class
         ],
-        \App\Events\JobCreated::class => [
-            \App\Listeners\NotifyEligibleBots::class
+        Events\JobCreated::class => [
+            Listeners\NotifyEligibleBots::class
         ],
     ];
 
