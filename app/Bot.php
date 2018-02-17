@@ -4,6 +4,8 @@ namespace App;
 
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
+use App\Events\Host\BotAssignedToHost;
+use App\Events\Host\BotRemovedFromHost;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,6 +66,11 @@ class Bot extends Model
         return $this->belongsToMany(Cluster::class);
     }
 
+    public function host()
+    {
+        return $this->belongsTo(Host::class);
+    }
+
     /**
      * Scope to only include bots belonging to the currently authenticated user
      *
@@ -77,8 +84,16 @@ class Bot extends Model
 
     public function assignTo($host)
     {
+        if($this->host_id !== null) {
+            $oldHost = $this->host;
+
+            event(new BotRemovedFromHost($this, $oldHost));
+        }
+
         $this->host_id = $host->id;
 
         $this->save();
+
+        event(new BotAssignedToHost($this, $host));
     }
 }

@@ -4,7 +4,11 @@ namespace Tests\Feature\Api\V2\Hosts;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
+use App\Events\Host\BotAssignedToHost;
+use App\Events\Host\BotRemovedFromHost;
+use App\Host;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Event;
 use Tests\HasHost;
 use Tests\HasUser;
 use Tests\PassportHelper;
@@ -67,5 +71,57 @@ class BotsTest extends TestCase
                 ]
             ])
             ->assertDontSee('creator');
+    }
+
+    public function testAssigningBotFiresAssignedEvent()
+    {
+        Event::fake([
+            BotAssignedToHost::class,
+        ]);
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $bot->assignTo($this->host);
+
+        Event::assertDispatched(BotAssignedToHost::class, function ($event) use ($bot) {
+            /** @var $event BotAssignedToHost */
+            return $event->bot->id == $bot->id &&
+                $event->host->id == $this->host->id;
+        });
+    }
+
+    public function testAssigningBotToNewHostFiresRemovedEvent()
+    {
+        Event::fake([
+            BotAssignedToHost::class,
+            BotRemovedFromHost::class,
+        ]);
+
+        $otherHost = factory(Host::class)->create([
+            'owner_id' => $this->user->id,
+        ]);
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+            'host_id' => $otherHost->id,
+        ]);
+
+        $bot->assignTo($this->host);
+
+        Event::assertDispatched(BotAssignedToHost::class, function ($event) use ($bot) {
+            /** @var $event BotAssignedToHost */
+            return $event->bot->id == $bot->id &&
+                $event->host->id == $this->host->id;
+        });
+
+        Event::assertDispatched(BotRemovedFromHost::class, function ($event) use ($bot, $otherHost) {
+            /** @var $event BotRemovedFromHost */
+            return $event->bot->id == $bot->id &&
+                $event->host->id == $otherHost->id;
+        });
     }
 }
