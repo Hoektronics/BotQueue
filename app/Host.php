@@ -10,6 +10,31 @@ use Laravel\Passport\Bridge\ClientRepository;
 use Laravel\Passport\Bridge\Scope;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
+/**
+ * App\Host
+ *
+ * @property int $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property string|null $seen_at
+ * @property string|null $local_ip
+ * @property string|null $remote_ip
+ * @property string $name
+ * @property int $owner_id
+ * @property string $token_id
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
+ * @property-read \App\User $owner
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereLocalIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereRemoteIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereSeenAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereTokenId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Host extends Model
 {
     /**

@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Query\Builder|\App\Bot mine()
  * @property string $type
  * @method static \Illuminate\Database\Query\Builder|\App\Bot whereType($value)
+ * @property-read \App\Host $host
  */
 class Bot extends Model
 {

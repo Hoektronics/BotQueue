@@ -5,6 +5,20 @@ namespace App\Oauth;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\Client;
 
+/**
+ * App\Oauth\OauthHostClient
+ *
+ * @property int $id
+ * @property int $client_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Laravel\Passport\Client $client
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient whereClientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class OauthHostClient extends Model
 {
     /**

@@ -27,6 +27,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereStatus($value)
  * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $claimer_id
+ * @property-read \App\User|null $claimer
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereClaimerId($value)
  */
 class HostRequest extends Model
 {

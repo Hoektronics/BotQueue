@@ -3,6 +3,9 @@
 
 namespace App\Oauth;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+
 class HostTokenResult implements Arrayable, Jsonable
 {
     /**
