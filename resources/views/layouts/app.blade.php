@@ -10,7 +10,7 @@
         <title>BotQueue</title>
     </head>
     <body>
-        <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <nav class="navbar fixed-top navbar-expand-md navbar-light bg-light">
             <a class="navbar-brand" href="#">BotQueue</a>
                 {{--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"--}}
                         {{--data-target="#main-navbar-collapse" aria-expanded="false">--}}
