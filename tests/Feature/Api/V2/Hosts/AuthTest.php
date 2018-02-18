@@ -6,7 +6,6 @@ use App\Enums\HostRequestStatusEnum;
 use App\Host;
 use App\HostRequest;
 use Illuminate\Http\Response;
-use Laravel\Passport\Passport;
 use Tests\HasUser;
 use Tests\PassportHelper;
 use Tests\TestCase;
@@ -57,20 +56,26 @@ class AuthTest extends TestCase
 
         $host_access_response = $this->json('POST', "/api/v2/host_requests/{$host_request->id}/access");
 
+        $host = Host::where(['owner_id' => $this->user->id])->first();
+
         $host_access_response
             ->assertStatus(Response::HTTP_CREATED)
+            ->assertJson([
+                'data' => [
+                    'host' => [
+                        'id' => $host->id,
+                        'name' => $host->name,
+                        'owner' =>[
+                            'id' => $this->user->id,
+                            'username' => $this->user->username,
+                            'link' => url('/api/v2/users', $this->user->id),
+                        ]
+                    ]
+                ]
+            ])
             ->assertJsonStructure([
                 'data' => [
                     'access_token',
-                    'host' => [
-                        'id',
-                        'name',
-                        'owner' => [
-                            'id',
-                            'username',
-                            'link',
-                        ]
-                    ]
                 ]
             ]);
     }
