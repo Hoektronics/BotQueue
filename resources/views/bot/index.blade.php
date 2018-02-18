@@ -3,12 +3,11 @@
 @inject('bot_status', 'App\Services\BotStatusService')
 
 @section('content')
-    <div class="page-header">
-        <div class="btn-toolbar pull-right">
-            <a role="button" class="btn btn-primary btn-lg" href="{{ route('bots.create') }}">Create a Bot</a>
-        </div>
-        <h1>Bots</h1>
+    <div class="btn-toolbar float-right">
+        <a role="button" class="btn btn-primary btn-lg" href="{{ route('bots.create') }}">Create a Bot</a>
     </div>
+
+    <h1>Bots</h1>
 
     @if(count($bots) == 0)
         <h4>
@@ -21,9 +20,9 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th class="col-md-3">Bot Name</th>
-                    <th class="col-md-1">Status</th>
-                    <th>Clusters</th>
+                    <th class="col-md-auto">Bot Name</th>
+                    <th class="col-md-auto">Status</th>
+                    <th class="col-md-auto">Clusters</th>
                 </tr>
             </thead>
             @foreach($bots as $bot)

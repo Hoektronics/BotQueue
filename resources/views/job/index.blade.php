@@ -3,18 +3,17 @@
 @inject('job_status', 'App\Services\JobStatusService')
 
 @section('content')
-    <div class="page-header">
-        <div class="btn-toolbar pull-right">
-            <a role="button" class="btn btn-primary btn-lg" href="{{ route('files.create') }}">Create a Job</a>
-        </div>
-        <h1>Jobs</h1>
+    <div class="btn-toolbar float-right">
+        <a role="button" class="btn btn-primary btn-lg" href="{{ route('files.create') }}">Create a Job</a>
     </div>
+
+    <h1>Jobs</h1>
 
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th class="col-md-6">Name</th>
-                <th class="col-md-3">Status</th>
+                <th class="col-md-auto">Name</th>
+                <th class="col-md-auto">Status</th>
             </tr>
         </thead>
         @foreach($jobs as $job)

@@ -9,9 +9,9 @@ class BotStatusService
 {
     // Database name to label class
     protected $statusToLabelClass = [
-        BotStatusEnum::Offline => 'label-inverse',
-        BotStatusEnum::Idle => 'label-success',
-        BotStatusEnum::Working => 'label-info',
+        BotStatusEnum::Offline => 'badge-dark',
+        BotStatusEnum::Idle => 'badge-success',
+        BotStatusEnum::Working => 'badge-info',
     ];
 
     // Database name to human readable name
@@ -29,7 +29,7 @@ class BotStatusService
     {
         $labelClass = $this->label_class($status);
 
-        return "<span class=\"label $labelClass\">$status</span>";
+        return "<span class=\"badge $labelClass\">$status</span>";
     }
 
     /**
