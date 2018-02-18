@@ -15,14 +15,7 @@
     </head>
     <body>
         <nav class="navbar fixed-top navbar-expand-md navbar-light bg-light">
-            <a class="navbar-brand" href="#">BotQueue</a>
-                {{--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"--}}
-                        {{--data-target="#main-navbar-collapse" aria-expanded="false">--}}
-                    {{--<span class="sr-only">Toggle navigation</span>--}}
-                    {{--<span class="icon-bar"></span>--}}
-                    {{--<span class="icon-bar"></span>--}}
-                    {{--<span class="icon-bar"></span>--}}
-                {{--</button>--}}
+            <a class="navbar-brand" href="/">BotQueue</a>
 
             <div class="collapse navbar-collapse" id="main-navbar-collapse">
                 <ul class="navbar-nav mr-auto">
