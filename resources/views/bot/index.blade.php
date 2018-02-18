@@ -3,13 +3,11 @@
 @inject('bot_status', 'App\Services\BotStatusService')
 
 @section('content')
-    <div>
-        <div class="btn-toolbar float-right">
-            <a role="button" class="btn btn-primary btn-lg" href="{{ route('bots.create') }}">Create a Bot</a>
-        </div>
-        <h1>Bots</h1>
-        <hr>
+    <div class="btn-toolbar float-right">
+        <a role="button" class="btn btn-primary btn-lg" href="{{ route('bots.create') }}">Create a Bot</a>
     </div>
+
+    <h1>Bots</h1>
 
     @if(count($bots) == 0)
         <h4>
