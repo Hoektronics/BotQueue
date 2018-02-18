@@ -12,14 +12,23 @@ class JobFileCreationRequest extends FormRequest
     /** @var MatchExists $matchExists */
     private $matchExists;
 
+    public function __construct() {
+        parent::__construct();
+
+        $this->matchExists = new MatchExists([
+            'bots_{id}' => App\Bot::mine(),
+            'clusters_{id}' => App\Cluster::mine(),
+        ]);
+    }
+
     /**
      * Validate the class instance.
      *
      * @return void
      */
-    public function validate()
+    public function validateResolved()
     {
-        parent::validate();
+        parent::validateResolved();
 
         $original_value = $this->get('bot_cluster');
 
@@ -45,11 +54,6 @@ class JobFileCreationRequest extends FormRequest
      */
     public function rules()
     {
-        $this->matchExists = new MatchExists([
-            'bots_{id}' => App\Bot::mine(),
-            'clusters_{id}' => App\Cluster::mine(),
-        ]);
-
         return [
             'job_name' => 'required',
             'bot_cluster' => [

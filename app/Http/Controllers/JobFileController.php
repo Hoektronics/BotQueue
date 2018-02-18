@@ -36,6 +36,7 @@ class JobFileController extends Controller
         ]);
 
         $worker = $request->get('bot_cluster');
+
         $job->worker()->associate($worker);
         $job->save();
 
