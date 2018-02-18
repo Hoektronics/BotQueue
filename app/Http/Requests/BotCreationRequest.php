@@ -26,7 +26,7 @@ class BotCreationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|max:255',
+            'name' => 'required|unique:bots,name|max:255',
             'type' => [
                 'required',
                 Rule::in(['3d_printer'])
