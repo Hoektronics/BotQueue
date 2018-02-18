@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\V2\Hosts;
+namespace Tests\Feature\Api\Hosts;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
@@ -26,7 +26,7 @@ class BotsTest extends TestCase
     {
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', '/api/v2/bots');
+            ->json('GET', '/api/bots');
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -40,7 +40,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/v2/bots/{$bot->id}");
+            ->json('GET', "/api/bots/{$bot->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -56,7 +56,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/v2/hosts/{$this->host->id}/bots");
+            ->json('GET', "/api/hosts/{$this->host->id}/bots");
 
         $response
             ->assertStatus(Response::HTTP_OK)

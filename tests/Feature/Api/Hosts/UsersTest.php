@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\V2\Hosts;
+namespace Tests\Feature\Api\Hosts;
 
 use App\Bot;
 use Illuminate\Http\Response;
@@ -21,7 +21,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/v2/users/{$this->user->id}");
+            ->json('GET', "/api/users/{$this->user->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }

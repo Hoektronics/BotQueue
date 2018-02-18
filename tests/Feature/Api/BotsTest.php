@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\V2;
+namespace Tests\Feature\Api;
 
 use App\Bot;
 use App\User;
@@ -27,7 +27,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', '/api/v2/bots');
+            ->json('GET', '/api/bots');
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -41,7 +41,7 @@ class BotsTest extends TestCase
                         'creator' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
-                            'link' => url('/api/v2/users', $this->user->id),
+                            'link' => url('/api/users', $this->user->id),
                         ]
                     ]
                 ]
@@ -62,7 +62,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', '/api/v2/bots');
+            ->json('GET', '/api/bots');
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -76,7 +76,7 @@ class BotsTest extends TestCase
                         'creator' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
-                            'link' => url('/api/v2/users', $this->user->id),
+                            'link' => url('/api/users', $this->user->id),
                         ]
                     ]
                 ]
@@ -93,7 +93,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/v2/bots/{$bot->id}");
+            ->json('GET', "/api/bots/{$bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -106,7 +106,7 @@ class BotsTest extends TestCase
                     'creator' => [
                         'id' => $this->user->id,
                         'username' => $this->user->username,
-                        'link' => url('/api/v2/users', $this->user->id),
+                        'link' => url('/api/users', $this->user->id),
                     ]
                 ]
             ]);
@@ -121,7 +121,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user, 'bots')
-            ->json('GET', "/api/v2/bots/{$bot->id}");
+            ->json('GET', "/api/bots/{$bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -134,7 +134,7 @@ class BotsTest extends TestCase
                     'creator' => [
                         'id' => $this->user->id,
                         'username' => $this->user->username,
-                        'link' => url('/api/v2/users', $this->user->id),
+                        'link' => url('/api/users', $this->user->id),
                     ]
                 ]
             ]);
@@ -149,7 +149,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/v2/bots/{$other_bot->id}");
+            ->json('GET', "/api/bots/{$other_bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -164,7 +164,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user, [])
-            ->json('GET', "/api/v2/bots/{$bot->id}");
+            ->json('GET', "/api/bots/{$bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);
