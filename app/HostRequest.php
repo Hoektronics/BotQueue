@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Enums\HostRequestStatusEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -46,12 +47,16 @@ class HostRequest extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
+        'expires_at',
     ];
 
-    protected $attributes = [
-        'status' => HostRequestStatusEnum::REQUESTED,
-    ];
+    public function getStatusAttribute($value)
+    {
+        if (Carbon::now() > $this->expires_at)
+            return HostRequestStatusEnum::EXPIRED;
+
+        return $value;
+    }
 
     public function claimer()
     {

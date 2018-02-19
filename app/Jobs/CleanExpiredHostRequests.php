@@ -2,29 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Cluster;
+use App\HostRequest;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class AssignJobsForCluster implements ShouldQueue
+class CleanExpiredHostRequests implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    /**
-     * @var Cluster
-     */
-    private $cluster;
-
-    /**
-     * Create a new job instance.
-     *
-     */
-    public function __construct(Cluster $cluster)
-    {
-        $this->cluster = $cluster;
-    }
 
     /**
      * Execute the job.
@@ -33,6 +21,8 @@ class AssignJobsForCluster implements ShouldQueue
      */
     public function handle()
     {
-        //
+        HostRequest::query()
+            ->where('expires_at', '<=', Carbon::now()->subHour())
+            ->delete();
     }
 }
