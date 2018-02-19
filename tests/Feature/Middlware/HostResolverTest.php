@@ -4,6 +4,7 @@ namespace Tests\Feature\Middlware;
 
 use App\Host;
 use App\Http\Middleware\HostResolver;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Tests\HasHost;
@@ -36,10 +37,8 @@ class HostResolverTest extends TestCase
     public function testRequestWithTokenResolvesHost()
     {
         $request = Request::create('http://example.com/host/foo', 'GET');
-        $jwt = $this->host->getJWT();
-
         $request->headers->add([
-            'Authorization' => 'Bearer '.$jwt,
+            'Authorization' => 'Bearer '. $this->host->getJWT(),
         ]);
 
         $middleware = new HostResolver();
@@ -53,5 +52,24 @@ class HostResolverTest extends TestCase
 
         $testHost = app(Host::class);
         $this->assertEquals($this->host->id, $testHost->id);
+    }
+
+    public function testUpdatesSeenAt()
+    {
+        $fakeTimeStamp = Carbon::now()->subMinute();
+        $this->host->seen_at = $fakeTimeStamp;
+        $this->host->save();
+
+        $request = Request::create('http://example.com/host/foo', 'GET');
+        $request->headers->add([
+            'Authorization' => 'Bearer '. $this->host->getJWT(),
+        ]);
+
+        $middleware = new HostResolver();
+
+        $middleware->handle($request, function() {});
+
+        $testHost = Host::find($this->host->id);
+        $this->assertEquals(Carbon::now(), $testHost->seen_at);
     }
 }

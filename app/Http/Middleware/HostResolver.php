@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Host;
 use App\HostManager;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser;
@@ -35,6 +36,9 @@ class HostResolver
         $jti = $token->getClaim('jti');
 
         $host = Host::where('token_id', $jti)->first();
+
+        $host->seen_at = Carbon::now();
+        $host->save();
 
         app(HostManager::class)->setHost($host);
 
