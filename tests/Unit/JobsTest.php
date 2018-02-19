@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App;
+use App\Bot;
+use App\Cluster;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
 use App\Job;
@@ -17,165 +19,135 @@ class JobsTest extends TestCase
     use HasUser;
     use RefreshDatabase;
 
-    public function testJobCreatedEventIsFired()
+    /** @var Bot $bot */
+    protected $bot;
+
+    /** @var Cluster $cluster */
+    protected $cluster;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $this->cluster = factory(App\Cluster::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+        $this->cluster->bots()->save($this->bot);
+    }
+
+    public function testJobCreatedEventIsFiredForBot()
     {
         Event::fake([
             JobCreated::class,
         ]);
 
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
+        $job = $this->createJob($this->bot);
+
+        Event::assertDispatched(JobCreated::class, function ($e) use ($job) {
+            /** @var $e JobCreated */
+            return $e->job->id == $job->id &&
+                $e->bots()->count() == 1 &&
+                $e->bots()->contains($this->bot);
+        });
+    }
+
+    public function testJobCreatedEventIsFiredForCluster()
+    {
+        Event::fake([
+            JobCreated::class,
         ]);
 
-        /** @var App\Job $bot */
-        $job = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-        ]);
-        $job->worker()->associate($bot);
-        $job->save();
+        $job = $this->createJob($this->cluster);
 
-        Event::assertDispatched(JobCreated::class);
+        Event::assertDispatched(JobCreated::class, function ($e) use ($job) {
+            /** @var $e JobCreated */
+            return $e->job->id == $job->id &&
+                $e->bots()->count() == 1 &&
+                $e->bots()->contains($this->bot);
+        });
     }
 
     public function testBotCanGrabJobWhenThatBotIsTheJobsWorker()
     {
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        /** @var App\Job $bot */
-        $job = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-            'status' => JobStatusEnum::QUEUED,
-        ]);
-        $job->worker()->associate($bot);
-        $job->save();
+        $job = $this->createJob($this->bot);
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($bot);
+        $testJob = $manager->nextAvailableJob($this->bot);
 
         $this->assertEquals($job->id, $testJob->id);
     }
 
     public function testBotCanGrabJobWhenThatBotIsInAClusterThatIsTheJobsWorker()
     {
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        /** @var App\Cluster $cluster */
-        $cluster = factory(App\Cluster::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-        $cluster->bots()->save($bot);
-
-        /** @var App\Job $bot */
-        $job = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-            'status' => JobStatusEnum::QUEUED,
-        ]);
-        $job->worker()->associate($cluster);
-        $job->save();
+        $job = $this->createJob($this->bot);
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($bot);
+        $testJob = $manager->nextAvailableJob($this->bot);
 
         $this->assertEquals($job->id, $testJob->id);
     }
 
     public function testBotGrabsJobDirectlyAssignedToItBeforeOneInCluster()
     {
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $jobA = $this->createJob($this->bot);
 
-        /** @var App\Job $bot */
-        $jobA = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-            'status' => JobStatusEnum::QUEUED,
-        ]);
-        $jobA->worker()->associate($bot);
-        $jobA->save();
-
-        /** @var App\Cluster $cluster */
-        $cluster = factory(App\Cluster::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-        $cluster->bots()->save($bot);
-
-        /** @var App\Job $bot */
-        $jobB = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-            'status' => JobStatusEnum::QUEUED,
-        ]);
-        $jobB->worker()->associate($cluster);
-        $jobB->save();
+        /** @var App\Job $jobB */
+        $jobB = $this->createJob($this->cluster);
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($bot);
+        $testJob = $manager->nextAvailableJob($this->bot);
 
         $this->assertEquals($jobA->id, $testJob->id);
     }
 
     public function testGettingNextJobIgnoresJobsThatAreNotQueued()
     {
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        /** @var App\Job $bot */
-        $job = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-            'status' => JobStatusEnum::IN_PROGRESS,
-        ]);
-        $job->worker()->associate($bot);
-        $job->save();
+        $this->createJob($this->bot, JobStatusEnum::IN_PROGRESS);
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($bot);
+        $testJob = $manager->nextAvailableJob($this->bot);
 
         $this->assertNull($testJob);
     }
 
     public function testGettingNextJobIgnoresJobsThatAreNotQueuedInCluster()
     {
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        /** @var App\Cluster $cluster */
-        $cluster = factory(App\Cluster::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-        $cluster->bots()->save($bot);
-
-        /** @var App\Job $bot */
-        $job = factory(App\Job::class)->make([
-            'creator_id' => $this->user->id,
-            'status' => JobStatusEnum::IN_PROGRESS,
-        ]);
-        $job->worker()->associate($cluster);
-        $job->save();
+        $this->createJob($this->cluster, JobStatusEnum::IN_PROGRESS);
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($bot);
+        $testJob = $manager->nextAvailableJob($this->bot);
 
         $this->assertNull($testJob);
+    }
+
+    /**
+     * @return Job
+     */
+    protected function createJob($worker, $status = JobStatusEnum::QUEUED): Job
+    {
+        /** @var App\Job $job */
+        $job = factory(App\Job::class)->make([
+            'creator_id' => $this->user->id,
+            'status' => $status,
+        ]);
+
+        $job->worker()->associate($worker);
+        $job->save();
+
+        return $job;
     }
 }

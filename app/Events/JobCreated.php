@@ -48,7 +48,7 @@ class JobCreated implements HasRelatedBots, ShouldBroadcast
     {
         $worker = $this->job->worker;
         if ($worker instanceof Bot) {
-            return [$worker];
+            return collect([$worker]);
         } elseif ($worker instanceof Cluster) {
             return $worker->bots;
         }
