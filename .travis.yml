@@ -14,7 +14,7 @@ services:
 # whitelist
 branches:
   only:
-    - laravel2
+    - v2.0-dev
 
 before_install:
   - mysql -e 'CREATE DATABASE botqueue;'
