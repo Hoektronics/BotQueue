@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Host;
 
 use App\Host;
 use App\Http\Resources\BotResource;

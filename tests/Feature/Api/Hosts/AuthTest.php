@@ -20,12 +20,21 @@ class AuthTest extends TestCase
 
     public function testFullWorkflow()
     {
-        $host_request_response = $this->json('POST', '/api/host_requests');
+        $host_request_response = $this->json('POST', '/host/requests');
+
+        $host_request_response
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'id'
+                ]
+            ]);
+
         $host_request_id = $host_request_response->json()['data']['id'];
 
         $host_request = HostRequest::find($host_request_id);
 
-        $before_claim = $this->json('GET', "/api/host_requests/{$host_request->id}");
+        $before_claim = $this->json('GET', "/host/requests/{$host_request->id}");
 
         $before_claim
             ->assertStatus(Response::HTTP_OK)
@@ -38,7 +47,7 @@ class AuthTest extends TestCase
 
         $this->user->claim($host_request, 'Test name');
 
-        $after_claim = $this->json('GET', "/api/host_requests/{$host_request->id}");
+        $after_claim = $this->json('GET', "/host/requests/{$host_request->id}");
 
         $after_claim
             ->assertStatus(Response::HTTP_OK)
@@ -54,7 +63,7 @@ class AuthTest extends TestCase
                 ]
             ]);
 
-        $host_access_response = $this->json('POST', "/api/host_requests/{$host_request->id}/access");
+        $host_access_response = $this->json('POST', "/host/requests/{$host_request->id}/access");
 
         $host = Host::where(['owner_id' => $this->user->id])->first();
 
@@ -99,7 +108,7 @@ class AuthTest extends TestCase
 
         $refresh_response = $this
             ->withTokenFromHost($host)
-            ->json('POST', '/api/hosts/refresh');
+            ->json('POST', '/host/refresh');
 
         $refresh_response
             ->assertStatus(Response::HTTP_OK)
