@@ -33,6 +33,12 @@ $factory->define(App\Bot::class, function (Faker $faker) {
     ];
 });
 
+$factory->define(App\Cluster::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+    ];
+});
+
 $factory->define(App\Job::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
