@@ -24,7 +24,7 @@ class HostResolver
                 [
                     'error' => 'Missing "Authorization" header',
                 ],
-                $status = Response::HTTP_FORBIDDEN
+                Response::HTTP_FORBIDDEN
                 );
         }
 

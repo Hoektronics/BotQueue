@@ -4,7 +4,7 @@ namespace App\Enums;
 
 class BotStatusEnum
 {
-    const Idle = 'idle';
-    const Offline = 'offline';
-    const Working = 'working';
+    const IDLE = 'idle';
+    const OFFLINE = 'offline';
+    const WORKING = 'working';
 }

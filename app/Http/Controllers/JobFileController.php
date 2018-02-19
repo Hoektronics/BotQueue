@@ -31,7 +31,7 @@ class JobFileController extends Controller
         /** @var App\Job $job */
         $job = new App\Job([
             'name' => $request->get('job_name'),
-            'status' => App\Enums\JobStatusEnum::Queued,
+            'status' => App\Enums\JobStatusEnum::QUEUED,
             'creator_id' => Auth::id(),
         ]);
 

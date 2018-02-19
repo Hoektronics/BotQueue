@@ -103,13 +103,9 @@ class MatchFieldSet
 
         $keyed_match = array_combine($this->attributes, $matches);
 
-        if (is_subclass_of($this->type, Model::class)) {
-            /** @var Model $object */
-            $object = app($this->type);
-            $builder = $object->newQuery();
-        } elseif (is_a($this->type, \Illuminate\Database\Eloquent\Builder::class)) {
-            $builder = $this->type;
-        } else {
+        $builder = $this->getBuilder();
+
+        if ($builder == null) {
             return null;
         }
 
@@ -118,6 +114,20 @@ class MatchFieldSet
         }
 
         return $builder->first();
+    }
+
+    protected function getBuilder()
+    {
+        if (is_subclass_of($this->type, Model::class)) {
+            /** @var Model $object */
+            $object = app($this->type);
+            return $object->newQuery();
+        }
+        if (is_a($this->type, \Illuminate\Database\Eloquent\Builder::class)) {
+            return $this->type;
+        }
+
+        return null;
     }
 
     /**

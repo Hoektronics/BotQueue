@@ -5,8 +5,8 @@ namespace App\Enums;
 
 class HostRequestStatusEnum
 {
-    const Requested = 'requested';
-    const Rejected = 'rejected';
-    const Claimed = 'claimed';
-    const Expired = 'expired';
+    const REQUESTED = 'requested';
+    const REJECTED = 'rejected';
+    const CLAIMED = 'claimed';
+    const EXPIRED = 'expired';
 }

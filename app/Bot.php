@@ -54,7 +54,7 @@ class Bot extends Model
     ];
 
     protected $attributes = [
-        'status' => BotStatusEnum::Offline,
+        'status' => BotStatusEnum::OFFLINE,
     ];
 
     public function creator()

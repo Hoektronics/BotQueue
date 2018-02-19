@@ -9,22 +9,22 @@ class JobStatusService
 {
     // Database name to label class
     protected $statusToLabelClass = [
-        JobStatusEnum::Queued => 'label-primary',
-        JobStatusEnum::InProgress => 'label-info',
-        JobStatusEnum::QualityCheck => 'label-warning',
-        JobStatusEnum::Completed => 'label-success',
-        JobStatusEnum::Failed => 'label-danger',
-        JobStatusEnum::Cancelled => 'label-inverse',
+        JobStatusEnum::QUEUED => 'label-primary',
+        JobStatusEnum::IN_PROGRESS => 'label-info',
+        JobStatusEnum::QUALITY_CHECK => 'label-warning',
+        JobStatusEnum::COMPLETED => 'label-success',
+        JobStatusEnum::FAILED => 'label-danger',
+        JobStatusEnum::CANCELLED => 'label-inverse',
     ];
 
     // Database name to human readable name
     protected $statusToName = [
-        JobStatusEnum::Queued => 'Queued',
-        JobStatusEnum::InProgress => 'InProgress',
-        JobStatusEnum::QualityCheck => 'QualityCheck',
-        JobStatusEnum::Completed => 'Completed',
-        JobStatusEnum::Failed => 'Failed',
-        JobStatusEnum::Cancelled => 'Cancelled',
+        JobStatusEnum::QUEUED => 'Queued',
+        JobStatusEnum::IN_PROGRESS => 'InProgress',
+        JobStatusEnum::QUALITY_CHECK => 'QualityCheck',
+        JobStatusEnum::COMPLETED => 'Completed',
+        JobStatusEnum::FAILED => 'Failed',
+        JobStatusEnum::CANCELLED => 'Cancelled',
     ];
 
     /**

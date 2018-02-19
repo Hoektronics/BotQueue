@@ -15,7 +15,7 @@ class AddStatusToBotsTable extends Migration
     public function up()
     {
         Schema::table('bots', function (Blueprint $table) {
-            $table->string('status')->default(BotStatusEnum::Offline);
+            $table->string('status')->default(BotStatusEnum::OFFLINE);
             $table->index('status');
         });
     }

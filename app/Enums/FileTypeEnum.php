@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 
 class FileTypeEnum
 {
-    const GCode = "gcode";
+    const GCODE = "gcode";
     const STL = "stl";
 
     public static function fromFile($file)
@@ -23,7 +23,7 @@ class FileTypeEnum
     {
         switch ($extension) {
             case "gcode":
-                return self::GCode;
+                return self::GCODE;
             case "stl":
                 return self::STL;
             default:

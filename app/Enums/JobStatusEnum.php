@@ -4,10 +4,10 @@ namespace App\Enums;
 
 class JobStatusEnum
 {
-    const Queued = 'queued';
-    const InProgress = 'in_progress';
-    const QualityCheck = 'quality_check';
-    const Completed = 'completed';
-    const Failed = 'failed';
-    const Cancelled = 'cancelled';
+    const QUEUED = 'queued';
+    const IN_PROGRESS = 'in_progress';
+    const QUALITY_CHECK = 'quality_check';
+    const COMPLETED = 'completed';
+    const FAILED = 'failed';
+    const CANCELLED = 'cancelled';
 }
