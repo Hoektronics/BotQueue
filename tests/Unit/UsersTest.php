@@ -19,7 +19,7 @@ class UsersTest extends TestCase
         ]);
 
         /** @var App\User $user */
-        $user = factory(App\User::class)->create();
+        factory(App\User::class)->create();
 
         Event::assertDispatched(UserCreated::class);
     }

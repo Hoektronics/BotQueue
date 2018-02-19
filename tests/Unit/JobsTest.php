@@ -1,15 +1,17 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use App;
 use App\Events\JobCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Tests\HasUser;
 use Tests\TestCase;
 
 class JobsTest extends TestCase
 {
+    use HasUser;
     use RefreshDatabase;
 
     public function testBotCreatedEventIsFired()
@@ -18,17 +20,14 @@ class JobsTest extends TestCase
             JobCreated::class,
         ]);
 
-        /** @var App\User $user */
-        $user = factory(App\User::class)->create();
-
         /** @var App\Bot $bot */
         $bot = factory(App\Bot::class)->create([
-            'creator_id' => $user->id,
+            'creator_id' => $this->user->id,
         ]);
 
         /** @var App\Job $bot */
         $job = factory(App\Job::class)->make([
-            'creator_id' => $user->id,
+            'creator_id' => $this->user->id,
         ]);
         $job->worker()->associate($bot);
         $job->save();

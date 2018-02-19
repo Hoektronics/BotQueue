@@ -7,10 +7,12 @@ use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Tests\HasUser;
 use Tests\TestCase;
 
 class BotsTest extends TestCase
 {
+    use HasUser;
     use RefreshDatabase;
 
     public function testBotCreatedEventIsFired()
@@ -19,11 +21,9 @@ class BotsTest extends TestCase
             BotCreated::class,
         ]);
 
-        /** @var App\User $user */
-        $user = factory(App\User::class)->create();
         /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $user->id,
+        factory(App\Bot::class)->create([
+            'creator_id' => $this->user->id,
         ]);
 
         Event::assertDispatched(BotCreated::class);
@@ -31,11 +31,9 @@ class BotsTest extends TestCase
 
     public function testBotIsByDefaultOffline()
     {
-        /** @var App\User $user */
-        $user = factory(App\User::class)->create();
         /** @var App\Bot $bot */
         $bot = factory(App\Bot::class)->create([
-            'creator_id' => $user->id,
+            'creator_id' => $this->user->id,
         ]);
 
         $this->assertEquals(BotStatusEnum::Offline, $bot->status);
