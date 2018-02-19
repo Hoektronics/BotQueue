@@ -20,9 +20,9 @@ class AuthTest extends TestCase
 
     public function testFullWorkflow()
     {
-        $host_request_response = $this->json('POST', '/host/requests');
+        $request_response = $this->json('POST', '/host/requests');
 
-        $host_request_response
+        $request_response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'data' => [
@@ -30,7 +30,7 @@ class AuthTest extends TestCase
                 ]
             ]);
 
-        $host_request_id = $host_request_response->json()['data']['id'];
+        $host_request_id = $request_response->json()['data']['id'];
 
         $host_request = HostRequest::find($host_request_id);
 
@@ -100,9 +100,9 @@ class AuthTest extends TestCase
             'owner_id' => $this->user->id,
         ]);
 
-        $original_access_token = $host->getAccessToken();
+        $original_token = $host->getAccessToken();
 
-        $first_expire_time = $original_access_token->getExpiryDateTime()->getTimestamp();
+        $first_expire_time = $original_token->getExpiryDateTime()->getTimestamp();
 
         sleep(1);
 
