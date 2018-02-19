@@ -20,8 +20,9 @@ Route::post('requests/{host_request}/access', 'HostRequestController@access');
 
 Route::middleware('scope:host')
     ->middleware('auth:api')
+    ->middleware('is_host')
     ->group(function () {
         Route::post('refresh', 'TokenController@refresh');
 
-        Route::get('{host}/bots', 'HostController@bots');
+        Route::get('bots', 'HostController@bots');
     });

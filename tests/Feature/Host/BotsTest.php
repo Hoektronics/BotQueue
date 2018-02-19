@@ -56,7 +56,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/host/{$this->host->id}/bots");
+            ->json('GET', "/host/bots");
 
         $response
             ->assertStatus(Response::HTTP_OK)
