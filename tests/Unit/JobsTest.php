@@ -7,6 +7,7 @@ use App\Bot;
 use App\Cluster;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
+use App\Exceptions\BotCannotGrabJob;
 use App\Job;
 use App\Managers\JobDistributionManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -74,6 +75,7 @@ class JobsTest extends TestCase
     public function testBotCanGrabJobWhenThatBotIsTheJobsWorker()
     {
         $job = $this->createJob($this->bot);
+        $this->assertTrue($this->bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
@@ -85,7 +87,8 @@ class JobsTest extends TestCase
 
     public function testBotCanGrabJobWhenThatBotIsInAClusterThatIsTheJobsWorker()
     {
-        $job = $this->createJob($this->bot);
+        $job = $this->createJob($this->cluster);
+        $this->assertTrue($this->bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
@@ -98,9 +101,11 @@ class JobsTest extends TestCase
     public function testBotGrabsJobDirectlyAssignedToItBeforeOneInCluster()
     {
         $jobA = $this->createJob($this->bot);
+        $this->assertTrue($this->bot->canGrab($jobA));
 
         /** @var App\Job $jobB */
         $jobB = $this->createJob($this->cluster);
+        $this->assertTrue($this->bot->canGrab($jobB));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
@@ -112,7 +117,8 @@ class JobsTest extends TestCase
 
     public function testGettingNextJobIgnoresJobsThatAreNotQueued()
     {
-        $this->createJob($this->bot, JobStatusEnum::IN_PROGRESS);
+        $job = $this->createJob($this->bot, JobStatusEnum::IN_PROGRESS);
+        $this->assertFalse($this->bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
@@ -124,7 +130,8 @@ class JobsTest extends TestCase
 
     public function testGettingNextJobIgnoresJobsThatAreNotQueuedInCluster()
     {
-        $this->createJob($this->cluster, JobStatusEnum::IN_PROGRESS);
+        $job = $this->createJob($this->cluster, JobStatusEnum::IN_PROGRESS);
+        $this->assertFalse($this->bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
@@ -134,10 +141,64 @@ class JobsTest extends TestCase
         $this->assertNull($testJob);
     }
 
+    public function testBotCannotGrabJobIfItIsNotTheWorker()
+    {
+        $otherBot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+        $job = $this->createJob($this->bot);
+
+        $this->expectException(BotCannotGrabJob::class);
+
+        $otherBot->grabJob($job);
+    }
+
+    public function testBotCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
+    {
+        $otherBot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+        $job = $this->createJob($this->cluster);
+
+        $this->expectException(BotCannotGrabJob::class);
+
+        $otherBot->grabJob($job);
+    }
+
     /**
+     * @throws BotCannotGrabJob
+     */
+    public function testBotGrabbingJobWithBotWorkerSetsBotIdOnJob()
+    {
+        $job = $this->createJob($this->bot);
+
+        $this->assertNull($job->bot_id);
+        $this->bot->grabJob($job);
+
+        $job = $job->refresh();
+        $this->assertEquals($this->bot->id, $job->bot_id);
+    }
+
+    /**
+     * @throws BotCannotGrabJob
+     */
+    public function testBotGrabbingJobWithClusterWorkerSetsBotIdOnJob()
+    {
+        $job = $this->createJob($this->cluster);
+
+        $this->assertNull($job->bot_id);
+        $this->bot->grabJob($job);
+
+        $job = $job->refresh();
+        $this->assertEquals($this->bot->id, $job->bot_id);
+    }
+
+    /**
+     * @param $worker Bot|Cluster
+     * @param string $status
      * @return Job
      */
-    protected function createJob($worker, $status = JobStatusEnum::QUEUED): Job
+    protected function createJob($worker, $status = JobStatusEnum::QUEUED)
     {
         /** @var App\Job $job */
         $job = factory(App\Job::class)->make([

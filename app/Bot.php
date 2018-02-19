@@ -3,9 +3,11 @@
 namespace App;
 
 use App\Enums\BotStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Events\BotCreated;
 use App\Events\Host\BotAssignedToHost;
 use App\Events\Host\BotRemovedFromHost;
+use App\Exceptions\BotCannotGrabJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -96,5 +98,33 @@ class Bot extends Model
         $this->save();
 
         event(new BotAssignedToHost($this, $host));
+    }
+
+    /**
+     * @param $job Job
+     * @throws BotCannotGrabJob
+     */
+    public function grabJob($job)
+    {
+        if (! $this->canGrab($job))
+            throw new BotCannotGrabJob("This job cannot be grabbed!");
+
+        $job->bot_id = $this->id;
+        $job->save();
+    }
+
+    /**
+     * @param $job Job
+     * @return bool
+     */
+    public function canGrab($job)
+    {
+        if ($job->worker instanceof Bot && $job->worker->id == $this->id)
+            return $job->status == JobStatusEnum::QUEUED;
+
+        if ($job->worker instanceof Cluster && $job->worker->bots->contains($this->id))
+            return $job->status == JobStatusEnum::QUEUED;
+
+        return false;
     }
 }
