@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\Hosts;
+namespace Tests\Feature\Host;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;

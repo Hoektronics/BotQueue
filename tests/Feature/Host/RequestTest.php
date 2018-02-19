@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api;
+namespace Tests\Feature\Host;
 
 use App\Enums\HostRequestStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
