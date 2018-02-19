@@ -32,7 +32,7 @@ class HostResource extends Resource
                 'owner' => [
                     'id' => $this->owner->id,
                     'username' => $this->owner->username,
-                    'link' => url('/api/v2/users', $this->owner->id),
+                    'link' => url('/api/users', $this->owner->id),
                 ],
             ]
         ];

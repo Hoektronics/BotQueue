@@ -1,10 +1,9 @@
 <?php
 
-namespace Tests\Feature\Api\V2;
+namespace Tests\Feature\Api;
 
 use App\User;
 use Illuminate\Http\Response;
-use Laravel\Passport\Passport;
 use Tests\HasUser;
 use Tests\PassportHelper;
 use Tests\TestCase;
@@ -21,7 +20,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/v2/users/{$this->user->id}");
+            ->json('GET', "/api/users/{$this->user->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -37,7 +36,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromUser($this->user, 'users')
-            ->json('GET', "/api/v2/users/{$this->user->id}");
+            ->json('GET', "/api/users/{$this->user->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -55,7 +54,7 @@ class UsersTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/v2/users/{$other_user->id}");
+            ->json('GET', "/api/users/{$other_user->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -65,7 +64,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromUser($this->user, [])
-            ->json('GET', "/api/v2/users/{$this->user->id}");
+            ->json('GET', "/api/users/{$this->user->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);

@@ -14,13 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('host_requests')
-    ->group(function () {
-        Route::post('/', 'HostRequestController@create');
-        Route::get('{host_request}', 'HostRequestController@show');
-        Route::post('{host_request}/access', 'HostRequestController@access');
-    });
-
 Route::middleware('auth:api')
     ->group(function () {
         Route::get('users/{user}', 'UserController@show')
@@ -34,13 +27,5 @@ Route::middleware('auth:api')
 
                 Route::get('{bot}', 'BotController@show')
                     ->middleware('can:view,bot');
-            });
-
-        Route::prefix('hosts')
-            ->middleware('scope:host')
-            ->group(function () {
-                Route::post('refresh', 'TokenController@refresh');
-
-                Route::get('{host}/bots', 'HostController@bots');
             });
     });

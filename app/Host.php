@@ -85,6 +85,11 @@ class Host extends Model
         return $accessToken;
     }
 
+    public function getJWT()
+    {
+        return $this->getAccessToken()->convertToJWT(passport_private_key());
+    }
+
     /**
      * @return OauthHostClient|ClientEntityInterface
      */

@@ -22,7 +22,7 @@ class HostRequestResource extends Resource
                 return [
                     'id' => $this->claimer->id,
                     'username' => $this->claimer->username,
-                    'link' => url('/api/v2/users', $this->claimer->id),
+                    'link' => url('/api/users', $this->claimer->id),
                 ];
             }),
         ];

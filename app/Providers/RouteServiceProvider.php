@@ -43,7 +43,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->mapHostRoutes();
     }
 
     /**
@@ -69,9 +69,22 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api/v2')
+        Route::prefix('api')
              ->middleware('api')
-             ->namespace('App\Http\Controllers\Api\V2')
-             ->group(base_path('routes/api_v2.php'));
+             ->namespace('App\Http\Controllers\Api')
+             ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "host" routes for the application.
+     *
+     * @return void
+     */
+    protected function mapHostRoutes()
+    {
+        Route::prefix('host')
+            ->middleware('host')
+            ->namespace('App\Http\Controllers\Host')
+            ->group(base_path('routes/host.php'));
     }
 }
