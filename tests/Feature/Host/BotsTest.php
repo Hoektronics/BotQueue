@@ -66,7 +66,7 @@ class BotsTest extends TestCase
                         'id' => $bot->id,
                         'name' => $bot->name,
                         'type' => '3d_printer',
-                        'status' => BotStatusEnum::Offline,
+                        'status' => BotStatusEnum::OFFLINE,
                     ]
                 ]
             ])

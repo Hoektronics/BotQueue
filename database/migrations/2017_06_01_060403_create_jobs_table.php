@@ -18,7 +18,7 @@ class CreateJobsTable extends Migration
             $table->increments('id');
             $table->string('name');
 
-            $table->string('status')->default(JobStatusEnum::Queued);
+            $table->string('status')->default(JobStatusEnum::QUEUED);
             $table->index('status');
 
             $table->integer('creator_id')->unsigned();

@@ -38,7 +38,7 @@ class RequestTest extends TestCase
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
                 'data' => [
-                    'status' => HostRequestStatusEnum::Requested
+                    'status' => HostRequestStatusEnum::REQUESTED
                 ]
             ])
             ->assertJsonStructure([
@@ -58,7 +58,7 @@ class RequestTest extends TestCase
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
                 'data' => [
-                    'status' => HostRequestStatusEnum::Requested
+                    'status' => HostRequestStatusEnum::REQUESTED
                 ]
             ])
             ->assertJsonStructure([

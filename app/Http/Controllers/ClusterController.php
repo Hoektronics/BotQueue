@@ -28,13 +28,13 @@ class ClusterController extends Controller
     {
         $clusters = Auth::user()->clusters()->withCount([
             'bots AS offline_bots_count' => function ($query) {
-                $query->where('status', BotStatusEnum::Offline);
+                $query->where('status', BotStatusEnum::OFFLINE);
             },
             'bots AS idle_bots_count' => function ($query) {
-                $query->where('status', BotStatusEnum::Idle);
+                $query->where('status', BotStatusEnum::IDLE);
             },
             'bots AS working_bots_count' => function ($query) {
-                $query->where('status', BotStatusEnum::Working);
+                $query->where('status', BotStatusEnum::WORKING);
             }
         ])->get();
         return view('cluster.index', compact('clusters'));

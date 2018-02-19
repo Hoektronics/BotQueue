@@ -36,6 +36,6 @@ class BotsTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $this->assertEquals(BotStatusEnum::Offline, $bot->status);
+        $this->assertEquals(BotStatusEnum::OFFLINE, $bot->status);
     }
 }

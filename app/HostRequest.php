@@ -50,7 +50,7 @@ class HostRequest extends Model
     ];
 
     protected $attributes = [
-        'status' => HostRequestStatusEnum::Requested,
+        'status' => HostRequestStatusEnum::REQUESTED,
     ];
 
     public function claimer()

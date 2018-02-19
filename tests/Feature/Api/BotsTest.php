@@ -37,7 +37,7 @@ class BotsTest extends TestCase
                         'id' => $bot->id,
                         'name' => $bot->name,
                         'type' => '3d_printer',
-                        'status' => BotStatusEnum::Offline,
+                        'status' => BotStatusEnum::OFFLINE,
                         'creator' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
@@ -72,7 +72,7 @@ class BotsTest extends TestCase
                         'id' => $bot->id,
                         'name' => $bot->name,
                         'type' => '3d_printer',
-                        'status' => BotStatusEnum::Offline,
+                        'status' => BotStatusEnum::OFFLINE,
                         'creator' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
@@ -102,7 +102,7 @@ class BotsTest extends TestCase
                     'id' => $bot->id,
                     'name' => $bot->name,
                     'type' => '3d_printer',
-                    'status' => BotStatusEnum::Offline,
+                    'status' => BotStatusEnum::OFFLINE,
                     'creator' => [
                         'id' => $this->user->id,
                         'username' => $this->user->username,
@@ -130,7 +130,7 @@ class BotsTest extends TestCase
                     'id' => $bot->id,
                     'name' => $bot->name,
                     'type' => '3d_printer',
-                    'status' => BotStatusEnum::Offline,
+                    'status' => BotStatusEnum::OFFLINE,
                     'creator' => [
                         'id' => $this->user->id,
                         'username' => $this->user->username,

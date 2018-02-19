@@ -63,7 +63,7 @@ class User extends Authenticatable
     public function claim(HostRequest $request, $name)
     {
         $request->claimer_id = $this->id;
-        $request->status = HostRequestStatusEnum::Claimed;
+        $request->status = HostRequestStatusEnum::CLAIMED;
         $request->save();
     }
 

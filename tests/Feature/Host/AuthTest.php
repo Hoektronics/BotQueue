@@ -41,7 +41,7 @@ class AuthTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $host_request_id,
-                    'status' => HostRequestStatusEnum::Requested,
+                    'status' => HostRequestStatusEnum::REQUESTED,
                 ]
             ]);
 
@@ -54,7 +54,7 @@ class AuthTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $host_request->id,
-                    'status' => HostRequestStatusEnum::Claimed,
+                    'status' => HostRequestStatusEnum::CLAIMED,
                     'claimer' => [
                         'id' => $this->user->id,
                         'username' => $this->user->username,

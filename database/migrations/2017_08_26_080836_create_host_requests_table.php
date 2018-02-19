@@ -23,7 +23,7 @@ class CreateHostRequestsTable extends Migration
             $table->string('remote_ip')->nullable();
             $table->string('hostname')->nullable();
 
-            $table->string('status')->default(HostRequestStatusEnum::Requested);
+            $table->string('status')->default(HostRequestStatusEnum::REQUESTED);
 
             $table->integer('claimer_id')->unsigned()->nullable();
             $table->foreign('claimer_id')->references('id')->on('users');
