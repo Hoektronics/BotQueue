@@ -12,16 +12,15 @@ use App\Job;
 use App\Managers\JobDistributionManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Tests\HasBot;
 use Tests\HasUser;
 use Tests\TestCase;
 
 class JobsTest extends TestCase
 {
     use HasUser;
+    use HasBot;
     use RefreshDatabase;
-
-    /** @var Bot $bot */
-    protected $bot;
 
     /** @var Cluster $cluster */
     protected $cluster;
@@ -29,10 +28,6 @@ class JobsTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
 
         $this->cluster = factory(App\Cluster::class)->create([
             'creator_id' => $this->user->id,
@@ -167,6 +162,8 @@ class JobsTest extends TestCase
 
     /**
      * @throws BotCannotGrabJob
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function testBotGrabbingJobWithBotWorkerSetsBotIdOnJob()
     {
@@ -181,6 +178,8 @@ class JobsTest extends TestCase
 
     /**
      * @throws BotCannotGrabJob
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function testBotGrabbingJobWithClusterWorkerSetsBotIdOnJob()
     {

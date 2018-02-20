@@ -10,6 +10,7 @@ use App\Events\Host\BotRemovedFromHost;
 use App\Exceptions\BotCannotGrabJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Bot
@@ -87,7 +88,7 @@ class Bot extends Model
 
     public function assignTo($host)
     {
-        if($this->host_id !== null) {
+        if ($this->host_id !== null) {
             $oldHost = $this->host;
 
             event(new BotRemovedFromHost($this, $oldHost));
@@ -103,14 +104,29 @@ class Bot extends Model
     /**
      * @param $job Job
      * @throws BotCannotGrabJob
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function grabJob($job)
     {
-        if (! $this->canGrab($job))
+        if (!$this->canGrab($job))
             throw new BotCannotGrabJob("This job cannot be grabbed!");
 
-        $job->bot_id = $this->id;
-        $job->save();
+        DB::transaction(function () use ($job) {
+            Job::query()
+                ->whereKey($job->getKey())
+                ->where('status', JobStatusEnum::QUEUED)
+                ->whereNull('bot_id')
+                ->update([
+                    'bot_id' => $this->id,
+                    'status' => JobStatusEnum::ASSIGNED
+                ]);
+
+            $job->refresh();
+
+            if ($job->bot_id != $this->id)
+                throw new BotCannotGrabJob("This job cannot be grabbed!");
+        });
     }
 
     /**

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait HasHost
 {
-    /** @var App\Host $user */
+    /** @var App\Host $host */
     protected $host;
 
     public function createTestHost()

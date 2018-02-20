@@ -28,5 +28,9 @@ abstract class TestCase extends BaseTestCase
         if (isset($uses[HasHost::class])) {
             $this->createTestHost();
         }
+
+        if (isset($uses[HasBot::class])) {
+            $this->createTestBot();
+        }
     }
 }
