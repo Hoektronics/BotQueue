@@ -26,16 +26,20 @@ class BotCreationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:bots,name|max:255',
+            'name' => [
+                'required',
+                Rule::unique('bots', 'name')
+                    ->where('creator_id', Auth::user()->id),
+                'max:255',
+            ],
             'type' => [
                 'required',
                 Rule::in(['3d_printer'])
             ],
             'cluster' => [
                 'required',
-                Rule::exists('clusters', 'id')->where(function ($query) {
-                    $query->where('creator_id', Auth::user()->id);
-                })
+                Rule::exists('clusters', 'id')
+                    ->where('creator_id', Auth::user()->id),
             ],
         ];
     }
