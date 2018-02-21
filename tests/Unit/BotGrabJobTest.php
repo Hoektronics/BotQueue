@@ -33,6 +33,8 @@ class BotGrabJobTest extends TestCase
 
     public function testBotCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
     {
+        $this->cluster->bots()->save($this->bot);
+
         $otherBot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
         ]);
@@ -66,6 +68,8 @@ class BotGrabJobTest extends TestCase
      */
     public function testBotGrabbingJobWithClusterWorkerSetsBotIdOnJob()
     {
+        $this->cluster->bots()->save($this->bot);
+
         $job = $this->createJob($this->cluster);
 
         $this->assertNull($job->bot_id);
