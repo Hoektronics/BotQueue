@@ -9,18 +9,9 @@ use App\Events\Host\BotRemovedFromHost;
 use App\Host;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
-use Tests\HasHost;
-use Tests\HasUser;
-use Tests\PassportHelper;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class BotsTest extends TestCase
+class BotsTest extends HostTestCase
 {
-    use HasUser;
-    use HasHost;
-    use PassportHelper;
-    use RefreshDatabase;
 
     public function testHostCanNotAccessRootBotsResourceForUser()
     {

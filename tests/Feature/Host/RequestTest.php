@@ -6,14 +6,10 @@ use App\Enums\HostRequestStatusEnum;
 use App\HostRequest;
 use App\Jobs\CleanExpiredHostRequests;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Tests\TestCase;
 
-class RequestTest extends TestCase
+class RequestTest extends HostTestCase
 {
-    use RefreshDatabase;
-
     /** @var $faker \Faker\Generator */
     private $faker;
     private $localIpv4;

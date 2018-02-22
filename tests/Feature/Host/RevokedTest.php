@@ -2,21 +2,10 @@
 
 namespace Tests\Feature\Host;
 
-use App\Host;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Tests\HasHost;
-use Tests\HasUser;
-use Tests\PassportHelper;
-use Tests\TestCase;
 
-class RevokedTest extends TestCase
+class RevokedTest extends HostTestCase
 {
-    use HasUser;
-    use HasHost;
-    use PassportHelper;
-    use RefreshDatabase;
-
     public function testRefreshingExpiredHostFails()
     {
         $this->host->revoke();

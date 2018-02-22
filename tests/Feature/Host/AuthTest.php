@@ -7,18 +7,10 @@ use App\Host;
 use App\HostRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
-use Tests\HasUser;
-use Tests\PassportHelper;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Lcobucci\JWT\Parser as JwtParser;
 
-class AuthTest extends TestCase
+class AuthTest extends HostTestCase
 {
-    use HasUser;
-    use PassportHelper;
-    use RefreshDatabase;
-
     public function testFullWorkflow()
     {
         $request_response = $this->json('POST', '/host/requests');
@@ -31,7 +23,7 @@ class AuthTest extends TestCase
                 ]
             ]);
 
-        $host_request_id = $request_response->json()['data']['id'];
+        $host_request_id = $request_response->json('data.id');
 
         $host_request = HostRequest::find($host_request_id);
 
@@ -66,7 +58,16 @@ class AuthTest extends TestCase
 
         $host_access_response = $this->json('POST', "/host/requests/{$host_request->id}/access");
 
-        $host = Host::where(['owner_id' => $this->user->id])->first();
+        $host_access_response->assertJsonStructure([
+            'data' => [
+                'access_token',
+                'host' => [
+                    'id'
+                ]
+            ]
+        ]);
+
+        $host = Host::find($host_access_response->json("data.host.id"));
 
         $host_access_response
             ->assertStatus(Response::HTTP_CREATED)
@@ -82,11 +83,6 @@ class AuthTest extends TestCase
                         ]
                     ]
                 ]
-            ])
-            ->assertJsonStructure([
-                'data' => [
-                    'access_token',
-                ]
             ]);
     }
 
@@ -94,19 +90,14 @@ class AuthTest extends TestCase
     {
         $jwt = app(JwtParser::class);
 
-        /** @var Host $host */
-        $host = factory(Host::class)->create([
-            'owner_id' => $this->user->id,
-        ]);
-
-        $original_token = $host->getAccessToken();
+        $original_token = $this->host->getAccessToken();
 
         $first_expire_time = $original_token->getExpiryDateTime()->getTimestamp();
 
         Carbon::setTestNow(Carbon::createFromTimestamp($first_expire_time)->addMinute());
 
         $refresh_response = $this
-            ->withTokenFromHost($host)
+            ->withTokenFromHost($this->host)
             ->json('POST', '/host/refresh');
 
         $refresh_response
@@ -115,11 +106,11 @@ class AuthTest extends TestCase
                 'access_token',
             ]);
 
-        $new_token = $refresh_response->json()['access_token'];
+        $new_token = $refresh_response->json('access_token');
         $later_expire_time = $jwt->parse($new_token)->getClaim('exp');
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
 
-        $host->token->refresh();
-        $this->assertEquals($later_expire_time, $host->token->expires_at->getTimestamp());
+        $this->host->token->refresh();
+        $this->assertEquals($later_expire_time, $this->host->token->expires_at->getTimestamp());
     }
 }
