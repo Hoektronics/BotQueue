@@ -2,14 +2,7 @@
 
 namespace App;
 
-use App\Oauth\OauthHostClient;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Passport\Bridge\AccessToken;
-use Laravel\Passport\Bridge\ClientRepository;
-use Laravel\Passport\Bridge\Scope;
-use Laravel\Passport\Token;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 /**
  * App\Host
@@ -62,5 +55,10 @@ class Host extends Model
     public function bots()
     {
         return $this->hasMany(Bot::class);
+    }
+
+    public function revoke()
+    {
+        $this->token->revoke();
     }
 }
