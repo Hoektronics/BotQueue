@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\DB;
  * @property string $type
  * @method static \Illuminate\Database\Query\Builder|\App\Bot whereType($value)
  * @property-read \App\Host $host
+ * @property int|null $host_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereHostId($value)
  */
 class Bot extends Model
 {

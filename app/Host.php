@@ -35,6 +35,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Laravel\Passport\Token $token
  */
 class Host extends Model
 {
