@@ -5,6 +5,7 @@ namespace Tests\Feature\Host;
 use App\Enums\HostRequestStatusEnum;
 use App\Host;
 use App\HostRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Tests\HasUser;
 use Tests\PassportHelper;
@@ -104,7 +105,7 @@ class AuthTest extends TestCase
 
         $first_expire_time = $original_token->getExpiryDateTime()->getTimestamp();
 
-        sleep(1);
+        Carbon::setTestNow(Carbon::createFromTimestamp($first_expire_time)->addMinute());
 
         $refresh_response = $this
             ->withTokenFromHost($host)
@@ -119,5 +120,8 @@ class AuthTest extends TestCase
         $new_token = $refresh_response->json()['access_token'];
         $later_expire_time = $jwt->parse($new_token)->getClaim('exp');
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
+
+        $host->token->refresh();
+        $this->assertEquals($later_expire_time, $host->token->expires_at->getTimestamp());
     }
 }

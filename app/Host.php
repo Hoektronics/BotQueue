@@ -3,11 +3,12 @@
 namespace App;
 
 use App\Oauth\OauthHostClient;
-use DateInterval;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\ClientRepository;
 use Laravel\Passport\Bridge\Scope;
+use Laravel\Passport\Token;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 /**
@@ -60,25 +61,40 @@ class Host extends Model
         return $this->hasMany(Bot::class);
     }
 
+    public function token()
+    {
+        return $this->belongsTo(Token::class);
+    }
+
     protected $accessToken;
 
+    /**
+     * @return AccessToken
+     */
     public function getAccessToken()
     {
-        if ($this->accessToken !== null) {
-            return $this->accessToken;
+        if ($this->accessToken === null) {
+            $this->refreshAccessToken();
         }
 
+        return $this->accessToken;
+    }
+
+    public function refreshAccessToken()
+    {
         $client = $this->client();
 
-        $accessTokenTTL = new DateInterval('P1Y');
-        $new_expiration = (new \DateTime())->add($accessTokenTTL);
+        $expiration = Carbon::now()->addYear();
 
         $host_scope = new Scope('host');
         $accessToken = new AccessToken($this->owner_id, [$host_scope]);
         $accessToken->setClient($client);
         $accessToken->setIdentifier($this->token_id);
         $accessToken->setUserIdentifier($this->owner_id);
-        $accessToken->setExpiryDateTime($new_expiration);
+        $accessToken->setExpiryDateTime($expiration);
+
+        $this->token->expires_at = $expiration;
+        $this->token->save();
 
         $this->accessToken = $accessToken;
 

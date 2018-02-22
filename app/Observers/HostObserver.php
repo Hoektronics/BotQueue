@@ -4,8 +4,7 @@
 namespace App\Observers;
 
 use App\Host;
-use App\Oauth\OauthHostClient;
-use DateInterval;
+use Carbon\Carbon;
 use DateTime;
 use Laravel\Passport\Bridge\ClientRepository;
 use Laravel\Passport\TokenRepository;
@@ -51,7 +50,7 @@ class HostObserver
             'revoked' => false,
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
-            'expires_at' => (new \DateTime())->add(new DateInterval('P1Y')),
+            'expires_at' => Carbon::now()->addYear(),
         ]);
 
         $host->token_id = $token->id;
