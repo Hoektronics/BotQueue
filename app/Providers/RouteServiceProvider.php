@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -86,10 +87,11 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('throttle:1,10')
             ->middleware('bindings')
             ->namespace('App\Http\Controllers\Host')
-            ->group(function($route) {
-                Route::post('requests', 'HostRequestController@create');
-                Route::get('requests/{host_request}', 'HostRequestController@show');
-                Route::post('requests/{host_request}/access', 'HostRequestController@access');
+            ->group(function($router) {
+                /** @var Router $router */
+                $router->post('requests', 'HostRequestController@create');
+                $router->get('requests/{host_request}', 'HostRequestController@show');
+                $router->post('requests/{host_request}/access', 'HostRequestController@access');
             });
 
         Route::prefix('host')
