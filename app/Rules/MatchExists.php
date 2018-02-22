@@ -16,28 +16,30 @@ class MatchExists implements Rule
      */
     public function __construct($fields)
     {
-        $this->fields = [];
+        $this->fields = collect();
 
         foreach ($fields as $key => $type) {
-            array_push($this->fields, new MatchFieldSet($key, $type));
+            $this->fields->push(new MatchFieldSet($key, $type));
         }
     }
 
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param  string $attribute
+     * @param  mixed $value
      * @return bool
      */
     public function passes($attribute, $value)
     {
         /** @var MatchFieldSet $field */
-        foreach ($this->fields as $field) {
-            if ($field->matches($value)) {
-                return $field->exists($value);
-            }
-        }
+        $field = $this->fields->first(function ($field) use ($value) {
+            /** @var MatchFieldSet $field */
+            return $field->matches($value);
+        });
+
+        if($field !== null)
+            return $field->exists($value);
 
         return false;
     }
@@ -74,9 +76,9 @@ class MatchFieldSet
         $matches = [];
         preg_match_all('/\{(\w+)\}/', $key, $matches);
 
-        $variables = isset($matches[1]) ? $matches[1] : [];
+        $variables = isset($matches[1]) ? collect($matches[1]) : collect();
 
-        $this->regex_pattern = '/'.preg_replace('/\{(\w+)\}/', '(.*)', $key).'/';
+        $this->regex_pattern = '/' . preg_replace('/\{(\w+)\}/', '(.*)', $key) . '/';
 
         $this->attributes = $variables;
 
@@ -87,21 +89,21 @@ class MatchFieldSet
     {
         $matches = $this->getMatches($value);
 
-        return ! is_null($matches);
+        return !is_null($matches);
     }
 
     public function exists($value)
     {
         $model = $this->getModel($value);
 
-        return ! is_null($model);
+        return !is_null($model);
     }
 
     public function getModel($value)
     {
         $matches = $this->getMatches($value);
 
-        $keyed_match = array_combine($this->attributes, $matches);
+        $keyed_match = $this->attributes->combine($matches);
 
         $builder = $this->getBuilder();
 
@@ -143,7 +145,7 @@ class MatchFieldSet
             return null;
         }
 
-        if (! isset($matches[1])) {
+        if (!isset($matches[1])) {
             return null;
         }
 
