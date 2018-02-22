@@ -45,6 +45,9 @@ class Kernel extends HttpKernel
         'host' => [
             'throttle:60,1',
             'bindings',
+            'is_host',
+            'scope:host',
+            'auth:api',
         ],
     ];
 

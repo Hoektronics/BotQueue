@@ -83,6 +83,16 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapHostRoutes()
     {
         Route::prefix('host')
+            ->middleware('throttle:1,10')
+            ->middleware('bindings')
+            ->namespace('App\Http\Controllers\Host')
+            ->group(function($route) {
+                Route::post('requests', 'HostRequestController@create');
+                Route::get('requests/{host_request}', 'HostRequestController@show');
+                Route::post('requests/{host_request}/access', 'HostRequestController@access');
+            });
+
+        Route::prefix('host')
             ->middleware('host')
             ->namespace('App\Http\Controllers\Host')
             ->group(base_path('routes/host.php'));
