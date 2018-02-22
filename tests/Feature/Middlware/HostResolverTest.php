@@ -3,6 +3,7 @@
 namespace Tests\Feature\Middlware;
 
 use App\Host;
+use App\HostManager;
 use App\Http\Middleware\HostResolver;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -50,8 +51,12 @@ class HostResolverTest extends TestCase
 
         $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
 
-        $testHost = app(Host::class);
-        $this->assertEquals($this->host->id, $testHost->id);
+        $appMadeHost = app(Host::class);
+        $this->assertNotNull($appMadeHost);
+        $this->assertNull($appMadeHost->id);
+
+        $hostManagerHost = app(HostManager::class)->getHost();
+        $this->assertEquals($this->host->id, $hostManagerHost->id);
     }
 
     public function testUpdatesSeenAt()

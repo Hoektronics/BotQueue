@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Host;
 
-use App\Host;
+use App\HostManager;
 use App\Http\Controllers\Controller;
 
 class TokenController extends Controller
 {
-    public function refresh(Host $host)
+    public function refresh(HostManager $hostManager)
     {
+        $host = $hostManager->getHost();
+
         $accessToken = $host->refreshAccessToken();
 
         $jwtToken = $accessToken->convertToJWT(passport_private_key());

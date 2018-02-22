@@ -33,10 +33,6 @@ class AuthServiceProvider extends ServiceProvider
         $this->app->singleton(App\HostManager::class, function() {
             return new App\HostManager();
         });
-
-        $this->app->bind(App\Host::class, function() {
-            return app()->make(App\HostManager::class)->getHost();
-        });
     }
 
     /**
