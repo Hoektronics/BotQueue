@@ -68,8 +68,6 @@ class AuthTest extends TestCase
 
         $host = Host::where(['owner_id' => $this->user->id])->first();
 
-        $host = Host::where(['owner_id' => $this->user->id])->first();
-
         $host_access_response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([

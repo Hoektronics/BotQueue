@@ -39,6 +39,8 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
  */
 class Host extends Model
 {
+    use HostAuthTrait;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -60,71 +62,5 @@ class Host extends Model
     public function bots()
     {
         return $this->hasMany(Bot::class);
-    }
-
-    public function token()
-    {
-        return $this->belongsTo(Token::class);
-    }
-
-    protected $accessToken;
-
-    /**
-     * @return AccessToken
-     */
-    public function getAccessToken()
-    {
-        if ($this->accessToken === null) {
-            $this->refreshAccessToken();
-        }
-
-        return $this->accessToken;
-    }
-
-    public function refreshAccessToken()
-    {
-        $client = $this->client();
-
-        $expiration = Carbon::now()->addYear();
-
-        $host_scope = new Scope('host');
-        $accessToken = new AccessToken($this->owner_id, [$host_scope]);
-        $accessToken->setClient($client);
-        $accessToken->setIdentifier($this->token_id);
-        $accessToken->setUserIdentifier($this->owner_id);
-        $accessToken->setExpiryDateTime($expiration);
-
-        $this->token->expires_at = $expiration;
-        $this->token->save();
-
-        $this->accessToken = $accessToken;
-
-        return $accessToken;
-    }
-
-    public function getJWT()
-    {
-        return $this->getAccessToken()->convertToJWT(passport_private_key());
-    }
-
-    /**
-     * @return OauthHostClient|ClientEntityInterface
-     */
-    public function client()
-    {
-        /** @var OauthHostClient $client */
-        $oauthHostClient = OauthHostClient::orderBy('id', 'desc')->first();
-
-        $clientRepository = app(ClientRepository::class);
-
-        /** @var ClientEntityInterface $client */
-        $client = $clientRepository->getClientEntity(
-            $oauthHostClient->client_id,
-            'host',
-            null,
-            false
-        );
-
-        return $client;
     }
 }

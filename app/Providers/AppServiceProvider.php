@@ -17,7 +17,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        App\Host::observe(App\Observers\HostObserver::class);
         App\HostRequest::observe(App\Observers\HostRequestObserver::class);
     }
 
