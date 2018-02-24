@@ -11,7 +11,7 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Name</label>
 
-                        <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name"
+                        <input name="name" id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
                                value="{{ old('name') }}" required autofocus>
 
                         @if ($errors->has('name'))

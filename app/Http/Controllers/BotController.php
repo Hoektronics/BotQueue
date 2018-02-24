@@ -59,7 +59,7 @@ class BotController extends Controller
             'type' => $request->get('type'),
             'creator_id' => Auth::id(),
         ]);
-        $cluster = Cluster::find($request->get('cluster'));
+        $cluster = Cluster::query()->find($request->get('cluster'));
 
         $bot->save();
         $bot->clusters()->save($cluster);

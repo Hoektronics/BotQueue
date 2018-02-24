@@ -27,7 +27,7 @@ $factory->define(App\User::class, function (Faker $faker) {
 
 $factory->define(App\Bot::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'name' => $faker->userName,
         'seen_at' => $faker->dateTime,
         'type' => '3d_printer',
     ];
@@ -35,13 +35,13 @@ $factory->define(App\Bot::class, function (Faker $faker) {
 
 $factory->define(App\Cluster::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'name' => $faker->userName,
     ];
 });
 
 $factory->define(App\Job::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'name' => $faker->userName,
     ];
 });
 
@@ -57,6 +57,6 @@ $factory->define(App\Host::class, function (Faker $faker) {
     return [
         'local_ip' => $faker->localIpv4,
         'remote_ip' => $faker->ipv4,
-        'name' => $faker->name,
+        'name' => $faker->userName,
     ];
 });
