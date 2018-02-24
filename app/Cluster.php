@@ -32,6 +32,7 @@ class Cluster extends Model
      */
     protected $fillable = [
         'name',
+        'creator_id',
     ];
 
     public function creator()

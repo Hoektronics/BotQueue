@@ -58,6 +58,7 @@ class BotsTest extends TestCase
     {
         $this->actingAs($this->user)
             ->get('/bots/create')
+            ->assertViewIs('bot.create')
             ->assertSee('<input name="name"')
             ->assertSee('<select name="type"')
             ->assertSee('<option value="3d_printer">3D Printer</option>')

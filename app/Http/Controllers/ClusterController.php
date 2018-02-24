@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Cluster;
 use App\Enums\BotStatusEnum;
+use App\Http\Requests\ClusterCreationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ClusterController extends Controller
@@ -47,18 +49,24 @@ class ClusterController extends Controller
      */
     public function create()
     {
-        //
+        return view('cluster.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param ClusterCreationRequest $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(ClusterCreationRequest $request)
     {
-        //
+        /** @var Cluster $cluster */
+        $cluster = Cluster::create([
+            'name' => $request->get('name'),
+            'creator_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('clusters.show', $cluster);
     }
 
     /**
