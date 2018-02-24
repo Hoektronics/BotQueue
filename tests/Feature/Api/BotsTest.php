@@ -18,7 +18,8 @@ class BotsTest extends TestCase
     use PassportHelper;
     use RefreshDatabase;
 
-    public function testBotsIndex()
+    /** @test */
+    public function botsIndex()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
@@ -48,7 +49,8 @@ class BotsTest extends TestCase
             ]);
     }
 
-    public function testBotsThatAreNotMineAreNotVisibleInIndex()
+    /** @test */
+    public function botsThatAreNotMineAreNotVisibleInIndex()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
@@ -84,7 +86,8 @@ class BotsTest extends TestCase
             ->assertDontSee($other_bot->name);
     }
 
-    public function testCanSeeMyOwnBot()
+    /** @test */
+    public function canSeeMyOwnBot()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
@@ -112,7 +115,8 @@ class BotsTest extends TestCase
             ]);
     }
 
-    public function testCanSeeMyOwnBotGivenExplicitScope()
+    /** @test */
+    public function canSeeMyOwnBotGivenExplicitScope()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
@@ -140,7 +144,8 @@ class BotsTest extends TestCase
             ]);
     }
 
-    public function testCannotSeeOtherBot()
+    /** @test */
+    public function cannotSeeOtherBot()
     {
         $other_user = factory(User::class)->create();
         $other_bot = factory(Bot::class)->create([
@@ -155,7 +160,8 @@ class BotsTest extends TestCase
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public function testCannotSeeMyBotIfMissingCorrectScope()
+    /** @test */
+    public function cannotSeeMyBotIfMissingCorrectScope()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([

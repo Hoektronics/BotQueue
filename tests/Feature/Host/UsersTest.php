@@ -17,7 +17,8 @@ class UsersTest extends TestCase
     use PassportHelper;
     use RefreshDatabase;
 
-    public function testHostCanNotAccessSpecificUserEvenIfUserOwnsHost()
+    /** @test */
+    public function hostCanNotAccessSpecificUserEvenIfUserOwnsHost()
     {
         $response = $this
             ->withTokenFromHost($this->host)

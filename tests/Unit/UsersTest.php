@@ -12,7 +12,8 @@ class UsersTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testBotCreatedEventIsFired()
+    /** @test */
+    public function botCreatedEventIsFired()
     {
         Event::fake([
             UserCreated::class,

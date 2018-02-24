@@ -19,7 +19,8 @@ class BotGrabJobTest extends TestCase
     use CreatesJob;
     use RefreshDatabase;
 
-    public function testBotCannotGrabJobIfItIsNotTheWorker()
+    /** @test */
+    public function botCannotGrabJobIfItIsNotTheWorker()
     {
         $otherBot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -31,7 +32,8 @@ class BotGrabJobTest extends TestCase
         $otherBot->grabJob($job);
     }
 
-    public function testBotCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
+    /** @test */
+    public function botCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
     {
         $this->cluster->bots()->save($this->bot);
 
@@ -49,8 +51,9 @@ class BotGrabJobTest extends TestCase
      * @throws BotCannotGrabJob
      * @throws \Exception
      * @throws \Throwable
+     * @test
      */
-    public function testBotGrabbingJobWithBotWorkerSetsBotIdOnJob()
+    public function botGrabbingJobWithBotWorkerSetsBotIdOnJob()
     {
         $job = $this->createJob($this->bot);
 
@@ -65,8 +68,9 @@ class BotGrabJobTest extends TestCase
      * @throws BotCannotGrabJob
      * @throws \Exception
      * @throws \Throwable
+     * @test
      */
-    public function testBotGrabbingJobWithClusterWorkerSetsBotIdOnJob()
+    public function botGrabbingJobWithClusterWorkerSetsBotIdOnJob()
     {
         $this->cluster->bots()->save($this->bot);
 

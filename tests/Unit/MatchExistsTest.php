@@ -15,7 +15,8 @@ class MatchExistsTest extends TestCase
     use HasUser;
     use RefreshDatabase;
 
-    public function testMatchingOnModelIdAttribute()
+    /** @test */
+    public function matchingOnModelIdAttribute()
     {
         $bot = factory(App\Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -38,7 +39,8 @@ class MatchExistsTest extends TestCase
         $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
     }
 
-    public function testWhenNothingMatches()
+    /** @test */
+    public function whenNothingMatches()
     {
         $bot = factory(App\Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -61,7 +63,8 @@ class MatchExistsTest extends TestCase
         $this->assertNull($matchExists->getModel($fieldValue));
     }
 
-    public function testMultipleFieldMatches()
+    /** @test */
+    public function multipleFieldMatches()
     {
         $bot = factory(App\Bot::class)->create([
             'creator_id' => $this->user->id,
@@ -85,7 +88,8 @@ class MatchExistsTest extends TestCase
         $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
     }
 
-    public function testFieldMatchesWithScope()
+    /** @test */
+    public function fieldMatchesWithScope()
     {
         Auth::login($this->user);
 

@@ -15,7 +15,8 @@ class BotsTest extends TestCase
     use HasUser;
     use RefreshDatabase;
 
-    public function testBotCreatedEventIsFired()
+    /** @test */
+    public function botCreatedEventIsFired()
     {
         Event::fake([
             BotCreated::class,
@@ -29,7 +30,8 @@ class BotsTest extends TestCase
         Event::assertDispatched(BotCreated::class);
     }
 
-    public function testBotIsByDefaultOffline()
+    /** @test */
+    public function botIsByDefaultOffline()
     {
         /** @var App\Bot $bot */
         $bot = factory(App\Bot::class)->create([

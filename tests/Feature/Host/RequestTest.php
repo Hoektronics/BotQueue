@@ -26,7 +26,8 @@ class RequestTest extends HostTestCase
         parent::setUp();
     }
 
-    public function testClientRequestHasStatusOfRequested()
+    /** @test */
+    public function clientRequestHasStatusOfRequested()
     {
         $response = $this->json('POST', '/host/requests', [
             'local_ip' => $this->localIpv4,
@@ -49,7 +50,8 @@ class RequestTest extends HostTestCase
             ]);
     }
 
-    public function testNoInformationIsNeededForRequest()
+    /** @test */
+    public function noInformationIsNeededForRequest()
     {
         $response = $this->json('POST', '/host/requests');
 
@@ -69,7 +71,8 @@ class RequestTest extends HostTestCase
             ]);
     }
 
-    public function testRetrievingHostRequestThatHasNotExpired()
+    /** @test */
+    public function retrievingHostRequestThatHasNotExpired()
     {
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
@@ -78,7 +81,8 @@ class RequestTest extends HostTestCase
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
     }
 
-    public function testRetrievingHostRequestThatHasExpiredButDBHasNotBeenUpdated()
+    /** @test */
+    public function retrievingHostRequestThatHasExpiredButDBHasNotBeenUpdated()
     {
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
@@ -90,7 +94,8 @@ class RequestTest extends HostTestCase
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->getAttributes()['status']);
     }
 
-    public function testHostRequestThatHasExpiredIsGoneOneHourAfter()
+    /** @test */
+    public function hostRequestThatHasExpiredIsGoneOneHourAfter()
     {
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
@@ -104,7 +109,8 @@ class RequestTest extends HostTestCase
         $this->assertNull($missing_request);
     }
 
-    public function testHostRequestThatHasExpiredIsNotGoneIfItHasNotBeenOneHourSinceExpiration()
+    /** @test */
+    public function hostRequestThatHasExpiredIsNotGoneIfItHasNotBeenOneHourSinceExpiration()
     {
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();

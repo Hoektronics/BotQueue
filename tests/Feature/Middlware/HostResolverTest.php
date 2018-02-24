@@ -21,7 +21,8 @@ class HostResolverTest extends TestCase
     use PassportHelper;
     use RefreshDatabase;
 
-    public function testRequestWithoutTokenIsForbidden()
+    /** @test */
+    public function requestWithoutTokenIsForbidden()
     {
         $request = Request::create('http://example.com/host/foo', 'GET');
 
@@ -35,7 +36,8 @@ class HostResolverTest extends TestCase
         $this->assertEquals($response->getStatusCode(), Response::HTTP_FORBIDDEN);
     }
 
-    public function testRequestWithTokenResolvesHost()
+    /** @test */
+    public function requestWithTokenResolvesHost()
     {
         $request = Request::create('http://example.com/host/foo', 'GET');
         $request->headers->add([
@@ -59,7 +61,8 @@ class HostResolverTest extends TestCase
         $this->assertEquals($this->host->id, $hostManagerHost->id);
     }
 
-    public function testUpdatesSeenAt()
+    /** @test */
+    public function updatesSeenAt()
     {
         $fakeTimeStamp = Carbon::now()->subMinute();
         $this->host->seen_at = $fakeTimeStamp;
