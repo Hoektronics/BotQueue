@@ -70,11 +70,14 @@ class BotController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Bot  $bot
+     * @param  \App\Bot $bot
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Bot $bot)
     {
+        $this->authorize('view', $bot);
+
         $bot->load(['clusters', 'creator']);
 
         return view('bot.show', [

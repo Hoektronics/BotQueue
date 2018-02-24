@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@inject('bot_status', 'App\Services\BotStatusService')
+
 @section('content')
     <div class="row">
         <div class="col-md-9">
@@ -13,7 +15,8 @@
                     Info
                 </div>
                 <div class="card-body">
-                    Creator: {{ $bot->creator->username }}
+                    Creator: {{ $bot->creator->username }}<br>
+                    Status: {!! $bot_status->label($bot->status) !!}
                 </div>
             </div>
 

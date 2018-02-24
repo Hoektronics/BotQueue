@@ -4,7 +4,10 @@ namespace Tests\Feature\Web;
 
 use App\Bot;
 use App\Cluster;
+use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
+use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class BotsTest extends TestCase
 {
     use HasUser;
+    use HasCluster;
     use RefreshDatabase;
     use WithFaker;
 
@@ -67,22 +71,132 @@ class BotsTest extends TestCase
             ->assertRedirect('/login');
     }
 
+    protected function postBot($overrides = [])
+    {
+        $default = [
+            'name' => $this->faker->userName,
+            'type' => '3d_printer',
+            'cluster' => $this->cluster->id,
+        ];
+
+        return $this->post('/bots', array_merge($default, $overrides));
+    }
+
     /** @test */
     public function userCanCreateBot()
+    {
+        $botName = $this->faker->name;
+        $response = $this->actingAs($this->user)
+            ->postBot(['name' => $botName]);
+
+        $bot = Bot::whereCreatorId($this->user->id)->where('name', $botName)->first();
+        $this->assertNotNull($bot);
+        $response->assertRedirect("/bots/{$bot->id}");
+    }
+
+    /** @test */
+    public function userCanSeeTheirBot()
+    {
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $this->actingAs($this->user)
+            ->get("/bots/{$bot->id}")
+            ->assertSee($bot->name)
+            ->assertSee($bot->status)
+            ->assertSee("Creator: {$this->user->name}");
+    }
+
+    /** @test */
+    public function anotherUserCannotSeeMyBot()
+    {
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $otherUser = factory(User::class)->create();
+
+        $this->actingAs($otherUser)
+            ->get("/bots/{$bot->id}")
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    /** @test */
+    public function aUserCannotMakeABotWithTheSameNameAsAnExistingBot()
+    {
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $this->actingAs($this->user)
+            ->postBot(['name' => $bot->name])
+            ->assertSessionHasErrors('name');
+    }
+
+    /** @test */
+    public function aDifferentUserCanMakeABotWithTheSameNameAsMyExistingBot()
+    {
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $otherUser = factory(User::class)->create();
+
+        $otherCluster = factory(Cluster::class)->create([
+            'creator_id' => $otherUser,
+        ]);
+
+        $response = $this->actingAs($otherUser)
+            ->postBot([
+                'name' => $bot->name,
+                'cluster' => $otherCluster->id,
+            ]);
+
+        $bot = Bot::whereCreatorId($otherUser->id)->where('name', $bot->name)->first();
+        $this->assertNotNull($bot);
+        $response->assertRedirect("/bots/{$bot->id}");
+    }
+
+    /** @test */
+    public function anotherUserCannotAssignABotToMyCluster()
+    {
+        $otherUser = factory(User::class)->create();
+
+        $this->actingAs($otherUser)
+            ->postBot()
+            ->assertSessionHasErrors('cluster');
+    }
+
+    /** @test */
+    public function botNameIsRequired()
     {
         $cluster = factory(Cluster::class)->create([
             'creator_id' => $this->user,
         ]);
 
-        $botName = $this->faker->name;
-        $response = $this->actingAs($this->user)
-            ->post('/bots', [
-                'name' => $botName,
-                'type' => '3d_printer',
-                'cluster' => $cluster->id,
-            ]);
+        $this->actingAs($this->user)
+            ->postBot(['name' => null])
+            ->assertSessionHasErrors('name');
+    }
 
-        $bot = Bot::whereName($botName)->first();
-        $response->assertRedirect("/bots/{$bot->id}");
+    /** @test */
+    public function botTypeIsRequired()
+    {
+        $cluster = factory(Cluster::class)->create([
+            'creator_id' => $this->user,
+        ]);
+
+        $this->actingAs($this->user)
+            ->postBot(['type' => null])
+            ->assertSessionHasErrors('type');
+    }
+
+    /** @test */
+    public function botClusterIsRequired()
+    {
+        $this->actingAs($this->user)
+            ->postBot(['cluster' => null])
+            ->assertSessionHasErrors('cluster');
     }
 }
