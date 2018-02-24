@@ -169,12 +169,16 @@ class BotsTest extends TestCase
     }
 
     /** @test */
+    public function aUserCannotAssignABotToANonExistingCluster()
+    {
+        $this->actingAs($this->user)
+            ->postBot(['cluster' => 9999])
+            ->assertSessionHasErrors('cluster');
+    }
+
+    /** @test */
     public function botNameIsRequired()
     {
-        $cluster = factory(Cluster::class)->create([
-            'creator_id' => $this->user,
-        ]);
-
         $this->actingAs($this->user)
             ->postBot(['name' => null])
             ->assertSessionHasErrors('name');
@@ -183,10 +187,6 @@ class BotsTest extends TestCase
     /** @test */
     public function botTypeIsRequired()
     {
-        $cluster = factory(Cluster::class)->create([
-            'creator_id' => $this->user,
-        ]);
-
         $this->actingAs($this->user)
             ->postBot(['type' => null])
             ->assertSessionHasErrors('type');
