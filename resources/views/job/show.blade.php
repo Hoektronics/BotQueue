@@ -20,7 +20,7 @@
 
                     <div class="row">
                         Worker:
-                        @if(is_a($job->worker, App\Job::class))
+                        @if(is_a($job->worker, App\Bot::class))
                             @inject('bot_status', 'App\Services\BotStatusService')
 
                             <a class="badge {{ $bot_status->label_class($job->worker->status) }}"
