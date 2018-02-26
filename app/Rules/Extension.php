@@ -30,7 +30,7 @@ class Extension implements Rule
     public function passes($attribute, $value)
     {
         $originalName = $value->getClientOriginalName();
-        return in_array(File::extension($originalName), $this->extensions);
+        return in_array(strtolower(File::extension($originalName)), $this->extensions);
     }
 
     /**

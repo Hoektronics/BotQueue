@@ -21,7 +21,7 @@ class FileTypeEnum
 
     public static function fromExtension($extension)
     {
-        switch ($extension) {
+        switch (strtolower($extension)) {
             case "gcode":
                 return self::GCODE;
             case "stl":

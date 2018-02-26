@@ -49,7 +49,7 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  FileUploadRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(FileUploadRequest $request)
@@ -64,7 +64,7 @@ class FileController extends Controller
         $file = new File([
             'path' => $uploadedFilePath,
             'name' => $clientOriginalName,
-            'filesystem' => config('filesystems.default'),
+            'filesystem' => 'public',
             'type' => FileTypeEnum::fromExtension($extension),
             'uploader_id' => Auth::id(),
         ]);
