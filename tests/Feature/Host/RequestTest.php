@@ -48,6 +48,8 @@ class RequestTest extends HostTestCase
                     'expires_at',
                 ]
             ]);
+
+        $this->assertEquals(8, strlen($response->json('data.id')));
     }
 
     /** @test */
@@ -69,6 +71,8 @@ class RequestTest extends HostTestCase
                     'expires_at',
                 ]
             ]);
+
+        $this->assertEquals(8, strlen($response->json('data.id')));
     }
 
     /** @test */
