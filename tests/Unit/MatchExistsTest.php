@@ -3,26 +3,28 @@
 namespace Tests\Unit;
 
 use App;
+use App\Bot;
+use App\Cluster;
 use App\Rules\MatchExists;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Tests\HasBot;
+use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
 
 class MatchExistsTest extends TestCase
 {
     use HasUser;
+    use HasBot;
+    use HasCluster;
     use RefreshDatabase;
 
     /** @test */
     public function matchingOnModelIdAttribute()
     {
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        $fieldValue = 'foo_' . $bot->id;
+        $fieldValue = 'foo_' . $this->bot->id;
         $fields = [
             'field' => $fieldValue
         ];
@@ -36,17 +38,16 @@ class MatchExistsTest extends TestCase
         ]);
 
         $this->assertTrue($validator->passes());
-        $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
+
+        $model = $matchExists->getModel($fieldValue);
+        $this->assertEquals($this->bot->id, $model->id);
+        $this->assertInstanceOf(Bot::class, $model);
     }
 
     /** @test */
     public function whenNothingMatches()
     {
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        $fieldValue = 'foo_' . ($bot->id + 1);
+        $fieldValue = 'foo_' . ($this->bot->id + 1);
         $fields = [
             'field' => $fieldValue
         ];
@@ -64,13 +65,9 @@ class MatchExistsTest extends TestCase
     }
 
     /** @test */
-    public function multipleFieldMatches()
+    public function multipleFieldMatchesWithSameModel()
     {
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        $fieldValue = 'bar_' . $bot->id;
+        $fieldValue = 'bar_' . $this->bot->id;
         $fields = [
             'field' => $fieldValue
         ];
@@ -85,19 +82,42 @@ class MatchExistsTest extends TestCase
         ]);
 
         $this->assertTrue($validator->passes());
-        $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
+
+        $model = $matchExists->getModel($fieldValue);
+        $this->assertEquals($this->bot->id, $model->id);
+        $this->assertInstanceOf(Bot::class, $model);
+    }
+
+    /** @test */
+    public function multipleFieldMatchesWithDifferentModel()
+    {
+        $fieldValue = 'bar_' . $this->cluster->id;
+        $fields = [
+            'field' => $fieldValue
+        ];
+
+        $matchExists = new MatchExists([
+            'foo_{id}' => App\Bot::class,
+            'bar_{id}' => App\Cluster::class,
+        ]);
+
+        $validator = Validator::make($fields, [
+            'field' => $matchExists
+        ]);
+
+        $this->assertTrue($validator->passes());
+
+        $model = $matchExists->getModel($fieldValue);
+        $this->assertEquals($this->cluster->id, $model->id);
+        $this->assertInstanceOf(Cluster::class, $model);
     }
 
     /** @test */
     public function fieldMatchesWithScope()
     {
-        Auth::login($this->user);
+        $this->actingAs($this->user);
 
-        $bot = factory(App\Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
-
-        $fieldValue = 'foo_' . $bot->id;
+        $fieldValue = 'foo_' . $this->bot->id;
 
         $fields = [
             'field' => $fieldValue
@@ -112,6 +132,9 @@ class MatchExistsTest extends TestCase
         ]);
 
         $this->assertTrue($validator->passes());
-        $this->assertEquals($bot->id, $matchExists->getModel($fieldValue)->id);
+
+        $model = $matchExists->getModel($fieldValue);
+        $this->assertEquals($this->bot->id, $model->id);
+        $this->assertInstanceOf(Bot::class, $model);
     }
 }

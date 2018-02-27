@@ -62,6 +62,8 @@ class MatchExists implements Rule
                 return $field->getModel($value);
             }
         }
+
+        return null;
     }
 }
 
