@@ -2,9 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Bot;
+use App\Cluster;
 use App\Events\JobCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 use Tests\CreatesJob;
 use Tests\HasBot;
 use Tests\HasCluster;
@@ -19,37 +20,55 @@ class JobsTest extends TestCase
     use RefreshDatabase;
     use CreatesJob;
 
-    public function testJobCreatedEventIsFiredForBot()
+    /** @test */
+    public function jobCreatedEventIsFiredForBot()
     {
-        Event::fake([
-            JobCreated::class,
-        ]);
+        $this->fakesEvents(JobCreated::class);
 
         $job = $this->createJob($this->bot);
 
-        Event::assertDispatched(JobCreated::class, function ($e) use ($job) {
-            /** @var $e JobCreated */
-            return $e->job->id == $job->id &&
-                $e->bots()->count() == 1 &&
-                $e->bots()->contains($this->bot);
-        });
+        $this->assertTrue($job->workerIs(Bot::class));
+
+        $this->assertDispatched(JobCreated::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var JobCreated $event */
+                $this->assertEquals($job->id, $event->job->id);
+            })
+            ->channels([
+                'private-user.' . $this->user->id,
+                'private-bot.' . $this->bot->id,
+            ]);
     }
 
-    public function testJobCreatedEventIsFiredForCluster()
+    /** @test */
+    public function jobCreatedEventIsFiredForAllBotsInCluster()
     {
-        Event::fake([
-            JobCreated::class,
+        $this->fakesEvents(JobCreated::class);
+
+        /** @var Bot $otherBot */
+        $otherBot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
         ]);
 
-        $this->cluster->bots()->save($this->bot);
+        $this->cluster->bots()->saveMany([
+            $this->bot,
+            $otherBot,
+        ]);
 
         $job = $this->createJob($this->cluster);
 
-        Event::assertDispatched(JobCreated::class, function ($e) use ($job) {
-            /** @var $e JobCreated */
-            return $e->job->id == $job->id &&
-                $e->bots()->count() == 1 &&
-                $e->bots()->contains($this->bot);
-        });
+        $this->assertTrue($job->workerIs(Cluster::class));
+
+        $this->assertDispatched(JobCreated::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var JobCreated $event */
+                $this->assertEquals($job->id, $event->job->id);
+            })
+            ->channels([
+                'private-user.'.$this->user->id,
+                'private-cluster.'.$this->cluster->id,
+                'private-bot.'.$this->bot->id,
+                'private-bot.'.$otherBot->id,
+            ]);
     }
 }

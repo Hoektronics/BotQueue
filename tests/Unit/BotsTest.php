@@ -18,16 +18,21 @@ class BotsTest extends TestCase
     /** @test */
     public function botCreatedEventIsFired()
     {
-        Event::fake([
-            BotCreated::class,
-        ]);
+        $this->fakesEvents(BotCreated::class);
 
         /** @var App\Bot $bot */
-        factory(App\Bot::class)->create([
+        $bot = factory(App\Bot::class)->create([
             'creator_id' => $this->user->id,
         ]);
 
-        Event::assertDispatched(BotCreated::class);
+        $this->assertDispatched(BotCreated::class)
+            ->inspect(function($event) use ($bot) {
+                /** @var BotCreated $event */
+                $this->assertEquals($bot->id, $event->bot->id);
+            })
+            ->channels([
+                'private-user.'.$this->user->id,
+            ]);
     }
 
     /** @test */

@@ -45,6 +45,7 @@ class BotAssignedToHost extends Event implements ShouldBroadcast
         return $this
             ->userChannel($this->bot->creator_id)
             ->userChannel($this->host->owner_id)
+            ->botChannel($this->bot->id)
             ->hostChannel($this->host->id)
             ->channels();
     }

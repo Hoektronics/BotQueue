@@ -15,13 +15,11 @@ class UsersTest extends TestCase
     /** @test */
     public function botCreatedEventIsFired()
     {
-        Event::fake([
-            UserCreated::class,
-        ]);
+        $this->fakesEvents(UserCreated::class);
 
         /** @var App\User $user */
         factory(App\User::class)->create();
 
-        Event::assertDispatched(UserCreated::class);
+        $this->assertDispatched(UserCreated::class);
     }
 }

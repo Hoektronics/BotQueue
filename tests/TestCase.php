@@ -4,10 +4,12 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Laravel\Passport\ClientRepository;
+use Tests\Helpers\WithFakesEvents;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use WithFakesEvents;
 
     public function setUpTraits()
     {

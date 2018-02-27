@@ -43,7 +43,9 @@ class BotRemovedFromHost extends Event implements ShouldBroadcast
     public function broadcastOn()
     {
         return $this
+            ->userChannel($this->bot->creator_id)
             ->userChannel($this->host->owner_id)
+            ->botChannel($this->bot->id)
             ->hostChannel($this->host->id)
             ->channels();
     }

@@ -5,6 +5,7 @@ namespace App\Events;
 
 
 use App\Bot;
+use App\Cluster;
 use App\Host;
 use App\Job;
 use App\User;
@@ -73,7 +74,7 @@ class Event
     }
 
     /**
-     * @param $job Bot|mixed
+     * @param $job Job|mixed
      * @return Event
      */
     protected function jobChannel($job)
@@ -90,7 +91,7 @@ class Event
     }
 
     /**
-     * @param $host Bot|mixed
+     * @param $host Host|mixed
      * @return Event
      */
     protected function hostChannel($host)
@@ -102,6 +103,23 @@ class Event
 
         if($host_id !== null)
             return $this->addChannel(new PrivateChannel('host.'.$host_id));
+
+        return $this;
+    }
+
+    /**
+     * @param $cluster Cluster|mixed
+     * @return Event
+     */
+    protected function clusterChannel($cluster)
+    {
+        $cluster_id = $cluster;
+        if ($cluster instanceof Cluster) {
+            $cluster_id = $cluster->id;
+        }
+
+        if($cluster_id !== null)
+            return $this->addChannel(new PrivateChannel('cluster.'.$cluster_id));
 
         return $this;
     }

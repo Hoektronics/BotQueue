@@ -62,9 +62,7 @@ class BotGrabJobTest extends TestCase
      */
     public function botGrabbingJobWithBotWorkerSetsBotIdOnJob()
     {
-        Event::fake([
-            BotGrabbedJob::class
-        ]);
+        $this->fakesEvents(BotGrabbedJob::class);
 
         $job = $this->createJob($this->bot);
 
@@ -74,13 +72,17 @@ class BotGrabJobTest extends TestCase
         $job = $job->refresh();
         $this->assertEquals($this->bot->id, $job->bot_id);
 
-        Event::assertDispatched(BotGrabbedJob::class, function ($e) use ($job) {
-            /** @var BotGrabbedJob $e */
-            $this->assertEquals($this->bot->id, $e->bot->id);
-            $this->assertEquals($job->id, $e->job->id);
-
-            return true;
-        });
+        $this->assertDispatched(BotGrabbedJob::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var BotGrabbedJob $event */
+                $this->assertEquals($this->bot->id, $event->bot->id);
+                $this->assertEquals($job->id, $event->job->id);
+            })
+            ->channels([
+                'private-user.' . $this->user->id,
+                'private-bot.' . $this->bot->id,
+                'private-job.' . $job->id,
+            ]);
     }
 
     /**
@@ -89,9 +91,7 @@ class BotGrabJobTest extends TestCase
      */
     public function botGrabbingJobWithClusterWorkerSetsBotIdOnJob()
     {
-        Event::fake([
-            BotGrabbedJob::class
-        ]);
+        $this->fakesEvents(BotGrabbedJob::class);
 
         $this->cluster->bots()->save($this->bot);
 
@@ -103,13 +103,17 @@ class BotGrabJobTest extends TestCase
         $job = $job->refresh();
         $this->assertEquals($this->bot->id, $job->bot_id);
 
-        Event::assertDispatched(BotGrabbedJob::class, function ($e) use ($job) {
-            /** @var BotGrabbedJob $e */
-            $this->assertEquals($this->bot->id, $e->bot->id);
-            $this->assertEquals($job->id, $e->job->id);
-
-            return true;
-        });
+        $this->assertDispatched(BotGrabbedJob::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var BotGrabbedJob $event */
+                $this->assertEquals($this->bot->id, $event->bot->id);
+                $this->assertEquals($job->id, $event->job->id);
+            })
+            ->channels([
+                'private-user.'.$this->user->id,
+                'private-bot.'.$this->bot->id,
+                'private-job.'.$job->id,
+            ]);
     }
 
 }

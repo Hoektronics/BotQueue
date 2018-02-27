@@ -59,6 +59,13 @@ class Job extends Model
         return $this->morphTo();
     }
 
+    public function workerIs($class)
+    {
+        $modelClass = static::getActualClassNameForMorph($this->worker_type);
+
+        return $modelClass == $class;
+    }
+
     /**
      * Scope to only include jobs belonging to the currently authenticated user
      *

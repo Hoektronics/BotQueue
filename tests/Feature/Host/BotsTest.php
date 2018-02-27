@@ -66,9 +66,7 @@ class BotsTest extends HostTestCase
 
     public function testAssigningBotFiresAssignedEvent()
     {
-        Event::fake([
-            BotAssignedToHost::class,
-        ]);
+        $this->fakesEvents(BotAssignedToHost::class);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)->create([
@@ -77,16 +75,22 @@ class BotsTest extends HostTestCase
 
         $bot->assignTo($this->host);
 
-        Event::assertDispatched(BotAssignedToHost::class, function ($event) use ($bot) {
-            /** @var $event BotAssignedToHost */
-            return $event->bot->id == $bot->id &&
-                $event->host->id == $this->host->id;
-        });
+        $this->assertDispatched(BotAssignedToHost::class)
+            ->inspect(function ($event) use ($bot) {
+                /** @var $event BotAssignedToHost */
+                $this->assertEquals($bot->id, $event->bot->id);
+                $this->assertEquals($this->host->id, $event->host->id);
+            })
+            ->channels([
+                'private-user.' . $this->user->id,
+                'private-bot.' . $bot->id,
+                'private-host.' . $this->host->id,
+            ]);
     }
 
     public function testAssigningBotToNewHostFiresRemovedEvent()
     {
-        Event::fake([
+        $this->fakesEvents([
             BotAssignedToHost::class,
             BotRemovedFromHost::class,
         ]);
@@ -103,16 +107,28 @@ class BotsTest extends HostTestCase
 
         $bot->assignTo($this->host);
 
-        Event::assertDispatched(BotAssignedToHost::class, function ($event) use ($bot) {
-            /** @var $event BotAssignedToHost */
-            return $event->bot->id == $bot->id &&
-                $event->host->id == $this->host->id;
-        });
+        $this->assertDispatched(BotAssignedToHost::class)
+            ->inspect(function ($event) use ($bot) {
+                /** @var $event BotAssignedToHost */
+                $this->assertEquals($bot->id, $event->bot->id);
+                $this->assertEquals($this->host->id, $event->host->id);
+            })
+            ->channels([
+                'private-user.' . $this->user->id,
+                'private-bot.' . $bot->id,
+                'private-host.' . $this->host->id,
+            ]);
 
-        Event::assertDispatched(BotRemovedFromHost::class, function ($event) use ($bot, $otherHost) {
-            /** @var $event BotRemovedFromHost */
-            return $event->bot->id == $bot->id &&
-                $event->host->id == $otherHost->id;
-        });
+        $this->assertDispatched(BotRemovedFromHost::class)
+            ->inspect(function ($event) use ($bot, $otherHost) {
+                /** @var $event BotRemovedFromHost */
+                $this->assertEquals($bot->id, $event->bot->id);
+                $this->assertEquals($otherHost->id, $event->host->id);
+            })
+            ->channels([
+                'private-user.'.$this->user->id,
+                'private-bot.'.$bot->id,
+                'private-host.'.$otherHost->id,
+            ]);
     }
 }
