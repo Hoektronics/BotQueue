@@ -5,6 +5,7 @@ namespace App;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\BotCreated;
+use App\Events\BotGrabbedJob;
 use App\Events\Host\BotAssignedToHost;
 use App\Events\Host\BotRemovedFromHost;
 use App\Exceptions\BotCannotGrabJob;
@@ -106,29 +107,33 @@ class Bot extends Model
     /**
      * @param $job Job
      * @throws BotCannotGrabJob
-     * @throws \Exception
-     * @throws \Throwable
      */
     public function grabJob($job)
     {
         if (!$this->canGrab($job))
             throw new BotCannotGrabJob("This job cannot be grabbed!");
 
-        DB::transaction(function () use ($job) {
-            Job::query()
-                ->whereKey($job->getKey())
-                ->where('status', JobStatusEnum::QUEUED)
-                ->whereNull('bot_id')
-                ->update([
-                    'bot_id' => $this->id,
-                    'status' => JobStatusEnum::ASSIGNED
-                ]);
+        try {
+            DB::transaction(function () use ($job) {
+                Job::query()
+                    ->whereKey($job->getKey())
+                    ->where('status', JobStatusEnum::QUEUED)
+                    ->whereNull('bot_id')
+                    ->update([
+                        'bot_id' => $this->id,
+                        'status' => JobStatusEnum::ASSIGNED
+                    ]);
 
-            $job->refresh();
+                $job->refresh();
 
-            if ($job->bot_id != $this->id)
-                throw new BotCannotGrabJob("This job cannot be grabbed!");
-        });
+                if ($job->bot_id != $this->id)
+                    throw new BotCannotGrabJob("This job cannot be grabbed!");
+            });
+        } catch (\Exception|\Throwable $e) {
+            throw new BotCannotGrabJob("Unexpected exception while trying to grab job");
+        }
+
+        event(new BotGrabbedJob($this, $job));
     }
 
     /**
