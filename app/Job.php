@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Query\Builder|\App\Job whereWorkerType($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Job mine()
  * @property-read \App\User $creator
+ * @property-read \App\Bot|null $bot
  */
 class Job extends Model
 {
@@ -64,6 +65,11 @@ class Job extends Model
         $modelClass = static::getActualClassNameForMorph($this->worker_type);
 
         return $modelClass == $class;
+    }
+
+    public function bot()
+    {
+        return $this->belongsTo(Bot::class);
     }
 
     /**

@@ -18,4 +18,6 @@ Route::post('refresh', 'TokenController@refresh');
 
 Route::get('bots', 'HostController@bots');
 
+
+Route::get('jobs/{job}', 'HostController@show');
 Route::post('jobs/grab', 'HostController@grabJob');
