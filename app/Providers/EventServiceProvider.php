@@ -18,15 +18,6 @@ class EventServiceProvider extends ServiceProvider
             Listeners\SetupDefaultCluster::class,
             Listeners\EmailNewUser::class,
         ],
-        Events\BotCanGrabJob::class => [
-
-        ],
-        Events\BotCreated::class => [
-            Listeners\NotifyEligibleBots::class
-        ],
-        Events\JobCreated::class => [
-            Listeners\NotifyEligibleBots::class
-        ],
     ];
 
     /**

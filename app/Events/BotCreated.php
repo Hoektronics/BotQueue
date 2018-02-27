@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
-class BotCreated extends Event implements HasRelatedBots, ShouldBroadcast
+class BotCreated extends Event implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -37,10 +37,5 @@ class BotCreated extends Event implements HasRelatedBots, ShouldBroadcast
         return $this
             ->userChannel($this->bot->creator_id)
             ->channels();
-    }
-
-    public function bots()
-    {
-        return [$this->bot];
     }
 }

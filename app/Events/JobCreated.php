@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
-class JobCreated extends Event implements HasRelatedBots, ShouldBroadcast
+class JobCreated extends Event implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -39,15 +39,5 @@ class JobCreated extends Event implements HasRelatedBots, ShouldBroadcast
         return $this
             ->userChannel($this->job->creator_id)
             ->channels();
-    }
-
-    public function bots()
-    {
-        $worker = $this->job->worker;
-        if ($worker instanceof Bot) {
-            return collect([$worker]);
-        } elseif ($worker instanceof Cluster) {
-            return $worker->bots;
-        }
     }
 }
