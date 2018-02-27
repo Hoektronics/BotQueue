@@ -14,7 +14,7 @@ class AuthTest extends HostTestCase
     /** @test */
     public function fullWorkflow()
     {
-        $request_response = $this->json('POST', '/host/requests');
+        $request_response = $this->postJson('/host/requests');
 
         $request_response
             ->assertStatus(Response::HTTP_CREATED)
@@ -26,9 +26,10 @@ class AuthTest extends HostTestCase
 
         $host_request_id = $request_response->json('data.id');
 
-        $host_request = HostRequest::find($host_request_id);
+        /** @var HostRequest $host_request */
+        $host_request = HostRequest::query()->find($host_request_id);
 
-        $before_claim = $this->json('GET', "/host/requests/{$host_request->id}");
+        $before_claim = $this->getJson("/host/requests/{$host_request->id}");
 
         $before_claim
             ->assertStatus(Response::HTTP_OK)
@@ -41,7 +42,7 @@ class AuthTest extends HostTestCase
 
         $this->user->claim($host_request, 'Test name');
 
-        $after_claim = $this->json('GET', "/host/requests/{$host_request->id}");
+        $after_claim = $this->getJson("/host/requests/{$host_request->id}");
 
         $after_claim
             ->assertStatus(Response::HTTP_OK)
@@ -57,7 +58,7 @@ class AuthTest extends HostTestCase
                 ]
             ]);
 
-        $host_access_response = $this->json('POST', "/host/requests/{$host_request->id}/access");
+        $host_access_response = $this->postJson("/host/requests/{$host_request->id}/access");
 
         $host_access_response->assertJsonStructure([
             'data' => [
@@ -68,7 +69,8 @@ class AuthTest extends HostTestCase
             ]
         ]);
 
-        $host = Host::find($host_access_response->json("data.host.id"));
+        $host_id = $host_access_response->json("data.host.id");
+        $host = Host::query()->find($host_id);
 
         $host_access_response
             ->assertStatus(Response::HTTP_CREATED)
@@ -100,7 +102,7 @@ class AuthTest extends HostTestCase
 
         $refresh_response = $this
             ->withTokenFromHost($this->host)
-            ->json('POST', '/host/refresh');
+            ->postJson('/host/refresh');
 
         $refresh_response
             ->assertStatus(Response::HTTP_OK)

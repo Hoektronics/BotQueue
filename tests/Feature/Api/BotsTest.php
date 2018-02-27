@@ -28,7 +28,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', '/api/bots');
+            ->getJson('/api/bots');
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -64,7 +64,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', '/api/bots');
+            ->getJson('/api/bots');
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -96,7 +96,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/bots/{$bot->id}");
+            ->getJson("/api/bots/{$bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -125,7 +125,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user, 'bots')
-            ->json('GET', "/api/bots/{$bot->id}");
+            ->getJson("/api/bots/{$bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -154,7 +154,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/bots/{$other_bot->id}");
+            ->getJson("/api/bots/{$other_bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -170,7 +170,7 @@ class BotsTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user, [])
-            ->json('GET', "/api/bots/{$bot->id}");
+            ->getJson("/api/bots/{$bot->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);

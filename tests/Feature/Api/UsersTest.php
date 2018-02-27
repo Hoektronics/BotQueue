@@ -20,7 +20,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/users/{$this->user->id}");
+            ->getJson("/api/users/{$this->user->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -36,7 +36,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromUser($this->user, 'users')
-            ->json('GET', "/api/users/{$this->user->id}");
+            ->getJson("/api/users/{$this->user->id}");
 
         $response
             ->assertStatus(Response::HTTP_OK)
@@ -54,7 +54,7 @@ class UsersTest extends TestCase
 
         $response = $this
             ->withTokenFromUser($this->user)
-            ->json('GET', "/api/users/{$other_user->id}");
+            ->getJson("/api/users/{$other_user->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -64,7 +64,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromUser($this->user, [])
-            ->json('GET', "/api/users/{$this->user->id}");
+            ->getJson("/api/users/{$this->user->id}");
 
         $response
             ->assertStatus(Response::HTTP_FORBIDDEN);

@@ -77,7 +77,8 @@ class HostResolverTest extends TestCase
 
         $middleware->handle($request, function() {});
 
-        $testHost = Host::find($this->host->id);
+        /** @var Host $testHost */
+        $testHost = Host::query()->find($this->host->id);
         $this->assertEquals(Carbon::now(), $testHost->seen_at);
     }
 }

@@ -6,24 +6,24 @@ use App\Enums\HostRequestStatusEnum;
 use App\HostRequest;
 use App\Jobs\CleanExpiredHostRequests;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 
 class RequestTest extends HostTestCase
 {
-    /** @var $faker \Faker\Generator */
-    private $faker;
+    use WithFaker;
+
     private $localIpv4;
     private $ipv4;
     private $hostname;
 
     public function setUp()
     {
-        $this->faker = \Faker\Factory::create();
+        parent::setUp();
+
         $this->localIpv4 = $this->faker->localIpv4;
         $this->ipv4 = $this->faker->ipv4;
         $this->hostname = $this->faker->domainWord;
-
-        parent::setUp();
     }
 
     /** @test */
@@ -109,7 +109,7 @@ class RequestTest extends HostTestCase
         $job = new CleanExpiredHostRequests();
         $job->handle();
 
-        $missing_request = HostRequest::find($host_request->id);
+        $missing_request = HostRequest::query()->find($host_request->id);
         $this->assertNull($missing_request);
     }
 
@@ -124,7 +124,7 @@ class RequestTest extends HostTestCase
         $job = new CleanExpiredHostRequests();
         $job->handle();
 
-        $found_request = HostRequest::find($host_request->id);
+        $found_request = HostRequest::query()->find($host_request->id);
         $this->assertNotNull($found_request);
 
         $this->assertLessThan(Carbon::now(), $found_request->expires_at);

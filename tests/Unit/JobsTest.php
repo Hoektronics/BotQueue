@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Cluster;
 use App\Events\JobCreated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;

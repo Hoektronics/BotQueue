@@ -17,7 +17,7 @@ class BotsTest extends HostTestCase
     {
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', '/api/bots');
+            ->getJson('/api/bots');
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -31,7 +31,7 @@ class BotsTest extends HostTestCase
 
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/bots/{$bot->id}");
+            ->getJson("/api/bots/{$bot->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -47,7 +47,7 @@ class BotsTest extends HostTestCase
 
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/host/bots");
+            ->getJson("/host/bots");
 
         $response
             ->assertStatus(Response::HTTP_OK)

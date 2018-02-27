@@ -22,7 +22,7 @@ class UsersTest extends TestCase
     {
         $response = $this
             ->withTokenFromHost($this->host)
-            ->json('GET', "/api/users/{$this->user->id}");
+            ->getJson("/api/users/{$this->user->id}");
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
