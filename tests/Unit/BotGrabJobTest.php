@@ -6,7 +6,6 @@ use App\Bot;
 use App\Events\BotGrabbedJob;
 use App\Exceptions\BotCannotGrabJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 use Tests\CreatesJob;
 use Tests\HasBot;
 use Tests\HasCluster;
