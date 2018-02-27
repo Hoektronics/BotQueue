@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::post('refresh', 'TokenController@refresh');
 
 Route::get('bots', 'HostController@bots');
+
+Route::post('jobs/grab', 'HostController@grabJob');

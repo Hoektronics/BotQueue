@@ -30,6 +30,7 @@ class JobDistributionManagerTest extends TestCase
 
         $testJob = $manager->nextAvailableJob($this->bot);
 
+        $this->assertInstanceOf(Job::class, $testJob);
         $this->assertEquals($job->id, $testJob->id);
     }
 
@@ -45,6 +46,7 @@ class JobDistributionManagerTest extends TestCase
 
         $testJob = $manager->nextAvailableJob($this->bot);
 
+        $this->assertInstanceOf(Job::class, $testJob);
         $this->assertEquals($job->id, $testJob->id);
     }
 
@@ -64,6 +66,7 @@ class JobDistributionManagerTest extends TestCase
 
         $testJob = $manager->nextAvailableJob($this->bot);
 
+        $this->assertInstanceOf(Job::class, $testJob);
         $this->assertEquals($jobA->id, $testJob->id);
     }
 

@@ -32,8 +32,7 @@ class JobDistributionManager
     {
         return $bot
             ->morphMany(Job::class, 'worker')
-            ->where('status', JobStatusEnum::QUEUED)
-            ->toBase();
+            ->where('status', JobStatusEnum::QUEUED);
     }
 
     /**
