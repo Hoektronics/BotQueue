@@ -4,24 +4,22 @@ namespace App\Events;
 
 use App\Bot;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Support\Facades\Auth;
 
-class BotCreated implements HasRelatedBots, ShouldBroadcast
+class BotCreated extends Event implements HasRelatedBots, ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
     /**
      * @var Bot
      */
     public $bot;
 
     /**
-     * Create a new event instance.
-     *
+     * BotCreated constructor.
      * @param Bot $bot
      */
     public function __construct(Bot $bot)
@@ -36,9 +34,9 @@ class BotCreated implements HasRelatedBots, ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return [
-            new PrivateChannel('user.'.Auth::id()),
-        ];
+        return $this
+            ->userChannel($this->bot->creator_id)
+            ->channels();
     }
 
     public function bots()

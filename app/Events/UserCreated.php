@@ -14,13 +14,15 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class UserCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    /** @var User $user */
+
+    /**
+     * @var User
+     */
     public $user;
 
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * UserCreated constructor.
+     * @param User $user
      */
     public function __construct(User $user)
     {

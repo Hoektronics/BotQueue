@@ -5,28 +5,25 @@ namespace App\Events;
 use App\Bot;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Support\Facades\Auth;
 
-class BotCanGrabJob implements ShouldBroadcast
+class BotCanGrabJob extends Event implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
     /**
      * @var Bot
      */
     public $bot;
 
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * BotCanGrabJob constructor.
+     * @param Bot $bot
      */
     public function __construct(Bot $bot)
     {
-        //
         $this->bot = $bot;
     }
 
@@ -37,9 +34,10 @@ class BotCanGrabJob implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return [
-            new PrivateChannel('user.'.Auth::id()),
-            new PrivateChannel('bot.'.$this->bot->id),
-        ];
+        return $this
+            ->userChannel($this->bot->creator_id)
+            ->botChannel($this->bot->id)
+            ->hostChannel($this->bot->host_id)
+            ->channels();
     }
 }

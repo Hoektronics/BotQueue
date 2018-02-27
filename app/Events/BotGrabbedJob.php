@@ -12,19 +12,21 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class BotGrabbedJob extends Event implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
     /**
      * @var Bot
      */
     public $bot;
+
     /**
      * @var Job
      */
     public $job;
 
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * BotGrabbedJob constructor.
+     * @param Bot $bot
+     * @param Job $job
      */
     public function __construct(Bot $bot, Job $job)
     {

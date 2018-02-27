@@ -3,25 +3,31 @@
 namespace App\Events\Host;
 
 use App\Bot;
+use App\Events\Event;
 use App\Host;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Support\Facades\Auth;
 
-class BotRemovedFromHost implements ShouldBroadcast
+class BotRemovedFromHost extends Event implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * @var Bot
+     */
     public $bot;
+
+    /**
+     * @var Host
+     */
     public $host;
 
     /**
-     * Create a new event instance.
-     *
-     * @return void
+     * BotRemovedFromHost constructor.
+     * @param Bot $bot
+     * @param Host $host
      */
     public function __construct(Bot $bot, Host $host)
     {
@@ -36,9 +42,9 @@ class BotRemovedFromHost implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return [
-            new PrivateChannel('user.'.Auth::id()),
-            new PrivateChannel('host.'.$this->host->id),
-        ];
+        return $this
+            ->userChannel($this->host->owner_id)
+            ->hostChannel($this->host->id)
+            ->channels();
     }
 }
