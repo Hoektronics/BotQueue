@@ -4,6 +4,7 @@
 namespace Tests;
 
 use App;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 
 trait HasUser
@@ -13,6 +14,15 @@ trait HasUser
 
     public function createTestUser()
     {
-        $this->user = factory(App\User::class)->create();
+        $this->user = $this->createUser();
+    }
+
+    /**
+     * @param array $overrides
+     * @return User
+     */
+    public function createUser($overrides = [])
+    {
+        return factory(App\User::class)->create($overrides);
     }
 }

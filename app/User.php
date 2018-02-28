@@ -60,10 +60,15 @@ class User extends Authenticatable
         'created' => UserCreated::class,
     ];
 
+    /**
+     * @param HostRequest $request
+     * @param $name
+     */
     public function claim(HostRequest $request, $name)
     {
         $request->claimer_id = $this->id;
         $request->status = HostRequestStatusEnum::CLAIMED;
+        $request->name = $name;
         $request->save();
     }
 

@@ -31,6 +31,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $claimer_id
  * @property-read \App\User|null $claimer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereClaimerId($value)
+ * @property string|null $name
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereName($value)
  */
 class HostRequest extends Model
 {

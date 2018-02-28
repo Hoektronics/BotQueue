@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Web;
 
+use App\Enums\HostRequestStatusEnum;
+use App\Host;
 use App\HostRequest;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -82,5 +84,45 @@ class HostRequestTest extends TestCase
             ->assertSee("<input name=\"name\" type=\"text\" value=\"{$hostname}\"")
             ->assertSee("Device hostname: {$hostname}")
             ->assertDontSee("Local IP");
+    }
+
+    /** @test */
+    public function canCreateHostFromHostRequest()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $newHostName = 'Test host';
+        $this->actingAs($this->user)
+            ->post('/hosts', [
+                'host_request_id' => $host_request->id,
+                'name' => $newHostName,
+            ])
+            ->assertRedirect("/dashboard");
+
+        $host_request->refresh();
+
+        $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
+        $this->assertEquals($this->user->id, $host_request->claimer_id);
+        $this->assertEquals($newHostName, $host_request->name);
+    }
+
+    /** @test */
+    public function aUserCannotClaimAnAlreadyClaimedHost()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $otherUser = $this->createUser();
+        $otherUser->claim($host_request, 'Other User Test host');
+
+        $this->actingAs($this->user)
+            ->post('/hosts', [
+                'host_request_id' => $host_request->id,
+                'name' => 'My Test host',
+            ])
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+
+        $host_request->refresh();
     }
 }
