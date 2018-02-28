@@ -4,44 +4,9 @@
 namespace Tests;
 
 use App;
-use App\Oauth\OauthHostClient;
-use Laravel\Passport\ClientRepository;
-use Laravel\Passport\PersonalAccessClient;
 
 trait PassportHelper
 {
-    public function setUpClients(ClientRepository $clients)
-    {
-        $this->setUpPersonalClient($clients);
-        $this->setUpHostClient($clients);
-    }
-
-    protected function setUpPersonalClient(ClientRepository $clients)
-    {
-        $client = $clients->createPersonalAccessClient(
-            null,
-            'TestPersonalClient',
-            'http://localhost'
-        );
-
-        $accessClient = new PersonalAccessClient();
-        $accessClient->client_id = $client->id;
-        $accessClient->save();
-    }
-
-    protected function setUpHostClient(ClientRepository $clients)
-    {
-        $client = $clients->create(
-            null,
-            'TestHostClient',
-            'http://localhost'
-        );
-
-        $accessClient = new OauthHostClient();
-        $accessClient->client_id = $client->id;
-        $accessClient->save();
-    }
-
     /**
      * @param $user App\User
      * @param array $scopes

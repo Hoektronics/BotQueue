@@ -17,6 +17,7 @@ class HostRequestController extends Controller
     {
         $host_request = new HostRequest($request->only(['local_ip', 'hostname']));
 
+        $host_request->remote_ip = $request->ip();
         $host_request->expires_at = Carbon::now()->addDay();
         $host_request->save();
 

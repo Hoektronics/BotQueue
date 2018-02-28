@@ -29,7 +29,7 @@ class RequestTest extends HostTestCase
     /** @test */
     public function clientRequestHasStatusOfRequested()
     {
-        $response = $this->json('POST', '/host/requests', [
+        $response = $this->postJson('/host/requests', [
             'local_ip' => $this->localIpv4,
             'hostname' => $this->hostname,
         ]);
@@ -55,7 +55,7 @@ class RequestTest extends HostTestCase
     /** @test */
     public function noInformationIsNeededForRequest()
     {
-        $response = $this->json('POST', '/host/requests');
+        $response = $this->postJson('/host/requests');
 
         $response
             ->assertStatus(Response::HTTP_CREATED)
@@ -73,6 +73,28 @@ class RequestTest extends HostTestCase
             ]);
 
         $this->assertEquals(8, strlen($response->json('data.id')));
+    }
+
+    /** @test */
+    public function hostRequestSetsExternalIp()
+    {
+        $response = $this
+            ->withRemoteIp($this->ipv4)
+            ->postJson('/host/requests');
+
+        $response
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'id'
+                ]
+            ]);
+
+        /** @var HostRequest $host_request */
+        $host_request = HostRequest::query()->find($response->json('data.id'));
+
+        $this->assertNotNull($host_request);
+        $this->assertEquals($this->ipv4, $host_request->remote_ip);
     }
 
     /** @test */
