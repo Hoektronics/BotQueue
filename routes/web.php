@@ -34,3 +34,7 @@ Route::get('jobs/create/file/{file}', 'JobFileController@create')
 
 Route::post('jobs/file/{file}', 'JobFileController@store')
     ->name('jobs.file.store');
+
+Route::get('hosts/requests/{host_request}', 'HostRequestController@show');
+Route::post('hosts/requests', 'HostRequestController@store')
+    ->name('hosts.store');
