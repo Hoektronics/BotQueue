@@ -6,14 +6,15 @@ use Illuminate\Http\Response;
 
 class RevokedTest extends HostTestCase
 {
-    public function testRefreshingExpiredHostFails()
+    /** @test */
+    public function refreshingExpiredHostFails()
     {
         $this->host->revoke();
 
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromHost($this->host)
-            ->json('POST', '/host/refresh');
-
-        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->json('POST', '/host/refresh')
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }

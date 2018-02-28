@@ -13,13 +13,14 @@ class ClustersTest extends TestCase
 {
     use HasUser;
     use HasCluster;
-    use RefreshDatabase;
     use WithFaker;
 
     /** @test */
     public function unauthenticatedUserIsRedirectedToLogin()
     {
-        $this->get('/clusters')
+        $this
+            ->withExceptionHandling()
+            ->get('/clusters')
             ->assertRedirect('/login');
     }
 
@@ -28,7 +29,9 @@ class ClustersTest extends TestCase
     {
         $clusters = $this->user->clusters;
 
-        $response = $this->actingAs($this->user)
+        $response = $this
+            ->withExceptionHandling()
+            ->actingAs($this->user)
             ->get('/clusters');
 
         $clusters->each(function ($cluster) use ($response) {
@@ -39,14 +42,17 @@ class ClustersTest extends TestCase
     /** @test */
     public function unauthenticatedUserCannotSeeCreateClusterPage()
     {
-        $this->get('/clusters/create')
+        $this
+            ->withExceptionHandling()
+            ->get('/clusters/create')
             ->assertRedirect('/login');
     }
 
     /** @test */
     public function authenticatedUserSeesCreateClusterPage()
     {
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->get('/clusters/create')
             ->assertViewIs('cluster.create')
             ->assertSee('<input name="name"');
@@ -55,7 +61,9 @@ class ClustersTest extends TestCase
     /** @test */
     public function unauthenticatedUserCannotCreateCluster()
     {
-        $this->post('/clusters')
+        $this
+            ->withExceptionHandling()
+            ->post('/clusters')
             ->assertRedirect('/login');
     }
 
@@ -72,7 +80,9 @@ class ClustersTest extends TestCase
     public function authenticatedUserCanCreateCluster()
     {
         $clusterName = $this->faker->userName;
-        $response = $this->actingAs($this->user)
+        $response = $this
+            ->withExceptionHandling()
+            ->actingAs($this->user)
             ->postCluster(['name' => $clusterName]);
 
         $cluster = Cluster::whereCreatorId($this->user->id)->where('name', $clusterName)->first();

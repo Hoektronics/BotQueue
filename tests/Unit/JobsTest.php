@@ -17,7 +17,6 @@ class JobsTest extends TestCase
     use HasUser;
     use HasBot;
     use HasCluster;
-    use RefreshDatabase;
     use CreatesJob;
 
     /** @test */

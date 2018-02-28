@@ -21,7 +21,9 @@ class HostRequestTest extends TestCase
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
 
-        $this->get("/hosts/requests/{$host_request->id}")
+        $this
+            ->withExceptionHandling()
+            ->get("/hosts/requests/{$host_request->id}")
             ->assertRedirect('/login');
     }
 
@@ -34,7 +36,8 @@ class HostRequestTest extends TestCase
             'hostname' => null,
         ]);
 
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->get("/hosts/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('host.request.show')
@@ -55,7 +58,8 @@ class HostRequestTest extends TestCase
             'hostname' => null,
         ]);
 
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->get("/hosts/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('host.request.show')
@@ -76,7 +80,8 @@ class HostRequestTest extends TestCase
             'hostname' => $hostname,
         ]);
 
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->get("/hosts/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('host.request.show')
@@ -93,7 +98,8 @@ class HostRequestTest extends TestCase
         $host_request = factory(HostRequest::class)->create();
 
         $newHostName = 'Test host';
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->post('/hosts', [
                 'host_request_id' => $host_request->id,
                 'name' => $newHostName,
@@ -116,7 +122,8 @@ class HostRequestTest extends TestCase
         $otherUser = $this->createUser();
         $otherUser->claim($host_request, 'Other User Test host');
 
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->post('/hosts', [
                 'host_request_id' => $host_request->id,
                 'name' => 'My Test host',

@@ -13,5 +13,4 @@ abstract class HostTestCase extends TestCase
     use HasUser;
     use HasHost;
     use PassportHelper;
-    use RefreshDatabase;
 }

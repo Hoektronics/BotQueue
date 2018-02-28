@@ -10,8 +10,6 @@ use Tests\TestCase;
 
 class UsersTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function botCreatedEventIsFired()
     {

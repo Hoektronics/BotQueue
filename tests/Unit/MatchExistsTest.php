@@ -19,7 +19,6 @@ class MatchExistsTest extends TestCase
     use HasUser;
     use HasBot;
     use HasCluster;
-    use RefreshDatabase;
 
     /** @test */
     public function matchingOnModelIdAttribute()

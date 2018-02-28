@@ -8,19 +8,15 @@ use App\Http\Middleware\HostResolver;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Tests\Feature\Host\HostTestCase;
 use Tests\HasHost;
 use Tests\HasUser;
 use Tests\PassportHelper;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class HostResolverTest extends TestCase
+class HostResolverTest extends HostTestCase
 {
-    use HasUser;
-    use HasHost;
-    use PassportHelper;
-    use RefreshDatabase;
-
     /** @test */
     public function requestWithoutTokenIsForbidden()
     {

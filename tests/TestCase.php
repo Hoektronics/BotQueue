@@ -19,6 +19,8 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUpTraits();
 
+        $this->withoutExceptionHandling();
+
         $uses = array_flip(class_uses_recursive(static::class));
 
         $client_repository = app(ClientRepository::class);

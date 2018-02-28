@@ -16,7 +16,6 @@ class BotsTest extends TestCase
 {
     use HasUser;
     use PassportHelper;
-    use RefreshDatabase;
 
     /** @test */
     public function botsIndex()
@@ -26,11 +25,9 @@ class BotsTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $response = $this
+        $this
             ->withTokenFromUser($this->user)
-            ->getJson('/api/bots');
-
-        $response
+            ->getJson('/api/bots')
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -62,11 +59,9 @@ class BotsTest extends TestCase
             'creator_id' => $other_user,
         ]);
 
-        $response = $this
+        $this
             ->withTokenFromUser($this->user)
-            ->getJson('/api/bots');
-
-        $response
+            ->getJson('/api/bots')
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -94,11 +89,9 @@ class BotsTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $response = $this
+        $this
             ->withTokenFromUser($this->user)
-            ->getJson("/api/bots/{$bot->id}");
-
-        $response
+            ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -123,11 +116,9 @@ class BotsTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $response = $this
+        $this
             ->withTokenFromUser($this->user, 'bots')
-            ->getJson("/api/bots/{$bot->id}");
-
-        $response
+            ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -152,11 +143,10 @@ class BotsTest extends TestCase
             'creator_id' => $other_user,
         ]);
 
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromUser($this->user)
-            ->getJson("/api/bots/{$other_bot->id}");
-
-        $response
+            ->getJson("/api/bots/{$other_bot->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -168,11 +158,10 @@ class BotsTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromUser($this->user, [])
-            ->getJson("/api/bots/{$bot->id}");
-
-        $response
+            ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

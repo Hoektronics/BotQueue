@@ -10,20 +10,14 @@ use Tests\PassportHelper;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class UsersTest extends TestCase
+class UsersTest extends HostTestCase
 {
-    use HasUser;
-    use HasHost;
-    use PassportHelper;
-    use RefreshDatabase;
-
     /** @test */
     public function hostCanNotAccessSpecificUserEvenIfUserOwnsHost()
     {
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromHost($this->host)
-            ->getJson("/api/users/{$this->user->id}");
-
-        $response->assertStatus(Response::HTTP_FORBIDDEN);
+            ->getJson("/api/users/{$this->user->id}")->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

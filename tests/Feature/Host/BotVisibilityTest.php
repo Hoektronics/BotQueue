@@ -11,11 +11,11 @@ class BotVisibilityTest extends HostTestCase
     /** @test */
     public function hostCanNotAccessRootBotsResourceForUser()
     {
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromHost($this->host)
-            ->getJson('/api/bots');
-
-        $response->assertStatus(Response::HTTP_FORBIDDEN);
+            ->getJson('/api/bots')
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
@@ -26,11 +26,11 @@ class BotVisibilityTest extends HostTestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromHost($this->host)
-            ->getJson("/api/bots/{$bot->id}");
-
-        $response->assertStatus(Response::HTTP_FORBIDDEN);
+            ->getJson("/api/bots/{$bot->id}")
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
@@ -43,11 +43,9 @@ class BotVisibilityTest extends HostTestCase
 
         $bot->assignTo($this->host);
 
-        $response = $this
+        $this
             ->withTokenFromHost($this->host)
-            ->getJson("/host/bots");
-
-        $response
+            ->getJson("/host/bots")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [

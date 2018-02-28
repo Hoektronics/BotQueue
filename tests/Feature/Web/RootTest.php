@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RootTest extends TestCase
 {
-    use RefreshDatabase;
     use HasUser;
 
     /** @test */

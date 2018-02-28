@@ -15,19 +15,21 @@ class FilesTest extends TestCase
 {
     use HasUser;
     use WithFaker;
-    use RefreshDatabase;
 
     /** @test */
     public function unauthenticatedUserCannotSeeFileCreatePage()
     {
-        $this->get('/files/create')
+        $this
+            ->withExceptionHandling()
+            ->get('/files/create')
             ->assertRedirect('/login');
     }
 
     /** @test */
     public function authenticatedUserCanSeeFileCreatePage()
     {
-        $this->actingAs($this->user)
+        $this
+            ->actingAs($this->user)
             ->get('/files/create')
             ->assertViewIs('file.create');
     }
@@ -39,7 +41,8 @@ class FilesTest extends TestCase
 
         $fileName = $this->faker->userName . '.stl';
 
-        $response = $this->actingAs($this->user)
+        $response = $this
+            ->actingAs($this->user)
             ->post('/files', [
                 'file' => UploadedFile::fake()->create($fileName),
             ]);
@@ -64,7 +67,8 @@ class FilesTest extends TestCase
 
         $fileName = $this->faker->userName . '.gcode';
 
-        $response = $this->actingAs($this->user)
+        $response = $this
+            ->actingAs($this->user)
             ->post('/files', [
                 'file' => UploadedFile::fake()->create($fileName),
             ]);
@@ -89,7 +93,8 @@ class FilesTest extends TestCase
 
         $fileName = $this->faker->userName . '.STL';
 
-        $response = $this->actingAs($this->user)
+        $response = $this
+            ->actingAs($this->user)
             ->post('/files', [
                 'file' => UploadedFile::fake()->create($fileName),
             ]);

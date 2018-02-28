@@ -18,7 +18,6 @@ class JobDistributionManagerTest extends TestCase
     use HasBot;
     use HasCluster;
     use CreatesJob;
-    use RefreshDatabase;
 
     public function testBotCanGrabJobWhenThatBotIsTheJobsWorker()
     {

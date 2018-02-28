@@ -13,7 +13,6 @@ use Tests\TestCase;
 class BotsTest extends TestCase
 {
     use HasUser;
-    use RefreshDatabase;
 
     /** @test */
     public function botCreatedEventIsFired()

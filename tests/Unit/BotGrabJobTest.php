@@ -18,7 +18,6 @@ class BotGrabJobTest extends TestCase
     use HasBot;
     use HasCluster;
     use CreatesJob;
-    use RefreshDatabase;
 
     /** @test
      * @throws BotCannotGrabJob

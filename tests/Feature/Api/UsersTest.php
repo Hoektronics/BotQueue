@@ -14,15 +14,13 @@ class UsersTest extends TestCase
 {
     use HasUser;
     use PassportHelper;
-    use RefreshDatabase;
 
-    public function testCanSeeMyUser()
+    /** @test */
+    public function canSeeMyUser()
     {
-        $response = $this
+        $this
             ->withTokenFromUser($this->user)
-            ->getJson("/api/users/{$this->user->id}");
-
-        $response
+            ->getJson("/api/users/{$this->user->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -32,13 +30,12 @@ class UsersTest extends TestCase
             ]);
     }
 
-    public function testCanSeeMyUserGivenExplicitScope()
+    /** @test */
+    public function canSeeMyUserGivenExplicitScope()
     {
-        $response = $this
+        $this
             ->withTokenFromUser($this->user, 'users')
-            ->getJson("/api/users/{$this->user->id}");
-
-        $response
+            ->getJson("/api/users/{$this->user->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -48,25 +45,25 @@ class UsersTest extends TestCase
             ]);
     }
 
-    public function testCannotSeeOtherUser()
+    /** @test */
+    public function cannotSeeOtherUser()
     {
         $other_user = factory(User::class)->create();
 
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromUser($this->user)
-            ->getJson("/api/users/{$other_user->id}");
-
-        $response
+            ->getJson("/api/users/{$other_user->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public function testCannotSeeMyUserIfMissingCorrectScope()
+    /** @test */
+    public function cannotSeeMyUserIfMissingCorrectScope()
     {
-        $response = $this
+        $this
+            ->withExceptionHandling()
             ->withTokenFromUser($this->user, [])
-            ->getJson("/api/users/{$this->user->id}");
-
-        $response
+            ->getJson("/api/users/{$this->user->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }
