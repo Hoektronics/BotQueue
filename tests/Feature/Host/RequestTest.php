@@ -29,12 +29,11 @@ class RequestTest extends HostTestCase
     /** @test */
     public function clientRequestHasStatusOfRequested()
     {
-        $response = $this->postJson('/host/requests', [
-            'local_ip' => $this->localIpv4,
-            'hostname' => $this->hostname,
-        ]);
-
-        $response
+        $host_request_id = $this
+            ->postJson('/host/requests', [
+                'local_ip' => $this->localIpv4,
+                'hostname' => $this->hostname,
+            ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
                 'data' => [
@@ -47,17 +46,21 @@ class RequestTest extends HostTestCase
                     'status',
                     'expires_at',
                 ]
-            ]);
+            ])
+            ->json('data.id');
 
-        $this->assertEquals(8, strlen($response->json('data.id')));
+        /** @var HostRequest $host_request */
+        $host_request = HostRequest::query()->find($host_request_id);
+
+        $this->assertEquals(8, strlen($host_request->id));
+        $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
     }
 
     /** @test */
     public function noInformationIsNeededForRequest()
     {
-        $response = $this->postJson('/host/requests');
-
-        $response
+        $host_request_id = $this
+            ->postJson('/host/requests')
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
                 'data' => [
@@ -70,28 +73,28 @@ class RequestTest extends HostTestCase
                     'status',
                     'expires_at',
                 ]
-            ]);
+            ])
+            ->json('data.id');
 
-        $this->assertEquals(8, strlen($response->json('data.id')));
+        $this->assertEquals(8, strlen($host_request_id));
     }
 
     /** @test */
     public function hostRequestSetsExternalIp()
     {
-        $response = $this
+        $host_request_id = $this
             ->withRemoteIp($this->ipv4)
-            ->postJson('/host/requests');
-
-        $response
+            ->postJson('/host/requests')
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'data' => [
                     'id'
                 ]
-            ]);
+            ])
+            ->json('data.id');
 
         /** @var HostRequest $host_request */
-        $host_request = HostRequest::query()->find($response->json('data.id'));
+        $host_request = HostRequest::query()->find($host_request_id);
 
         $this->assertNotNull($host_request);
         $this->assertEquals($this->ipv4, $host_request->remote_ip);

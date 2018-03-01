@@ -16,24 +16,21 @@ class AuthTest extends HostTestCase
      */
     public function fullWorkflow()
     {
-        $request_response = $this->postJson('/host/requests');
-
-        $request_response
+        $host_request_id = $this
+            ->postJson('/host/requests')
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'data' => [
                     'id'
                 ]
-            ]);
-
-        $host_request_id = $request_response->json('data.id');
+            ])
+            ->json('data.id');
 
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);
 
-        $before_claim = $this->getJson("/host/requests/{$host_request->id}");
-
-        $before_claim
+        $this
+            ->getJson("/host/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -44,9 +41,8 @@ class AuthTest extends HostTestCase
 
         $this->user->claim($host_request, 'Test name');
 
-        $after_claim = $this->getJson("/host/requests/{$host_request->id}");
-
-        $after_claim
+        $this
+            ->getJson("/host/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
@@ -60,16 +56,16 @@ class AuthTest extends HostTestCase
                 ]
             ]);
 
-        $host_access_response = $this->postJson("/host/requests/{$host_request->id}/access");
-
-        $host_access_response->assertJsonStructure([
-            'data' => [
-                'access_token',
-                'host' => [
-                    'id'
+        $host_access_response = $this
+            ->postJson("/host/requests/{$host_request->id}/access")
+            ->assertJsonStructure([
+                'data' => [
+                    'access_token',
+                    'host' => [
+                        'id'
+                    ]
                 ]
-            ]
-        ]);
+            ]);
 
         $host_id = $host_access_response->json("data.host.id");
         $host = Host::query()->find($host_id);
@@ -81,7 +77,7 @@ class AuthTest extends HostTestCase
                     'host' => [
                         'id' => $host->id,
                         'name' => $host->name,
-                        'owner' =>[
+                        'owner' => [
                             'id' => $this->user->id,
                             'username' => $this->user->username,
                             'link' => url('/api/users', $this->user->id),
