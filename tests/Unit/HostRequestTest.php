@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostAlreadyClaimed;
 use App\HostRequest;
 use Tests\HasUser;
@@ -52,7 +53,7 @@ class HostRequestTest extends TestCase
 
     /** @test
      * @throws \App\Exceptions\HostAlreadyClaimed
-     * @throws \App\Exceptions\CannotConvertHostRequestToHost
+     * @throws CannotConvertHostRequestToHost
      */
     public function hostRequestThatWasConvertedIntoAHostIsGone()
     {
@@ -70,5 +71,20 @@ class HostRequestTest extends TestCase
         $this->assertNotNull($host);
         $this->assertEquals($host_name, $host->name);
         $this->assertEquals($this->user->id, $host->owner_id);
+    }
+
+    /** @test
+     * @throws \Exception
+     */
+    public function deletingAHostRequestThenTryingToConvertItIntoAHostIsNotAllowed()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $host_request->delete();
+
+        $this->expectException(CannotConvertHostRequestToHost::class);
+
+        $host_request->toHost();
     }
 }
