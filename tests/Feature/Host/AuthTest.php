@@ -39,7 +39,7 @@ class AuthTest extends HostTestCase
                 ]
             ]);
 
-        $this->user->claim($host_request, 'Test name');
+        $this->user->claim($host_request, 'My super unique test name');
 
         $this
             ->getJson("/host/requests/{$host_request->id}")
@@ -68,7 +68,10 @@ class AuthTest extends HostTestCase
             ]);
 
         $host_id = $host_access_response->json("data.host.id");
+        /** @var Host $host */
         $host = Host::query()->find($host_id);
+
+        $this->assertEquals('My super unique test name', $host->name);
 
         $host_access_response
             ->assertStatus(Response::HTTP_CREATED)

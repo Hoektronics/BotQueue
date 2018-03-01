@@ -33,12 +33,10 @@ class HostRequestController extends Controller
 
     public function access(HostRequest $host_request)
     {
-        $name = "Host";
-
         $host = new Host([
             'local_ip' => $host_request->local_ip,
             'remote_ip' => $host_request->remote_ip,
-            'name' => $name,
+            'name' => $host_request->name,
             'owner_id' => $host_request->claimer_id,
         ]);
 
