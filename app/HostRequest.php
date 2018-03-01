@@ -3,8 +3,10 @@
 namespace App;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Exceptions\CannotConvertHostRequestToHost;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\ClientRequest
@@ -63,5 +65,29 @@ class HostRequest extends Model
     public function claimer()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return Host
+     * @throws CannotConvertHostRequestToHost
+     */
+    public function toHost()
+    {
+        $host = Host::make([
+            'local_ip' => $this->local_ip,
+            'remote_ip' => $this->remote_ip,
+            'name' => $this->name,
+            'owner_id' => $this->claimer_id,
+        ]);
+
+        try {
+            $this->delete();
+
+            $host->save();
+        } catch (\Exception $e) {
+            throw new CannotConvertHostRequestToHost("Unknown exception causing host to not be created");
+        }
+
+        return $host;
     }
 }

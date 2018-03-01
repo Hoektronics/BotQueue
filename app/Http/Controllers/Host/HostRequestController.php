@@ -33,14 +33,7 @@ class HostRequestController extends Controller
 
     public function access(HostRequest $host_request)
     {
-        $host = new Host([
-            'local_ip' => $host_request->local_ip,
-            'remote_ip' => $host_request->remote_ip,
-            'name' => $host_request->name,
-            'owner_id' => $host_request->claimer_id,
-        ]);
-
-        $host->save();
+        $host = $host_request->toHost();
 
         return new HostResource($host, $host->getAccessToken());
     }

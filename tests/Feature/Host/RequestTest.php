@@ -3,6 +3,7 @@
 namespace Tests\Feature\Host;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Host;
 use App\HostRequest;
 use App\Jobs\CleanExpiredHostRequests;
 use Carbon\Carbon;
@@ -98,6 +99,125 @@ class RequestTest extends HostTestCase
 
         $this->assertNotNull($host_request);
         $this->assertEquals($this->ipv4, $host_request->remote_ip);
+    }
+
+    /** @test */
+    public function viewingHostRequestReturnsRequestedStatus()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $this
+            ->getJson("/host/requests/{$host_request->id}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'data' => [
+                    'id' => $host_request->id,
+                    'status' => HostRequestStatusEnum::REQUESTED,
+                ]
+            ]);
+    }
+
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     */
+    public function viewingClaimedHostRequestReturnsClaimedStatus()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $this->user->claim($host_request, 'My host');
+
+        $this
+            ->getJson("/host/requests/{$host_request->id}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'data' => [
+                    'id' => $host_request->id,
+                    'status' => HostRequestStatusEnum::CLAIMED,
+                    'claimer' => [
+                        'id' => $this->user->id,
+                        'username' => $this->user->username,
+                        'link' => url('/api/users', $this->user->id),
+                    ]
+                ]
+            ]);
+    }
+
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     */
+    public function conversionToHostReturnsAccessToken()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $host_name = 'My super unique test name';
+        $this->user->claim($host_request, $host_name);
+
+        $host_access_response = $this
+            ->postJson("/host/requests/{$host_request->id}/access")
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'access_token',
+                    'host' => [
+                        'id'
+                    ]
+                ]
+            ]);
+
+        $host_id = $host_access_response->json("data.host.id");
+
+        /** @var Host $host */
+        $host = Host::query()->find($host_id);
+
+        $this->assertNotNull($host);
+        $this->assertEquals($host_name, $host->name);
+
+        $host_access_response
+            ->assertJson([
+                'data' => [
+                    'host' => [
+                        'id' => $host->id,
+                        'name' => $host->name,
+                        'owner' => [
+                            'id' => $this->user->id,
+                            'username' => $this->user->username,
+                            'link' => url('/api/users', $this->user->id),
+                        ]
+                    ]
+                ]
+            ]);
+    }
+
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     */
+    public function hostRequestToHostCanOnlyHappenOnce()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $host_name = 'My super unique test name';
+        $this->user->claim($host_request, $host_name);
+
+        $this
+            ->postJson("/host/requests/{$host_request->id}/access")
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'access_token',
+                    'host' => [
+                        'id'
+                    ]
+                ]
+            ]);
+
+        $this
+            ->withExceptionHandling()
+            ->postJson("/host/requests/{$host_request->id}/access")
+            ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     /** @test */

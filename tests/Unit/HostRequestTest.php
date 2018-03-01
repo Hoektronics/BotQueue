@@ -49,4 +49,26 @@ class HostRequestTest extends TestCase
         $this->assertEquals("Test Host", $host_request->name);
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
+
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     * @throws \App\Exceptions\CannotConvertHostRequestToHost
+     */
+    public function hostRequestThatWasConvertedIntoAHostIsGone()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $host_name = 'My super unique test name';
+        $this->user->claim($host_request, $host_name);
+
+        $host = $host_request->toHost();
+
+        $host_request = HostRequest::query()->find($host_request->id);
+        $this->assertNull($host_request);
+
+        $this->assertNotNull($host);
+        $this->assertEquals($host_name, $host->name);
+        $this->assertEquals($this->user->id, $host->owner_id);
+    }
 }
