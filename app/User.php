@@ -4,6 +4,7 @@ namespace App;
 
 use App\Enums\HostRequestStatusEnum;
 use App\Events\UserCreated;
+use App\Exceptions\HostAlreadyClaimed;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
@@ -63,13 +64,28 @@ class User extends Authenticatable
     /**
      * @param HostRequest $request
      * @param $name
+     * @throws HostAlreadyClaimed
      */
     public function claim(HostRequest $request, $name)
     {
-        $request->claimer_id = $this->id;
-        $request->status = HostRequestStatusEnum::CLAIMED;
-        $request->name = $name;
-        $request->save();
+        try {
+            HostRequest::query()
+                ->whereKey($request->getKey())
+                ->where('status', HostRequestStatusEnum::REQUESTED)
+                ->whereNull('claimer_id')
+                ->update([
+                    'claimer_id' => $this->id,
+                    'status' => HostRequestStatusEnum::CLAIMED,
+                    'name' => $name,
+                ]);
+
+            $request->refresh();
+
+            if($request->claimer_id != $this->id)
+                throw new HostAlreadyClaimed("This host request has already been claimed by someone else");
+        } catch (\Exception|\Throwable $e) {
+            throw new HostAlreadyClaimed("Unexpected exception while trying to grab host request");
+        }
     }
 
     public function bots()

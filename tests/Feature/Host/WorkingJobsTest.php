@@ -73,7 +73,6 @@ class WorkingJobsTest extends HostTestCase
      */
     public function aHostCannotSeeJobsBelongingToAnotherHost()
     {
-        $this->withoutExceptionHandling();
         $otherHost = $this->createHost();
         $job = $this->createJob($this->bot);
         $this->bot->grabJob($job);

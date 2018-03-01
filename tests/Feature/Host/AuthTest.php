@@ -11,7 +11,9 @@ use Lcobucci\JWT\Parser as JwtParser;
 
 class AuthTest extends HostTestCase
 {
-    /** @test */
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     */
     public function fullWorkflow()
     {
         $request_response = $this->postJson('/host/requests');
