@@ -2,20 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Host;
 use Illuminate\Http\Resources\Json\Resource;
 
 class HostResource extends Resource
 {
-    protected $access_token;
-
-    public function __construct(Host $host, $access_token)
-    {
-        parent::__construct($host);
-
-        $this->access_token = $access_token;
-    }
-
     /**
      * Transform the resource into an array.
      *
@@ -25,7 +15,7 @@ class HostResource extends Resource
     public function toArray($request)
     {
         return [
-            'access_token' => $this->access_token,
+            'access_token' => (string)$this->getAccessToken()->convertToJWT(passport_private_key()),
             'host' => [
                 'id' => $this->id,
                 'name' => $this->name,

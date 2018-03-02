@@ -9,6 +9,7 @@ use App\Jobs\CleanExpiredHostRequests;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
+use Lcobucci\JWT\Parser as JwtParser;
 
 class RequestTest extends HostTestCase
 {
@@ -218,6 +219,39 @@ class RequestTest extends HostTestCase
             ->withExceptionHandling()
             ->postJson("/host/requests/{$host_request->id}/access")
             ->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     */
+    public function tokenIsValid()
+    {
+        $jwt_parser = app(JwtParser::class);
+
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+        $this->user->claim($host_request, "My Test Host");
+
+        $access_token = $this
+            ->postJson("/host/requests/{$host_request->id}/access")
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'access_token',
+                ]
+            ])
+            ->json('data.access_token');
+
+        /** @var Host $host */
+        $host = Host::query()->where('name', 'My Test Host')->first();
+        $this->assertNotNull($host);
+
+        $jwt = $jwt_parser->parse($access_token);
+
+        $this->assertEquals($host->token_id, $jwt->getClaim('jti'));
+        $this->assertEquals($this->user->id, $jwt->getClaim('sub'));
+        $this->assertEquals($host->token->client_id, $jwt->getClaim('aud'));
+        $this->assertArraySubset(['host'], $jwt->getClaim('scopes'));
     }
 
     /** @test */

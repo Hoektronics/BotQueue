@@ -35,6 +35,6 @@ class HostRequestController extends Controller
     {
         $host = $host_request->toHost();
 
-        return new HostResource($host, $host->getAccessToken());
+        return new HostResource($host);
     }
 }
