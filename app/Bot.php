@@ -46,6 +46,9 @@ use Illuminate\Support\Facades\DB;
  */
 class Bot extends Model
 {
+    use WorksOnJobsTrait;
+    use BelongsToHostTrait;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -75,16 +78,6 @@ class Bot extends Model
         return $this->belongsToMany(Cluster::class);
     }
 
-    public function host()
-    {
-        return $this->belongsTo(Host::class);
-    }
-
-    public function currentJob()
-    {
-        return $this->belongsTo(Job::class);
-    }
-
     /**
      * Scope to only include bots belonging to the currently authenticated user
      *
@@ -94,93 +87,5 @@ class Bot extends Model
     public function scopeMine($query)
     {
         return $query->where('creator_id', Auth::user()->id);
-    }
-
-    public function assignTo($host)
-    {
-        if ($this->host_id !== null) {
-            $oldHost = $this->host;
-
-            event(new BotRemovedFromHost($this, $oldHost));
-        }
-
-        $this->host_id = $host->id;
-
-        $this->save();
-
-        event(new BotAssignedToHost($this, $host));
-    }
-
-    /**
-     * @param $job Job
-     * @throws BotCannotGrabJob
-     */
-    public function grabJob($job)
-    {
-        if (!$this->canGrab($job))
-            throw new BotCannotGrabJob("This job cannot be grabbed!");
-
-        try {
-            DB::transaction(function () use ($job) {
-                Job::query()
-                    ->whereKey($job->getKey())
-                    ->where('status', JobStatusEnum::QUEUED)
-                    ->whereNull('bot_id')
-                    ->update([
-                        'bot_id' => $this->id,
-                        'status' => JobStatusEnum::ASSIGNED
-                    ]);
-
-                $job->refresh();
-
-                if ($job->bot_id != $this->id)
-                    throw new BotCannotGrabJob("This job cannot be grabbed!");
-
-                Bot::query()
-                    ->whereKey($this->getKey())
-                    ->whereNull('current_job_id')
-                    ->update([
-                        'current_job_id' => $job->id,
-                    ]);
-
-                $this->refresh();
-
-                if ($this->current_job_id != $job->id)
-                    throw new BotCannotGrabJob("This job cannot be grabbed!");
-            });
-        } catch (\Exception|\Throwable $e) {
-            throw new BotCannotGrabJob("Unexpected exception while trying to grab job");
-        }
-
-        event(new BotGrabbedJob($this, $job));
-    }
-
-    /**
-     * @param $job Job
-     * @return bool
-     */
-    public function canGrab($job)
-    {
-        if ($this->current_job_id !== null)
-            return false;
-
-        if ($this->status != BotStatusEnum::IDLE)
-            return false;
-
-        if (
-            $job->worker instanceof Bot &&
-            $job->worker->id == $this->id &&
-            $job->status == JobStatusEnum::QUEUED
-        )
-            return true;
-
-        if (
-            $job->worker instanceof Cluster &&
-            $job->worker->bots->contains($this->id) &&
-            $job->status == JobStatusEnum::QUEUED
-        )
-            return true;
-
-        return false;
     }
 }
