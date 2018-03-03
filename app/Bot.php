@@ -41,6 +41,8 @@ use Illuminate\Support\Facades\DB;
  * @property-read \App\Host $host
  * @property int|null $host_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereHostId($value)
+ * @property int|null $current_job_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereCurrentJobId($value)
  */
 class Bot extends Model
 {
@@ -76,6 +78,11 @@ class Bot extends Model
     public function host()
     {
         return $this->belongsTo(Host::class);
+    }
+
+    public function currentJob()
+    {
+        return $this->belongsTo(Job::class);
     }
 
     /**
@@ -128,6 +135,18 @@ class Bot extends Model
 
                 if ($job->bot_id != $this->id)
                     throw new BotCannotGrabJob("This job cannot be grabbed!");
+
+                Bot::query()
+                    ->whereKey($this->getKey())
+                    ->whereNull('current_job_id')
+                    ->update([
+                        'current_job_id' => $job->id,
+                    ]);
+
+                $this->refresh();
+
+                if ($this->current_job_id != $job->id)
+                    throw new BotCannotGrabJob("This job cannot be grabbed!");
             });
         } catch (\Exception|\Throwable $e) {
             throw new BotCannotGrabJob("Unexpected exception while trying to grab job");
@@ -142,11 +161,25 @@ class Bot extends Model
      */
     public function canGrab($job)
     {
-        if ($job->worker instanceof Bot && $job->worker->id == $this->id)
-            return $job->status == JobStatusEnum::QUEUED;
+        if ($this->current_job_id !== null)
+            return false;
 
-        if ($job->worker instanceof Cluster && $job->worker->bots->contains($this->id))
-            return $job->status == JobStatusEnum::QUEUED;
+        if ($this->status != BotStatusEnum::IDLE)
+            return false;
+
+        if (
+            $job->worker instanceof Bot &&
+            $job->worker->id == $this->id &&
+            $job->status == JobStatusEnum::QUEUED
+        )
+            return true;
+
+        if (
+            $job->worker instanceof Cluster &&
+            $job->worker->bots->contains($this->id) &&
+            $job->status == JobStatusEnum::QUEUED
+        )
+            return true;
 
         return false;
     }

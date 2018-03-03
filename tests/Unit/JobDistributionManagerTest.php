@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Job;
 use App\Managers\JobDistributionManager;
@@ -21,6 +22,8 @@ class JobDistributionManagerTest extends TestCase
 
     public function testBotCanGrabJobWhenThatBotIsTheJobsWorker()
     {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $job = $this->createJob($this->bot);
         $this->assertTrue($this->bot->canGrab($job));
 
@@ -35,6 +38,8 @@ class JobDistributionManagerTest extends TestCase
 
     public function testBotCanGrabJobWhenThatBotIsInAClusterThatIsTheJobsWorker()
     {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $this->cluster->bots()->save($this->bot);
 
         $job = $this->createJob($this->cluster);
@@ -51,6 +56,8 @@ class JobDistributionManagerTest extends TestCase
 
     public function testBotGrabsJobDirectlyAssignedToItBeforeOneInCluster()
     {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $this->cluster->bots()->save($this->bot);
 
         $jobA = $this->createJob($this->bot);

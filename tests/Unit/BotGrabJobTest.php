@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Bot;
+use App\Enums\BotStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Exceptions\BotCannotGrabJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -62,6 +63,8 @@ class BotGrabJobTest extends TestCase
     {
         $this->fakesEvents(BotGrabbedJob::class);
 
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $job = $this->createJob($this->bot);
 
         $this->assertNull($job->bot_id);
@@ -91,6 +94,8 @@ class BotGrabJobTest extends TestCase
     {
         $this->fakesEvents(BotGrabbedJob::class);
 
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $this->cluster->bots()->save($this->bot);
 
         $job = $this->createJob($this->cluster);
@@ -114,4 +119,54 @@ class BotGrabJobTest extends TestCase
             ]);
     }
 
+    /** @test
+     * @throws BotCannotGrabJob
+     */
+    public function botThatAlreadyHasAJobCannotGrabAnother()
+    {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
+        $jobA = $this->createJob($this->bot);
+        $jobB = $this->createJob($this->bot);
+
+        $this->assertTrue($this->bot->canGrab($jobA));
+        $this->bot->grabJob($jobA);
+
+        $this->expectException(BotCannotGrabJob::class);
+
+        $this->assertFalse($this->bot->canGrab($jobB));
+        $this->bot->grabJob($jobB);
+    }
+
+    /** @test
+     * @throws BotCannotGrabJob
+     */
+    public function anOfflineBotCannotGrabAJob()
+    {
+        $this->bot->status = BotStatusEnum::OFFLINE;
+        $this->bot->save();
+
+        $job = $this->createJob($this->bot);
+
+        $this->expectException(BotCannotGrabJob::class);
+
+        $this->assertFalse($this->bot->canGrab($job));
+        $this->bot->grabJob($job);
+    }
+
+    /** @test
+     * @throws BotCannotGrabJob
+     */
+    public function aWorkingBotCannotGrabAJob()
+    {
+        $this->bot->status = BotStatusEnum::WORKING;
+        $this->bot->save();
+
+        $job = $this->createJob($this->bot);
+
+        $this->expectException(BotCannotGrabJob::class);
+
+        $this->assertFalse($this->bot->canGrab($job));
+        $this->bot->grabJob($job);
+    }
 }

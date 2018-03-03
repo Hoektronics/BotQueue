@@ -33,6 +33,8 @@ class BotGrabbingJobsTest extends HostTestCase
     {
         $this->fakesEvents(BotGrabbedJob::class);
 
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         /** @var Job $job */
         $job = $this->createJob($this->bot);
 

@@ -4,6 +4,7 @@
 namespace Tests\Feature\Host;
 
 
+use App\Enums\BotStatusEnum;
 use App\Enums\ErrorCodes;
 use App\Exceptions\BotCannotGrabJob;
 use Illuminate\Http\Response;
@@ -26,6 +27,8 @@ class WorkingJobsTest extends HostTestCase
      */
     public function aHostCanSeeJobsForBotsAssignedToIt()
     {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $job = $this->createJob($this->bot);
         $this->bot->grabJob($job);
 
@@ -47,6 +50,8 @@ class WorkingJobsTest extends HostTestCase
      */
     public function aHostCannotSeeJobsForBotsNotAssignedToIt()
     {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $job = $this->createJob($this->bot);
         $this->bot->grabJob($job);
 
@@ -73,6 +78,8 @@ class WorkingJobsTest extends HostTestCase
      */
     public function aHostCannotSeeJobsBelongingToAnotherHost()
     {
+        $this->withBotStatus(BotStatusEnum::IDLE);
+
         $otherHost = $this->createHost();
         $job = $this->createJob($this->bot);
         $this->bot->grabJob($job);

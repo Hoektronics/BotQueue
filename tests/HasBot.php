@@ -29,4 +29,11 @@ trait HasBot
 
         return factory(App\Bot::class)->create(array_merge($default, $overrides));
     }
+
+    public function withBotStatus($botStatus)
+    {
+        $this->bot->status = $botStatus;
+        $this->bot->save();
+        $this->bot->refresh();
+    }
 }
