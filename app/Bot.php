@@ -3,15 +3,9 @@
 namespace App;
 
 use App\Enums\BotStatusEnum;
-use App\Enums\JobStatusEnum;
 use App\Events\BotCreated;
-use App\Events\BotGrabbedJob;
-use App\Events\Host\BotAssignedToHost;
-use App\Events\Host\BotRemovedFromHost;
-use App\Exceptions\BotCannotGrabJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 /**
  * App\Bot
