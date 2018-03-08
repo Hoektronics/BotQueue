@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereHostId($value)
  * @property int|null $current_job_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereCurrentJobId($value)
+ * @property-read \App\Job|null $currentJob
  */
 class Bot extends Model
 {

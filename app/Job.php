@@ -32,6 +32,9 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Query\Builder|\App\Job mine()
  * @property-read \App\User $creator
  * @property-read \App\Bot|null $bot
+ * @property int|null $current_attempt_id
+ * @property-read \App\JobAttempt|null $currentAttempt
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereCurrentAttemptId($value)
  */
 class Job extends Model
 {
@@ -70,6 +73,11 @@ class Job extends Model
     public function bot()
     {
         return $this->belongsTo(Bot::class);
+    }
+
+    public function currentAttempt()
+    {
+        return $this->belongsTo(JobAttempt::class);
     }
 
     /**
