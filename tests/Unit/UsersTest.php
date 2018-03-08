@@ -4,14 +4,12 @@ namespace Tests\Unit;
 
 use App;
 use App\Events\UserCreated;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class UsersTest extends TestCase
 {
     /** @test */
-    public function botCreatedEventIsFired()
+    public function userCreatedEventIsFired()
     {
         $this->fakesEvents(UserCreated::class);
 
