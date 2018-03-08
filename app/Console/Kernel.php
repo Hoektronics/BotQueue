@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(CleanExpiredHostRequests::class)
             ->hourly();
+
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
     }
 
     /**

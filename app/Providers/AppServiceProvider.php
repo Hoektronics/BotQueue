@@ -5,6 +5,7 @@ namespace App\Providers;
 use App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Horizon\Horizon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         App\HostRequest::observe(App\Observers\HostRequestObserver::class);
+
+        Horizon::auth(function ($request) {
+            return true;
+        });
     }
 
     /**
