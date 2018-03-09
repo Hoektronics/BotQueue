@@ -32,14 +32,18 @@ install:
   # Install NPM scripts
   - npm install
 
+before_script:
   # Setting up the laravel framework
   - cp .env.travis .env
+
+  - touch database/database.sqlite
+
   - php artisan key:generate
   - php artisan migrate
   - php artisan passport:keys
 
-before_script:
-  - touch database/database.sqlite
-
 script:
-  - vendor/bin/phpunit
+  - php vendor/bin/phpunit --coverage-clover build/coverage/xml
+
+after_script:
+  - php vendor/bin/codacycoverage clover build/coverage/xml
