@@ -33,6 +33,8 @@ use Laravel\Passport\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\File[] $files
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
+ * @property bool $is_admin
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereIsAdmin($value)
  */
 class User extends Authenticatable
 {
@@ -48,6 +50,10 @@ class User extends Authenticatable
         'username', 'email', 'password',
     ];
 
+    protected $attributes = [
+        'is_admin' => false,
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -60,6 +66,16 @@ class User extends Authenticatable
     protected $dispatchesEvents = [
         'created' => UserCreated::class,
     ];
+
+    protected $casts = [
+        'is_admin' => 'boolean',
+    ];
+
+    public function promoteToAdmin()
+    {
+        $this->is_admin = true;
+        $this->save();
+    }
 
     /**
      * @param HostRequest $request

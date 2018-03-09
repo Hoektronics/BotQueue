@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App;
 use App\Events\UserCreated;
+use App\User;
 use Tests\TestCase;
 
 class UsersTest extends TestCase
@@ -13,9 +14,33 @@ class UsersTest extends TestCase
     {
         $this->fakesEvents(UserCreated::class);
 
-        /** @var App\User $user */
-        factory(App\User::class)->create();
+        /** @var User $user */
+        factory(User::class)->create();
 
         $this->assertDispatched(UserCreated::class);
+    }
+
+    /** @test */
+    public function userIsNotAnAdminByDefault()
+    {
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
+        $user->refresh();
+
+        $this->assertFalse($user->is_admin);
+    }
+
+    /** @test */
+    public function userCanBePromotedToAdmin()
+    {
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
+        $user->promoteToAdmin();
+
+        $user->refresh();
+
+        $this->assertTrue($user->is_admin);
     }
 }
