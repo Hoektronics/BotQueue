@@ -21,8 +21,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        App\HostRequest::observe(App\Observers\HostRequestObserver::class);
-
         Horizon::auth(function () {
             /** @var Request $request */
 

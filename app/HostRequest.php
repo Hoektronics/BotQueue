@@ -4,6 +4,7 @@ namespace App;
 
 use App\Enums\HostRequestStatusEnum;
 use App\Exceptions\CannotConvertHostRequestToHost;
+use App\ModelTraits\HostRequestDynamicAttributes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,8 @@ use Illuminate\Support\Facades\DB;
  */
 class HostRequest extends Model
 {
+    use HostRequestDynamicAttributes;
+
     public $incrementing = false;
 
     protected $keyType = 'string';
