@@ -4,6 +4,8 @@ namespace App;
 
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
+use App\ModelTraits\BelongsToHostTrait;
+use App\ModelTraits\WorksOnJobsTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 

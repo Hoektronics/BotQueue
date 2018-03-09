@@ -1,13 +1,16 @@
 <?php
 
 
-namespace App;
+namespace App\ModelTraits;
 
 
+use App\Bot;
+use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Exceptions\BotCannotGrabJob;
+use App\Job;
 use Illuminate\Support\Facades\DB;
 
 trait WorksOnJobsTrait

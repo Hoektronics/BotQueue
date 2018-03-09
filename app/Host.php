@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\ModelTraits\HostAuthTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**

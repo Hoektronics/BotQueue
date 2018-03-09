@@ -1,11 +1,13 @@
 <?php
 
 
-namespace App;
+namespace App\ModelTraits;
 
 
+use App\Bot;
 use App\Events\Host\BotAssignedToHost;
 use App\Events\Host\BotRemovedFromHost;
+use App\Host;
 
 trait BelongsToHostTrait
 {

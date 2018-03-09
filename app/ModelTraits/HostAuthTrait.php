@@ -1,9 +1,10 @@
 <?php
 
 
-namespace App;
+namespace App\ModelTraits;
 
 
+use App\Host;
 use App\Oauth\OauthHostClient;
 use Carbon\Carbon;
 use Laravel\Passport\Bridge\AccessToken;
@@ -94,7 +95,7 @@ trait HostAuthTrait
     protected static function client()
     {
         /** @var OauthHostClient $client */
-        $oauthHostClient = OauthHostClient::orderBy('id', 'desc')->first();
+        $oauthHostClient = OauthHostClient::query()->orderBy('id', 'desc')->first();
 
         $clientRepository = app(ClientRepository::class);
 
