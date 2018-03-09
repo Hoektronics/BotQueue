@@ -15,7 +15,6 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Events\UserCreated::class => [
-            Listeners\SetupDefaultCluster::class,
             Listeners\EmailNewUser::class,
         ],
     ];

@@ -5,6 +5,7 @@ namespace App;
 use App\Enums\HostRequestStatusEnum;
 use App\Events\UserCreated;
 use App\Exceptions\HostAlreadyClaimed;
+use App\ModelTraits\CreatesMyCluster;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
@@ -40,6 +41,7 @@ class User extends Authenticatable
 {
     use Notifiable;
     use HasApiTokens;
+    use CreatesMyCluster;
 
     /**
      * The attributes that are mass assignable.
