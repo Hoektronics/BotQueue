@@ -15,6 +15,8 @@ return [
 
     'use' => 'default',
 
+    'middleware' => ['web', 'auth'],
+
     /*
     |--------------------------------------------------------------------------
     | Horizon Redis Prefix
