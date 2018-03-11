@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\User;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -36,12 +37,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        if (app()->bound('sentry') && $this->shouldReport($exception)) {
-            /** @var \Raven_Client $sentry */
-            $sentry = app('sentry');
-
-            $sentry->captureException($exception);
-        }
+        $this->handleSentryReporting($exception);
 
         parent::report($exception);
     }
@@ -56,5 +52,34 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    protected function handleSentryReporting(Exception $exception)
+    {
+        if (!$this->shouldReport($exception))
+            return;
+
+        if (!app()->bound('sentry'))
+            return;
+
+        /** @var \Raven_Client $sentry */
+        $sentry = app('sentry');
+
+        if (auth()->check()) {
+            /** @var User $user */
+            $user = auth()->user();
+
+            $sentry->user_context([
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'ip_address' => request()->getClientIp(),
+            ]);
+        }
+
+        $sentry->captureException($exception);
     }
 }
