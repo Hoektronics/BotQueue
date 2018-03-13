@@ -32,14 +32,8 @@ class JobAssignedState
         $this->job = $job;
     }
 
-    /**
-     * @throws JobNotAssignedToBot
-     */
     public function toInProgress()
     {
-        if($this->job->bot_id === null)
-            throw new JobNotAssignedToBot("Invalid State: Job is in assigned state but has no bot");
-
         $attempt = JobAttempt::create([
             'bot_id' => $this->job->bot_id,
             'job_id' => $this->job->id,

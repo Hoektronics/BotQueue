@@ -2,35 +2,42 @@
 
 namespace Tests\Unit;
 
+use App\Bot;
+use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Job;
 use App\Managers\JobDistributionManager;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\CreatesJob;
-use Tests\HasBot;
-use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
 
 class JobDistributionManagerTest extends TestCase
 {
     use HasUser;
-    use HasBot;
-    use HasCluster;
-    use CreatesJob;
 
     public function testBotCanGrabJobWhenThatBotIsTheJobsWorker()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
-        $this->assertTrue($this->bot->canGrab($job));
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertTrue($bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($this->bot);
+        $testJob = $manager->nextAvailableJob($bot);
 
         $this->assertInstanceOf(Job::class, $testJob);
         $this->assertEquals($job->id, $testJob->id);
@@ -38,17 +45,35 @@ class JobDistributionManagerTest extends TestCase
 
     public function testBotCanGrabJobWhenThatBotIsInAClusterThatIsTheJobsWorker()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $this->cluster->bots()->save($this->bot);
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
 
-        $job = $this->createJob($this->cluster);
-        $this->assertTrue($this->bot->canGrab($job));
+        $cluster->bots()->save($bot);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
+            ->create([
+                'worker_id' => $cluster->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertTrue($bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($this->bot);
+        $testJob = $manager->nextAvailableJob($bot);
 
         $this->assertInstanceOf(Job::class, $testJob);
         $this->assertEquals($job->id, $testJob->id);
@@ -56,50 +81,114 @@ class JobDistributionManagerTest extends TestCase
 
     public function testBotGrabsJobDirectlyAssignedToItBeforeOneInCluster()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $this->cluster->bots()->save($this->bot);
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
 
-        $jobA = $this->createJob($this->bot);
-        $this->assertTrue($this->bot->canGrab($jobA));
+        $cluster->bots()->save($bot);
 
-        /** @var Job $jobB */
-        $jobB = $this->createJob($this->cluster);
-        $this->assertTrue($this->bot->canGrab($jobB));
+        /** @var Job $jobOnBot */
+        $jobOnBot = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $jobOnCluster */
+        $jobOnCluster = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
+            ->create([
+                'worker_id' => $cluster->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertTrue($bot->canGrab($jobOnBot));
+        $this->assertTrue($bot->canGrab($jobOnCluster));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($this->bot);
+        $testJob = $manager->nextAvailableJob($bot);
 
         $this->assertInstanceOf(Job::class, $testJob);
-        $this->assertEquals($jobA->id, $testJob->id);
+        $this->assertEquals($jobOnBot->id, $testJob->id);
     }
 
-    public function testGettingNextJobIgnoresJobsThatAreNotQueued()
+    public function testGettingNextJobIgnoresJobsThatAreAlreadyAssigned()
     {
-        $job = $this->createJob($this->bot, JobStatusEnum::IN_PROGRESS);
-        $this->assertFalse($this->bot->canGrab($job));
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
+
+        $cluster->bots()->save($bot);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertFalse($bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($this->bot);
+        $testJob = $manager->nextAvailableJob($bot);
 
         $this->assertNull($testJob);
     }
 
-    public function testGettingNextJobIgnoresJobsThatAreNotQueuedInCluster()
+    public function testGettingNextJobIgnoresJobsThatAreAlreadyAssignedInCluster()
     {
-        $this->cluster->bots()->save($this->bot);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->cluster, JobStatusEnum::IN_PROGRESS);
-        $this->assertFalse($this->bot->canGrab($job));
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
+
+        $cluster->bots()->save($bot);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED, 'worker:cluster')
+            ->create([
+                'worker_id' => $cluster->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertFalse($bot->canGrab($job));
 
         /** @var JobDistributionManager $manager */
         $manager = app(JobDistributionManager::class);
 
-        $testJob = $manager->nextAvailableJob($this->bot);
+        $testJob = $manager->nextAvailableJob($bot);
 
         $this->assertNull($testJob);
     }

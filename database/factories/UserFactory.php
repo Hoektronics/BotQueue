@@ -30,12 +30,6 @@ $factory->state(App\User::class, 'admin', [
     'is_admin' => true,
 ]);
 
-$factory->define(App\Cluster::class, function (Faker $faker) {
-    return [
-        'name' => $faker->userName,
-    ];
-});
-
 $factory->define(App\HostRequest::class, function (Faker $faker) {
     return [
         'local_ip' => $faker->localIpv4,

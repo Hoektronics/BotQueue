@@ -2,22 +2,18 @@
 
 namespace Tests\Unit\Jobs;
 
+use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotCannotGrabJob;
-use App\Exceptions\State\JobNotAssignedToBot;
 use App\Job;
 use App\Managers\JobStateMachine;
-use Tests\CreatesJob;
-use Tests\HasBot;
 use Tests\HasUser;
 use Tests\TestCase;
 
 class MovingToInProgressUnitTest extends TestCase
 {
     use HasUser;
-    use HasBot;
-    use CreatesJob;
     /**
      * @var JobStateMachine
      */
@@ -30,32 +26,23 @@ class MovingToInProgressUnitTest extends TestCase
         $this->jobStateMachine = app(JobStateMachine::class);
     }
 
-    /** @test
-     * @throws JobNotAssignedToBot
-     */
-    public function cannotMoveJobNotAssignedToABotToInProgress()
-    {
-        /** @var Job $job */
-        $job = $this->createJob($this->bot, JobStatusEnum::ASSIGNED);
-
-        $this->expectException(JobNotAssignedToBot::class);
-
-        $this->jobStateMachine
-            ->with($job)
-            ->toInProgress();
-    }
-
-    /** @test
-     * @throws JobNotAssignedToBot
-     * @throws BotCannotGrabJob
-     */
+    /** @test */
     public function assigningToInProgress()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
         /** @var Job $job */
-        $job = $this->createJob($this->bot, JobStatusEnum::QUEUED);
-        $this->bot->grabJob($job);
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'bot_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->jobStateMachine
             ->with($job)
@@ -67,6 +54,6 @@ class MovingToInProgressUnitTest extends TestCase
 
         $this->assertNotNull($attempt);
         $this->assertEquals($job->id, $attempt->job->id);
-        $this->assertEquals($this->bot->id, $attempt->bot->id);
+        $this->assertEquals($bot->id, $attempt->bot->id);
     }
 }

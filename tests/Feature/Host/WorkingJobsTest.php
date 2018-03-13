@@ -4,17 +4,17 @@
 namespace Tests\Feature\Host;
 
 
+use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\ErrorCodes;
-use App\Exceptions\BotCannotGrabJob;
+use App\Enums\JobStatusEnum;
+use App\Job;
 use Illuminate\Http\Response;
-use Tests\CreatesJob;
 use Tests\HasBot;
 
 class WorkingJobsTest extends HostTestCase
 {
     use HasBot;
-    use CreatesJob;
 
     protected const JOB_IS_NOT_ASSIGNED_TO_YOU_JSON = [
         'status' => 'error',
@@ -22,17 +22,24 @@ class WorkingJobsTest extends HostTestCase
         'message' => 'This job is not assigned to any of your bots',
     ];
 
-    /** @test
-     * @throws BotCannotGrabJob
-     */
+    /** @test */
     public function aHostCanSeeJobsForBotsAssignedToIt()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $this->host,
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
-        $this->bot->grabJob($job);
-
-        $this->bot->assignTo($this->host);
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'bot_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")
@@ -45,15 +52,23 @@ class WorkingJobsTest extends HostTestCase
             ]);
     }
 
-    /** @test
-     * @throws BotCannotGrabJob
-     */
+    /** @test */
     public function aHostCannotSeeJobsForBotsNotAssignedToIt()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
-        $this->bot->grabJob($job);
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'bot_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")
@@ -64,8 +79,20 @@ class WorkingJobsTest extends HostTestCase
     /** @test */
     public function aHostCannotSeeJobsIfNoBotsAreAssignedThatJob()
     {
-        $job = $this->createJob($this->bot);
-        $this->bot->assignTo($this->host);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'bot_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")
@@ -73,18 +100,26 @@ class WorkingJobsTest extends HostTestCase
             ->assertJson(self::JOB_IS_NOT_ASSIGNED_TO_YOU_JSON);
     }
 
-    /** @test
-     * @throws BotCannotGrabJob
-     */
+    /** @test */
     public function aHostCannotSeeJobsBelongingToAnotherHost()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
-
         $otherHost = $this->createHost();
-        $job = $this->createJob($this->bot);
-        $this->bot->grabJob($job);
 
-        $this->bot->assignTo($otherHost);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $otherHost,
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'bot_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")

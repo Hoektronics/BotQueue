@@ -3,9 +3,12 @@
 namespace Tests\Unit;
 
 use App\Bot;
+use App\Cluster;
 use App\Enums\BotStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Exceptions\BotCannotGrabJob;
+use App\Job;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\CreatesJob;
 use Tests\HasBot;
@@ -16,9 +19,6 @@ use Tests\TestCase;
 class BotGrabJobTest extends TestCase
 {
     use HasUser;
-    use HasBot;
-    use HasCluster;
-    use CreatesJob;
 
     /** @test
      * @throws BotCannotGrabJob
@@ -30,7 +30,20 @@ class BotGrabJobTest extends TestCase
             'creator_id' => $this->user->id,
         ]);
 
-        $job = $this->createJob($this->bot);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->expectException(BotCannotGrabJob::class);
 
@@ -42,79 +55,129 @@ class BotGrabJobTest extends TestCase
      */
     public function botCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
     {
-        $this->cluster->bots()->save($this->bot);
-
         /** @var Bot $otherBot */
         $otherBot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
         ]);
-        $job = $this->createJob($this->cluster);
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
+
+        $cluster->bots()->save($bot);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
+            ->create([
+                'worker_id' => $cluster->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->expectException(BotCannotGrabJob::class);
 
         $otherBot->grabJob($job);
     }
 
-    /**
+    /** @test
      * @throws BotCannotGrabJob
-     * @test
      */
     public function botGrabbingJobWithBotWorkerSetsBotIdOnJob()
     {
         $this->fakesEvents(BotGrabbedJob::class);
 
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->assertNull($job->bot_id);
-        $this->bot->grabJob($job);
+        $bot->grabJob($job);
 
-        $job = $job->refresh();
-        $this->assertEquals($this->bot->id, $job->bot_id);
+        $bot->refresh();
+        $job->refresh();
+        $this->assertEquals($job->id, $bot->current_job_id);
+        $this->assertEquals($bot->id, $job->bot_id);
 
         $this->assertDispatched(BotGrabbedJob::class)
-            ->inspect(function ($event) use ($job) {
+            ->inspect(function ($event) use ($bot, $job) {
                 /** @var BotGrabbedJob $event */
-                $this->assertEquals($this->bot->id, $event->bot->id);
+                $this->assertEquals($bot->id, $event->bot->id);
                 $this->assertEquals($job->id, $event->job->id);
             })
             ->channels([
                 'private-user.' . $this->user->id,
-                'private-bot.' . $this->bot->id,
+                'private-bot.' . $bot->id,
                 'private-job.' . $job->id,
             ]);
     }
 
-    /**
+    /** @test
      * @throws BotCannotGrabJob
-     * @test
      */
     public function botGrabbingJobWithClusterWorkerSetsBotIdOnJob()
     {
         $this->fakesEvents(BotGrabbedJob::class);
 
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $this->cluster->bots()->save($this->bot);
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
 
-        $job = $this->createJob($this->cluster);
+        $cluster->bots()->save($bot);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
+            ->create([
+                'worker_id' => $cluster->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->assertNull($job->bot_id);
-        $this->bot->grabJob($job);
+        $bot->grabJob($job);
 
-        $job = $job->refresh();
-        $this->assertEquals($this->bot->id, $job->bot_id);
+        $bot->refresh();
+        $job->refresh();
+        $this->assertEquals($job->id, $bot->current_job_id);
+        $this->assertEquals($bot->id, $job->bot_id);
 
         $this->assertDispatched(BotGrabbedJob::class)
-            ->inspect(function ($event) use ($job) {
+            ->inspect(function ($event) use ($bot, $job) {
                 /** @var BotGrabbedJob $event */
-                $this->assertEquals($this->bot->id, $event->bot->id);
+                $this->assertEquals($bot->id, $event->bot->id);
                 $this->assertEquals($job->id, $event->job->id);
             })
             ->channels([
                 'private-user.'.$this->user->id,
-                'private-bot.'.$this->bot->id,
+                'private-bot.'.$bot->id,
                 'private-job.'.$job->id,
             ]);
     }
@@ -124,18 +187,36 @@ class BotGrabJobTest extends TestCase
      */
     public function botThatAlreadyHasAJobCannotGrabAnother()
     {
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $jobA = $this->createJob($this->bot);
-        $jobB = $this->createJob($this->bot);
+        /** @var Job $jobA */
+        $jobA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
-        $this->assertTrue($this->bot->canGrab($jobA));
-        $this->bot->grabJob($jobA);
+        /** @var Job $jobB */
+        $jobB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertTrue($bot->canGrab($jobA));
+        $bot->grabJob($jobA);
 
         $this->expectException(BotCannotGrabJob::class);
 
-        $this->assertFalse($this->bot->canGrab($jobB));
-        $this->bot->grabJob($jobB);
+        $this->assertFalse($bot->canGrab($jobB));
+        $bot->grabJob($jobB);
     }
 
     /** @test
@@ -143,15 +224,25 @@ class BotGrabJobTest extends TestCase
      */
     public function anOfflineBotCannotGrabAJob()
     {
-        $this->bot->status = BotStatusEnum::OFFLINE;
-        $this->bot->save();
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::OFFLINE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->expectException(BotCannotGrabJob::class);
 
-        $this->assertFalse($this->bot->canGrab($job));
-        $this->bot->grabJob($job);
+        $this->assertFalse($bot->canGrab($job));
+        $bot->grabJob($job);
     }
 
     /** @test
@@ -159,14 +250,24 @@ class BotGrabJobTest extends TestCase
      */
     public function aWorkingBotCannotGrabAJob()
     {
-        $this->bot->status = BotStatusEnum::WORKING;
-        $this->bot->save();
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::WORKING)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
+        /** @var Job $otherJob */
+        $otherJob = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->expectException(BotCannotGrabJob::class);
 
-        $this->assertFalse($this->bot->canGrab($job));
-        $this->bot->grabJob($job);
+        $this->assertFalse($bot->canGrab($otherJob));
+        $bot->grabJob($otherJob);
     }
 }

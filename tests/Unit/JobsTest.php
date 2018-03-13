@@ -4,7 +4,10 @@ namespace Tests\Feature;
 
 use App\Bot;
 use App\Cluster;
+use App\Enums\BotStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
+use App\Job;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\CreatesJob;
 use Tests\HasBot;
@@ -15,16 +18,26 @@ use Tests\TestCase;
 class JobsTest extends TestCase
 {
     use HasUser;
-    use HasBot;
-    use HasCluster;
-    use CreatesJob;
 
     /** @test */
     public function jobCreatedEventIsFiredForBot()
     {
         $this->fakesEvents(JobCreated::class);
 
-        $job = $this->createJob($this->bot);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->assertTrue($job->workerIs(Bot::class));
 
@@ -35,7 +48,7 @@ class JobsTest extends TestCase
             })
             ->channels([
                 'private-user.' . $this->user->id,
-                'private-bot.' . $this->bot->id,
+                'private-bot.' . $bot->id,
             ]);
     }
 
@@ -45,16 +58,34 @@ class JobsTest extends TestCase
         $this->fakesEvents(JobCreated::class);
 
         /** @var Bot $otherBot */
-        $otherBot = factory(Bot::class)->create([
+        $otherBot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
             'creator_id' => $this->user->id,
         ]);
 
-        $this->cluster->bots()->saveMany([
-            $this->bot,
-            $otherBot,
-        ]);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->cluster);
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
+
+        $cluster->bots()->saveMany([$bot, $otherBot]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
+            ->create([
+                'worker_id' => $cluster->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->assertTrue($job->workerIs(Cluster::class));
 
@@ -64,10 +95,10 @@ class JobsTest extends TestCase
                 $this->assertEquals($job->id, $event->job->id);
             })
             ->channels([
-                'private-user.'.$this->user->id,
-                'private-cluster.'.$this->cluster->id,
-                'private-bot.'.$this->bot->id,
-                'private-bot.'.$otherBot->id,
+                'private-user.' . $this->user->id,
+                'private-cluster.' . $cluster->id,
+                'private-bot.' . $bot->id,
+                'private-bot.' . $otherBot->id,
             ]);
     }
 }

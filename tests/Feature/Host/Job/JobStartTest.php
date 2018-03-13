@@ -2,55 +2,48 @@
 
 namespace Tests\Feature\Host\Job;
 
+use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Job;
 use App\JobAttempt;
-use Tests\CreatesJob;
 use Tests\Feature\Host\HostTestCase;
-use Tests\HasBot;
 
 class JobStartTest extends HostTestCase
 {
-    use CreatesJob;
-    use HasBot;
-
-    /**
-     * @var Job
-     */
-    private $job;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->withBotStatus(BotStatusEnum::IDLE);
-        $this->bot->assignTo($this->host);
-
-        $this->job = $this->createJob($this->bot, JobStatusEnum::QUEUED);
-    }
-
-    /** @test
-     * @throws \App\Exceptions\BotCannotGrabJob
-     */
+    /** @test */
     public function canMoveJobToInProgress()
     {
-        $this->bot->grabJob($this->job);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $this->host,
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::ASSIGNED)
+            ->create([
+                'bot_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $response = $this
             ->withTokenFromHost($this->host)
-            ->postJson("/host/jobs/{$this->job->id}/start");
+            ->postJson("/host/jobs/{$job->id}/start");
 
-        $this->job->refresh();
+        $job->refresh();
 
         /** @var JobAttempt $attempt */
-        $attempt = $this->job->currentAttempt;
+        $attempt = $job->currentAttempt;
         $this->assertNotNull($attempt);
 
         $response
             ->assertJson([
                 'data' => [
-                    'id' => $this->job->id,
+                    'id' => $job->id,
                     'status' => JobStatusEnum::IN_PROGRESS,
                     'attempt' => [
                         'id' => $attempt->id,
