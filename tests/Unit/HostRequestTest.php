@@ -6,6 +6,7 @@ use App\Enums\HostRequestStatusEnum;
 use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostAlreadyClaimed;
 use App\HostRequest;
+use App\User;
 use Tests\HasUser;
 use Tests\TestCase;
 
@@ -38,7 +39,8 @@ class HostRequestTest extends TestCase
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
 
-        $otherUser = $this->createUser();
+        /** @var User $otherUser */
+        $otherUser = factory(User::class)->create();
 
         $otherUser->claim($host_request, "Test Host");
 

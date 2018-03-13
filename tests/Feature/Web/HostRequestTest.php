@@ -3,7 +3,7 @@
 namespace Tests\Feature\Web;
 
 use App\Enums\HostRequestStatusEnum;
-use App\Host;
+use App\User;
 use App\HostRequest;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -113,13 +113,16 @@ class HostRequestTest extends TestCase
         $this->assertEquals($newHostName, $host_request->name);
     }
 
-    /** @test */
+    /** @test
+     * @throws \App\Exceptions\HostAlreadyClaimed
+     */
     public function aUserCannotClaimAnAlreadyClaimedHost()
     {
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
 
-        $otherUser = $this->createUser();
+        /** @var User $otherUser */
+        $otherUser = factory(User::class)->create();
         $otherUser->claim($host_request, 'Other User Test host');
 
         $this
@@ -131,5 +134,7 @@ class HostRequestTest extends TestCase
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $host_request->refresh();
+        $this->assertEquals($otherUser->id, $host_request->claimer_id);
+        $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
 }

@@ -14,15 +14,6 @@ trait HasUser
 
     public function createTestUser()
     {
-        $this->user = $this->createUser();
-    }
-
-    /**
-     * @param array $overrides
-     * @return User
-     */
-    public function createUser($overrides = [])
-    {
-        return factory(App\User::class)->create($overrides);
+        $this->user = factory(App\User::class)->create();
     }
 }
