@@ -4,9 +4,33 @@
 namespace Tests;
 
 use App;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\PersonalAccessClient;
 
 trait PassportHelper
 {
+    private $userClientSetUp = false;
+
+    private function setUpPersonalClient()
+    {
+        if($this->userClientSetUp)
+            return;
+
+        $clients = app(ClientRepository::class);
+
+        $client = $clients->createPersonalAccessClient(
+            null,
+            'TestPersonalClient',
+            'http://localhost'
+        );
+
+        $accessClient = new PersonalAccessClient();
+        $accessClient->client_id = $client->id;
+        $accessClient->save();
+
+        $this->userClientSetUp = true;
+    }
+
     /**
      * @param $user App\User
      * @param array $scopes
@@ -14,6 +38,8 @@ trait PassportHelper
      */
     public function withTokenFromUser($user, $scopes = ['*'])
     {
+        $this->setUpPersonalClient();
+
         if (! is_array($scopes)) {
             $scopes = [$scopes];
         }
@@ -27,14 +53,11 @@ trait PassportHelper
 
     /**
      * @param $host App\Host
+     * @return $this
      */
     public function withTokenFromHost($host)
     {
-        $accessToken = $host->getAccessToken();
-
-        $jwtToken = (string)$accessToken->convertToJWT(passport_private_key());
-
-        $this->withAccessToken($jwtToken);
+        $this->withAccessToken($host->getJWT());
 
         return $this;
     }
@@ -48,25 +71,5 @@ trait PassportHelper
         $this->withHeader('Authorization', 'Bearer ' . $accessToken);
 
         return $this;
-    }
-}
-
-class HostTokenHolder
-{
-    /**
-     * @var App\Host
-     */
-    public $host;
-    public $accessToken;
-
-    /**
-     * HostTokenHolder constructor.
-     * @param $host App\Host
-     * @param $accessToken
-     */
-    public function __construct($host, $accessToken)
-    {
-        $this->host = $host;
-        $this->accessToken = $accessToken;
     }
 }

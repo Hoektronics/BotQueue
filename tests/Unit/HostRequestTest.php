@@ -7,11 +7,13 @@ use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostAlreadyClaimed;
 use App\HostRequest;
 use App\User;
+use Tests\HasHost;
 use Tests\HasUser;
 use Tests\TestCase;
 
 class HostRequestTest extends TestCase
 {
+    use HasHost;
     use HasUser;
 
     /** @test
@@ -59,6 +61,8 @@ class HostRequestTest extends TestCase
      */
     public function hostRequestThatWasConvertedIntoAHostIsGone()
     {
+        $this->setUpHostClient();
+
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
 

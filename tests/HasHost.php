@@ -5,6 +5,8 @@ namespace Tests;
 
 use App;
 use App\Host;
+use App\Oauth\OauthHostClient;
+use Laravel\Passport\ClientRepository;
 
 trait HasHost
 {
@@ -13,7 +15,23 @@ trait HasHost
 
     public function createTestHost()
     {
+        $this->setUpHostClient();
         $this->host = $this->createHost();
+    }
+
+    protected function setUpHostClient()
+    {
+        $clients = app(ClientRepository::class);
+
+        $client = $clients->create(
+            null,
+            'TestHostClient',
+            'http://localhost'
+        );
+
+        $accessClient = new OauthHostClient();
+        $accessClient->client_id = $client->id;
+        $accessClient->save();
     }
 
     /**

@@ -2,11 +2,8 @@
 
 namespace Tests;
 
-use App\Oauth\OauthHostClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Laravel\Passport\ClientRepository;
-use Laravel\Passport\PersonalAccessClient;
 use Tests\Helpers\WithFakesEvents;
 
 abstract class TestCase extends BaseTestCase
@@ -23,10 +20,6 @@ abstract class TestCase extends BaseTestCase
 
         $uses = array_flip(class_uses_recursive(static::class));
 
-        $client_repository = app(ClientRepository::class);
-
-        $this->setUpClients($client_repository);
-
         if (isset($uses[HasUser::class])) {
             $this->createTestUser();
         }
@@ -34,38 +27,6 @@ abstract class TestCase extends BaseTestCase
         if (isset($uses[HasHost::class])) {
             $this->createTestHost();
         }
-    }
-
-    public function setUpClients(ClientRepository $clients)
-    {
-        $this->setUpPersonalClient($clients);
-        $this->setUpHostClient($clients);
-    }
-
-    protected function setUpPersonalClient(ClientRepository $clients)
-    {
-        $client = $clients->createPersonalAccessClient(
-            null,
-            'TestPersonalClient',
-            'http://localhost'
-        );
-
-        $accessClient = new PersonalAccessClient();
-        $accessClient->client_id = $client->id;
-        $accessClient->save();
-    }
-
-    protected function setUpHostClient(ClientRepository $clients)
-    {
-        $client = $clients->create(
-            null,
-            'TestHostClient',
-            'http://localhost'
-        );
-
-        $accessClient = new OauthHostClient();
-        $accessClient->client_id = $client->id;
-        $accessClient->save();
     }
 
     public function withRemoteIp($ip)

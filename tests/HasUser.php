@@ -4,8 +4,6 @@
 namespace Tests;
 
 use App;
-use App\User;
-use Illuminate\Support\Facades\Auth;
 
 trait HasUser
 {
