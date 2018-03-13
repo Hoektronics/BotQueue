@@ -18,15 +18,11 @@ abstract class TestCase extends BaseTestCase
 
         $this->withoutExceptionHandling();
 
-        $uses = array_flip(class_uses_recursive(static::class));
-
-        if (isset($uses[HasUser::class])) {
+        if(method_exists($this, 'createTestUser'))
             $this->createTestUser();
-        }
 
-        if (isset($uses[HasHost::class])) {
+        if(method_exists($this, 'createTestHost'))
             $this->createTestHost();
-        }
     }
 
     public function withRemoteIp($ip)

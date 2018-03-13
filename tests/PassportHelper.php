@@ -4,6 +4,7 @@
 namespace Tests;
 
 use App;
+use Illuminate\Support\Arr;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessClient;
 
@@ -36,15 +37,11 @@ trait PassportHelper
      * @param array $scopes
      * @return $this
      */
-    public function withTokenFromUser($user, $scopes = ['*'])
+    public function withTokenFromUser($user, $scopes = '*')
     {
         $this->setUpPersonalClient();
 
-        if (! is_array($scopes)) {
-            $scopes = [$scopes];
-        }
-
-        $token = $user->createToken('Test Token', $scopes);
+        $token = $user->createToken('Test Token', Arr::wrap($scopes));
 
         $this->withAccessToken($token->accessToken);
 
