@@ -16,16 +16,6 @@ use Tests\HasBot;
 
 class BotGrabbingJobsTest extends HostTestCase
 {
-    use HasBot;
-    use CreatesJob;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->bot->assignTo($this->host);
-    }
-
     /** @test
      * @throws \App\Exceptions\BotCannotGrabJob
      */
@@ -33,17 +23,28 @@ class BotGrabbingJobsTest extends HostTestCase
     {
         $this->fakesEvents(BotGrabbedJob::class);
 
-        $this->withBotStatus(BotStatusEnum::IDLE);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $this->host,
+                'creator_id' => $this->user->id,
+            ]);
 
         /** @var Job $job */
-        $job = $this->createJob($this->bot);
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
-        $this->bot->grabJob($job);
+        $bot->grabJob($job);
 
         $this->assertDispatched(BotGrabbedJob::class)
-            ->inspect(function ($event) use ($job) {
+            ->inspect(function ($event) use ($bot, $job) {
                 /** @var BotGrabbedJob $event */
-                $this->assertEquals($this->bot->id, $event->bot->id);
+                $this->assertEquals($bot->id, $event->bot->id);
                 $this->assertEquals($job->id, $event->job->id);
             })
             ->channels([
@@ -67,17 +68,28 @@ class BotGrabbingJobsTest extends HostTestCase
     /** @test */
     public function botTryingToGrabAJobGetsThatJob()
     {
-        $this->bot->status = BotStatusEnum::IDLE;
-        $this->bot->save();
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $this->host,
+                'creator_id' => $this->user->id,
+            ]);
 
-        $job = $this->createJob($this->bot);
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
 
         $this->withTokenFromHost($this->host)
             ->postJson('/host/jobs/grab')
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    $this->bot->id => [
+                    $bot->id => [
                         'id' => $job->id,
                         'name' => $job->name,
                         'status' => JobStatusEnum::ASSIGNED,
@@ -89,18 +101,37 @@ class BotGrabbingJobsTest extends HostTestCase
     /** @test */
     public function multipleBotsAllGetAssignedAtOnce()
     {
-        $this->bot->status = BotStatusEnum::IDLE;
-        $this->bot->save();
+        /** @var Bot $botA */
+        $botA = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $this->host,
+                'creator_id' => $this->user->id,
+            ]);
 
-        /** @var Bot $otherBot */
-        $otherBot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-            'status' => BotStatusEnum::IDLE,
-        ]);
-        $otherBot->assignTo($this->host);
+        /** @var Job $jobA */
+        $jobA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $botA->id,
+                'creator_id' => $this->user->id,
+            ]);
 
-        $jobA = $this->createJob($this->bot);
-        $jobB = $this->createJob($otherBot);
+        /** @var Bot $botB */
+        $botB = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'host_id' => $this->host,
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $jobB */
+        $jobB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $botB->id,
+                'creator_id' => $this->user->id,
+            ]);
 
 
         $this->withTokenFromHost($this->host)
@@ -108,12 +139,12 @@ class BotGrabbingJobsTest extends HostTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 'data' => [
-                    $this->bot->id => [
+                    $botA->id => [
                         'id' => $jobA->id,
                         'name' => $jobA->name,
                         'status' => JobStatusEnum::ASSIGNED,
                     ],
-                    $otherBot->id => [
+                    $botB->id => [
                         'id' => $jobB->id,
                         'name' => $jobB->name,
                         'status' => JobStatusEnum::ASSIGNED,

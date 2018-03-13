@@ -14,6 +14,7 @@ use Faker\Generator as Faker;
 */
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
+
 $factory->define(App\User::class, function (Faker $faker) {
     static $password;
 
@@ -25,21 +26,11 @@ $factory->define(App\User::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\Bot::class, function (Faker $faker) {
-    return [
-        'name' => $faker->userName,
-        'seen_at' => $faker->dateTime,
-        'type' => '3d_printer',
-    ];
-});
+$factory->state(App\User::class, 'admin', [
+    'is_admin' => true,
+]);
 
 $factory->define(App\Cluster::class, function (Faker $faker) {
-    return [
-        'name' => $faker->userName,
-    ];
-});
-
-$factory->define(App\Job::class, function (Faker $faker) {
     return [
         'name' => $faker->userName,
     ];
