@@ -34,10 +34,6 @@ abstract class TestCase extends BaseTestCase
         if (isset($uses[HasHost::class])) {
             $this->createTestHost();
         }
-
-        if (isset($uses[HasCluster::class])) {
-            $this->createTestCluster();
-        }
     }
 
     public function setUpClients(ClientRepository $clients)

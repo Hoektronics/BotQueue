@@ -4,15 +4,12 @@ namespace Tests\Feature\Web;
 
 use App\Cluster;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ClustersTest extends TestCase
 {
     use HasUser;
-    use HasCluster;
     use WithFaker;
 
     /** @test */

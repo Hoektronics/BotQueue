@@ -7,15 +7,12 @@ use App\Cluster;
 use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
-use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BotsTest extends TestCase
 {
     use HasUser;
-    use HasCluster;
     use WithFaker;
 
     /** @test */
@@ -82,10 +79,16 @@ class BotsTest extends TestCase
 
     protected function postBot($overrides = [])
     {
+        /** @var Cluster $default */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
         $default = [
             'name' => $this->faker->userName,
             'type' => '3d_printer',
-            'cluster' => $this->cluster->id,
+            'cluster' => $cluster->id,
         ];
 
         return $this->post('/bots', array_merge($default, $overrides));

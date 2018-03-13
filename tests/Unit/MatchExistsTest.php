@@ -8,7 +8,6 @@ use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Rules\MatchExists;
 use Illuminate\Support\Facades\Validator;
-use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
 
