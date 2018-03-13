@@ -9,10 +9,6 @@ use App\Enums\JobStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Exceptions\BotCannotGrabJob;
 use App\Job;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\CreatesJob;
-use Tests\HasBot;
-use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
 

@@ -10,12 +10,9 @@ use App\Enums\ErrorCodes;
 use App\Enums\JobStatusEnum;
 use App\Job;
 use Illuminate\Http\Response;
-use Tests\HasBot;
 
 class WorkingJobsTest extends HostTestCase
 {
-    use HasBot;
-
     protected const JOB_IS_NOT_ASSIGNED_TO_YOU_JSON = [
         'status' => 'error',
         'code' => ErrorCodes::JOB_IS_NOT_ASSIGNED_TO_ANY_OF_YOUR_BOTS,

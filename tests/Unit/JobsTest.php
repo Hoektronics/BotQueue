@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use App\Bot;
 use App\Cluster;
@@ -8,10 +8,6 @@ use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
 use App\Job;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\CreatesJob;
-use Tests\HasBot;
-use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
 

@@ -5,11 +5,9 @@ namespace Tests\Unit;
 use App;
 use App\Bot;
 use App\Cluster;
+use App\Enums\BotStatusEnum;
 use App\Rules\MatchExists;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Tests\HasBot;
 use Tests\HasCluster;
 use Tests\HasUser;
 use Tests\TestCase;
@@ -17,13 +15,18 @@ use Tests\TestCase;
 class MatchExistsTest extends TestCase
 {
     use HasUser;
-    use HasBot;
-    use HasCluster;
 
     /** @test */
     public function matchingOnModelIdAttribute()
     {
-        $fieldValue = 'foo_' . $this->bot->id;
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        $fieldValue = 'foo_' . $bot->id;
         $fields = [
             'field' => $fieldValue
         ];
@@ -39,14 +42,21 @@ class MatchExistsTest extends TestCase
         $this->assertTrue($validator->passes());
 
         $model = $matchExists->getModel($fieldValue);
-        $this->assertEquals($this->bot->id, $model->id);
+        $this->assertEquals($bot->id, $model->id);
         $this->assertInstanceOf(Bot::class, $model);
     }
 
     /** @test */
     public function whenNothingMatches()
     {
-        $fieldValue = 'foo_' . ($this->bot->id + 1);
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        $fieldValue = 'foo_' . ($bot->id + 1);
         $fields = [
             'field' => $fieldValue
         ];
@@ -66,7 +76,13 @@ class MatchExistsTest extends TestCase
     /** @test */
     public function multipleFieldMatchesWithSameModel()
     {
-        $fieldValue = 'bar_' . $this->bot->id;
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+        $fieldValue = 'bar_' . $bot->id;
         $fields = [
             'field' => $fieldValue
         ];
@@ -83,14 +99,20 @@ class MatchExistsTest extends TestCase
         $this->assertTrue($validator->passes());
 
         $model = $matchExists->getModel($fieldValue);
-        $this->assertEquals($this->bot->id, $model->id);
+        $this->assertEquals($bot->id, $model->id);
         $this->assertInstanceOf(Bot::class, $model);
     }
 
     /** @test */
     public function multipleFieldMatchesWithDifferentModel()
     {
-        $fieldValue = 'bar_' . $this->cluster->id;
+        /** @var Cluster $cluster */
+        $cluster = factory(Cluster::class)
+            ->create([
+                'creator_id' => $this->user,
+            ]);
+
+        $fieldValue = 'bar_' . $cluster->id;
         $fields = [
             'field' => $fieldValue
         ];
@@ -107,16 +129,23 @@ class MatchExistsTest extends TestCase
         $this->assertTrue($validator->passes());
 
         $model = $matchExists->getModel($fieldValue);
-        $this->assertEquals($this->cluster->id, $model->id);
+        $this->assertEquals($cluster->id, $model->id);
         $this->assertInstanceOf(Cluster::class, $model);
     }
 
     /** @test */
     public function fieldMatchesWithScope()
     {
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
         $this->actingAs($this->user);
 
-        $fieldValue = 'foo_' . $this->bot->id;
+        $fieldValue = 'foo_' . $bot->id;
 
         $fields = [
             'field' => $fieldValue
@@ -133,7 +162,7 @@ class MatchExistsTest extends TestCase
         $this->assertTrue($validator->passes());
 
         $model = $matchExists->getModel($fieldValue);
-        $this->assertEquals($this->bot->id, $model->id);
+        $this->assertEquals($bot->id, $model->id);
         $this->assertInstanceOf(Bot::class, $model);
     }
 }

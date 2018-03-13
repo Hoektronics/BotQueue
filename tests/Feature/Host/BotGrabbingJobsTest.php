@@ -11,8 +11,6 @@ use App\Enums\JobStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Job;
 use Illuminate\Http\Response;
-use Tests\CreatesJob;
-use Tests\HasBot;
 
 class BotGrabbingJobsTest extends HostTestCase
 {
