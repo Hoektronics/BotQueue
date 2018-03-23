@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Host;
 
-use App\Host;
 use App\HostRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\HostRequestResource;
 use App\Http\Resources\HostResource;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -31,6 +29,11 @@ class HostRequestController extends Controller
         return new HostRequestResource($host_request);
     }
 
+    /**
+     * @param HostRequest $host_request
+     * @return HostResource
+     * @throws \App\Exceptions\CannotConvertHostRequestToHost
+     */
     public function access(HostRequest $host_request)
     {
         $host = $host_request->toHost();

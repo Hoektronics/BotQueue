@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Host;
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\ErrorCodes;
-use App\Host;
 use App\HostManager;
 use App\Http\Resources\BotResource;
 use App\Http\Controllers\Controller;

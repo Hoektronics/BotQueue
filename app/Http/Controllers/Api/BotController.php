@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\User;
 use App\Bot;
 use App\Http\Resources\BotResource;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,7 @@ class BotController extends Controller
 {
     public function index()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $bots = $user->bots()->with('creator')->get();

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser as JwtParser;
+use Lcobucci\JWT\Token;
 
 class RequestTest extends HostTestCase
 {
@@ -40,14 +41,16 @@ class RequestTest extends HostTestCase
             ->assertJson([
                 'data' => [
                     'status' => HostRequestStatusEnum::REQUESTED
-                ]
+                ],
+                'links' => []
             ])
             ->assertJsonStructure([
                 'data' => [
                     'id',
                     'status',
                     'expires_at',
-                ]
+                ],
+                'links' => []
             ])
             ->json('data.id');
 
@@ -67,14 +70,16 @@ class RequestTest extends HostTestCase
             ->assertJson([
                 'data' => [
                     'status' => HostRequestStatusEnum::REQUESTED
-                ]
+                ],
+                'links' => []
             ])
             ->assertJsonStructure([
                 'data' => [
                     'id',
                     'status',
                     'expires_at',
-                ]
+                ],
+                'links' => []
             ])
             ->json('data.id');
 
@@ -91,7 +96,8 @@ class RequestTest extends HostTestCase
             ->assertJsonStructure([
                 'data' => [
                     'id'
-                ]
+                ],
+                'links' => []
             ])
             ->json('data.id');
 
@@ -115,7 +121,8 @@ class RequestTest extends HostTestCase
                 'data' => [
                     'id' => $host_request->id,
                     'status' => HostRequestStatusEnum::REQUESTED,
-                ]
+                ],
+                'links' => []
             ]);
     }
 
@@ -141,6 +148,9 @@ class RequestTest extends HostTestCase
                         'username' => $this->user->username,
                         'link' => url('/api/users', $this->user->id),
                     ]
+                ],
+                'links' => [
+                    'to_host' => url("/host/requests/{$host_request->id}/access"),
                 ]
             ]);
     }
@@ -246,6 +256,7 @@ class RequestTest extends HostTestCase
         $host = Host::query()->where('name', 'My Test Host')->first();
         $this->assertNotNull($host);
 
+        /** @var Token $jwt */
         $jwt = $jwt_parser->parse($access_token);
 
         $this->assertEquals($host->token_id, $jwt->getClaim('jti'));

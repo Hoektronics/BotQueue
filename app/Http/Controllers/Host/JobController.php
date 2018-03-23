@@ -13,7 +13,6 @@ class JobController extends Controller
      * @param Job $job
      * @param JobStateMachine $stateMachine
      * @return JobStartedResponse
-     * @throws \App\Exceptions\State\JobNotAssignedToBot
      */
     public function start(Job $job, JobStateMachine $stateMachine)
     {
