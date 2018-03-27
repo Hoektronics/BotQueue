@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests\Feature\Host;
+namespace Tests\Feature\Host\Bot;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use Illuminate\Http\Response;
+use Tests\Feature\Host\HostTestCase;
 
 class BotVisibilityTest extends HostTestCase
 {

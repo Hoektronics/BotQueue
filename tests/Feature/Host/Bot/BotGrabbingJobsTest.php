@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tests\Feature\Host;
+namespace Tests\Feature\Host\Bot;
 
 
 use App\Bot;
@@ -11,6 +11,7 @@ use App\Enums\JobStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Job;
 use Illuminate\Http\Response;
+use Tests\Feature\Host\HostTestCase;
 
 class BotGrabbingJobsTest extends HostTestCase
 {

@@ -1,13 +1,14 @@
 <?php
 
 
-namespace Tests\Feature\Host;
+namespace Tests\Feature\Host\Bot;
 
 
 use App\Bot;
 use App\Events\Host\BotAssignedToHost;
 use App\Events\Host\BotRemovedFromHost;
 use App\Host;
+use Tests\Feature\Host\HostTestCase;
 
 class BotAssignmentTest extends HostTestCase
 {
