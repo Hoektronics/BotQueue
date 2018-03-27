@@ -10,6 +10,7 @@ use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\BotGrabbedJob;
 use App\Exceptions\BotCannotGrabJob;
+use App\Exceptions\JobOfferFailed;
 use App\Job;
 use Illuminate\Support\Facades\DB;
 
@@ -94,5 +95,32 @@ trait WorksOnJobsTrait
             return true;
 
         return false;
+    }
+
+    /**
+     * @param Job $job
+     * @throws JobOfferFailed
+     */
+    public function offer(Job $job)
+    {
+        try {
+            DB::transaction(function () use ($job) {
+                Job::query()
+                    ->whereKey($job->getKey())
+                    ->where('status', JobStatusEnum::QUEUED)
+                    ->whereNull('bot_id')
+                    ->update([
+                        'bot_id' => $this->id,
+                        'status' => JobStatusEnum::OFFERED
+                    ]);
+
+                $job->refresh();
+
+                if ($job->bot_id != $this->id)
+                    throw new JobOfferFailed("This job is offered or assigned to a different bot");
+            });
+        } catch (\Exception|\Throwable $e) {
+            throw new JobOfferFailed("Unexpected exception while trying to offer job");
+        }
     }
 }

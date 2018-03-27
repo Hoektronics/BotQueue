@@ -2,9 +2,7 @@
 
 use Faker\Generator as Faker;
 use App\Bot;
-use App\Job;
 use App\Enums\BotStatusEnum;
-use App\Enums\JobStatusEnum;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(Bot::class, function (Faker $faker) {
