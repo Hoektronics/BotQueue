@@ -20,11 +20,16 @@ class Event
      */
     private $channels;
 
-    protected function addChannel(Channel $channel)
+    protected function ensureNotEmptyChannels()
     {
         if($this->channels == null) {
             $this->channels = collect();
         }
+    }
+
+    protected function addChannel(Channel $channel)
+    {
+        $this->ensureNotEmptyChannels();
 
         $this->channels->push($channel);
 
@@ -33,6 +38,8 @@ class Event
 
     protected function channels()
     {
+        $this->ensureNotEmptyChannels();
+
         return $this->channels->unique(function ($channel) {
             /** @var Channel $channel */
             return $channel->name;
