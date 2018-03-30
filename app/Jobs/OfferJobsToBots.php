@@ -6,7 +6,6 @@ use App\Bot;
 use App\Cluster;
 use App\Enums\JobStatusEnum;
 use App\Job;
-use App\Managers\JobDistributionManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -18,18 +17,12 @@ class OfferJobsToBots implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var JobDistributionManager
-     */
-    private $jobDistributionManager;
-
-    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(JobDistributionManager $jobDistributionManager)
+    public function __construct()
     {
-        $this->jobDistributionManager = $jobDistributionManager;
     }
 
     /**
