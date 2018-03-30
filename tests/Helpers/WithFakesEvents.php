@@ -27,4 +27,9 @@ trait WithFakesEvents
     {
         return $this->eventFake->assertDispatched($event);
     }
+
+    protected function assertNotDispatched($event)
+    {
+        return $this->eventFake->assertNotDispatched($event);
+    }
 }

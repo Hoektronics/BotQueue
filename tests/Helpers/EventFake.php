@@ -35,8 +35,8 @@ class EventFake implements Dispatcher
     /**
      * Create a new event fake instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
-     * @param  array|string  $eventsToFake
+     * @param  \Illuminate\Contracts\Events\Dispatcher $dispatcher
+     * @param  array|string $eventsToFake
      * @return void
      */
     public function __construct(Dispatcher $dispatcher, $eventsToFake = [])
@@ -48,21 +48,31 @@ class EventFake implements Dispatcher
 
     public function hasDispatched($eventClass)
     {
-        return isset($this->events[$eventClass]) && ! empty($this->events[$eventClass]);
+        return isset($this->events[$eventClass]) && !empty($this->events[$eventClass]);
     }
 
     public function assertDispatched($eventClass)
     {
-        $constraint = new EventDispatchedConstraint($this);
-        Assert::assertThat($eventClass, $constraint);
+        Assert::assertTrue(
+            $this->hasDispatched($eventClass),
+            "Failed asserting that [{$eventClass}] was dispatched"
+        );
 
         return new EventAssertion($this->events[$eventClass]);
+    }
+
+    public function assertNotDispatched($eventClass)
+    {
+        Assert::assertFalse(
+            $this->hasDispatched($eventClass),
+            "Failed asserting that [{$eventClass}] was not dispatched"
+        );
     }
 
     /**
      * Determine if an event should be faked or actually dispatched.
      *
-     * @param  string  $eventName
+     * @param  string $eventName
      * @return bool
      */
     protected function shouldFakeEvent($eventName)
@@ -85,9 +95,9 @@ class EventFake implements Dispatcher
     /**
      * Fire an event and call the listeners.
      *
-     * @param  string|object  $event
-     * @param  mixed  $payload
-     * @param  bool  $halt
+     * @param  string|object $event
+     * @param  mixed $payload
+     * @param  bool $halt
      * @return array|null
      */
     public function fire($event, $payload = [], $halt = false)
@@ -105,7 +115,7 @@ class EventFake implements Dispatcher
      */
     public function dispatch($event, $payload = [], $halt = false)
     {
-        $name = is_object($event) ? get_class($event) : (string) $event;
+        $name = is_object($event) ? get_class($event) : (string)$event;
 
         if ($this->shouldFakeEvent($name)) {
             $this->events[$name][] = func_get_args();
