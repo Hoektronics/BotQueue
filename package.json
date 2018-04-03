@@ -8,7 +8,7 @@
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "ws": "node js/socket/ws.js"
+    "socket": "node js/socket/server.js"
   },
   "jshintConfig": {
     "esversion": 6
@@ -16,7 +16,15 @@
   "dependencies": {
     "dotenv": "^4.0.0",
     "ioredis": "^3.1.1",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "connect": "3.0.1",
+    "express": "4.14.0",
+    "sc-errors": "^1.4.0",
+    "sc-framework-health-check": "^2.0.0",
+    "scc-broker-client": "^3.0.0",
+    "serve-static": "1.11.2",
+    "socketcluster": "^11.1.0",
+    "socketcluster-client": "^11.0.0"
   },
   "devDependencies": {
     "axios": "^0.16.2",
