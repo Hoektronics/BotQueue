@@ -41,31 +41,15 @@ class Broker extends SCBroker {
             subClient.unsubscribe(channel);
         });
 
-        const instanceIdRegex = /^[^\/]*\//;
-
         subClient.on('message', function(channel, message) {
             let sender = null;
 
-            message = message.replace(instanceIdRegex, function(match) {
-                sender = match.slice(0, -1);
-                return '';
-            });
+            let data = JSON.parse(message);
 
             // Do not publish if this message was published by
             // the current SC instance since it has already been
             // handled internally
             if (sender == null || sender !== broker.instanceId) {
-                const type = message.charAt(0);
-                let data = message.slice(2);
-
-                console.log(`Publishing ${data} to ${channel}`);
-
-                if(type === 'o') {
-                    try {
-                        data = JSON.parse(data);
-                    } catch (e) {}
-                }
-
                 broker.publish(channel, data);
             }
         });

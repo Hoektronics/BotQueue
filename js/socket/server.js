@@ -17,7 +17,7 @@ const SocketCluster = require('socketcluster');
 
 const workerControllerPath = path.join(__dirname, 'worker.js');
 const brokerControllerPath = path.join(__dirname, 'broker.js');
-const environment = 'dev';
+const environment = 'prod';
 
 const options = {
     path: '/socket',
