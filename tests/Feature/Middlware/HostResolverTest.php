@@ -4,7 +4,7 @@ namespace Tests\Feature\Middlware;
 
 use App\Host;
 use App\HostManager;
-use App\Http\Middleware\HostResolver;
+use App\Http\Middleware\ResolveHost;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -18,18 +18,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class HostResolverTest extends HostTestCase
 {
     /** @test */
-    public function requestWithoutTokenIsForbidden()
+    public function requestWithoutTokenDoesNotResolveHost()
     {
         $request = Request::create('http://example.com/host/foo', 'GET');
 
-        $middleware = new HostResolver();
+        $middleware = new ResolveHost();
 
         /** @var Response $response */
-        $response = $middleware->handle($request, function($request) {
+        $response = $middleware->handle($request, function() {
             return Response::create('', Response::HTTP_OK);
         });
 
-        $this->assertEquals($response->getStatusCode(), Response::HTTP_FORBIDDEN);
+        $this->assertEquals($response->getStatusCode(), Response::HTTP_OK);
+
+        $hostManagerHost = app(HostManager::class)->getHost();
+        $this->assertNull($hostManagerHost);
     }
 
     /** @test */
@@ -40,10 +43,10 @@ class HostResolverTest extends HostTestCase
             'Authorization' => 'Bearer '. $this->host->getJWT(),
         ]);
 
-        $middleware = new HostResolver();
+        $middleware = new ResolveHost();
 
         /** @var Response $response */
-        $response = $middleware->handle($request, function($request) {
+        $response = $middleware->handle($request, function() {
             return Response::create('', Response::HTTP_OK);
         });
 
@@ -69,7 +72,7 @@ class HostResolverTest extends HostTestCase
             'Authorization' => 'Bearer '. $this->host->getJWT(),
         ]);
 
-        $middleware = new HostResolver();
+        $middleware = new ResolveHost();
 
         $middleware->handle($request, function() {});
 

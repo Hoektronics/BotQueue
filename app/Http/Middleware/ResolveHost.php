@@ -9,7 +9,7 @@ use Closure;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser;
 
-class HostResolver
+class ResolveHost
 {
     /**
      * Handle an incoming request.
@@ -21,12 +21,7 @@ class HostResolver
     public function handle($request, Closure $next)
     {
         if (!$request->hasHeader('authorization')) {
-            return response()->json(
-                [
-                    'error' => 'Missing "Authorization" header',
-                ],
-                Response::HTTP_FORBIDDEN
-                );
+            return $next($request);
         }
 
         $header = $request->header('authorization');

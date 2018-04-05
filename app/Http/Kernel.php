@@ -45,7 +45,7 @@ class Kernel extends HttpKernel
         'host' => [
             'throttle:60,1',
             'bindings',
-            'is_host',
+            'resolve_host',
             'scope:host',
             'auth:api',
         ],
@@ -65,7 +65,7 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'is_host' => \App\Http\Middleware\HostResolver::class,
+        'resolve_host' => \App\Http\Middleware\ResolveHost::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
