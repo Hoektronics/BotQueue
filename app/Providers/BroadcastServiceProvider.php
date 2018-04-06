@@ -2,20 +2,23 @@
 
 namespace App\Providers;
 
+use App\Channels\BotChannel;
+use App\Channels\UserChannel;
+use App\HostManager;
+use App\Managers\BroadcastAuthManager;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Broadcast;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        Broadcast::routes();
+    protected $channels = [
+        'private-user.{user}' => UserChannel::class,
+        'private-bot.{bot}' => BotChannel::class,
+    ];
 
-        require base_path('routes/channels.php');
+    public function register()
+    {
+        $this->app->singleton(BroadcastAuthManager::class, function () {
+            return new BroadcastAuthManager($this->channels, app(HostManager::class));
+        });
     }
 }
