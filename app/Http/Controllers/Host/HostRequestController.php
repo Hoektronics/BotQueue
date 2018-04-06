@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Host;
 
+use App\Enums\HostRequestStatusEnum;
 use App\HostRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\HostRequestResource;
 use App\Http\Resources\HostResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class HostRequestController extends Controller
 {
@@ -36,6 +38,9 @@ class HostRequestController extends Controller
      */
     public function access(HostRequest $host_request)
     {
+        if($host_request->status !== HostRequestStatusEnum::CLAIMED)
+            throw new BadRequestHttpException;
+
         $host = $host_request->toHost();
 
         return new HostResource($host);

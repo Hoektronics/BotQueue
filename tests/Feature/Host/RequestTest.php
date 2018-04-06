@@ -152,6 +152,18 @@ class RequestTest extends HostTestCase
                 ]
             ]);
     }
+    
+    /** @test */
+    public function tryingToAcessHostWithoutItBeingClaimedIsNotAllowed()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $this
+            ->withExceptionHandling()
+            ->postJson("/host/requests/{$host_request->id}/access")
+            ->assertStatus(Response::HTTP_BAD_REQUEST);
+    }
 
     /** @test
      * @throws \App\Exceptions\HostAlreadyClaimed
