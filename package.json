@@ -14,15 +14,16 @@
     "esversion": 6
   },
   "dependencies": {
-    "dotenv": "^4.0.0",
-    "ioredis": "^3.1.1",
-    "socket.io": "^2.0.3",
     "connect": "3.0.1",
+    "dotenv": "^4.0.0",
     "express": "4.14.0",
+    "ioredis": "^3.1.1",
+    "jsonwebtoken": "^8.2.1",
     "sc-errors": "^1.4.0",
     "sc-framework-health-check": "^2.0.0",
     "scc-broker-client": "^3.0.0",
     "serve-static": "1.11.2",
+    "socket.io": "^2.0.3",
     "socketcluster": "^11.1.0",
     "socketcluster-client": "^11.0.0"
   },
