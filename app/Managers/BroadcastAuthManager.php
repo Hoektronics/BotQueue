@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -35,7 +36,6 @@ class BroadcastAuthManager
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
-     * @throws \ReflectionException
      */
     public function auth(Request $request)
     {
@@ -58,7 +58,11 @@ class BroadcastAuthManager
 
             $parameters = $this->extractAuthParameters($pattern, $channel);
 
-            $handler = $this->getCallback($channelClass, $authModel, $parameters);
+            try {
+                $handler = $this->getCallback($channelClass, $authModel, $parameters);
+            } catch (\ReflectionException $e) {
+                throw new AccessDeniedException;
+            }
 
             if ($handler()) {
                 return response()->json();
