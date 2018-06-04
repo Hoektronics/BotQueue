@@ -1,6 +1,9 @@
+const path = require("path");
 const dotenv = require("dotenv");
 
-const config_load_result = dotenv.config();
+const config_load_result = dotenv.config({
+    path: path.join(__dirname, "../.env")
+});
 
 if (config_load_result.error) {
     throw config_load_result.error;
