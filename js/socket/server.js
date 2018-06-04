@@ -7,32 +7,32 @@
   each one has a specific meaning within the SC ecosystem.
 */
 
-const fs = require('fs');
-const config = require('../config');
-const path = require('path');
+const fs = require("fs");
+const config = require("../config");
+const path = require("path");
 
-const fsUtil = require('socketcluster/fsutil');
+const fsUtil = require("socketcluster/fsutil");
 const waitForFile = fsUtil.waitForFile;
 
-const SocketCluster = require('socketcluster');
+const SocketCluster = require("socketcluster");
 
-const workerControllerPath = path.join(__dirname, 'worker.js');
-const brokerControllerPath = path.join(__dirname, 'broker.js');
-const environment = 'prod';
+const workerControllerPath = path.join(__dirname, "worker.js");
+const brokerControllerPath = path.join(__dirname, "broker.js");
+const environment = "prod";
 
-const public_key = fs.readFileSync(path.join(__dirname, '../../storage/oauth-public.key'));
-const private_key = fs.readFileSync(path.join(__dirname, '../../storage/oauth-private.key'));
+const publicKey = fs.readFileSync(path.join(__dirname, "../../storage/oauth-public.key"));
+const privateKey = fs.readFileSync(path.join(__dirname, "../../storage/oauth-private.key"));
 
 const options = {
-    path: '/socket',
+    path: "/socket",
     workers: config.SOCKET_WORKERS,
     brokers: config.SOCKET_BROKERS,
     port: config.SOCKET_PORT,
-    authPublicKey: public_key,
-    authPrivateKey: private_key,
+    authPublicKey: publicKey,
+    authPrivateKey: privateKey,
 
-    // If your system doesn't support 'uws', you can switch to 'ws' (which is slower but works on older systems).
-    wsEngine: 'ws',
+    // If your system doesn"t support "uws", you can switch to "ws" (which is slower but works on older systems).
+    wsEngine: "ws",
     appName: config.APP_NAME,
     workerController: workerControllerPath,
     brokerController: brokerControllerPath,
@@ -47,7 +47,7 @@ const options = {
     clusterStateServerAckTimeout: null, // Number(process.env.SCC_STATE_SERVER_ACK_TIMEOUT) || null,
     clusterStateServerReconnectRandomness: null, // Number(process.env.SCC_STATE_SERVER_RECONNECT_RANDOMNESS) || null,
     crashWorkerOnError: true,
-    // If using nodemon, set this to true, and make sure that environment is 'dev'.
+    // If using nodemon, set this to true, and make sure that environment is "dev".
     killMasterOnSignal: false,
     environment: environment
 };
@@ -58,7 +58,7 @@ const start = function () {
     const socketCluster = new SocketCluster(options);
 
     socketCluster.on(socketCluster.EVENT_WORKER_CLUSTER_START, function (workerClusterInfo) {
-        console.log('   >> WorkerCluster PID:', workerClusterInfo.pid);
+        console.log("   >> WorkerCluster PID:", workerClusterInfo.pid);
     });
 };
 

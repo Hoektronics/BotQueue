@@ -1,10 +1,10 @@
-const SCWorker = require('socketcluster/scworker');
-const request = require('request');
-let url = require('url');
+const SCWorker = require("socketcluster/scworker");
+const request = require("request");
+let url = require("url");
 
 class Worker extends SCWorker {
     run() {
-        console.log('   >> Worker PID:', process.pid);
+        console.log("   >> Worker PID:", process.pid);
         const scServer = this.scServer;
         const self = this;
 
@@ -25,7 +25,7 @@ class Worker extends SCWorker {
             url: this.authHost(req.socket) + "/broadcasting/auth",
             json: { channel_name: req.channel },
             headers: {
-                Authorization: 'Bearer ' + req.socket.signedAuthToken
+                Authorization: "Bearer " + req.socket.signedAuthToken
             },
             rejectUnauthorized: false
         };
@@ -34,7 +34,8 @@ class Worker extends SCWorker {
     }
 
     authHost(socket) {
-        let authHostSelected = 'http://localhost';
+        let authHosts = [];
+        let authHostSelected = "http://localhost";
 
         if(socket.request.headers.referer) {
             let referer = url.parse(socket.request.headers.referer);
@@ -53,7 +54,7 @@ class Worker extends SCWorker {
     }
 
     static hasMatchingHost(referer, host) {
-        return referer.hostname.substr(referer.hostname.indexOf('.')) === host ||
+        return referer.hostname.substr(referer.hostname.indexOf(".")) === host ||
             `${referer.protocol}//${referer.host}` === host ||
             referer.host === host;
     }
@@ -76,7 +77,7 @@ class Worker extends SCWorker {
             } else {
                 console.log(`[${new Date().toLocaleTimeString()}] - ${socket.id} authenticated for: ${options.json.channel_name}`);
 
-                next()
+                next();
             }
         });
     }

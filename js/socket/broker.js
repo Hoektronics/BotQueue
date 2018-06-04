@@ -1,9 +1,9 @@
-const SCBroker = require('socketcluster/scbroker');
-const scClusterBrokerClient = require('scc-broker-client');
-const config = require('../config');
-const Redis = require('ioredis');
+const SCBroker = require("socketcluster/scbroker");
+const scClusterBrokerClient = require("scc-broker-client");
+const config = require("../config");
+const Redis = require("ioredis");
 
-const subClient = Redis({
+const subClient = new Redis({
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
     password: config.REDIS_PASSWORD
@@ -12,7 +12,7 @@ const subClient = Redis({
 class Broker extends SCBroker {
     run() {
         let broker = this;
-        console.log('   >> Broker PID:', process.pid);
+        console.log("   >> Broker PID:", process.pid);
 
         // This is defined in server.js (taken from environment variable SC_CLUSTER_STATE_SERVER_HOST).
         // If this property is defined, the broker will try to attach itself to the SC cluster for
@@ -31,17 +31,17 @@ class Broker extends SCBroker {
             });
         }
 
-        broker.on('subscribe', function (channel) {
+        broker.on("subscribe", function (channel) {
             console.log(`Channel ${channel} subscribed to`);
             subClient.subscribe(channel);
         });
 
-        broker.on('unsubscribe', function (channel) {
+        broker.on("unsubscribe", function (channel) {
             console.log(`Channel ${channel} unsubscribed from`);
             subClient.unsubscribe(channel);
         });
 
-        subClient.on('message', function(channel, message) {
+        subClient.on("message", function(channel, message) {
             let sender = null;
 
             let data = JSON.parse(message);
