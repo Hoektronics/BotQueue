@@ -7,6 +7,7 @@
   each one has a specific meaning within the SC ecosystem.
 */
 
+const fs = require('fs');
 const config = require('../config');
 const path = require('path');
 
@@ -19,11 +20,17 @@ const workerControllerPath = path.join(__dirname, 'worker.js');
 const brokerControllerPath = path.join(__dirname, 'broker.js');
 const environment = 'prod';
 
+const public_key = fs.readFileSync(path.join(__dirname, '../../storage/oauth-public.key'));
+const private_key = fs.readFileSync(path.join(__dirname, '../../storage/oauth-private.key'));
+
 const options = {
     path: '/socket',
     workers: config.SOCKET_WORKERS,
     brokers: config.SOCKET_BROKERS,
     port: config.SOCKET_PORT,
+    authPublicKey: public_key,
+    authPrivateKey: private_key,
+
     // If your system doesn't support 'uws', you can switch to 'ws' (which is slower but works on older systems).
     wsEngine: 'ws',
     appName: config.APP_NAME,
