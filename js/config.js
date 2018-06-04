@@ -11,7 +11,7 @@ if (config_load_result.error) {
 
 const config = config_load_result.parsed;
 
-// Set up some defaults if properties aren"t there
+// Set up some defaults if properties aren't there
 if (! config.hasOwnProperty("SOCKET_PORT")) {
     config.SOCKET_PORT = 8085;
 } else {
