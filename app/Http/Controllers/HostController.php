@@ -3,11 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\HostRequest;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class HostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function index()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        return view('host.index', [
+            'hosts' => $user->hosts
+        ]);
+    }
+
     public function store(Request $request)
     {
         $hostRequestId = $request->get('host_request_id');

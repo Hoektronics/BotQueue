@@ -36,6 +36,7 @@ use Laravel\Passport\HasApiTokens;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
  * @property bool $is_admin
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereIsAdmin($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Host[] $hosts
  */
 class User extends Authenticatable
 {
@@ -119,5 +120,10 @@ class User extends Authenticatable
     public function files()
     {
         return $this->hasMany(File::class, 'uploader_id');
+    }
+
+    public function hosts()
+    {
+        return $this->hasMany(Host::class, 'owner_id');
     }
 }

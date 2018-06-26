@@ -16,7 +16,7 @@ class HostRequestTest extends TestCase
     use WithFaker;
 
     /** @test */
-    public function anUnauthenticatedUserCannotViewHost()
+    public function anUnauthenticatedUserCannotViewHostRequest()
     {
         /** @var HostRequest $host_request */
         $host_request = factory(HostRequest::class)->create();
@@ -24,7 +24,7 @@ class HostRequestTest extends TestCase
         $this
             ->withExceptionHandling()
             ->get("/hosts/requests/{$host_request->id}")
-            ->assertRedirect('/login');
+            ->assertRedirect("/login");
     }
 
     /** @test */
@@ -89,6 +89,22 @@ class HostRequestTest extends TestCase
             ->assertSee("<input name=\"name\" type=\"text\" value=\"{$hostname}\"")
             ->assertSee("Device hostname: {$hostname}")
             ->assertDontSee("Local IP");
+    }
+
+    /** @test */
+    public function anUnauthorizedUserCannotClaimHost()
+    {
+        /** @var HostRequest $host_request */
+        $host_request = factory(HostRequest::class)->create();
+
+        $newHostName = 'Test host';
+        $this
+            ->withExceptionHandling()
+            ->post('/hosts', [
+                'host_request_id' => $host_request->id,
+                'name' => $newHostName,
+            ])
+            ->assertRedirect("/login");
     }
 
     /** @test */
