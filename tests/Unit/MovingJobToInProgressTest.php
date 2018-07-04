@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Jobs;
+namespace Tests\Unit;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
@@ -10,7 +10,7 @@ use App\Managers\JobStateMachine;
 use Tests\HasUser;
 use Tests\TestCase;
 
-class MovingToInProgressUnitTest extends TestCase
+class MovingJobToInProgressTest extends TestCase
 {
     use HasUser;
     /**
