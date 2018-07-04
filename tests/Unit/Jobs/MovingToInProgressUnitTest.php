@@ -5,7 +5,6 @@ namespace Tests\Unit\Jobs;
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Exceptions\BotCannotGrabJob;
 use App\Job;
 use App\Managers\JobStateMachine;
 use Tests\HasUser;

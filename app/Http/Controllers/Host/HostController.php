@@ -34,44 +34,6 @@ class HostController extends Controller
         return BotResource::collection($bots);
     }
 
-    public function grabJob(JobDistributionManager $distributionManager)
-    {
-        $host = $this->hostManager->getHost();
-
-        $bots = $host->bots()->where('status', BotStatusEnum::IDLE)->get();
-
-        $jobs = $bots
-            ->map(function ($bot) use ($distributionManager) {
-                /** @var Bot $bot */
-                $job = $distributionManager->nextAvailableJob($bot);
-
-                if ($job !== null) {
-                    $bot->grabJob($job);
-                }
-
-                return $job;
-            });
-
-        $anyAssigned = $jobs->filter()->count() > 0;
-
-        if (!$anyAssigned) {
-            return response()->json([
-                'status' => 'error',
-                'code' => ErrorCodes::NO_JOBS_AVAILABLE_TO_GRAB,
-                'message' => 'No jobs were available to grab',
-            ]);
-        }
-
-        $botsToJobs = $jobs->mapWithKeys(function ($job) {
-            /** @var Job $job */
-            return [$job->bot_id => new JobResource($job)];
-        })->all();
-
-        return [
-            'data' => $botsToJobs,
-        ];
-    }
-
     public function show(Job $job)
     {
         if($job->bot === null)

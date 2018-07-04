@@ -8,9 +8,7 @@ use App\Bot;
 use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Events\BotGrabbedJob;
-use App\Exceptions\BotCannotGrabJob;
-use App\Exceptions\JobOfferFailed;
+use App\Exceptions\JobAssignmentFailed;
 use App\Job;
 use Illuminate\Support\Facades\DB;
 
@@ -19,53 +17,6 @@ trait WorksOnJobsTrait
     public function currentJob()
     {
         return $this->belongsTo(Job::class);
-    }
-
-    /**
-     * @param $job Job
-     * @throws BotCannotGrabJob
-     */
-    public function grabJob($job)
-    {
-        if (!$this->canGrab($job))
-            throw new BotCannotGrabJob("This job cannot be grabbed!");
-
-        try {
-            DB::transaction(function () use ($job) {
-                Job::query()
-                    ->whereKey($job->getKey())
-                    ->where('status', JobStatusEnum::QUEUED)
-                    ->whereNull('bot_id')
-                    ->update([
-                        'bot_id' => $this->id,
-                        'status' => JobStatusEnum::ASSIGNED
-                    ]);
-
-                $job->refresh();
-
-                if ($job->bot_id != $this->id)
-                    throw new BotCannotGrabJob("This job cannot be grabbed!");
-
-                Bot::query()
-                    ->whereKey($this->getKey())
-                    ->whereNull('current_job_id')
-                    ->update([
-                        'current_job_id' => $job->id,
-                    ]);
-
-                $this->refresh();
-
-                if ($this->current_job_id != $job->id)
-                    throw new BotCannotGrabJob("This job cannot be grabbed!");
-            });
-        } catch (\Exception|\Throwable $e) {
-            throw new BotCannotGrabJob("Unexpected exception while trying to grab job");
-        }
-
-        /** @var Bot $bot */
-        $bot = $this;
-
-        event(new BotGrabbedJob($bot, $job));
     }
 
     /**
@@ -99,10 +50,13 @@ trait WorksOnJobsTrait
 
     /**
      * @param Job $job
-     * @throws JobOfferFailed
+     * @throws JobAssignmentFailed
      */
-    public function offer(Job $job)
+    public function assign(Job $job)
     {
+        if(! $this->canGrab($job))
+            throw new JobAssignmentFailed("This bot cannot grab this job");
+
         try {
             DB::transaction(function () use ($job) {
                 Job::query()
@@ -111,16 +65,30 @@ trait WorksOnJobsTrait
                     ->whereNull('bot_id')
                     ->update([
                         'bot_id' => $this->id,
-                        'status' => JobStatusEnum::OFFERED
+                        'status' => JobStatusEnum::ASSIGNED
                     ]);
 
                 $job->refresh();
 
                 if ($job->bot_id != $this->id)
-                    throw new JobOfferFailed("This job is offered or assigned to a different bot");
+                    throw new JobAssignmentFailed("This job is assigned to a different bot");
+
+                Bot::query()
+                    ->whereKey($this->id)
+                    ->where('status', BotStatusEnum::IDLE)
+                    ->whereNull('current_job_id')
+                    ->update([
+                        'current_job_id' => $job->id,
+                        'status' => BotStatusEnum::WORKING
+                    ]);
+
+                $this->refresh();
+
+                if ($this->current_job_id != $job->id)
+                    throw new JobAssignmentFailed("This job cannot be assigned to this bot");
             });
         } catch (\Exception|\Throwable $e) {
-            throw new JobOfferFailed("Unexpected exception while trying to offer job");
+            throw new JobAssignmentFailed("Unexpected exception while trying to assign job");
         }
     }
 }

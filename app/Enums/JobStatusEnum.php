@@ -5,7 +5,6 @@ namespace App\Enums;
 class JobStatusEnum
 {
     const QUEUED = 'queued';
-    const OFFERED = 'offered';
     const ASSIGNED = 'assigned';
     const IN_PROGRESS = 'in_progress';
     const QUALITY_CHECK = 'quality_check';

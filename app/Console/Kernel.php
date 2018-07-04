@@ -4,7 +4,6 @@ namespace App\Console;
 
 use App\Console\Commands\InitialSetupCommand;
 use App\Jobs\CleanExpiredHostRequests;
-use App\Jobs\OfferJobsToBots;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -31,8 +30,6 @@ class Kernel extends ConsoleKernel
             ->hourly();
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
-
-        $schedule->job(OfferJobsToBots::class)->everyMinute();
     }
 
     /**

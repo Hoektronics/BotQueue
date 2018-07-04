@@ -1,28 +1,28 @@
 <?php
 
-namespace Tests\Unit\Jobs;
+namespace Unit;
+
 
 use App\Bot;
 use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Events\JobOfferedToBot;
+use App\Events\JobAssignedToBot;
 use App\Job;
-use App\Jobs\OfferJobsToBots;
-use Carbon\Carbon;
+use App\Jobs\FindJobForBot;
 use Tests\HasHost;
 use Tests\HasUser;
 use Tests\TestCase;
 
-class OfferJobsToBotsTest extends TestCase
+class FindJobForBotTest extends TestCase
 {
     use HasUser;
     use HasHost;
 
     /** @test */
-    public function botWillNotBeOfferedAJobIfItIsNotPartOfAHost()
+    public function botWillNotBeAssignedAJobIfItIsNotPartOfAHost()
     {
-        $this->fakesEvents(JobOfferedToBot::class);
+        $this->fakesEvents(JobAssignedToBot::class);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -41,25 +41,26 @@ class OfferJobsToBotsTest extends TestCase
 
         $this->assertTrue($bot->canGrab($job));
 
-        /** @var OfferJobsToBots $offerer */
-        $offerer = app(OfferJobsToBots::class);
-        $offerer->handle();
+        /** @var FindJobForBot $finder */
+        $finder = app(FindJobForBot::class);
+        $finder->handle();
 
         $job->refresh();
+        $bot->refresh();
 
-        $this->assertNull($job->bot);
         $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
+        $this->assertNull($job->bot);
 
-        $this->assertNull($bot->current_job_id);
         $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
+        $this->assertNull($bot->current_job_id);
 
-        $this->assertNotDispatched(JobOfferedToBot::class);
+        $this->assertNotDispatched(JobAssignedToBot::class);
     }
 
     /** @test */
-    public function botWillBeOfferedJobIfItHasAHostAndIsIdle()
+    public function botWillBeAssignedJobIfItHasAHostAndIsIdle()
     {
-        $this->fakesEvents(JobOfferedToBot::class);
+        $this->fakesEvents(JobAssignedToBot::class);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -79,21 +80,23 @@ class OfferJobsToBotsTest extends TestCase
 
         $this->assertTrue($bot->canGrab($job));
 
-        /** @var OfferJobsToBots $offerer */
-        $offerer = app(OfferJobsToBots::class);
-        $offerer->handle();
+        /** @var FindJobForBot $finder */
+        $finder = app(FindJobForBot::class);
+        $finder->handle();
 
         $job->refresh();
+        $bot->refresh();
 
-        $this->assertEquals(JobStatusEnum::OFFERED, $job->status);
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertNotNull($job->bot);
-        $testBot = $job->bot;
+        $this->assertEquals($job->bot_id, $bot->id);
 
-        $this->assertEquals($testBot->id, $bot->id);
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
+        $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
+        $this->assertNotNull($bot->current_job_id);
+        $this->assertEquals($bot->current_job_id, $job->id);
 
-        $this->assertDispatched(JobOfferedToBot::class)
-            ->inspect(function($event) use ($job, $bot) {
+        $this->assertDispatched(JobAssignedToBot::class)
+            ->inspect(function ($event) use ($job, $bot) {
                 $this->assertEquals($job->id, $event->job->id);
                 $this->assertEquals($bot->id, $event->bot->id);
             })
@@ -106,9 +109,9 @@ class OfferJobsToBotsTest extends TestCase
     }
 
     /** @test */
-    public function botWillNotBeOfferedAJobIfItIsOffline()
+    public function botWillNotBeAssignedAJobIfItIsOffline()
     {
-        $this->fakesEvents(JobOfferedToBot::class);
+        $this->fakesEvents(JobAssignedToBot::class);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -128,25 +131,26 @@ class OfferJobsToBotsTest extends TestCase
 
         $this->assertFalse($bot->canGrab($job));
 
-        /** @var OfferJobsToBots $offerer */
-        $offerer = app(OfferJobsToBots::class);
-        $offerer->handle();
+        /** @var FindJobForBot $finder */
+        $finder = app(FindJobForBot::class);
+        $finder->handle();
 
         $job->refresh();
+        $bot->refresh();
 
-        $this->assertNull($job->bot);
         $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
+        $this->assertNull($job->bot);
 
-        $this->assertNull($bot->current_job_id);
         $this->assertEquals(BotStatusEnum::OFFLINE, $bot->status);
+        $this->assertNull($bot->current_job_id);
 
-        $this->assertNotDispatched(JobOfferedToBot::class);
+        $this->assertNotDispatched(JobAssignedToBot::class);
     }
 
     /** @test */
-    public function botWillNotBeOfferedAJobIfItIsWorking()
+    public function botWillNotBeAssignedAJobIfItIsWorking()
     {
-        $this->fakesEvents(JobOfferedToBot::class);
+        $this->fakesEvents(JobAssignedToBot::class);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -166,25 +170,26 @@ class OfferJobsToBotsTest extends TestCase
 
         $this->assertFalse($bot->canGrab($job));
 
-        /** @var OfferJobsToBots $offerer */
-        $offerer = app(OfferJobsToBots::class);
-        $offerer->handle();
+        /** @var FindJobForBot $finder */
+        $finder = app(FindJobForBot::class);
+        $finder->handle();
 
         $job->refresh();
+        $bot->refresh();
 
-        $this->assertNull($job->bot);
         $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
+        $this->assertNull($job->bot);
 
-        $this->assertNull($bot->current_job_id);
         $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
+        $this->assertNull($bot->current_job_id);
 
-        $this->assertNotDispatched(JobOfferedToBot::class);
+        $this->assertNotDispatched(JobAssignedToBot::class);
     }
 
     /** @test */
-    public function aBotInAClusterWillBeOfferedAJob()
+    public function aBotInAClusterWillBeAssignedAJob()
     {
-        $this->fakesEvents(JobOfferedToBot::class);
+        $this->fakesEvents(JobAssignedToBot::class);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -212,21 +217,23 @@ class OfferJobsToBotsTest extends TestCase
 
         $this->assertTrue($bot->canGrab($job));
 
-        /** @var OfferJobsToBots $offerer */
-        $offerer = app(OfferJobsToBots::class);
-        $offerer->handle();
+        /** @var FindJobForBot $finder */
+        $finder = app(FindJobForBot::class);
+        $finder->handle();
 
         $job->refresh();
+        $bot->refresh();
 
-        $this->assertEquals(JobStatusEnum::OFFERED, $job->status);
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertNotNull($job->bot);
-        $testBot = $job->bot;
+        $this->assertEquals($job->bot_id, $bot->id);
 
-        $this->assertEquals($testBot->id, $bot->id);
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
+        $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
+        $this->assertNotNull($bot->current_job_id);
+        $this->assertEquals($bot->current_job_id, $job->id);
 
-        $this->assertDispatched(JobOfferedToBot::class)
-            ->inspect(function($event) use ($job, $bot) {
+        $this->assertDispatched(JobAssignedToBot::class)
+            ->inspect(function ($event) use ($job, $bot) {
                 $this->assertEquals($job->id, $event->job->id);
                 $this->assertEquals($bot->id, $event->bot->id);
             })
@@ -241,7 +248,7 @@ class OfferJobsToBotsTest extends TestCase
     /** @test */
     public function aJobSentToAClusterWillOnlyBeSentToTheBotWithAHost()
     {
-        $this->fakesEvents(JobOfferedToBot::class);
+        $this->fakesEvents(JobAssignedToBot::class);
 
         /** @var Bot $botWithoutHost */
         $botWithoutHost = factory(Bot::class)
@@ -277,21 +284,24 @@ class OfferJobsToBotsTest extends TestCase
         $this->assertTrue($botWithoutHost->canGrab($job));
         $this->assertTrue($botWithHost->canGrab($job));
 
-        /** @var OfferJobsToBots $offerer */
-        $offerer = app(OfferJobsToBots::class);
-        $offerer->handle();
+        /** @var FindJobForBot $finder */
+        $finder = app(FindJobForBot::class);
+        $finder->handle();
 
         $job->refresh();
+        $botWithHost->refresh();
+        $botWithoutHost->refresh();
 
-        $this->assertEquals(JobStatusEnum::OFFERED, $job->status);
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertNotNull($job->bot);
-        $testBot = $job->bot;
+        $this->assertEquals($job->bot_id, $botWithHost->id);
 
-        $this->assertEquals($testBot->id, $botWithHost->id);
-        $this->assertEquals(BotStatusEnum::IDLE, $botWithHost->status);
+        $this->assertEquals(BotStatusEnum::WORKING, $botWithHost->status);
+        $this->assertNotNull($botWithHost->current_job_id);
+        $this->assertEquals($botWithHost->current_job_id, $job->id);
 
-        $this->assertDispatched(JobOfferedToBot::class)
-            ->inspect(function($event) use ($job, $botWithHost) {
+        $this->assertDispatched(JobAssignedToBot::class)
+            ->inspect(function ($event) use ($job, $botWithHost) {
                 $this->assertEquals($job->id, $event->job->id);
                 $this->assertEquals($botWithHost->id, $event->bot->id);
             })

@@ -21,5 +21,3 @@ Route::get('bots', 'HostController@bots');
 
 Route::get('jobs/{job}', 'HostController@show');
 Route::post('jobs/{job}/start', 'JobController@start');
-
-Route::post('jobs/grab', 'HostController@grabJob');

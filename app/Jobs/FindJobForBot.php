@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Bot;
 use App\Cluster;
 use App\Enums\JobStatusEnum;
-use App\Events\JobOfferedToBot;
+use App\Events\JobAssignedToBot;
 use App\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -14,18 +14,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Collection;
 
-class OfferJobsToBots implements ShouldQueue
+class FindJobForBot implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-    }
 
     /**
      * Execute the job.
@@ -39,12 +30,12 @@ class OfferJobsToBots implements ShouldQueue
 
         $queued->chunk(20, function ($jobs) {
             foreach ($jobs as $job) {
-                $bot = $this->findBotToGiveOfferTo($job);
+                $bot = $this->findBotToAssignJobTo($job);
 
                 if ($bot !== null) {
-                    $bot->offer($job);
+                    $bot->assign($job);
 
-                    event(new JobOfferedToBot($job, $bot));
+                    event(new JobAssignedToBot($job, $bot));
                 }
             }
         });
@@ -54,7 +45,7 @@ class OfferJobsToBots implements ShouldQueue
      * @param Job $job
      * @return Bot
      */
-    private function findBotToGiveOfferTo($job)
+    private function findBotToAssignJobTo($job)
     {
         return $this
             ->getEligibleBots($job)
