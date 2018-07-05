@@ -10,9 +10,10 @@ use App\Managers\JobStateMachine;
 use Tests\HasUser;
 use Tests\TestCase;
 
-class MovingJobToInProgressTest extends TestCase
+class JobStateMachineTest extends TestCase
 {
     use HasUser;
+
     /**
      * @var JobStateMachine
      */
@@ -26,7 +27,7 @@ class MovingJobToInProgressTest extends TestCase
     }
 
     /** @test */
-    public function assigningToInProgress()
+    public function assignedToInProgress()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)

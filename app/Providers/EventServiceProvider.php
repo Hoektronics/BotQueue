@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events;
+use App\Jobs\FindJobForBot;
 use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -16,6 +17,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Events\UserCreated::class => [
             Listeners\EmailNewUser::class,
+        ],
+        Events\BotCreated::class => [
+            FindJobForBot::class,
         ],
     ];
 

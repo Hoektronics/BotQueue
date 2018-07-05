@@ -2,25 +2,26 @@
 
 namespace Tests\Unit;
 
-use App;
+use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
+use App\Jobs\FindJobForBot;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\HasUser;
 use Tests\TestCase;
 
 class BotsTest extends TestCase
 {
     use HasUser;
+    use WithFaker;
 
     /** @test */
     public function botCreatedEventIsFired()
     {
         $this->fakesEvents(BotCreated::class);
 
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
         ]);
 
@@ -35,10 +36,19 @@ class BotsTest extends TestCase
     }
 
     /** @test */
+    public function findJobForBotIsDispatched()
+    {
+        $this->markTestSkipped("See bug: https://github.com/laravel/framework/issues/22951");
+
+        $this->expectsJobs(FindJobForBot::class);
+        event(BotCreated::class);
+    }
+
+    /** @test */
     public function botIsByDefaultOffline()
     {
-        /** @var App\Bot $bot */
-        $bot = factory(App\Bot::class)->create([
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)->create([
             'creator_id' => $this->user->id,
         ]);
 
