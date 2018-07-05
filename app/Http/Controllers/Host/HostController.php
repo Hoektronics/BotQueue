@@ -29,7 +29,7 @@ class HostController extends Controller
     {
         $host = $this->hostManager->getHost();
 
-        $bots = $host->bots()->get();
+        $bots = $host->bots()->with('currentJob')->get();
 
         return BotResource::collection($bots);
     }

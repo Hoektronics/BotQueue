@@ -25,7 +25,13 @@ class BotResource extends Resource
                     'username' => $this->creator->username,
                     'link' => url('/api/users', $this->creator->id),
                 ];
-            })
+            }),
+            'job' => $this->whenLoaded('currentJob', function () {
+                return [
+                    'id' => $this->currentJob->id,
+                    'status' => $this->currentJob->status
+                ];
+            }),
         ];
     }
 }
