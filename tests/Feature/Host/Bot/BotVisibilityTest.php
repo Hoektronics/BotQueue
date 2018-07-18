@@ -95,7 +95,7 @@ class BotVisibilityTest extends HostTestCase
                     [
                         'id' => $bot->id,
                         'name' => $bot->name,
-                        'status' => BotStatusEnum::WORKING,
+                        'status' => BotStatusEnum::PENDING,
                         'type' => '3d_printer',
                         'job' => [
                             'id' => $job->id,

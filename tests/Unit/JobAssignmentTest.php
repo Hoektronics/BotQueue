@@ -177,4 +177,30 @@ class JobAssignmentTest extends TestCase
         $this->expectException(JobAssignmentFailed::class);
         $bot->assign($otherJob);
     }
+
+    /** @test
+     * @throws JobAssignmentFailed
+     */
+    public function aPendingBotCannotGrabAJob()
+    {
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::PENDING)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $otherJob */
+        $otherJob = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        $this->assertFalse($bot->canGrab($otherJob));
+
+        $this->expectException(JobAssignmentFailed::class);
+        $bot->assign($otherJob);
+    }
 }

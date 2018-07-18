@@ -9,17 +9,19 @@ class JobStatusService
 {
     // Database name to label class
     protected $statusToLabelClass = [
-        JobStatusEnum::QUEUED => 'label-primary',
-        JobStatusEnum::IN_PROGRESS => 'label-info',
-        JobStatusEnum::QUALITY_CHECK => 'label-warning',
-        JobStatusEnum::COMPLETED => 'label-success',
-        JobStatusEnum::FAILED => 'label-danger',
-        JobStatusEnum::CANCELLED => 'label-inverse',
+        JobStatusEnum::QUEUED => 'badge-secondary',
+        JobStatusEnum::ASSIGNED => 'badge-primary',
+        JobStatusEnum::IN_PROGRESS => 'badge-info',
+        JobStatusEnum::QUALITY_CHECK => 'badge-warning',
+        JobStatusEnum::COMPLETED => 'badge-success',
+        JobStatusEnum::FAILED => 'badge-danger',
+        JobStatusEnum::CANCELLED => 'badge-inverse',
     ];
 
     // Database name to human readable name
     protected $statusToName = [
         JobStatusEnum::QUEUED => 'Queued',
+        JobStatusEnum::ASSIGNED => 'Assigned',
         JobStatusEnum::IN_PROGRESS => 'InProgress',
         JobStatusEnum::QUALITY_CHECK => 'QualityCheck',
         JobStatusEnum::COMPLETED => 'Completed',
@@ -35,7 +37,7 @@ class JobStatusService
     {
         $labelClass = $this->label_class($status);
 
-        return "<span class=\"label $labelClass\">$status</span>";
+        return "<span class=\"badge $labelClass\">$status</span>";
     }
 
     /**

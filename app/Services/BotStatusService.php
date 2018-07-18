@@ -10,6 +10,7 @@ class BotStatusService
     // Database name to label class
     protected $statusToLabelClass = [
         BotStatusEnum::OFFLINE => 'badge-dark',
+        BotStatusEnum::PENDING => 'badge-primary',
         BotStatusEnum::IDLE => 'badge-success',
         BotStatusEnum::WORKING => 'badge-info',
     ];
@@ -17,6 +18,7 @@ class BotStatusService
     // Database name to human readable name
     protected $statusToName = [
         BotStatusEnum::OFFLINE => 'Offline',
+        BotStatusEnum::PENDING => 'Pending',
         BotStatusEnum::IDLE => 'Idle',
         BotStatusEnum::WORKING => 'Working',
     ];

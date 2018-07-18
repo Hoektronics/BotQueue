@@ -91,7 +91,7 @@ class FindJobForBotTest extends TestCase
         $this->assertNotNull($job->bot);
         $this->assertEquals($job->bot_id, $bot->id);
 
-        $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
+        $this->assertEquals(BotStatusEnum::PENDING, $bot->status);
         $this->assertNotNull($bot->current_job_id);
         $this->assertEquals($bot->current_job_id, $job->id);
 
@@ -228,7 +228,7 @@ class FindJobForBotTest extends TestCase
         $this->assertNotNull($job->bot);
         $this->assertEquals($job->bot_id, $bot->id);
 
-        $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
+        $this->assertEquals(BotStatusEnum::PENDING, $bot->status);
         $this->assertNotNull($bot->current_job_id);
         $this->assertEquals($bot->current_job_id, $job->id);
 
@@ -303,7 +303,7 @@ class FindJobForBotTest extends TestCase
         $this->assertNotNull($job->bot);
         $this->assertEquals($job->bot_id, $botWithHost->id);
 
-        $this->assertEquals(BotStatusEnum::WORKING, $botWithHost->status);
+        $this->assertEquals(BotStatusEnum::PENDING, $botWithHost->status);
         $this->assertNotNull($botWithHost->current_job_id);
         $this->assertEquals($botWithHost->current_job_id, $job->id);
 
@@ -370,7 +370,7 @@ class FindJobForBotTest extends TestCase
         $this->assertEquals(JobStatusEnum::QUEUED, $jobForBotB->status);
         $this->assertNull($jobForBotB->bot_id);
 
-        $this->assertEquals(BotStatusEnum::WORKING, $botA->status);
+        $this->assertEquals(BotStatusEnum::PENDING, $botA->status);
         $this->assertNotNull($botA->current_job_id);
         $this->assertEquals($botA->current_job_id, $jobForBotA->id);
 

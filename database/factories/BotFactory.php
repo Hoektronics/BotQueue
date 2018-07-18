@@ -30,3 +30,9 @@ $factory->state(Bot::class, BotStatusEnum::WORKING, function () {
         'status' => BotStatusEnum::WORKING,
     ];
 });
+
+$factory->state(Bot::class, BotStatusEnum::PENDING, function () {
+    return [
+        'status' => BotStatusEnum::PENDING,
+    ];
+});
