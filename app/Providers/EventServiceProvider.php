@@ -6,6 +6,7 @@ use App\Events;
 use App\Jobs\FindJobForBot;
 use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -19,7 +20,6 @@ class EventServiceProvider extends ServiceProvider
             Listeners\EmailNewUser::class,
         ],
         Events\BotCreated::class => [
-            FindJobForBot::class,
         ],
     ];
 
@@ -32,6 +32,11 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        //
+        Event::listen(Events\BotCreated::class, function($botCreated) {
+            /** @var Events\BotCreated $botCreated */
+            $finder = new FindJobForBot($botCreated->bot);
+
+            dispatch($finder);
+        });
     }
 }

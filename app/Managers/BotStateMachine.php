@@ -35,6 +35,9 @@ class BotOfflineState
         $this->bot->status = BotStatusEnum::IDLE;
         $this->bot->save();
 
-        dispatch(FindJobForBot::class);
+        /** @var FindJobForBot $finder */
+        $finder = new FindJobForBot($this->bot);
+
+        dispatch($finder);
     }
 }

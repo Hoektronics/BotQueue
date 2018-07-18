@@ -42,7 +42,7 @@ class FindJobForBotTest extends TestCase
         $this->assertTrue($bot->canGrab($job));
 
         /** @var FindJobForBot $finder */
-        $finder = app(FindJobForBot::class);
+        $finder = new FindJobForBot($bot);
         $finder->handle();
 
         $job->refresh();
@@ -81,7 +81,7 @@ class FindJobForBotTest extends TestCase
         $this->assertTrue($bot->canGrab($job));
 
         /** @var FindJobForBot $finder */
-        $finder = app(FindJobForBot::class);
+        $finder = new FindJobForBot($bot);
         $finder->handle();
 
         $job->refresh();
@@ -132,7 +132,7 @@ class FindJobForBotTest extends TestCase
         $this->assertFalse($bot->canGrab($job));
 
         /** @var FindJobForBot $finder */
-        $finder = app(FindJobForBot::class);
+        $finder = new FindJobForBot($bot);
         $finder->handle();
 
         $job->refresh();
@@ -171,7 +171,7 @@ class FindJobForBotTest extends TestCase
         $this->assertFalse($bot->canGrab($job));
 
         /** @var FindJobForBot $finder */
-        $finder = app(FindJobForBot::class);
+        $finder = new FindJobForBot($bot);
         $finder->handle();
 
         $job->refresh();
@@ -218,7 +218,7 @@ class FindJobForBotTest extends TestCase
         $this->assertTrue($bot->canGrab($job));
 
         /** @var FindJobForBot $finder */
-        $finder = app(FindJobForBot::class);
+        $finder = new FindJobForBot($bot);
         $finder->handle();
 
         $job->refresh();
@@ -284,13 +284,20 @@ class FindJobForBotTest extends TestCase
         $this->assertTrue($botWithoutHost->canGrab($job));
         $this->assertTrue($botWithHost->canGrab($job));
 
-        /** @var FindJobForBot $finder */
-        $finder = app(FindJobForBot::class);
-        $finder->handle();
+        /** @var FindJobForBot $botWithoutHostFinder */
+        $botWithoutHostFinder = new FindJobForBot($botWithoutHost);
+        $botWithoutHostFinder->handle();
+
+        /** @var FindJobForBot $botWithHostFinder */
+        $botWithHostFinder = new FindJobForBot($botWithHost);
+        $botWithHostFinder->handle();
 
         $job->refresh();
         $botWithHost->refresh();
         $botWithoutHost->refresh();
+
+        $this->assertEquals(BotStatusEnum::IDLE, $botWithoutHost->status);
+        $this->assertNull($botWithoutHost->current_job_id);
 
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertNotNull($job->bot);
@@ -311,5 +318,64 @@ class FindJobForBotTest extends TestCase
                 'private-bot.' . $botWithHost->id,
                 'private-job.' . $job->id,
             ]);
+    }
+
+    /** @test */
+    public function finderOnlyAssignsJobToSpecifiedBot()
+    {
+        $this->fakesEvents(JobAssignedToBot::class);
+
+        /** @var Bot $botA */
+        $botA = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+                'host_id' => $this->host->id,
+            ]);
+
+        /** @var Job $jobForBotA */
+        $jobForBotA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'creator_id' => $this->user->id,
+                'worker_id' => $botA->id,
+            ]);
+        /** @var Bot $botB */
+        $botB = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+                'host_id' => $this->host->id,
+            ]);
+
+        /** @var Job $jobForBotB */
+        $jobForBotB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'creator_id' => $this->user->id,
+                'worker_id' => $botB->id,
+            ]);
+
+        $finder = new FindJobForBot($botA);
+        $finder->handle();
+
+        $botA->refresh();
+        $jobForBotA->refresh();
+        $botB->refresh();
+        $jobForBotB->refresh();
+
+        $this->assertEquals(BotStatusEnum::IDLE, $botB->status);
+        $this->assertNull($botB->current_job_id);
+
+        $this->assertEquals(JobStatusEnum::QUEUED, $jobForBotB->status);
+        $this->assertNull($jobForBotB->bot_id);
+
+        $this->assertEquals(BotStatusEnum::WORKING, $botA->status);
+        $this->assertNotNull($botA->current_job_id);
+        $this->assertEquals($botA->current_job_id, $jobForBotA->id);
+
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $jobForBotA->status);
+        $this->assertNotNull($jobForBotA->bot_id);
+        $this->assertEquals($jobForBotA->bot_id, $botA->id);
     }
 }

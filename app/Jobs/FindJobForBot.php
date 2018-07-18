@@ -19,23 +19,34 @@ class FindJobForBot implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * @var Bot
+     */
+    private $bot;
+
+    public function __construct(Bot $bot)
+    {
+        $this->bot = $bot;
+    }
+
+    /**
      * Execute the job.
      *
      * @return void
      */
     public function handle()
     {
+        if($this->bot->host_id === null)
+            return;
+
         /** @var \Illuminate\Database\Eloquent\Builder $queued */
         $queued = Job::whereStatus(JobStatusEnum::QUEUED);
 
         $queued->chunk(20, function ($jobs) {
             foreach ($jobs as $job) {
-                $bot = $this->findBotToAssignJobTo($job);
+                if($this->bot->canGrab($job)) {
+                    $this->bot->assign($job);
 
-                if ($bot !== null) {
-                    $bot->assign($job);
-
-                    event(new JobAssignedToBot($job, $bot));
+                    event(new JobAssignedToBot($job, $this->bot));
                 }
             }
         });
