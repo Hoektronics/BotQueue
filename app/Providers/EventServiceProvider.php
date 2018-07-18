@@ -31,12 +31,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        Event::listen(Events\BotCreated::class, function($botCreated) {
-            /** @var Events\BotCreated $botCreated */
-            $finder = new FindJobForBot($botCreated->bot);
-
-            dispatch($finder);
-        });
     }
 }

@@ -36,15 +36,6 @@ class BotsTest extends TestCase
     }
 
     /** @test */
-    public function findJobForBotIsDispatched()
-    {
-        $this->markTestSkipped("See bug: https://github.com/laravel/framework/issues/22951");
-
-        $this->expectsJobs(FindJobForBot::class);
-        event(BotCreated::class);
-    }
-
-    /** @test */
     public function botIsByDefaultOffline()
     {
         /** @var Bot $bot */
