@@ -51,37 +51,4 @@ class FindJobForBot implements ShouldQueue
             }
         });
     }
-
-    /**
-     * @param Job $job
-     * @return Bot
-     */
-    private function findBotToAssignJobTo($job)
-    {
-        return $this
-            ->getEligibleBots($job)
-            ->filter(function ($bot) use ($job) {
-                /** @var Bot $bot */
-                return $bot->host_id !== null &&
-                    $bot->canGrab($job);
-            })
-            ->first();
-    }
-
-    /**
-     * @param Job $job
-     * @return \Illuminate\Support\Collection
-     */
-    private function getEligibleBots($job)
-    {
-        if ($job->worker instanceof Bot) {
-            return Collection::wrap($job->worker);
-        }
-
-        if ($job->worker instanceof Cluster) {
-            return $job->worker->bots()->get()->toBase();
-        }
-
-        return collect();
-    }
 }

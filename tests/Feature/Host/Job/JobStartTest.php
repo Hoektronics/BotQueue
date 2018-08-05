@@ -16,7 +16,7 @@ class JobStartTest extends HostTestCase
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
+            ->states(BotStatusEnum::PENDING)
             ->create([
                 'host_id' => $this->host,
                 'creator_id' => $this->user->id,

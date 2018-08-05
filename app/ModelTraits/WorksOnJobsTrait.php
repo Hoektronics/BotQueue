@@ -10,6 +10,7 @@ use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\JobAssignmentFailed;
 use App\Job;
+use App\JobAttempt;
 use Illuminate\Support\Facades\DB;
 
 trait WorksOnJobsTrait
@@ -54,7 +55,7 @@ trait WorksOnJobsTrait
      */
     public function assign(Job $job)
     {
-        if(! $this->canGrab($job))
+        if (!$this->canGrab($job))
             throw new JobAssignmentFailed("This bot cannot grab this job");
 
         try {
@@ -90,5 +91,42 @@ trait WorksOnJobsTrait
         } catch (\Exception|\Throwable $e) {
             throw new JobAssignmentFailed("Unexpected exception while trying to assign job");
         }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function start()
+    {
+        DB::transaction(function () {
+            /** @var Job $job */
+            $job = $this->currentJob;
+
+            $attempt = JobAttempt::create([
+                'bot_id' => $job->bot_id,
+                'job_id' => $job->id,
+            ]);
+
+            Job::query()
+                ->whereKey($job->getKey())
+                ->where('status', JobStatusEnum::ASSIGNED)
+                ->where('bot_id', $this->id)
+                ->update([
+                    'status' => JobStatusEnum::IN_PROGRESS,
+                    'current_attempt_id' => $attempt->id
+                ]);
+
+            $job->refresh();
+
+            Bot::query()
+                ->whereKey($this->id)
+                ->where('status', BotStatusEnum::PENDING)
+                ->where('current_job_id', $job->id)
+                ->update([
+                    'status' => BotStatusEnum::WORKING,
+                ]);
+
+            $this->refresh();
+        });
     }
 }

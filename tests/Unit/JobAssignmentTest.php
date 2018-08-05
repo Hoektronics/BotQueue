@@ -24,8 +24,8 @@ class JobAssignmentTest extends TestCase
         $otherBot = factory(Bot::class)
             ->states(BotStatusEnum::IDLE)
             ->create([
-            'creator_id' => $this->user->id,
-        ]);
+                'creator_id' => $this->user->id,
+            ]);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -57,8 +57,8 @@ class JobAssignmentTest extends TestCase
         $otherBot = factory(Bot::class)
             ->states(BotStatusEnum::IDLE)
             ->create([
-            'creator_id' => $this->user->id,
-        ]);
+                'creator_id' => $this->user->id,
+            ]);
 
         /** @var Bot $bot */
         $bot = factory(Bot::class)
