@@ -102,18 +102,12 @@ trait WorksOnJobsTrait
             /** @var Job $job */
             $job = $this->currentJob;
 
-            $attempt = JobAttempt::create([
-                'bot_id' => $job->bot_id,
-                'job_id' => $job->id,
-            ]);
-
             Job::query()
                 ->whereKey($job->getKey())
                 ->where('status', JobStatusEnum::ASSIGNED)
                 ->where('bot_id', $this->id)
                 ->update([
-                    'status' => JobStatusEnum::IN_PROGRESS,
-                    'current_attempt_id' => $attempt->id
+                    'status' => JobStatusEnum::IN_PROGRESS
                 ]);
 
             $job->refresh();

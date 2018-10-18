@@ -5,20 +5,18 @@ namespace App\Http\Controllers\Host;
 use App\Http\Response\JobStartedResponse;
 use App\Job;
 use App\Http\Controllers\Controller;
-use App\Managers\JobStateMachine;
+use App\StateTransitions\Job\ToInProgress;
 
 class JobController extends Controller
 {
     /**
      * @param Job $job
-     * @param JobStateMachine $stateMachine
+     * @param ToInProgress $toInProgress
      * @return JobStartedResponse
      */
-    public function start(Job $job, JobStateMachine $stateMachine)
+    public function start(Job $job, ToInProgress $toInProgress)
     {
-        $stateMachine
-            ->with($job)
-            ->toInProgress();
+        $toInProgress($job);
 
         return new JobStartedResponse($job);
     }

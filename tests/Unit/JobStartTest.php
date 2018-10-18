@@ -44,11 +44,5 @@ class JobStartTest extends TestCase
 
         $this->assertEquals($bot->status, BotStatusEnum::WORKING);
         $this->assertEquals($job->status, JobStatusEnum::IN_PROGRESS);
-        $this->assertNotNull($job->current_attempt_id);
-
-        /** @var JobAttempt $jobAttempt */
-        $jobAttempt = $job->currentAttempt;
-        $this->assertEquals($bot->id, $jobAttempt->bot_id);
-        $this->assertEquals($job->id, $jobAttempt->job_id);
     }
 }

@@ -40,10 +40,7 @@ class JobStartedResponse implements Responsable
         return response()->json([
             'data' => [
                 'id' => $this->job->id,
-                'status' => $this->job->status,
-                'attempt' => [
-                    'id' => $this->currentAttempt->id,
-                ]
+                'status' => $this->job->status
             ]
         ]);
     }

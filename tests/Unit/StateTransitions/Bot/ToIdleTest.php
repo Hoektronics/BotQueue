@@ -1,29 +1,17 @@
 <?php
 
-namespace Unit;
+namespace Tests\Unit\StateTransitions\Bot;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Jobs\FindJobForBot;
-use App\Managers\BotStateMachine;
+use App\StateTransitions\Bot\ToIdle;
 use Tests\HasUser;
 use Tests\TestCase;
 
-class BotStateMachineTest extends TestCase
+class ToIdleTest extends TestCase
 {
     use HasUser;
-
-    /**
-     * @var BotStateMachine
-     */
-    protected $botStateMachine;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->botStateMachine = app(BotStateMachine::class);
-    }
 
     /** @test */
     public function offlineToIdle()
@@ -37,9 +25,9 @@ class BotStateMachineTest extends TestCase
 
         $this->expectsJobs(FindJobForBot::class);
 
-        $this->botStateMachine
-            ->with($bot)
-            ->toIdle();
+        $toIdle = new ToIdle();
+
+        $toIdle($bot);
 
         $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
     }

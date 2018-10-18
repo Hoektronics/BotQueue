@@ -6,7 +6,6 @@ use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Job;
-use App\JobAttempt;
 use Tests\Feature\Host\HostTestCase;
 
 class JobStartTest extends HostTestCase
@@ -36,18 +35,11 @@ class JobStartTest extends HostTestCase
 
         $job->refresh();
 
-        /** @var JobAttempt $attempt */
-        $attempt = $job->currentAttempt;
-        $this->assertNotNull($attempt);
-
         $response
             ->assertJson([
                 'data' => [
                     'id' => $job->id,
-                    'status' => JobStatusEnum::IN_PROGRESS,
-                    'attempt' => [
-                        'id' => $attempt->id,
-                    ]
+                    'status' => JobStatusEnum::IN_PROGRESS
                 ]
             ]);
     }
