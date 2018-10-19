@@ -5,7 +5,6 @@ namespace App\StateTransitions\Bot;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
-use App\Jobs\FindJobForBot;
 
 class ToIdle
 {
@@ -13,8 +12,5 @@ class ToIdle
     {
         $bot->status = BotStatusEnum::IDLE;
         $bot->save();
-
-        $finder = new FindJobForBot($bot);
-        dispatch($finder);
     }
 }

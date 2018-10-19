@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
-use App\Jobs\FindJobForBot;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\HasUser;
 use Tests\TestCase;

@@ -4,7 +4,6 @@ namespace Tests\Unit\StateTransitions\Bot;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
-use App\Jobs\FindJobForBot;
 use App\StateTransitions\Bot\ToIdle;
 use Tests\HasUser;
 use Tests\TestCase;
@@ -22,8 +21,6 @@ class ToIdleTest extends TestCase
             ->create([
                 'creator_id' => $this->user->id,
             ]);
-
-        $this->expectsJobs(FindJobForBot::class);
 
         $toIdle = new ToIdle();
 

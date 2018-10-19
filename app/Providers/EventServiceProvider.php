@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Events;
-use App\Jobs\FindJobForBot;
 use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
