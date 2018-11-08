@@ -2,22 +2,42 @@
 
 namespace App\Http\Controllers\Host;
 
-use App\Http\Response\JobStartedResponse;
+use App\Errors\HostErrors;
+use App\HostManager;
+use App\Http\Resources\JobResource;
 use App\Job;
 use App\Http\Controllers\Controller;
-use App\StateTransitions\Job\ToInProgress;
 
 class JobController extends Controller
 {
-    /**
-     * @param Job $job
-     * @param ToInProgress $toInProgress
-     * @return JobStartedResponse
-     */
-    public function start(Job $job, ToInProgress $toInProgress)
-    {
-        $toInProgress($job);
+    /** @var HostManager */
+    private $hostManager;
 
-        return new JobStartedResponse($job);
+    /** @var HostErrors */
+    private $hostErrors;
+
+    public function __construct(HostManager $hostManager,
+                                HostErrors $hostErrors)
+    {
+        $this->hostManager = $hostManager;
+        $this->hostErrors = $hostErrors;
+    }
+
+    public function show(Job $job)
+    {
+        if ($job->bot === null)
+            return $this->hostErrors->jobHasNoBot();
+
+        if ($job->bot->host_id === null) {
+            return $this->hostErrors->jobIsAssignedToABotWithNoHost();
+        }
+
+        $host = $this->hostManager->getHost();
+
+        if ($job->bot->host_id != $host->id) {
+            return $this->hostErrors->jobIsNotAssignedToThisHost();
+        }
+
+        return new JobResource($job);
     }
 }

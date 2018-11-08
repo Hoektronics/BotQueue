@@ -6,19 +6,13 @@ namespace Tests\Feature\Host;
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
-use App\Enums\ErrorCodes;
 use App\Enums\JobStatusEnum;
+use App\Errors\HostErrors;
 use App\Job;
 use Illuminate\Http\Response;
 
 class WorkingJobsTest extends HostTestCase
 {
-    protected const JOB_IS_NOT_ASSIGNED_TO_YOU_JSON = [
-        'status' => 'error',
-        'code' => ErrorCodes::JOB_IS_NOT_ASSIGNED_TO_ANY_OF_YOUR_BOTS,
-        'message' => 'This job is not assigned to any of your bots',
-    ];
-
     /** @test */
     public function aHostCanSeeJobsForBotsAssignedToIt()
     {
@@ -67,34 +61,32 @@ class WorkingJobsTest extends HostTestCase
                 'creator_id' => $this->user->id,
             ]);
 
+        /** @var HostErrors $hostErrors */
+        $hostErrors = app(HostErrors::class);
+
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")
-            ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(self::JOB_IS_NOT_ASSIGNED_TO_YOU_JSON);
+            ->assertStatus(Response::HTTP_CONFLICT)
+            ->assertJson($hostErrors->jobIsAssignedToABotWithNoHost()->toArray());
     }
 
     /** @test */
     public function aHostCannotSeeJobsIfNoBotsAreAssignedThatJob()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
             ->create([
                 'creator_id' => $this->user->id,
             ]);
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::ASSIGNED)
-            ->create([
-                'bot_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        /** @var HostErrors $hostErrors */
+        $hostErrors = app(HostErrors::class);
 
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")
-            ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(self::JOB_IS_NOT_ASSIGNED_TO_YOU_JSON);
+            ->assertStatus(Response::HTTP_CONFLICT)
+            ->assertJson($hostErrors->jobHasNoBot()->toArray());
     }
 
     /** @test */
@@ -118,9 +110,12 @@ class WorkingJobsTest extends HostTestCase
                 'creator_id' => $this->user->id,
             ]);
 
+        /** @var HostErrors $hostErrors */
+        $hostErrors = app(HostErrors::class);
+
         $this->withTokenFromHost($this->host)
             ->getJson("/host/jobs/{$job->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(self::JOB_IS_NOT_ASSIGNED_TO_YOU_JSON);
+            ->assertJson($hostErrors->jobIsNotAssignedToThisHost()->toArray());
     }
 }
