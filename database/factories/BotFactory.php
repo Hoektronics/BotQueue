@@ -31,8 +31,8 @@ $factory->state(Bot::class, BotStatusEnum::WORKING, function () {
     ];
 });
 
-$factory->state(Bot::class, BotStatusEnum::PENDING, function () {
+$factory->state(Bot::class, BotStatusEnum::JOB_ASSIGNED, function () {
     return [
-        'status' => BotStatusEnum::PENDING,
+        'status' => BotStatusEnum::JOB_ASSIGNED,
     ];
 });

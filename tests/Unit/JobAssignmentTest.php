@@ -185,7 +185,7 @@ class JobAssignmentTest extends TestCase
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)
-            ->states(BotStatusEnum::PENDING)
+            ->states(BotStatusEnum::JOB_ASSIGNED)
             ->create([
                 'creator_id' => $this->user->id,
             ]);

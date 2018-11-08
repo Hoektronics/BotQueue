@@ -80,7 +80,7 @@ trait WorksOnJobsTrait
                     ->whereNull('current_job_id')
                     ->update([
                         'current_job_id' => $job->id,
-                        'status' => BotStatusEnum::PENDING
+                        'status' => BotStatusEnum::JOB_ASSIGNED
                     ]);
 
                 $this->refresh();
@@ -114,7 +114,7 @@ trait WorksOnJobsTrait
 
             Bot::query()
                 ->whereKey($this->id)
-                ->where('status', BotStatusEnum::PENDING)
+                ->where('status', BotStatusEnum::JOB_ASSIGNED)
                 ->where('current_job_id', $job->id)
                 ->update([
                     'status' => BotStatusEnum::WORKING,

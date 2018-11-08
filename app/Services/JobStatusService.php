@@ -9,8 +9,8 @@ class JobStatusService
 {
     // Database name to label class
     protected $statusToLabelClass = [
-        JobStatusEnum::QUEUED => 'badge-secondary',
-        JobStatusEnum::ASSIGNED => 'badge-primary',
+        JobStatusEnum::QUEUED => 'badge-info',
+        JobStatusEnum::ASSIGNED => 'badge-secondary',
         JobStatusEnum::IN_PROGRESS => 'badge-info',
         JobStatusEnum::QUALITY_CHECK => 'badge-warning',
         JobStatusEnum::COMPLETED => 'badge-success',
