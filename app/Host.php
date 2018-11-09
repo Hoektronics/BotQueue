@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $token_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Bot[] $bots
  * @property-read \App\User $owner
+ * @property-read \Laravel\Passport\Token $token
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereLocalIp($value)
@@ -29,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \Laravel\Passport\Token $token
  */
 class Host extends Model
 {

@@ -10,32 +10,30 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
- * App\ClientRequest
+ * App\HostRequest
  *
- * @property int $id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string $expires_at
- * @property string $local_ip
- * @property string $remote_ip
- * @property string $hostname
+ * @property string $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $expires_at
+ * @property string|null $local_ip
+ * @property string|null $remote_ip
+ * @property string|null $hostname
  * @property string $status
- * @property int $lookup_code
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereExpiresAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereHostname($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereLocalIp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereLookupCode($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereRemoteIp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\HostRequest whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property int|null $claimer_id
+ * @property string|null $name
  * @property-read \App\User|null $claimer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereClaimerId($value)
- * @property string|null $name
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereHostname($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereLocalIp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereRemoteIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class HostRequest extends Model
 {
