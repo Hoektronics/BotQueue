@@ -17,6 +17,8 @@ class ToInProgressTest extends TestCase
     /** @test */
     public function assignedToInProgress()
     {
+        $this->withoutJobs();
+
         /** @var Bot $bot */
         $bot = factory(Bot::class)
             ->states(BotStatusEnum::IDLE)

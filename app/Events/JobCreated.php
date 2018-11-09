@@ -36,20 +36,8 @@ class JobCreated extends Event implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        $this->userChannel($this->job->creator_id);
-
-        if($this->job->worker instanceof Bot) {
-            $this->botChannel($this->job->worker);
-        }
-
-        if($this->job->worker instanceof Cluster) {
-            $this->clusterChannel($this->job->worker);
-
-            foreach ($this->job->worker->bots as $bot) {
-                $this->botChannel($bot);
-            }
-        }
-
-        return $this->channels();
+        return $this
+            ->userChannel($this->job->creator_id)
+            ->channels();
     }
 }

@@ -16,6 +16,8 @@ class WorkingJobsTest extends HostTestCase
     /** @test */
     public function aHostCanSeeJobsForBotsAssignedToIt()
     {
+        $this->withoutJobs();
+
         /** @var Bot $bot */
         $bot = factory(Bot::class)
             ->states(BotStatusEnum::IDLE)
@@ -46,6 +48,8 @@ class WorkingJobsTest extends HostTestCase
     /** @test */
     public function aHostCannotSeeJobsForBotsNotAssignedToIt()
     {
+        $this->withoutJobs();
+
         /** @var Bot $bot */
         $bot = factory(Bot::class)
             ->states(BotStatusEnum::IDLE)
@@ -73,6 +77,8 @@ class WorkingJobsTest extends HostTestCase
     /** @test */
     public function aHostCannotSeeJobsIfNoBotsAreAssignedThatJob()
     {
+        $this->withoutJobs();
+
         /** @var Job $job */
         $job = factory(Job::class)
             ->states(JobStatusEnum::QUEUED)
@@ -92,6 +98,8 @@ class WorkingJobsTest extends HostTestCase
     /** @test */
     public function aHostCannotSeeJobsBelongingToAnotherHost()
     {
+        $this->withoutJobs();
+
         $otherHost = $this->createHost();
 
         /** @var Bot $bot */

@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Bot;
 use App\Events;
+use App\Jobs\FindJobsForBot;
 use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -29,5 +32,15 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        Event::listen(Events\JobCreated::class, function($event) {
+            /** @var $event Events\JobCreated */
+            $worker = $event->job->worker;
+
+            if($worker instanceof Bot) {
+                /** @var $model Bot */
+                dispatch(new FindJobsForBot($worker));
+            }
+        });
     }
 }

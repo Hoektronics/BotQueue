@@ -21,6 +21,8 @@ class FindJobsForBotTest extends TestCase
     /** @test */
     public function theBotWillGetAJobAssignedDirectlyToItBeforeOneFromACluster()
     {
+        $this->withoutJobs();
+
         /** @var Cluster $cluster */
         $cluster = factory(Cluster::class)
             ->create([
@@ -81,6 +83,8 @@ class FindJobsForBotTest extends TestCase
     /** @test */
     public function theBotWillGetAJobAssignedToItFromTheClusterItIsPartOf()
     {
+        $this->withoutJobs();
+
         /** @var Cluster $cluster */
         $cluster = factory(Cluster::class)
             ->create([
@@ -127,6 +131,8 @@ class FindJobsForBotTest extends TestCase
     /** @test */
     public function anOfflineBotCannotBeAssignedAJob()
     {
+        $this->withoutJobs();
+
         /** @var Bot $bot */
         $bot = factory(Bot::class)
             ->states(BotStatusEnum::OFFLINE)
@@ -165,6 +171,8 @@ class FindJobsForBotTest extends TestCase
     /** @test */
     public function aWorkingBotCannotBeAssignedAJob()
     {
+        $this->withoutJobs();
+
         /** @var Bot $bot */
         $bot = factory(Bot::class)
             ->states(BotStatusEnum::WORKING)
