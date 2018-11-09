@@ -35,9 +35,8 @@ class FindJobsForBotTest extends TestCase
             ->create([
                 'host_id' => $this->host,
                 'creator_id' => $this->user->id,
+                'cluster_id' => $cluster->id,
             ]);
-
-        $bot->clusters()->attach($cluster);
 
         $now = Carbon::now();
 
@@ -97,9 +96,8 @@ class FindJobsForBotTest extends TestCase
             ->create([
                 'host_id' => $this->host,
                 'creator_id' => $this->user->id,
+                'cluster_id' => $cluster->id,
             ]);
-
-        $bot->clusters()->attach($cluster);
 
         $now = Carbon::now();
 

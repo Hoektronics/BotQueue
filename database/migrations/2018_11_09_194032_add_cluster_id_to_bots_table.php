@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddBotClusterTable extends Migration
+class AddClusterIdToBotsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class AddBotClusterTable extends Migration
      */
     public function up()
     {
-        Schema::create('bot_cluster', function (Blueprint $table) {
-            $table->integer('bot_id')->unsigned();
-            $table->integer('cluster_id')->unsigned();
-            $table->foreign('bot_id')->references('id')->on('bots');
+        Schema::table('bots', function (Blueprint $table) {
+            $table->string('cluster_id')->unsigned()->nullable();
             $table->foreign('cluster_id')->references('id')->on('clusters');
         });
     }
@@ -28,6 +26,8 @@ class AddBotClusterTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bot_cluster');
+        Schema::table('bots', function (Blueprint $table) {
+            $table->dropColumn('cluster_id');
+        });
     }
 }

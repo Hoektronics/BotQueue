@@ -34,12 +34,12 @@
                         {!! $bot_status->label($bot->status) !!}
                     </th>
                     <th>
-                        @foreach($bot->clusters as $cluster)
+                        @if($bot->cluster !== null)
                             <a class="label label-info"
-                               href="{{ route('clusters.show', [$cluster]) }}">
-                                {{ $cluster->name }}
+                               href="{{ route('clusters.show', [$bot->cluster]) }}">
+                                {{ $bot->cluster->name }}
                             </a>
-                        @endforeach
+                        @endif
                     </th>
                 </tr>
             @endforeach

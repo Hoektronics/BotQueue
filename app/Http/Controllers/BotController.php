@@ -28,7 +28,7 @@ class BotController extends Controller
     public function index()
     {
         return view('bot.index', [
-            'bots' => Auth::user()->bots
+            'bots' => Auth::user()->bots()->with('cluster')->get()
         ]);
     }
     /**
@@ -53,16 +53,18 @@ class BotController extends Controller
      */
     public function store(BotCreationRequest $request)
     {
+        /** @var Cluster $cluster */
+        $cluster = Cluster::query()->find($request->get('cluster'));
+
         /** @var Bot $bot */
         $bot = new Bot([
             'name' => $request->get('name'),
             'type' => $request->get('type'),
             'creator_id' => Auth::id(),
+            'cluster_id' => $cluster->id,
         ]);
-        $cluster = Cluster::query()->find($request->get('cluster'));
 
         $bot->save();
-        $bot->clusters()->save($cluster);
 
         return redirect()->route('bots.show', [$bot]);
     }
@@ -78,7 +80,7 @@ class BotController extends Controller
     {
         $this->authorize('view', $bot);
 
-        $bot->load(['clusters', 'creator']);
+        $bot->load(['cluster', 'creator']);
 
         return view('bot.show', [
             'bot' => $bot

@@ -42,7 +42,7 @@ class Cluster extends Model
 
     public function bots()
     {
-        return $this->belongsToMany(Bot::class);
+        return $this->hasMany(Bot::class);
     }
 
     /**

@@ -70,9 +70,9 @@ class Bot extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function clusters()
+    public function cluster()
     {
-        return $this->belongsToMany(Cluster::class);
+        return $this->belongsTo(Cluster::class);
     }
 
     /**

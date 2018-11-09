@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Bot;
+use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Job;
@@ -54,7 +55,8 @@ class FindJobsForBot implements ShouldQueue
             return;
         }
 
-        $cluster = $this->bot->clusters()->first();
+        /** @var Cluster $cluster */
+        $cluster = $this->bot->cluster;
         $jobForCluster = Job::whereStatus(JobStatusEnum::QUEUED)
             ->where('worker_id', $cluster->id)
             ->where('worker_type', $cluster->getMorphClass())
