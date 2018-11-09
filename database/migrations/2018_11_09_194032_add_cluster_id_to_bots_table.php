@@ -14,7 +14,7 @@ class AddClusterIdToBotsTable extends Migration
     public function up()
     {
         Schema::table('bots', function (Blueprint $table) {
-            $table->string('cluster_id')->unsigned()->nullable();
+            $table->integer('cluster_id')->unsigned()->nullable();
             $table->foreign('cluster_id')->references('id')->on('clusters');
         });
     }

@@ -104,6 +104,7 @@ class BotsTest extends TestCase
 
         $bot = Bot::whereCreatorId($this->user->id)->where('name', $botName)->first();
         $this->assertNotNull($bot);
+        $this->assertNotNull($bot->cluster);
         $response->assertRedirect("/bots/{$bot->id}");
     }
 
@@ -120,6 +121,27 @@ class BotsTest extends TestCase
             ->assertSee($bot->name)
             ->assertSee($bot->status)
             ->assertSee("Creator: {$this->user->name}");
+    }
+
+    /** @test */
+    public function userCanSeeBotsCluster()
+    {
+        $cluster = factory(Cluster::class)->create([
+            'creator_id' => $this->user->id,
+        ]);
+
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $this->user->id,
+            'cluster_id' => $cluster->id,
+        ]);
+
+        $this
+            ->actingAs($this->user)
+            ->get("/bots/{$bot->id}")
+            ->assertSee($bot->name)
+            ->assertSee($bot->status)
+            ->assertSee("Creator: {$this->user->name}")
+            ->assertSee($cluster->name);
     }
 
     /** @test */

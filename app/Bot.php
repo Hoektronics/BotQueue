@@ -55,6 +55,7 @@ class Bot extends Model
         'name',
         'type',
         'creator_id',
+        'cluster_id',
     ];
 
     protected $dispatchesEvents = [

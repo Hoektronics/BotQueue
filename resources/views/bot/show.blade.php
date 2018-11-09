@@ -16,12 +16,13 @@
                 </div>
                 <div class="card-body">
                     Creator: {{ $bot->creator->username }}<br>
-                    Status: {!! $bot_status->label($bot->status) !!}
+                    Status: {!! $bot_status->label($bot->status) !!}<br>
+                    Cluster:
                     @if($bot->cluster !== null)
                         <a class="badge badge-secondary"
                            href="{{ route('clusters.show', [$bot->cluster]) }}">
                             {{ $bot->cluster->name }}
-                    </a>
+                        </a>
                     @endif
                 </div>
             </div>
