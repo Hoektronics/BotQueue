@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\Action\AssignJobToBot;
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Job;
-use App\JobAttempt;
 use Tests\HasUser;
 use Tests\TestCase;
 
@@ -18,7 +18,7 @@ class JobStartTest extends TestCase
      * @throws \App\Exceptions\JobAssignmentFailed
      * @throws \Throwable
      */
-    public function botCanStartJobIfItIsPendingAndAssignAJob()
+    public function botCanStartJobIfItIsAssignedAJob()
     {
         /** @var Bot $bot */
         $bot = factory(Bot::class)
@@ -35,7 +35,8 @@ class JobStartTest extends TestCase
                 'creator_id' => $this->user->id,
             ]);
 
-        $bot->assign($job);
+        $assign = new AssignJobToBot($bot);
+        $assign->fromJob($job);
 
         $bot->start();
 

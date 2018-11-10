@@ -74,6 +74,11 @@ class Bot extends Model
         return $this->belongsTo(Cluster::class);
     }
 
+    public function currentJob()
+    {
+        return $this->belongsTo(Job::class);
+    }
+
     /**
      * Scope to only include bots belonging to the currently authenticated user
      *

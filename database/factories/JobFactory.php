@@ -58,17 +58,77 @@ $factory->state(Job::class, JobStatusEnum::ASSIGNED,
         ];
     });
 
-//$factory->state(Job::class, JobStatusEnum::IN_PROGRESS,
-//    function (Faker $faker, $attributes) {
-//        /** @var App\Bot $bot */
-//        $bot = factory(Bot::class)->create([
-//            'creator_id' => $attributes['creator_id'],
-//        ]);
-//
-//        return [
-//            'status' => JobStatusEnum::IN_PROGRESS,
-//            'worker_id' => $bot->id,
-//            'worker_type' => $bot->getMorphType(),
-//            'bot_id' => $bot->id,
-//        ];
-//    });
+$factory->state(Job::class, JobStatusEnum::IN_PROGRESS,
+    function (Faker $faker, $attributes) {
+        /** @var App\Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $attributes['creator_id'],
+        ]);
+
+        return [
+            'status' => JobStatusEnum::IN_PROGRESS,
+            'worker_id' => $bot->id,
+            'worker_type' => $bot->getMorphClass(),
+            'bot_id' => $bot->id,
+        ];
+    });
+
+$factory->state(Job::class, JobStatusEnum::QUALITY_CHECK,
+    function (Faker $faker, $attributes) {
+        /** @var App\Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $attributes['creator_id'],
+        ]);
+
+        return [
+            'status' => JobStatusEnum::QUALITY_CHECK,
+            'worker_id' => $bot->id,
+            'worker_type' => $bot->getMorphClass(),
+            'bot_id' => $bot->id,
+        ];
+    });
+
+$factory->state(Job::class, JobStatusEnum::COMPLETED,
+    function (Faker $faker, $attributes) {
+        /** @var App\Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $attributes['creator_id'],
+        ]);
+
+        return [
+            'status' => JobStatusEnum::COMPLETED,
+            'worker_id' => $bot->id,
+            'worker_type' => $bot->getMorphClass(),
+            'bot_id' => $bot->id,
+        ];
+    });
+
+$factory->state(Job::class, JobStatusEnum::FAILED,
+    function (Faker $faker, $attributes) {
+        /** @var App\Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $attributes['creator_id'],
+        ]);
+
+        return [
+            'status' => JobStatusEnum::FAILED,
+            'worker_id' => $bot->id,
+            'worker_type' => $bot->getMorphClass(),
+            'bot_id' => $bot->id,
+        ];
+    });
+
+$factory->state(Job::class, JobStatusEnum::CANCELLED,
+    function (Faker $faker, $attributes) {
+        /** @var App\Bot $bot */
+        $bot = factory(Bot::class)->create([
+            'creator_id' => $attributes['creator_id'],
+        ]);
+
+        return [
+            'status' => JobStatusEnum::CANCELLED,
+            'worker_id' => $bot->id,
+            'worker_type' => $bot->getMorphClass(),
+            'bot_id' => $bot->id,
+        ];
+    });

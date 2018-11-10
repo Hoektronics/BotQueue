@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Action\AssignJobToBot;
 use App\Bot;
 use App\Cluster;
 use App\Enums\BotStatusEnum;
@@ -35,7 +36,10 @@ class FindJobsForBot implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * @throws \App\Exceptions\BotIsNotIdle
+     * @throws \App\Exceptions\BotIsNotValidWorker
      * @throws \App\Exceptions\JobAssignmentFailed
+     * @throws \App\Exceptions\JobIsNotQueued
      */
     public function handle()
     {
@@ -50,7 +54,8 @@ class FindJobsForBot implements ShouldQueue
             ->first();
 
         if($jobForBotWorker != null) {
-            $this->bot->assign($jobForBotWorker);
+            $assign = new AssignJobToBot($this->bot);
+            $assign->fromJob($jobForBotWorker);
 
             return;
         }
@@ -64,7 +69,8 @@ class FindJobsForBot implements ShouldQueue
             ->first();
 
         if($jobForCluster != null) {
-            $this->bot->assign($jobForCluster);
+            $assign = new AssignJobToBot($this->bot);
+            $assign->fromJob($jobForCluster);
         }
     }
 }

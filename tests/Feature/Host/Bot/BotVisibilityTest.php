@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Host\Bot;
 
+use App\Action\AssignJobToBot;
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
@@ -64,7 +65,10 @@ class BotVisibilityTest extends HostTestCase
     }
 
     /** @test
+     * @throws \App\Exceptions\BotIsNotIdle
+     * @throws \App\Exceptions\BotIsNotValidWorker
      * @throws \App\Exceptions\JobAssignmentFailed
+     * @throws \App\Exceptions\JobIsNotQueued
      */
     public function hostCanSeeJobAssignedToBot()
     {
@@ -84,7 +88,8 @@ class BotVisibilityTest extends HostTestCase
                 'creator_id' => $this->user->id,
             ]);
 
-        $bot->assign($job);
+        $assign = new AssignJobToBot($bot);
+        $assign->fromJob($job);
 
         $this
             ->withTokenFromHost($this->host)
