@@ -19,7 +19,12 @@ class AssignJobToBotTest extends TestCase
 {
     use HasUser;
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function botGetsAssignedWhenItIsTheWorker()
     {
         $this->withoutJobs();
@@ -53,7 +58,12 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals($bot->id, $job->bot_id);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function botGetsAssignedWhenItIsInTheClusterThatIsTheWorker()
     {
         $this->withoutJobs();
@@ -94,7 +104,12 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals($bot->id, $job->bot_id);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function botCannotGrabJobIfItIsNotTheWorker()
     {
         $this->withoutJobs();
@@ -128,7 +143,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function botCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
     {
         $this->withoutJobs();
@@ -161,7 +181,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function botThatAlreadyHasAJobCannotGrabAnother()
     {
         $this->withoutJobs();
@@ -198,7 +223,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($jobB);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function anOfflineBotCannotGrabAJob()
     {
         $this->withoutJobs();
@@ -225,7 +255,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aWorkingBotCannotGrabAJob()
     {
         $this->withoutJobs();
@@ -252,7 +287,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function anAlreadyAssignedBotCannotGrabAJob()
     {
         $this->withoutJobs();
@@ -279,7 +319,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function anAlreadyAssignedJobCannotBeAssignedAgain()
     {
         $this->withoutJobs();
@@ -306,7 +351,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function anInProgressJobCannotBeAssigned()
     {
         $this->withoutJobs();
@@ -333,7 +383,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aQualityCheckJobCannotBeAssigned()
     {
         $this->withoutJobs();
@@ -360,7 +415,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aCompletedJobCannotBeAssigned()
     {
         $this->withoutJobs();
@@ -387,7 +447,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aFailedJobCannotBeAssigned()
     {
         $this->withoutJobs();
@@ -414,7 +479,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aCancelledJobCannotBeAssigned()
     {
         $this->withoutJobs();
@@ -441,7 +511,94 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
+    public function aBotThatWasIdleStillThrowsBotIsNotIdle()
+    {
+        $this->withoutJobs();
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        // Using an update this way means the model still has the old status
+        Bot::query()
+            ->whereKey($bot->id)
+            ->update([
+                'status' => BotStatusEnum::OFFLINE,
+            ]);
+
+        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
+
+        $assign = new AssignJobToBot($bot);
+
+        $this->expectException(JobAssignmentFailed::class);
+
+        $assign->fromJob($job);
+    }
+
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
+    public function aJobThatWasQueuedStillThrowsJobIsNotQueued()
+    {
+        $this->withoutJobs();
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Job $job */
+        $job = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+            ]);
+
+        // Using an update this way means the model still has the old status
+        Job::query()
+            ->whereKey($job->id)
+            ->update([
+                'status' => JobStatusEnum::CANCELLED,
+            ]);
+
+        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
+
+        $assign = new AssignJobToBot($bot);
+
+        $this->expectException(JobAssignmentFailed::class);
+
+        $assign->fromJob($job);
+    }
+
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aJobThatWasQueuedButGetsPickedUpByADifferentJobFails()
     {
         $this->withoutJobs();
@@ -486,7 +643,12 @@ class AssignJobToBotTest extends TestCase
         $assign->fromJob($job);
     }
 
-    /** @test */
+    /** @test
+     * @throws BotIsNotIdle
+     * @throws JobIsNotQueued
+     * @throws BotIsNotValidWorker
+     * @throws JobAssignmentFailed
+     */
     public function aBotThatAttemptsToUpAJobWhileAnotherProcessIsRunningFails()
     {
         $this->withoutJobs();
