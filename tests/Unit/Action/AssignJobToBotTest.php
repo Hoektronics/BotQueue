@@ -740,4 +740,169 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals(JobStatusEnum::QUEUED, $jobA->status);
         $this->assertNull($jobA->bot_id);
     }
+
+    /** @test */
+    public function jobAssignmentFromListMovesOnToTheNextJobIfTheFirstIsNotQueued()
+    {
+        $this->withoutJobs();
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        Carbon::setTestNow("now");
+
+        /** @var Job $jobA */
+        $jobA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(5)
+            ]);
+
+        /** @var Job $jobB */
+        $jobB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(10)
+            ]);
+
+        $assign = new AssignJobToBot($bot);
+
+        // Using an update this way means the model still has the old status
+        Job::query()
+            ->whereKey($jobB->id)
+            ->update([
+                'status' => JobStatusEnum::CANCELLED,
+            ]);
+
+        $assign->fromJobs(collect([$jobA, $jobB]));
+
+        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
+        $this->assertEquals($jobA->id, $bot->current_job_id);
+
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $jobA->status);
+        $this->assertEquals($bot->id, $jobA->bot_id);
+
+        $this->assertEquals(JobStatusEnum::CANCELLED, $jobB->status);
+        $this->assertNull($jobB->bot_id);
+    }
+
+    /** @test */
+    public function jobAssignmentFailsEntirelyIfBotIsNotIdle()
+    {
+        $this->withoutJobs();
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        Carbon::setTestNow("now");
+
+        /** @var Job $jobA */
+        $jobA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(5)
+            ]);
+
+        /** @var Job $jobB */
+        $jobB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(10)
+            ]);
+
+        $assign = new AssignJobToBot($bot);
+
+        // Using an update this way means the model still has the old status
+        Bot::query()
+            ->whereKey($bot->id)
+            ->update([
+                'status' => BotStatusEnum::OFFLINE,
+            ]);
+
+        $assign->fromJobs(collect([$jobA, $jobB]));
+
+        // Job B was attempted to assign but failed. The model is out of date.
+        $jobB->refresh();
+
+        $this->assertEquals(BotStatusEnum::OFFLINE, $bot->status);
+        $this->assertNull($bot->current_job_id);
+
+        $this->assertEquals(JobStatusEnum::QUEUED, $jobA->status);
+        $this->assertNull($jobA->bot_id);
+
+        $this->assertEquals(JobStatusEnum::QUEUED, $jobB->status);
+        $this->assertNull($jobB->bot_id);
+    }
+
+    /** @test */
+    public function jobAssignmentSkipsJobsWhereTheBotIsNotTheWorker()
+    {
+        $this->withoutJobs();
+
+        /** @var Bot $botA */
+        $botA = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        /** @var Bot $botB */
+        $botB = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        Carbon::setTestNow("now");
+
+        /** @var Job $jobA */
+        $jobA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $botA->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(5)
+            ]);
+
+        /** @var Job $jobB */
+        $jobB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $botB->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(10)
+            ]);
+
+        $assign = new AssignJobToBot($botA);
+
+        $assign->fromJobs(collect([$jobA, $jobB]));
+
+        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $botA->status);
+        $this->assertEquals($jobA->id, $botA->current_job_id);
+
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $jobA->status);
+        $this->assertEquals($botA->id, $jobA->bot_id);
+
+        $this->assertEquals(BotStatusEnum::IDLE, $botB->status);
+        $this->assertNull($botB->current_job_id);
+
+        $this->assertEquals(JobStatusEnum::QUEUED, $jobB->status);
+        $this->assertNull($jobB->bot_id);
+    }
 }
