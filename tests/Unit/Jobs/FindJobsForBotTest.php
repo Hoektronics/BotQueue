@@ -38,7 +38,7 @@ class FindJobsForBotTest extends TestCase
                 'cluster_id' => $cluster->id,
             ]);
 
-        $now = Carbon::now();
+        Carbon::setTestNow('now');
 
         /** @var Job $jobWithClusterWorker */
         $jobWithClusterWorker = factory(Job::class)
@@ -47,7 +47,7 @@ class FindJobsForBotTest extends TestCase
                 'worker_id' => $cluster,
                 'worker_type' => $cluster->getMorphClass(),
                 'creator_id' => $this->user->id,
-                'created_at' => $now->subMinute(1)
+                'created_at' => Carbon::now()->subMinute(1)
             ]);
 
         /** @var Job $jobWithBotWorker */
@@ -57,7 +57,7 @@ class FindJobsForBotTest extends TestCase
                 'worker_id' => $bot,
                 'worker_type' => $bot->getMorphClass(),
                 'creator_id' => $this->user->id,
-                'created_at' => $now->subMinute(2)
+                'created_at' => Carbon::now()->subMinute(2)
             ]);
 
         /** @var FindJobsForBot $findJobsForBot */
@@ -99,8 +99,6 @@ class FindJobsForBotTest extends TestCase
                 'cluster_id' => $cluster->id,
             ]);
 
-        $now = Carbon::now();
-
         /** @var Job $jobWithClusterWorker */
         $jobWithClusterWorker = factory(Job::class)
             ->states(JobStatusEnum::QUEUED)
@@ -108,7 +106,6 @@ class FindJobsForBotTest extends TestCase
                 'worker_id' => $cluster,
                 'worker_type' => $cluster->getMorphClass(),
                 'creator_id' => $this->user->id,
-                'created_at' => $now->subMinute(1)
             ]);
 
         /** @var FindJobsForBot $findJobsForBot */
@@ -139,8 +136,6 @@ class FindJobsForBotTest extends TestCase
                 'creator_id' => $this->user->id,
             ]);
 
-        $now = Carbon::now();
-
         /** @var Job $jobWithBotWorker */
         $jobWithBotWorker = factory(Job::class)
             ->states(JobStatusEnum::QUEUED)
@@ -148,7 +143,6 @@ class FindJobsForBotTest extends TestCase
                 'worker_id' => $bot,
                 'worker_type' => $bot->getMorphClass(),
                 'creator_id' => $this->user->id,
-                'created_at' => $now->subMinute(2)
             ]);
 
         /** @var FindJobsForBot $findJobsForBot */
@@ -179,8 +173,6 @@ class FindJobsForBotTest extends TestCase
                 'creator_id' => $this->user->id,
             ]);
 
-        $now = Carbon::now();
-
         /** @var Job $jobWithBotWorker */
         $jobWithBotWorker = factory(Job::class)
             ->states(JobStatusEnum::QUEUED)
@@ -188,7 +180,6 @@ class FindJobsForBotTest extends TestCase
                 'worker_id' => $bot,
                 'worker_type' => $bot->getMorphClass(),
                 'creator_id' => $this->user->id,
-                'created_at' => $now->subMinute(2)
             ]);
 
         /** @var FindJobsForBot $findJobsForBot */
