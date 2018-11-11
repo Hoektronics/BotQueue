@@ -12,6 +12,7 @@ use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobAssignmentFailed;
 use App\Exceptions\JobIsNotQueued;
 use App\Job;
+use Carbon\Carbon;
 use Tests\HasUser;
 use Tests\TestCase;
 
@@ -692,5 +693,51 @@ class AssignJobToBotTest extends TestCase
         $this->expectException(JobAssignmentFailed::class);
 
         $assign->fromJob($job);
+    }
+
+    /** @test */
+    public function jobAssignmentFromListPicksTheEarliestCreationDate()
+    {
+        $this->withoutJobs();
+
+        /** @var Bot $bot */
+        $bot = factory(Bot::class)
+            ->states(BotStatusEnum::IDLE)
+            ->create([
+                'creator_id' => $this->user->id,
+            ]);
+
+        Carbon::setTestNow("now");
+
+        /** @var Job $jobA */
+        $jobA = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(5)
+            ]);
+
+        /** @var Job $jobB */
+        $jobB = factory(Job::class)
+            ->states(JobStatusEnum::QUEUED)
+            ->create([
+                'worker_id' => $bot->id,
+                'creator_id' => $this->user->id,
+                'created_at' => Carbon::now()->subMinute(10)
+            ]);
+
+        $assign = new AssignJobToBot($bot);
+
+        $assign->fromJobs(collect([$jobA, $jobB]));
+
+        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
+        $this->assertEquals($jobB->id, $bot->current_job_id);
+
+        $this->assertEquals(JobStatusEnum::ASSIGNED, $jobB->status);
+        $this->assertEquals($bot->id, $jobB->bot_id);
+
+        $this->assertEquals(JobStatusEnum::QUEUED, $jobA->status);
+        $this->assertNull($jobA->bot_id);
     }
 }

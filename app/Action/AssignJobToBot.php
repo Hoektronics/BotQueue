@@ -12,6 +12,7 @@ use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobAssignmentFailed;
 use App\Exceptions\JobIsNotQueued;
 use App\Job;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class AssignJobToBot
@@ -21,9 +22,46 @@ class AssignJobToBot
      */
     private $bot;
 
+    /**
+     * AssignJobToBot constructor.
+     * @param Bot $bot
+     */
     public function __construct(Bot $bot)
     {
         $this->bot = $bot;
+    }
+
+    /**
+     * @param Collection $jobs
+     */
+    public function fromJobs($jobs)
+    {
+        $jobs
+            ->sortBy('created_at')
+            ->each(function($job) {
+            try {
+                $this->fromJob($job);
+
+                // No exception means assignment worked!
+                return false;
+            }
+            catch (BotIsNotIdle $ex) {
+                // No need to keep going, no job will work
+                return false;
+            }
+            catch (JobIsNotQueued $ex) {
+                // This job won't work, but the next might.
+                return true;
+            }
+            catch (BotIsNotValidWorker $ex) {
+                // This job won't work, but the next might.
+                return true;
+            }
+            catch (JobAssignmentFailed $x) {
+                // This job won't work, but the next might.
+                return true;
+            }
+        });
     }
 
     /**
