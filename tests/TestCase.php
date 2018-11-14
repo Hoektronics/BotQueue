@@ -13,18 +13,13 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
     use WithFakesEvents;
+    use UsesBuilders;
 
-    public function setUpTraits()
+    public function setUp()
     {
-        parent::setUpTraits();
+        parent::setUp();
 
         $this->withoutExceptionHandling();
-
-        if(method_exists($this, 'createTestUser'))
-            $this->createTestUser();
-
-        if(method_exists($this, 'createTestHost'))
-            $this->createTestHost();
     }
 
     public function withRemoteIp($ip)

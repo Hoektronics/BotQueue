@@ -7,12 +7,10 @@ use App\Cluster;
 use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class BotsTest extends TestCase
 {
-    use HasUser;
     use WithFaker;
 
     /** @test */
@@ -28,7 +26,7 @@ class BotsTest extends TestCase
     public function userWithNoBotsSeesHelpfulMessage()
     {
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/bots')
             ->assertSee('Click the "Create a Bot" button');
     }
@@ -36,12 +34,10 @@ class BotsTest extends TestCase
     /** @test */
     public function userWithABotSeesThatBot()
     {
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/bots')
             ->assertSee($bot->name);
     }
@@ -59,7 +55,7 @@ class BotsTest extends TestCase
     public function userCanSeeBotCreationPage()
     {
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/bots/create')
             ->assertViewIs('bot.create')
             ->assertSee('<input name="name"')
@@ -79,11 +75,7 @@ class BotsTest extends TestCase
 
     protected function postBot($overrides = [])
     {
-        /** @var Cluster $default */
-        $cluster = factory(Cluster::class)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $cluster = $this->cluster()->create();
 
         $default = [
             'name' => $this->faker->userName,
@@ -99,10 +91,10 @@ class BotsTest extends TestCase
     {
         $botName = $this->faker->name;
         $response = $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postBot(['name' => $botName]);
 
-        $bot = Bot::whereCreatorId($this->user->id)->where('name', $botName)->first();
+        $bot = Bot::whereCreatorId($this->mainUser->id)->where('name', $botName)->first();
         $this->assertNotNull($bot);
         $this->assertNotNull($bot->cluster);
         $response->assertRedirect("/bots/{$bot->id}");
@@ -111,47 +103,40 @@ class BotsTest extends TestCase
     /** @test */
     public function userCanSeeTheirBot()
     {
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee($bot->name)
             ->assertSee($bot->status)
-            ->assertSee("Creator: {$this->user->name}");
+            ->assertSee("Creator: {$this->mainUser->name}");
     }
 
     /** @test */
     public function userCanSeeBotsCluster()
     {
-        $cluster = factory(Cluster::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $cluster = $this->cluster()->create();
 
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-            'cluster_id' => $cluster->id,
-        ]);
+        $bot = $this->bot()
+            ->cluster($cluster)
+            ->create();
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee($bot->name)
             ->assertSee($bot->status)
-            ->assertSee("Creator: {$this->user->name}")
+            ->assertSee("Creator: {$this->mainUser->name}")
             ->assertSee($cluster->name);
     }
 
     /** @test */
     public function anotherUserCannotSeeMyBot()
     {
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
-        $otherUser = factory(User::class)->create();
+        $otherUser = $this->user()->create();
 
         $this
             ->withExceptionHandling()
@@ -163,13 +148,11 @@ class BotsTest extends TestCase
     /** @test */
     public function aUserCannotMakeABotWithTheSameNameAsAnExistingBot()
     {
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postBot(['name' => $bot->name])
             ->assertSessionHasErrors('name');
     }
@@ -177,15 +160,13 @@ class BotsTest extends TestCase
     /** @test */
     public function aDifferentUserCanMakeABotWithTheSameNameAsMyExistingBot()
     {
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
-        $otherUser = factory(User::class)->create();
+        $otherUser = $this->user()->create();
 
-        $otherCluster = factory(Cluster::class)->create([
-            'creator_id' => $otherUser,
-        ]);
+        $otherCluster = $this->cluster()
+            ->creator($otherUser)
+            ->create();
 
         $response = $this
             ->actingAs($otherUser)
@@ -202,7 +183,7 @@ class BotsTest extends TestCase
     /** @test */
     public function anotherUserCannotAssignABotToMyCluster()
     {
-        $otherUser = factory(User::class)->create();
+        $otherUser = $this->user()->create();
 
         $this
             ->withExceptionHandling()
@@ -216,7 +197,7 @@ class BotsTest extends TestCase
     {
         $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postBot(['cluster' => 9999])
             ->assertSessionHasErrors('cluster');
     }
@@ -226,7 +207,7 @@ class BotsTest extends TestCase
     {
         $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postBot(['name' => null])
             ->assertSessionHasErrors('name');
     }
@@ -236,7 +217,7 @@ class BotsTest extends TestCase
     {
         $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postBot(['type' => null])
             ->assertSessionHasErrors('type');
     }
@@ -246,7 +227,7 @@ class BotsTest extends TestCase
     {
         $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postBot(['cluster' => null])
             ->assertSessionHasErrors('cluster');
     }

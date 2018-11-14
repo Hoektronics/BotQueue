@@ -2,10 +2,8 @@
 
 namespace Tests\Unit;
 
-use App;
 use App\Cluster;
 use App\Events\UserCreated;
-use App\User;
 use Tests\TestCase;
 
 class UsersTest extends TestCase
@@ -15,8 +13,7 @@ class UsersTest extends TestCase
     {
         $this->fakesEvents(UserCreated::class);
 
-        /** @var User $user */
-        factory(User::class)->create();
+        $this->user()->create();
 
         $this->assertDispatched(UserCreated::class);
     }
@@ -24,8 +21,7 @@ class UsersTest extends TestCase
     /** @test */
     public function userIsNotAnAdminByDefault()
     {
-        /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = $this->user()->create();
 
         $user->refresh();
 
@@ -35,8 +31,7 @@ class UsersTest extends TestCase
     /** @test */
     public function userCanBePromotedToAdmin()
     {
-        /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = $this->user()->create();
 
         $user->promoteToAdmin();
 
@@ -48,8 +43,7 @@ class UsersTest extends TestCase
     /** @test */
     public function userHasDefaultCluster()
     {
-        /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = $this->user()->create();
 
         $this->assertEquals(1, $user->clusters->count());
 

@@ -7,19 +7,16 @@ use App\User;
 use App\HostRequest;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class HostRequestTest extends TestCase
 {
-    use HasUser;
     use WithFaker;
 
     /** @test */
     public function anUnauthenticatedUserCannotViewHostRequest()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $this
             ->withExceptionHandling()
@@ -30,14 +27,14 @@ class HostRequestTest extends TestCase
     /** @test */
     public function aHostRequestCanBeViewed()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create([
-            'local_ip' => null,
-            'hostname' => null,
-        ]);
+        $host_request = $this->hostRequest()
+            ->create();
+        
+        $this->assertEquals(null, $host_request->local_ip);
+        $this->assertEquals(null, $host_request->hostname);
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get("/hosts/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('host.request.show')
@@ -52,14 +49,15 @@ class HostRequestTest extends TestCase
     {
         $localIP = $this->faker->localIpv4;
 
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create([
-            'local_ip' => $localIP,
-            'hostname' => null,
-        ]);
+        $host_request = $this->hostRequest()
+            ->localIp($localIP)
+            ->create();
+
+        $this->assertEquals($localIP, $host_request->local_ip);
+        $this->assertEquals(null, $host_request->hostname);
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get("/hosts/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('host.request.show')
@@ -74,14 +72,15 @@ class HostRequestTest extends TestCase
     {
         $hostname = $this->faker->domainWord;
 
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create([
-            'local_ip' => null,
-            'hostname' => $hostname,
-        ]);
+        $host_request = $this->hostRequest()
+            ->hostname($hostname)
+            ->create();
+
+        $this->assertEquals(null, $host_request->local_ip);
+        $this->assertEquals($hostname, $host_request->hostname);
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get("/hosts/requests/{$host_request->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertViewIs('host.request.show')
@@ -94,8 +93,7 @@ class HostRequestTest extends TestCase
     /** @test */
     public function anUnauthorizedUserCannotClaimHost()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $newHostName = 'Test host';
         $this
@@ -110,12 +108,11 @@ class HostRequestTest extends TestCase
     /** @test */
     public function canCreateHostFromHostRequest()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $newHostName = 'Test host';
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->post('/hosts', [
                 'host_request_id' => $host_request->id,
                 'name' => $newHostName,
@@ -125,7 +122,7 @@ class HostRequestTest extends TestCase
         $host_request->refresh();
 
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
-        $this->assertEquals($this->user->id, $host_request->claimer_id);
+        $this->assertEquals($this->mainUser->id, $host_request->claimer_id);
         $this->assertEquals($newHostName, $host_request->name);
     }
 
@@ -134,15 +131,13 @@ class HostRequestTest extends TestCase
      */
     public function aUserCannotClaimAnAlreadyClaimedHost()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
-        /** @var User $otherUser */
-        $otherUser = factory(User::class)->create();
+        $otherUser = $this->user()->create();
         $otherUser->claim($host_request, 'Other User Test host');
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->post('/hosts', [
                 'host_request_id' => $host_request->id,
                 'name' => 'My Test host',

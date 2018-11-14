@@ -2,20 +2,14 @@
 
 namespace Tests\Feature\Web;
 
-use Tests\HasHost;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class HostsTest extends TestCase
 {
-    use HasUser;
-    use HasHost;
 
     /** @test */
     public function anUnauthenticatedUserCannotViewHostsIndex()
     {
-        $this->setUpHostClient();
-
         $this
             ->withExceptionHandling()
             ->get("/hosts")
@@ -25,11 +19,12 @@ class HostsTest extends TestCase
     /** @test */
     public function aUserCanSeeTheirHost()
     {
-        $this->setUpHostClient();
+        // mainHost is lazy, so we evaluate it here
+        $this->assertEquals($this->mainUser->id, $this->mainHost->owner_id);
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get("/hosts")
-            ->assertSee($this->host->name);
+            ->assertSee($this->mainHost->name);
     }
 }

@@ -10,31 +10,30 @@ use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
 use App\Job;
 use Illuminate\Http\Response;
+use Tests\PassportHelper;
+use Tests\TestCase;
 
-class WorkingJobsTest extends HostTestCase
+class WorkingJobsTest extends TestCase
 {
+    use PassportHelper;
+    
     /** @test */
     public function aHostCanSeeJobsForBotsAssignedToIt()
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'host_id' => $this->host,
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->host($this->mainHost)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::ASSIGNED)
-            ->create([
-                'bot_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::ASSIGNED)
+            ->worker($bot)
+            ->bot($bot)
+            ->create();
 
-        $this->withTokenFromHost($this->host)
+        $this->withTokenFromHost($this->mainHost)
             ->getJson("/host/jobs/{$job->id}")
             ->assertJson([
                 'data' => [
@@ -50,25 +49,20 @@ class WorkingJobsTest extends HostTestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::ASSIGNED)
-            ->create([
-                'bot_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::ASSIGNED)
+            ->worker($bot)
+            ->bot($bot)
+            ->create();
 
         /** @var HostErrors $hostErrors */
         $hostErrors = app(HostErrors::class);
 
-        $this->withTokenFromHost($this->host)
+        $this->withTokenFromHost($this->mainHost)
             ->getJson("/host/jobs/{$job->id}")
             ->assertStatus(Response::HTTP_CONFLICT)
             ->assertJson($hostErrors->jobIsAssignedToABotWithNoHost()->toArray());
@@ -79,17 +73,19 @@ class WorkingJobsTest extends HostTestCase
     {
         $this->withoutJobs();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->host($this->mainHost)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         /** @var HostErrors $hostErrors */
         $hostErrors = app(HostErrors::class);
 
-        $this->withTokenFromHost($this->host)
+        $this->withTokenFromHost($this->mainHost)
             ->getJson("/host/jobs/{$job->id}")
             ->assertStatus(Response::HTTP_CONFLICT)
             ->assertJson($hostErrors->jobHasNoBot()->toArray());
@@ -100,28 +96,23 @@ class WorkingJobsTest extends HostTestCase
     {
         $this->withoutJobs();
 
-        $otherHost = $this->createHost();
+        $otherHost = $this->host()->create();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'host_id' => $otherHost,
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->host($otherHost)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::ASSIGNED)
-            ->create([
-                'bot_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::ASSIGNED)
+            ->worker($bot)
+            ->bot($bot)
+            ->create();
 
         /** @var HostErrors $hostErrors */
         $hostErrors = app(HostErrors::class);
 
-        $this->withTokenFromHost($this->host)
+        $this->withTokenFromHost($this->mainHost)
             ->getJson("/host/jobs/{$job->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertJson($hostErrors->jobIsNotAssignedToThisHost()->toArray());

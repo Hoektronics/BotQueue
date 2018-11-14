@@ -2,66 +2,46 @@
 
 namespace Tests\Unit\Jobs;
 
-use App\Bot;
-use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Job;
 use App\Jobs\FindJobsForBot;
 use Carbon\Carbon;
-use Tests\HasHost;
-use Tests\HasUser;
 use Tests\TestCase;
+use Tests\UsesBuilders;
 
 class FindJobsForBotTest extends TestCase
 {
-    use HasUser;
-    use HasHost;
+    use UsesBuilders;
 
     /** @test */
     public function theBotWillGetAJobAssignedDirectlyToItBeforeOneFromACluster()
     {
         $this->withoutJobs();
 
-        /** @var Cluster $cluster */
-        $cluster = factory(Cluster::class)
-            ->create([
-                'creator_id' => $this->user,
-            ]);
+        $cluster = $this->cluster()
+            ->create();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'host_id' => $this->host,
-                'creator_id' => $this->user->id,
-                'cluster_id' => $cluster->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
 
         Carbon::setTestNow('now');
 
-        /** @var Job $jobWithClusterWorker */
-        $jobWithClusterWorker = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $cluster,
-                'worker_type' => $cluster->getMorphClass(),
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(1)
-            ]);
+        $jobWithClusterWorker = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute(1))
+            ->create();
 
-        /** @var Job $jobWithBotWorker */
-        $jobWithBotWorker = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot,
-                'worker_type' => $bot->getMorphClass(),
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(2)
-            ]);
+        $jobWithBotWorker = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(2))
+            ->create();
 
         /** @var FindJobsForBot $findJobsForBot */
-        $findJobsForBot = app()->make(FindJobsForBot::class, ['bot' => $bot]);
+        $findJobsForBot = new FindJobsForBot($bot);
 
         $findJobsForBot->handle();
 
@@ -84,43 +64,31 @@ class FindJobsForBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Cluster $cluster */
-        $cluster = factory(Cluster::class)
-            ->create([
-                'creator_id' => $this->user,
-            ]);
+        $cluster = $this->cluster()->create();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'host_id' => $this->host,
-                'creator_id' => $this->user->id,
-                'cluster_id' => $cluster->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
 
-        /** @var Job $jobWithClusterWorker */
-        $jobWithClusterWorker = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $cluster,
-                'worker_type' => $cluster->getMorphClass(),
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->create();
 
         /** @var FindJobsForBot $findJobsForBot */
         $findJobsForBot = app()->make(FindJobsForBot::class, ['bot' => $bot]);
 
         $findJobsForBot->handle();
 
-        $jobWithClusterWorker->refresh();
+        $job->refresh();
         $bot->refresh();
 
-        $this->assertEquals($jobWithClusterWorker->status, JobStatusEnum::ASSIGNED);
-        $this->assertEquals($jobWithClusterWorker->bot_id, $bot->id);
+        $this->assertEquals($job->status, JobStatusEnum::ASSIGNED);
+        $this->assertEquals($job->bot_id, $bot->id);
 
         $this->assertEquals($bot->status, BotStatusEnum::JOB_ASSIGNED);
-        $this->assertEquals($bot->current_job_id, $jobWithClusterWorker->id);
+        $this->assertEquals($bot->current_job_id, $job->id);
     }
 
     /** @test */
@@ -128,33 +96,25 @@ class FindJobsForBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::OFFLINE)
-            ->create([
-                'host_id' => $this->host,
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::OFFLINE)
+            ->create();
 
-        /** @var Job $jobWithBotWorker */
-        $jobWithBotWorker = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot,
-                'worker_type' => $bot->getMorphClass(),
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         /** @var FindJobsForBot $findJobsForBot */
         $findJobsForBot = app()->make(FindJobsForBot::class, ['bot' => $bot]);
 
         $findJobsForBot->handle();
 
-        $jobWithBotWorker->refresh();
+        $job->refresh();
         $bot->refresh();
 
-        $this->assertEquals($jobWithBotWorker->status, JobStatusEnum::QUEUED);
-        $this->assertNull($jobWithBotWorker->bot_id);
+        $this->assertEquals($job->status, JobStatusEnum::QUEUED);
+        $this->assertNull($job->bot_id);
 
         $this->assertEquals($bot->status, BotStatusEnum::OFFLINE);
         $this->assertNull($bot->current_job_id);
@@ -165,33 +125,24 @@ class FindJobsForBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::WORKING)
-            ->create([
-                'host_id' => $this->host,
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::WORKING)
+            ->create();
 
-        /** @var Job $jobWithBotWorker */
-        $jobWithBotWorker = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot,
-                'worker_type' => $bot->getMorphClass(),
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->worker($bot)
+            ->create();
 
         /** @var FindJobsForBot $findJobsForBot */
         $findJobsForBot = app()->make(FindJobsForBot::class, ['bot' => $bot]);
 
         $findJobsForBot->handle();
 
-        $jobWithBotWorker->refresh();
+        $job->refresh();
         $bot->refresh();
 
-        $this->assertEquals($jobWithBotWorker->status, JobStatusEnum::QUEUED);
-        $this->assertNull($jobWithBotWorker->bot_id);
+        $this->assertEquals($job->status, JobStatusEnum::QUEUED);
+        $this->assertNull($job->bot_id);
 
         $this->assertEquals($bot->status, BotStatusEnum::WORKING);
         $this->assertNull($bot->current_job_id);

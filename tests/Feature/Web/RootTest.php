@@ -2,14 +2,10 @@
 
 namespace Tests\Feature\Web;
 
-use Tests\HasUser;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RootTest extends TestCase
 {
-    use HasUser;
-
     /** @test */
     public function unauthenticatedUsersVisitingTheSiteSeeTheWelcomePage()
     {
@@ -20,7 +16,7 @@ class RootTest extends TestCase
     /** @test */
     public function authenticatedUsersVisitingTheSiteAreRedirectedToTheDashboard()
     {
-        $this->actingAs($this->user)
+        $this->actingAs($this->mainUser)
             ->get('/')
             ->assertRedirect('/dashboard');
     }

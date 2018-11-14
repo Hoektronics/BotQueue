@@ -4,12 +4,10 @@ namespace Tests\Feature\Web;
 
 use App\Cluster;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class ClustersTest extends TestCase
 {
-    use HasUser;
     use WithFaker;
 
     /** @test */
@@ -24,11 +22,11 @@ class ClustersTest extends TestCase
     /** @test */
     public function authenticatedUserSeesClusters()
     {
-        $clusters = $this->user->clusters;
+        $clusters = $this->mainUser->clusters;
 
         $response = $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/clusters');
 
         $clusters->each(function ($cluster) use ($response) {
@@ -49,7 +47,7 @@ class ClustersTest extends TestCase
     public function authenticatedUserSeesCreateClusterPage()
     {
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/clusters/create')
             ->assertViewIs('cluster.create')
             ->assertSee('<input name="name"');
@@ -79,10 +77,10 @@ class ClustersTest extends TestCase
         $clusterName = $this->faker->userName;
         $response = $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->postCluster(['name' => $clusterName]);
 
-        $cluster = Cluster::whereCreatorId($this->user->id)->where('name', $clusterName)->first();
+        $cluster = Cluster::whereCreatorId($this->mainUser->id)->where('name', $clusterName)->first();
         $this->assertNotNull($cluster);
         $response->assertRedirect("/clusters/{$cluster->id}");
     }

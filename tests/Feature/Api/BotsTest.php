@@ -2,31 +2,22 @@
 
 namespace Tests\Feature\Api;
 
-use App\Bot;
-use App\User;
 use App\Enums\BotStatusEnum;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Laravel\Passport\Passport;
-use Tests\HasUser;
 use Tests\PassportHelper;
 use Tests\TestCase;
 
 class BotsTest extends TestCase
 {
-    use HasUser;
     use PassportHelper;
 
     /** @test */
     public function botsIndex()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
-            ->withTokenFromUser($this->user)
+            ->withTokenFromUser($this->mainUser)
             ->getJson('/api/bots')
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
@@ -37,9 +28,9 @@ class BotsTest extends TestCase
                         'type' => '3d_printer',
                         'status' => BotStatusEnum::OFFLINE,
                         'creator' => [
-                            'id' => $this->user->id,
-                            'username' => $this->user->username,
-                            'link' => url('/api/users', $this->user->id),
+                            'id' => $this->mainUser->id,
+                            'username' => $this->mainUser->username,
+                            'link' => url('/api/users', $this->mainUser->id),
                         ]
                     ]
                 ]
@@ -49,18 +40,15 @@ class BotsTest extends TestCase
     /** @test */
     public function botsThatAreNotMineAreNotVisibleInIndex()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
-        $other_user = factory(User::class)->create();
-        $other_bot = factory(Bot::class)->create([
-            'creator_id' => $other_user,
-        ]);
+        $other_user = $this->user()->create();
+        $other_bot = $this->bot()
+            ->creator($other_user)
+            ->create();
 
         $this
-            ->withTokenFromUser($this->user)
+            ->withTokenFromUser($this->mainUser)
             ->getJson('/api/bots')
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
@@ -71,9 +59,9 @@ class BotsTest extends TestCase
                         'type' => '3d_printer',
                         'status' => BotStatusEnum::OFFLINE,
                         'creator' => [
-                            'id' => $this->user->id,
-                            'username' => $this->user->username,
-                            'link' => url('/api/users', $this->user->id),
+                            'id' => $this->mainUser->id,
+                            'username' => $this->mainUser->username,
+                            'link' => url('/api/users', $this->mainUser->id),
                         ]
                     ]
                 ]
@@ -84,13 +72,10 @@ class BotsTest extends TestCase
     /** @test */
     public function canSeeMyOwnBot()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
-            ->withTokenFromUser($this->user)
+            ->withTokenFromUser($this->mainUser)
             ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
@@ -100,9 +85,9 @@ class BotsTest extends TestCase
                     'type' => '3d_printer',
                     'status' => BotStatusEnum::OFFLINE,
                     'creator' => [
-                        'id' => $this->user->id,
-                        'username' => $this->user->username,
-                        'link' => url('/api/users', $this->user->id),
+                        'id' => $this->mainUser->id,
+                        'username' => $this->mainUser->username,
+                        'link' => url('/api/users', $this->mainUser->id),
                     ]
                 ]
             ]);
@@ -111,13 +96,10 @@ class BotsTest extends TestCase
     /** @test */
     public function canSeeMyOwnBotGivenExplicitScope()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
-            ->withTokenFromUser($this->user, 'bots')
+            ->withTokenFromUser($this->mainUser, 'bots')
             ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
@@ -127,9 +109,9 @@ class BotsTest extends TestCase
                     'type' => '3d_printer',
                     'status' => BotStatusEnum::OFFLINE,
                     'creator' => [
-                        'id' => $this->user->id,
-                        'username' => $this->user->username,
-                        'link' => url('/api/users', $this->user->id),
+                        'id' => $this->mainUser->id,
+                        'username' => $this->mainUser->username,
+                        'link' => url('/api/users', $this->mainUser->id),
                     ]
                 ]
             ]);
@@ -138,14 +120,14 @@ class BotsTest extends TestCase
     /** @test */
     public function cannotSeeOtherBot()
     {
-        $other_user = factory(User::class)->create();
-        $other_bot = factory(Bot::class)->create([
-            'creator_id' => $other_user,
-        ]);
+        $other_user = $this->user()->create();
+        $other_bot = $this->bot()
+            ->creator($other_user)
+            ->create();
 
         $this
             ->withExceptionHandling()
-            ->withTokenFromUser($this->user)
+            ->withTokenFromUser($this->mainUser)
             ->getJson("/api/bots/{$other_bot->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -153,14 +135,11 @@ class BotsTest extends TestCase
     /** @test */
     public function cannotSeeMyBotIfMissingCorrectScope()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
             ->withExceptionHandling()
-            ->withTokenFromUser($this->user, [])
+            ->withTokenFromUser($this->mainUser, [])
             ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }

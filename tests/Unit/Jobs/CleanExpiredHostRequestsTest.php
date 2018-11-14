@@ -13,8 +13,7 @@ class CleanExpiredHostRequestsTest extends TestCase
     /** @test */
     public function retrievingHostRequestThatHasNotExpired()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $this->assertGreaterThan(Carbon::now(), $host_request->expires_at);
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
@@ -23,8 +22,13 @@ class CleanExpiredHostRequestsTest extends TestCase
     /** @test */
     public function retrievingHostRequestThatHasExpiredButDBHasNotBeenUpdated()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()
+            ->create();
+
+        $this->assertGreaterThan(Carbon::now(), $host_request->expires_at);
+        $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
+        $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->getAttributes()['status']);
+
         $host_request->expires_at = Carbon::now()->subMinute();
         $host_request->save();
 
@@ -36,10 +40,9 @@ class CleanExpiredHostRequestsTest extends TestCase
     /** @test */
     public function hostRequestThatHasExpiredIsGoneOneHourAfter()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
-        $host_request->expires_at = Carbon::now()->subHour();
-        $host_request->save();
+        $host_request = $this->hostRequest()
+            ->expiresAt(Carbon::now()->subHour())
+            ->create();
 
         $job = new CleanExpiredHostRequests();
         $job->handle();
@@ -51,19 +54,19 @@ class CleanExpiredHostRequestsTest extends TestCase
     /** @test */
     public function hostRequestThatHasExpiredIsNotGoneIfItHasNotBeenOneHourSinceExpiration()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
-        $host_request->expires_at = Carbon::now()->subHour()->addMinute();
-        $host_request->save();
+        $host_request = $this->hostRequest()
+            ->expiresAt(Carbon::now()->subHour()->addMinute())
+            ->create();
 
         $job = new CleanExpiredHostRequests();
         $job->handle();
 
+        /** @var HostRequest $found_request */
         $found_request = HostRequest::query()->find($host_request->id);
         $this->assertNotNull($found_request);
 
         $this->assertLessThan(Carbon::now(), $found_request->expires_at);
         $this->assertEquals(HostRequestStatusEnum::EXPIRED, $found_request->status);
-        $this->assertEquals(HostRequestStatusEnum::REQUESTED, $found_request->getAttributes()['status']);
+        $this->assertEquals(HostRequestStatusEnum::EXPIRED, $found_request->getAttributes()['status']);
     }
 }

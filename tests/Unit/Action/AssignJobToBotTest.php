@@ -13,13 +13,10 @@ use App\Exceptions\JobAssignmentFailed;
 use App\Exceptions\JobIsNotQueued;
 use App\Job;
 use Carbon\Carbon;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class AssignJobToBotTest extends TestCase
 {
-    use HasUser;
-
     /** @test
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
@@ -30,20 +27,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -69,27 +60,17 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Cluster $cluster */
-        $cluster = factory(Cluster::class)
-            ->create([
-                'creator_id' => $this->user,
-            ]);
+        $cluster = $this->cluster()->create();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-                'cluster_id' => $cluster->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
-            ->create([
-                'worker_id' => $cluster->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -115,27 +96,18 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $otherBot */
-        $otherBot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $otherBot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $otherBot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($otherBot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -154,26 +126,16 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Cluster $cluster */
-        $cluster = factory(Cluster::class)
-            ->create([
-                'creator_id' => $this->user,
-            ]);
+        $cluster = $this->cluster()->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED, 'worker:cluster')
-            ->create([
-                'worker_id' => $cluster->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -192,28 +154,19 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $jobA */
-        $jobA = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $jobA = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
-        /** @var Job $jobB */
-        $jobB = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $jobB = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -234,20 +187,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::OFFLINE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::OFFLINE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -266,20 +213,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::WORKING)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::WORKING)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -298,20 +239,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::JOB_ASSIGNED)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::JOB_ASSIGNED)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -330,20 +265,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::ASSIGNED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::ASSIGNED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -362,20 +291,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::IN_PROGRESS)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::IN_PROGRESS)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -394,20 +317,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUALITY_CHECK)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUALITY_CHECK)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -426,20 +343,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::COMPLETED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::COMPLETED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -458,20 +369,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::FAILED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::FAILED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -490,20 +395,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::CANCELLED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::CANCELLED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -522,20 +421,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         // Using an update this way means the model still has the old status
         Bot::query()
@@ -563,20 +456,14 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         // Using an update this way means the model still has the old status
         Job::query()
@@ -604,27 +491,18 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Bot $otherBot */
-        $otherBot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $otherBot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         // Using an update this way means the model still has the old status
         Job::query()
@@ -654,28 +532,19 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
-        /** @var Job $otherJob */
-        $otherJob = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $otherJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         // Using an update this way means the model still has the old status
         Bot::query()
@@ -700,32 +569,23 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
         Carbon::setTestNow("now");
 
-        /** @var Job $jobA */
-        $jobA = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(5)
-            ]);
+        $jobA = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(5))
+            ->create();
 
-        /** @var Job $jobB */
-        $jobB = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(10)
-            ]);
+        $jobB = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(10))
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -746,32 +606,23 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
         Carbon::setTestNow("now");
 
-        /** @var Job $jobA */
-        $jobA = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(5)
-            ]);
+        $jobA = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(5))
+            ->create();
 
-        /** @var Job $jobB */
-        $jobB = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(10)
-            ]);
+        $jobB = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(10))
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -799,32 +650,23 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
         Carbon::setTestNow("now");
 
-        /** @var Job $jobA */
-        $jobA = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(5)
-            ]);
+        $jobA = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(5))
+            ->create();
 
-        /** @var Job $jobB */
-        $jobB = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(10)
-            ]);
+        $jobB = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(10))
+            ->create();
 
         $assign = new AssignJobToBot($bot);
 
@@ -855,39 +697,27 @@ class AssignJobToBotTest extends TestCase
     {
         $this->withoutJobs();
 
-        /** @var Bot $botA */
-        $botA = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $botA = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Bot $botB */
-        $botB = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $botB = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
         Carbon::setTestNow("now");
 
-        /** @var Job $jobA */
-        $jobA = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $botA->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(5)
-            ]);
+        $jobA = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($botA)
+            ->createdAt(Carbon::now()->subMinute(5))
+            ->create();
 
-        /** @var Job $jobB */
-        $jobB = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $botB->id,
-                'creator_id' => $this->user->id,
-                'created_at' => Carbon::now()->subMinute(10)
-            ]);
+        $jobB = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($botB)
+            ->createdAt(Carbon::now()->subMinute(10))
+            ->create();
 
         $assign = new AssignJobToBot($botA);
 

@@ -3,12 +3,10 @@
 namespace Tests\Feature\Web\Admin;
 
 use Illuminate\Http\Response;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class HorizonTest extends TestCase
 {
-    use HasUser;
 
     /** @test */
     public function anUnauthenticatedUserCanNotSeeHorizon()
@@ -24,7 +22,7 @@ class HorizonTest extends TestCase
     {
         $this
             ->withExceptionHandling()
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/horizon')
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -32,10 +30,10 @@ class HorizonTest extends TestCase
     /** @test */
     public function anAdminCanSeeHorizon()
     {
-        $this->user->promoteToAdmin();
+        $this->mainUser->promoteToAdmin();
 
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/horizon')
             ->assertStatus(Response::HTTP_OK);
     }

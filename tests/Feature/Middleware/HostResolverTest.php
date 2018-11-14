@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Middlware;
+namespace Tests\Feature\Middleware;
 
 use App\Host;
 use App\HostManager;
@@ -8,14 +8,9 @@ use App\Http\Middleware\ResolveHost;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Tests\Feature\Host\HostTestCase;
-use Tests\HasHost;
-use Tests\HasUser;
-use Tests\PassportHelper;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class HostResolverTest extends HostTestCase
+class HostResolverTest extends TestCase
 {
     /** @test */
     public function requestWithoutTokenDoesNotResolveHost()
@@ -40,7 +35,7 @@ class HostResolverTest extends HostTestCase
     {
         $request = Request::create('http://example.com/host/foo', 'GET');
         $request->headers->add([
-            'Authorization' => 'Bearer '. $this->host->getJWT(),
+            'Authorization' => 'Bearer '. $this->mainHost->getJWT(),
         ]);
 
         $middleware = new ResolveHost();
@@ -57,19 +52,19 @@ class HostResolverTest extends HostTestCase
         $this->assertNull($appMadeHost->id);
 
         $hostManagerHost = app(HostManager::class)->getHost();
-        $this->assertEquals($this->host->id, $hostManagerHost->id);
+        $this->assertEquals($this->mainHost->id, $hostManagerHost->id);
     }
 
     /** @test */
     public function updatesSeenAt()
     {
         $fakeTimeStamp = Carbon::now()->subMinute();
-        $this->host->seen_at = $fakeTimeStamp;
-        $this->host->save();
+        $this->mainHost->seen_at = $fakeTimeStamp;
+        $this->mainHost->save();
 
         $request = Request::create('http://example.com/host/foo', 'GET');
         $request->headers->add([
-            'Authorization' => 'Bearer '. $this->host->getJWT(),
+            'Authorization' => 'Bearer '. $this->mainHost->getJWT(),
         ]);
 
         $middleware = new ResolveHost();
@@ -77,7 +72,7 @@ class HostResolverTest extends HostTestCase
         $middleware->handle($request, function() {});
 
         /** @var Host $testHost */
-        $testHost = Host::query()->find($this->host->id);
+        $testHost = Host::query()->find($this->mainHost->id);
         $this->assertEquals(Carbon::now(), $testHost->seen_at);
     }
 }

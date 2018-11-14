@@ -17,15 +17,15 @@ class LoginTest extends TestCase
      */
     private $user;
 
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
 
         $this->password = $this->faker->password;
 
-        $this->user = factory(User::class)->create([
-            'password' => bcrypt($this->password),
-        ]);
+        $this->user = $this->user()
+            ->password($this->password)
+            ->create();
     }
 
     /** @test */

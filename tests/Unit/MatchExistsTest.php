@@ -8,22 +8,16 @@ use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Rules\MatchExists;
 use Illuminate\Support\Facades\Validator;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class MatchExistsTest extends TestCase
 {
-    use HasUser;
-
     /** @test */
     public function matchingOnModelIdAttribute()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
         $fieldValue = 'foo_' . $bot->id;
         $fields = [
@@ -48,12 +42,9 @@ class MatchExistsTest extends TestCase
     /** @test */
     public function whenNothingMatches()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
         $fieldValue = 'foo_' . ($bot->id + 1);
         $fields = [
@@ -75,12 +66,10 @@ class MatchExistsTest extends TestCase
     /** @test */
     public function multipleFieldMatchesWithSameModel()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
+
         $fieldValue = 'bar_' . $bot->id;
         $fields = [
             'field' => $fieldValue
@@ -105,11 +94,7 @@ class MatchExistsTest extends TestCase
     /** @test */
     public function multipleFieldMatchesWithDifferentModel()
     {
-        /** @var Cluster $cluster */
-        $cluster = factory(Cluster::class)
-            ->create([
-                'creator_id' => $this->user,
-            ]);
+        $cluster = $this->cluster()->create();
 
         $fieldValue = 'bar_' . $cluster->id;
         $fields = [
@@ -135,14 +120,11 @@ class MatchExistsTest extends TestCase
     /** @test */
     public function fieldMatchesWithScope()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        $this->actingAs($this->user);
+        $this->actingAs($this->mainUser);
 
         $fieldValue = 'foo_' . $bot->id;
 

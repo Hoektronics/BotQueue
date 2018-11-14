@@ -3,21 +3,22 @@
 namespace Tests\Feature\Host\Bot;
 
 use App\Action\AssignJobToBot;
-use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Job;
 use Illuminate\Http\Response;
-use Tests\Feature\Host\HostTestCase;
+use Tests\PassportHelper;
+use Tests\TestCase;
 
-class BotVisibilityTest extends HostTestCase
+class BotVisibilityTest extends TestCase
 {
+    use PassportHelper;
+
     /** @test */
     public function hostCanNotAccessRootBotsResourceForUser()
     {
         $this
             ->withExceptionHandling()
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->getJson('/api/bots')
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -25,14 +26,11 @@ class BotVisibilityTest extends HostTestCase
     /** @test */
     public function hostCanNotAccessSpecificBotEvenIfUserIsOwnerOfBoth()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
         $this
             ->withExceptionHandling()
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->getJson("/api/bots/{$bot->id}")
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -40,15 +38,12 @@ class BotVisibilityTest extends HostTestCase
     /** @test */
     public function hostCanAccessBotsAssignedToIt()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user->id,
-        ]);
+        $bot = $this->bot()->create();
 
-        $bot->assignTo($this->host);
+        $bot->assignTo($this->mainHost);
 
         $this
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->getJson("/host/bots")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
@@ -72,27 +67,21 @@ class BotVisibilityTest extends HostTestCase
      */
     public function hostCanSeeJobAssignedToBot()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-                'host_id' => $this->host->id
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->host($this->mainHost)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
         $assign->fromJob($job);
 
         $this
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->getJson("/host/bots")
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([

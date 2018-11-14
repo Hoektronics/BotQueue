@@ -3,37 +3,25 @@
 namespace Tests\Unit;
 
 use App\Action\AssignJobToBot;
-use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Job;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class JobStartTest extends TestCase
 {
-    use HasUser;
-
     /** @test
-     * @throws \App\Exceptions\JobAssignmentFailed
      * @throws \Throwable
      */
     public function botCanStartJobIfItIsAssignedAJob()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)
-            ->states(BotStatusEnum::IDLE)
-            ->create([
-                'creator_id' => $this->user->id,
-            ]);
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
 
-        /** @var Job $job */
-        $job = factory(Job::class)
-            ->states(JobStatusEnum::QUEUED)
-            ->create([
-                'worker_id' => $bot->id,
-                'creator_id' => $this->user->id,
-            ]);
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
 
         $assign = new AssignJobToBot($bot);
         $assign->fromJob($job);

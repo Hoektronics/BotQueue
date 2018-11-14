@@ -9,31 +9,19 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser as JwtParser;
 use Lcobucci\JWT\Token;
+use Tests\TestCase;
 
-class RequestTest extends HostTestCase
+class RequestTest extends TestCase
 {
     use WithFaker;
-
-    private $localIpv4;
-    private $ipv4;
-    private $hostname;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->localIpv4 = $this->faker->localIpv4;
-        $this->ipv4 = $this->faker->ipv4;
-        $this->hostname = $this->faker->domainWord;
-    }
 
     /** @test */
     public function clientRequestHasStatusOfRequested()
     {
         $host_request_id = $this
             ->postJson('/host/requests', [
-                'local_ip' => $this->localIpv4,
-                'hostname' => $this->hostname,
+                'local_ip' => $this->faker->localIpv4,
+                'hostname' => $this->faker->domainWord,
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
@@ -87,8 +75,10 @@ class RequestTest extends HostTestCase
     /** @test */
     public function hostRequestSetsExternalIp()
     {
+        $ipv4 = $this->faker->ipv4;
+
         $host_request_id = $this
-            ->withRemoteIp($this->ipv4)
+            ->withRemoteIp($ipv4)
             ->postJson('/host/requests')
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
@@ -103,14 +93,13 @@ class RequestTest extends HostTestCase
         $host_request = HostRequest::query()->find($host_request_id);
 
         $this->assertNotNull($host_request);
-        $this->assertEquals($this->ipv4, $host_request->remote_ip);
+        $this->assertEquals($ipv4, $host_request->remote_ip);
     }
 
     /** @test */
     public function viewingHostRequestReturnsRequestedStatus()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $this
             ->getJson("/host/requests/{$host_request->id}")
@@ -129,10 +118,9 @@ class RequestTest extends HostTestCase
      */
     public function viewingClaimedHostRequestReturnsClaimedStatus()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
-        $this->user->claim($host_request, 'My host');
+        $this->mainUser->claim($host_request, 'My host');
 
         $this
             ->getJson("/host/requests/{$host_request->id}")
@@ -142,9 +130,9 @@ class RequestTest extends HostTestCase
                     'id' => $host_request->id,
                     'status' => HostRequestStatusEnum::CLAIMED,
                     'claimer' => [
-                        'id' => $this->user->id,
-                        'username' => $this->user->username,
-                        'link' => url('/api/users', $this->user->id),
+                        'id' => $this->mainUser->id,
+                        'username' => $this->mainUser->username,
+                        'link' => url('/api/users', $this->mainUser->id),
                     ]
                 ],
                 'links' => [
@@ -152,12 +140,11 @@ class RequestTest extends HostTestCase
                 ]
             ]);
     }
-    
+
     /** @test */
     public function tryingToAcessHostWithoutItBeingClaimedIsNotAllowed()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $this
             ->withExceptionHandling()
@@ -170,11 +157,10 @@ class RequestTest extends HostTestCase
      */
     public function conversionToHostReturnsAccessToken()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $host_name = 'My super unique test name';
-        $this->user->claim($host_request, $host_name);
+        $this->mainUser->claim($host_request, $host_name);
 
         $host_access_response = $this
             ->postJson("/host/requests/{$host_request->id}/access")
@@ -203,9 +189,9 @@ class RequestTest extends HostTestCase
                         'id' => $host->id,
                         'name' => $host->name,
                         'owner' => [
-                            'id' => $this->user->id,
-                            'username' => $this->user->username,
-                            'link' => url('/api/users', $this->user->id),
+                            'id' => $this->mainUser->id,
+                            'username' => $this->mainUser->username,
+                            'link' => url('/api/users', $this->mainUser->id),
                         ]
                     ]
                 ]
@@ -217,11 +203,10 @@ class RequestTest extends HostTestCase
      */
     public function hostRequestToHostCanOnlyHappenOnce()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $host_name = 'My super unique test name';
-        $this->user->claim($host_request, $host_name);
+        $this->mainUser->claim($host_request, $host_name);
 
         $this
             ->postJson("/host/requests/{$host_request->id}/access")
@@ -248,9 +233,8 @@ class RequestTest extends HostTestCase
     {
         $jwt_parser = app(JwtParser::class);
 
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
-        $this->user->claim($host_request, "My Test Host");
+        $host_request = $this->hostRequest()->create();
+        $this->mainUser->claim($host_request, "My Test Host");
 
         $access_token = $this
             ->postJson("/host/requests/{$host_request->id}/access")
@@ -270,7 +254,7 @@ class RequestTest extends HostTestCase
         $jwt = $jwt_parser->parse($access_token);
 
         $this->assertEquals($host->token_id, $jwt->getClaim('jti'));
-        $this->assertEquals($this->user->id, $jwt->getClaim('sub'));
+        $this->assertEquals($this->mainUser->id, $jwt->getClaim('sub'));
         $this->assertEquals($host->token->client_id, $jwt->getClaim('aud'));
         $this->assertArraySubset(['host'], $jwt->getClaim('scopes'));
     }

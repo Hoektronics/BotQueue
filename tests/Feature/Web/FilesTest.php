@@ -7,13 +7,10 @@ use App\File;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\HasUser;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class FilesTest extends TestCase
 {
-    use HasUser;
     use WithFaker;
 
     /** @test */
@@ -29,7 +26,7 @@ class FilesTest extends TestCase
     public function authenticatedUserCanSeeFileCreatePage()
     {
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/files/create')
             ->assertViewIs('file.create');
     }
@@ -42,14 +39,14 @@ class FilesTest extends TestCase
         $fileName = $this->faker->userName . '.stl';
 
         $response = $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->post('/files', [
                 'file' => UploadedFile::fake()->create($fileName),
             ]);
 
         /** @var File $file */
         $file = File::query()
-            ->where('uploader_id', $this->user->id)
+            ->where('uploader_id', $this->mainUser->id)
             ->where('name', $fileName)
             ->first();
 
@@ -68,14 +65,14 @@ class FilesTest extends TestCase
         $fileName = $this->faker->userName . '.gcode';
 
         $response = $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->post('/files', [
                 'file' => UploadedFile::fake()->create($fileName),
             ]);
 
         /** @var File $file */
         $file = File::query()
-            ->where('uploader_id', $this->user->id)
+            ->where('uploader_id', $this->mainUser->id)
             ->where('name', $fileName)
             ->first();
 
@@ -94,14 +91,14 @@ class FilesTest extends TestCase
         $fileName = $this->faker->userName . '.STL';
 
         $response = $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->post('/files', [
                 'file' => UploadedFile::fake()->create($fileName),
             ]);
 
         /** @var File $file */
         $file = File::query()
-            ->where('uploader_id', $this->user->id)
+            ->where('uploader_id', $this->mainUser->id)
             ->where('name', $fileName)
             ->first();
 

@@ -6,29 +6,22 @@ use App\Enums\HostRequestStatusEnum;
 use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostAlreadyClaimed;
 use App\HostRequest;
-use App\User;
-use Tests\HasHost;
-use Tests\HasUser;
 use Tests\TestCase;
 
 class HostRequestTest extends TestCase
 {
-    use HasHost;
-    use HasUser;
-
     /** @test
      * @throws HostAlreadyClaimed
      */
     public function aUserCanClaimAHostRequest()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
-        $this->user->claim($host_request, "Test Host");
+        $this->mainUser->claim($host_request, "Test Host");
 
         $host_request->refresh();
 
-        $this->assertEquals($this->user->id, $host_request->claimer_id);
+        $this->assertEquals($this->mainUser->id, $host_request->claimer_id);
         $this->assertEquals("Test Host", $host_request->name);
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
@@ -38,17 +31,15 @@ class HostRequestTest extends TestCase
      */
     public function aUserCannotClaimHostAlreadyClaimedByOtherUser()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
-        /** @var User $otherUser */
-        $otherUser = factory(User::class)->create();
+        $otherUser = $this->user()->create();
 
         $otherUser->claim($host_request, "Test Host");
 
         $this->expectException(HostAlreadyClaimed::class);
 
-        $this->user->claim($host_request, "No I want this host!");
+        $this->mainUser->claim($host_request, "No I want this host!");
 
         $this->assertEquals($otherUser->id, $host_request->claimer_id);
         $this->assertEquals("Test Host", $host_request->name);
@@ -61,13 +52,10 @@ class HostRequestTest extends TestCase
      */
     public function hostRequestThatWasConvertedIntoAHostIsGone()
     {
-        $this->setUpHostClient();
-
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $host_name = 'My super unique test name';
-        $this->user->claim($host_request, $host_name);
+        $this->mainUser->claim($host_request, $host_name);
 
         $host = $host_request->toHost();
 
@@ -76,7 +64,7 @@ class HostRequestTest extends TestCase
 
         $this->assertNotNull($host);
         $this->assertEquals($host_name, $host->name);
-        $this->assertEquals($this->user->id, $host->owner_id);
+        $this->assertEquals($this->mainUser->id, $host->owner_id);
     }
 
     /** @test
@@ -84,8 +72,7 @@ class HostRequestTest extends TestCase
      */
     public function deletingAHostRequestThenTryingToConvertItIntoAHostIsNotAllowed()
     {
-        /** @var HostRequest $host_request */
-        $host_request = factory(HostRequest::class)->create();
+        $host_request = $this->hostRequest()->create();
 
         $host_request->delete();
 

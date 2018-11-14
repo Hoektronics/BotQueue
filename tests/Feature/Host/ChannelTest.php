@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\Host;
 
-use App\Bot;
 use Illuminate\Http\Response;
+use Tests\PassportHelper;
+use Tests\TestCase;
 
-class ChannelTest extends HostTestCase
+class ChannelTest extends TestCase
 {
+    use PassportHelper;
+    
     protected function authChannel($channel)
     {
         return $this->postJson('/broadcasting/auth', [
@@ -19,7 +22,7 @@ class ChannelTest extends HostTestCase
     {
         $this
             ->withExceptionHandling()
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->post('/broadcasting/auth')
             ->assertStatus(Response::HTTP_BAD_REQUEST);
     }
@@ -29,22 +32,19 @@ class ChannelTest extends HostTestCase
     {
         $this
             ->withExceptionHandling()
-            ->withTokenFromHost($this->host)
-            ->authChannel('private-user.' . $this->user->id)
+            ->withTokenFromHost($this->mainHost)
+            ->authChannel('private-user.' . $this->mainUser->id)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
     public function aHostCannotListenToABotsChannelIfThatBotIsNotAssignedToIt()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user
-        ]);
+        $bot = $this->bot()->create();
 
         $this
             ->withExceptionHandling()
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->authChannel('private-bot.' . $bot->id)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -52,16 +52,13 @@ class ChannelTest extends HostTestCase
     /** @test */
     public function aHostCanListenToABotsChannelIfThatBotIsAssignedToIt()
     {
-        /** @var Bot $bot */
-        $bot = factory(Bot::class)->create([
-            'creator_id' => $this->user
-        ]);
+        $bot = $this->bot()->create();
 
-        $bot->assignTo($this->host);
+        $bot->assignTo($this->mainHost);
 
         $this
             ->withExceptionHandling()
-            ->withTokenFromHost($this->host)
+            ->withTokenFromHost($this->mainHost)
             ->authChannel('private-bot.' . $bot->id)
             ->assertStatus(Response::HTTP_OK);
     }

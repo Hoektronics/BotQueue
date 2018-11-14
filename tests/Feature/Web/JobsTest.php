@@ -2,13 +2,10 @@
 
 namespace Tests\Feature\Web;
 
-use Tests\HasUser;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class JobsTest extends TestCase
 {
-    use HasUser;
 
     /** @test */
     public function unauthenticatedUserCannotSeeJobsPage()
@@ -23,7 +20,7 @@ class JobsTest extends TestCase
     public function authenticatedUserSeesTheirBots()
     {
         $this
-            ->actingAs($this->user)
+            ->actingAs($this->mainUser)
             ->get('/jobs')
             ->assertViewIs('job.index');
     }
