@@ -38,8 +38,8 @@ class FindJobsForBot implements ShouldQueue
      * @return void
      * @throws \App\Exceptions\BotIsNotIdle
      * @throws \App\Exceptions\BotIsNotValidWorker
-     * @throws \App\Exceptions\JobAssignmentFailed
      * @throws \App\Exceptions\JobIsNotQueued
+     * @throws \Throwable
      */
     public function handle()
     {

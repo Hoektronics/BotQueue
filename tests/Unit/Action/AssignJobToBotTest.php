@@ -4,7 +4,6 @@ namespace Tests\Unit\Action;
 
 use App\Action\AssignJobToBot;
 use App\Bot;
-use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotIsNotIdle;
@@ -21,7 +20,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function botGetsAssignedWhenItIsTheWorker()
     {
@@ -54,7 +53,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function botGetsAssignedWhenItIsInTheClusterThatIsTheWorker()
     {
@@ -90,7 +89,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function botCannotGrabJobIfItIsNotTheWorker()
     {
@@ -120,7 +119,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function botCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
     {
@@ -148,7 +147,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function botThatAlreadyHasAJobCannotGrabAnother()
     {
@@ -181,7 +180,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function anOfflineBotCannotGrabAJob()
     {
@@ -207,7 +206,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aWorkingBotCannotGrabAJob()
     {
@@ -233,7 +232,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function anAlreadyAssignedBotCannotGrabAJob()
     {
@@ -259,7 +258,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function anAlreadyAssignedJobCannotBeAssignedAgain()
     {
@@ -285,7 +284,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function anInProgressJobCannotBeAssigned()
     {
@@ -311,7 +310,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aQualityCheckJobCannotBeAssigned()
     {
@@ -337,7 +336,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aCompletedJobCannotBeAssigned()
     {
@@ -363,7 +362,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aFailedJobCannotBeAssigned()
     {
@@ -389,7 +388,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aCancelledJobCannotBeAssigned()
     {
@@ -415,7 +414,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aBotThatWasIdleStillThrowsBotIsNotIdle()
     {
@@ -450,7 +449,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aJobThatWasQueuedStillThrowsJobIsNotQueued()
     {
@@ -485,7 +484,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aJobThatWasQueuedButGetsPickedUpByADifferentJobFails()
     {
@@ -526,7 +525,7 @@ class AssignJobToBotTest extends TestCase
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued
      * @throws BotIsNotValidWorker
-     * @throws JobAssignmentFailed
+     * @throws \Throwable
      */
     public function aBotThatAttemptsToUpAJobWhileAnotherProcessIsRunningFails()
     {
