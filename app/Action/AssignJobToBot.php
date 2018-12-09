@@ -32,35 +32,6 @@ class AssignJobToBot
     }
 
     /**
-     * @param Collection $jobs
-     */
-    public function fromJobs($jobs)
-    {
-        $jobs
-            ->sortBy('created_at')
-            ->each(function ($job) {
-                try {
-                    $this->fromJob($job);
-
-                    // No exception means assignment worked!
-                    return false;
-                } catch (BotIsNotIdle $ex) {
-                    // No need to keep going, no job will work
-                    return false;
-                } catch (JobIsNotQueued $ex) {
-                    // This job won't work, but the next might.
-                    return true;
-                } catch (BotIsNotValidWorker $ex) {
-                    // This job won't work, but the next might.
-                    return true;
-                } catch (JobAssignmentFailed $x) {
-                    // This job won't work, but the next might.
-                    return true;
-                }
-            });
-    }
-
-    /**
      * @param Job $job
      * @throws BotIsNotIdle
      * @throws JobIsNotQueued

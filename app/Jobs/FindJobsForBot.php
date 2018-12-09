@@ -7,6 +7,9 @@ use App\Bot;
 use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Exceptions\BotIsNotIdle;
+use App\Exceptions\BotIsNotValidWorker;
+use App\Exceptions\JobIsNotQueued;
 use App\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -36,41 +39,71 @@ class FindJobsForBot implements ShouldQueue
      * Execute the job.
      *
      * @return void
-     * @throws \App\Exceptions\BotIsNotIdle
-     * @throws \App\Exceptions\BotIsNotValidWorker
-     * @throws \App\Exceptions\JobIsNotQueued
-     * @throws \Throwable
      */
     public function handle()
     {
-        if($this->bot->status != BotStatusEnum::IDLE) {
+        if($this->bot->status != BotStatusEnum::IDLE)
             return;
-        }
 
-        $jobForBotWorker = Job::whereStatus(JobStatusEnum::QUEUED)
+        /** @var Job $job */
+        $job = Job::query()
             ->where('worker_id', $this->bot->id)
             ->where('worker_type', $this->bot->getMorphClass())
+            ->where('status', JobStatusEnum::QUEUED)
             ->orderBy('created_at')
             ->first();
 
-        if($jobForBotWorker != null) {
-            $assign = new AssignJobToBot($this->bot);
-            $assign->fromJob($jobForBotWorker);
-
+        if ($job != null) {
+            try {
+                $assignJobToBot = new AssignJobToBot($this->bot);
+                $assignJobToBot->fromJob($job);
+            }
+            catch (BotIsNotIdle $e) {
+                return;
+            }
+            catch (BotIsNotValidWorker $e) {
+                return;
+            }
+            catch (JobIsNotQueued $e) {
+                return;
+            }
+            catch (\Throwable $e) {
+                return;
+            }
             return;
         }
 
         /** @var Cluster $cluster */
         $cluster = $this->bot->cluster;
-        $jobForCluster = Job::whereStatus(JobStatusEnum::QUEUED)
+        if ($cluster == null) {
+            return;
+        }
+
+        /** @var Job $job */
+        $job = Job::query()
             ->where('worker_id', $cluster->id)
             ->where('worker_type', $cluster->getMorphClass())
+            ->where('status', JobStatusEnum::QUEUED)
             ->orderBy('created_at')
             ->first();
 
-        if($jobForCluster != null) {
-            $assign = new AssignJobToBot($this->bot);
-            $assign->fromJob($jobForCluster);
+        if($job != null) {
+            try {
+                $assignJobToBot = new AssignJobToBot($this->bot);
+                $assignJobToBot->fromJob($job);
+            }
+            catch (BotIsNotIdle $e) {
+                return;
+            }
+            catch (BotIsNotValidWorker $e) {
+                return;
+            }
+            catch (JobIsNotQueued $e) {
+                return;
+            }
+            catch (\Throwable $e) {
+                return;
+            }
         }
     }
 }
