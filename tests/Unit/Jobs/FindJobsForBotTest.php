@@ -2,17 +2,59 @@
 
 namespace Tests\Unit\Jobs;
 
+use App\Action\AssignJobToBot;
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Exceptions\BotIsNotIdle;
+use App\Exceptions\BotIsNotValidWorker;
+use App\Exceptions\JobIsNotQueued;
 use App\Job;
 use App\Jobs\FindJobsForBot;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class FindJobsForBotTest extends TestCase
 {
+    /** @var MockInterface $assignJobToBot */
+    private $assignJobToBot;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->assignJobToBot = \Mockery::mock(AssignJobToBot::class);
+        $this->app->bind(AssignJobToBot::class, function () {
+            return $this->assignJobToBot;
+        });
+    }
+
+    private function fromJobIsNeverCalled()
+    {
+        return $this->assignJobToBot->shouldReceive('fromJob')->never();
+    }
+
+    private function fromJobIsCalledWith(Job $job)
+    {
+        return $this->assignJobToBot->shouldReceive('fromJob')
+            ->once()
+            ->withArgs(function($arg) use ($job) {
+                return $arg->id == $job->id;
+            })
+            ->andReturnUndefined();
+    }
+
+    private function fromJobIsNotCalledWith(Job $job)
+    {
+        return $this->assignJobToBot->shouldReceive('fromJob')
+            ->never()
+            ->withArgs(function($arg) use ($job) {
+                return $arg->id == $job->id;
+            })
+            ->andReturnUndefined();
+    }
+
     /** @test */
     public function anIdleBotCanBeAssignedAJobWhereItIsTheWorkerOfThatJob()
     {
@@ -27,17 +69,10 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
+        $this->fromJobIsCalledWith($job);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
-        $this->assertEquals($job->id, $bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
-        $this->assertEquals($bot->id, $job->bot_id);
     }
 
     /** @test */
@@ -49,7 +84,7 @@ class FindJobsForBotTest extends TestCase
             ->state(BotStatusEnum::IDLE)
             ->create();
 
-        $job = $this->job()
+        $this->job()
             ->state(JobStatusEnum::QUEUED)
             ->worker($botWithJobWorker)
             ->create();
@@ -58,21 +93,10 @@ class FindJobsForBotTest extends TestCase
             ->state(BotStatusEnum::IDLE)
             ->create();
 
+        $this->fromJobIsNeverCalled();
+
         $findJobsForBot = new FindJobsForBot($lonelyBot);
         $findJobsForBot->handle();
-
-        $botWithJobWorker->refresh();
-        $job->refresh();
-        $lonelyBot->refresh();
-
-        $this->assertEquals(BotStatusEnum::IDLE, $botWithJobWorker->status);
-        $this->assertNull($botWithJobWorker->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
-        $this->assertNull($job->bot_id);
-
-        $this->assertEquals(BotStatusEnum::IDLE, $lonelyBot->status);
-        $this->assertNull($lonelyBot->current_job_id);
     }
 
     /** @test */
@@ -92,17 +116,10 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
+        $this->fromJobIsCalledWith($job);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
-        $this->assertEquals($job->id, $bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
-        $this->assertEquals($bot->id, $job->bot_id);
     }
 
     /** @test */
@@ -119,22 +136,15 @@ class FindJobsForBotTest extends TestCase
 
         $clusterForJob = $this->cluster()->create();
 
-        $job = $this->job()
+        $this->job()
             ->state(JobStatusEnum::QUEUED)
             ->worker($clusterForJob)
             ->create();
 
+        $this->fromJobIsNeverCalled();
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
     /** @test */
@@ -147,7 +157,6 @@ class FindJobsForBotTest extends TestCase
             ->create();
 
         Carbon::setTestNow('now');
-
 
         $secondJobByTime = $this->job()
             ->state(JobStatusEnum::QUEUED)
@@ -166,21 +175,11 @@ class FindJobsForBotTest extends TestCase
         $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
         $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
 
+        $this->fromJobIsCalledWith($firstJobByTime);
+        $this->fromJobIsNotCalledWith($secondJobByTime);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $firstJobByTime->refresh();
-        $secondJobByTime->refresh();
-
-        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
-        $this->assertEquals($firstJobByTime->id, $bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::ASSIGNED, $firstJobByTime->status);
-        $this->assertEquals($bot->id, $firstJobByTime->bot_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $secondJobByTime->status);
-        $this->assertNull($secondJobByTime->bot_id);
     }
 
     /** @test */
@@ -212,18 +211,11 @@ class FindJobsForBotTest extends TestCase
         // The cluster job is earlier by time, but it should still pick the job with the bot worker
         $this->assertGreaterThan($jobWithBotWorker->created_at, $jobWithClusterWorker->created_at);
 
+        $this->fromJobIsCalledWith($jobWithBotWorker);
+        $this->fromJobIsNotCalledWith($jobWithClusterWorker);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $jobWithBotWorker->refresh();
-        $jobWithClusterWorker->refresh();
-
-        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
-        $this->assertEquals($jobWithBotWorker->id, $bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::ASSIGNED, $jobWithBotWorker->status);
-        $this->assertEquals($bot->id, $jobWithBotWorker->bot_id);
     }
 
     /** @test */
@@ -257,21 +249,11 @@ class FindJobsForBotTest extends TestCase
         $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
         $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
 
+        $this->fromJobIsCalledWith($firstJobByTime);
+        $this->fromJobIsNotCalledWith($secondJobByTime);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $firstJobByTime->refresh();
-        $secondJobByTime->refresh();
-
-        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
-        $this->assertEquals($firstJobByTime->id, $bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::ASSIGNED, $firstJobByTime->status);
-        $this->assertEquals($bot->id, $firstJobByTime->bot_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $secondJobByTime->status);
-        $this->assertNull($secondJobByTime->bot_id);
     }
 
     public static function nonIdleBotStates()
@@ -301,24 +283,14 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
+        $this->fromJobIsNotCalledWith($job);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals($botState, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
-    /** @test
-     * @dataProvider nonIdleBotStates
-     * @param $botState
-     */
-    public function aBotThatWasIdleButChangedStateCannotGrabABotWorkerJob($botState)
+    /** @test */
+    public function aBotThatWasIdleButChangedStateCannotGrabABotWorkerJob()
     {
         $this->withoutJobs();
 
@@ -331,24 +303,11 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        // $bot will have the old status
-        Bot::query()
-            ->whereKey($bot->id)
-            ->update([
-                'status' => $botState
-            ]);
+        $this->fromJobIsCalledWith($job)
+            ->andThrow(BotIsNotIdle::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals($botState, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
     /** @test
@@ -371,24 +330,14 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
+        $this->fromJobIsNotCalledWith($job);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals($botState, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
-    /** @test
-     * @dataProvider nonIdleBotStates
-     * @param $botState
-     */
-    public function aBotThatWasIdleButChangedStateCannotGrabAClusterWorkerJob($botState)
+    /** @test */
+    public function aBotThatWasIdleButChangedStateCannotGrabAClusterWorkerJob()
     {
         $this->withoutJobs();
 
@@ -404,24 +353,11 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        // $bot will have the old status
-        Bot::query()
-            ->whereKey($bot->id)
-            ->update([
-                'status' => $botState
-            ]);
+        $this->fromJobIsCalledWith($job)
+            ->andThrow(BotIsNotIdle::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals($botState, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
     public static function nonQueuedJobStates()
@@ -451,24 +387,14 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
+        $this->fromJobIsNotCalledWith($job);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals($jobState, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
-    /** @test
-     * @dataProvider nonQueuedJobStates
-     * @param $jobState
-     */
-    public function aBotWorkerJobThatWasQueuedButChangedStateCannotGrabAJob($jobState)
+    /** @test */
+    public function aBotWorkerJobThatWasQueuedButChangedStateCannotGrabAJob()
     {
         $this->withoutJobs();
 
@@ -481,24 +407,11 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        // $job will have the old status
-        Job::query()
-            ->whereKey($bot->id)
-            ->update([
-                'status' => $jobState
-            ]);
+        $this->fromJobIsCalledWith($job)
+            ->andThrow(JobIsNotQueued::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals($jobState, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
     /** @test
@@ -521,24 +434,14 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
+        $this->fromJobIsNotCalledWith($job);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals($jobState, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
-    /** @test
-     * @dataProvider nonQueuedJobStates
-     * @param $jobState
-     */
-    public function aClusterWorkerJobThatWasQueuedButChangedStateCannotGrabAJob($jobState)
+    /** @test */
+    public function aClusterWorkerJobThatWasQueuedButChangedStateCannotGrabAJob()
     {
         $this->withoutJobs();
 
@@ -554,24 +457,11 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        // $job will have the old status
-        Job::query()
-            ->whereKey($bot->id)
-            ->update([
-                'status' => $jobState
-            ]);
+        $this->fromJobIsCalledWith($job)
+            ->andThrow(JobIsNotQueued::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $job->refresh();
-
-        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
-        $this->assertNull($bot->current_job_id);
-
-        $this->assertEquals($jobState, $job->status);
-        $this->assertNull($job->bot_id);
     }
 
     /** @test */
@@ -597,16 +487,240 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(JobIsNotQueued::class);
+        $this->fromJobIsCalledWith($secondJob);
+
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
-
-        $bot->refresh();
-        $firstJob->refresh();
-        $secondJob->refresh();
-
-        $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
     }
-    // B. If the first job with a cluster worker cannot be assigned, a second one is assigned
-    // C. Chunking is used for sql statements with a bot worker
-    // D. Chunking is used for sql statements with a cluster worker
+
+    /** @test */
+    public function ifTheFirstJobWithAClusterWorkerCannotBeAssignedASecondOneIsAssigned()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(JobIsNotQueued::class);
+        $this->fromJobIsCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function ifTheBotIsNoLongerIdleNoMoreJobsWithBotWorkersWillBeAttempted()
+    {
+        $this->withoutJobs();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(BotIsNotIdle::class);
+        $this->fromJobIsNotCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function ifTheBotIsNoLongerIdleNoMoreJobsWithClusterWorkersWillBeAttempted()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(BotIsNotIdle::class);
+        $this->fromJobIsNotCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function ifTheBotIsNotAValidWorkerTheNextJobIsTriedForABotWorker()
+    {
+        $this->withoutJobs();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(BotIsNotValidWorker::class);
+        $this->fromJobIsCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function ifTheBotIsNotAValidWorkerTheNextJobIsTriedForAClusterWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(BotIsNotValidWorker::class);
+        $this->fromJobIsCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function ifTheJobIsNotQueuedTheNextJobIsTriedForABotWorker()
+    {
+        $this->withoutJobs();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(JobIsNotQueued::class);
+        $this->fromJobIsCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function ifTheJobIsNotQueuedTheNextJobIsTriedForAClusterWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $firstJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute())
+            ->create();
+
+        $secondJob = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $this->fromJobIsCalledWith($firstJob)
+            ->andThrow(JobIsNotQueued::class);
+        $this->fromJobIsCalledWith($secondJob);
+
+        $findJobsForBot = new FindJobsForBot($bot);
+        $findJobsForBot->handle();
+    }
 }

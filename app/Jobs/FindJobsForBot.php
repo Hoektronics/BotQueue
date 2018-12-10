@@ -24,6 +24,11 @@ class FindJobsForBot implements ShouldQueue
      * @var Bot
      */
     private $bot;
+    /**
+     * @var AssignJobToBot
+     */
+    private $assignJobToBot;
+    private $shouldKeepSearching;
 
     /**
      * Create a new job instance.
@@ -33,6 +38,8 @@ class FindJobsForBot implements ShouldQueue
     public function __construct(Bot $bot)
     {
         $this->bot = $bot;
+        $this->assignJobToBot = app()->makeWith(AssignJobToBot::class, ['bot' => $this->bot]);
+        $this->shouldKeepSearching = true;
     }
 
     /**
@@ -42,34 +49,19 @@ class FindJobsForBot implements ShouldQueue
      */
     public function handle()
     {
-        if($this->bot->status != BotStatusEnum::IDLE)
+        if ($this->bot->status != BotStatusEnum::IDLE)
             return;
 
-        /** @var Job $job */
-        $job = Job::query()
+        Job::query()
             ->where('worker_id', $this->bot->id)
             ->where('worker_type', $this->bot->getMorphClass())
             ->where('status', JobStatusEnum::QUEUED)
             ->orderBy('created_at')
-            ->first();
+            ->each(function ($job) {
+                return $this->attemptAssignment($job);
+            });
 
-        if ($job != null) {
-            try {
-                $assignJobToBot = new AssignJobToBot($this->bot);
-                $assignJobToBot->fromJob($job);
-            }
-            catch (BotIsNotIdle $e) {
-                return;
-            }
-            catch (BotIsNotValidWorker $e) {
-                return;
-            }
-            catch (JobIsNotQueued $e) {
-                return;
-            }
-            catch (\Throwable $e) {
-                return;
-            }
+        if (!$this->shouldKeepSearching) {
             return;
         }
 
@@ -79,31 +71,29 @@ class FindJobsForBot implements ShouldQueue
             return;
         }
 
-        /** @var Job $job */
-        $job = Job::query()
+        Job::query()
             ->where('worker_id', $cluster->id)
             ->where('worker_type', $cluster->getMorphClass())
             ->where('status', JobStatusEnum::QUEUED)
             ->orderBy('created_at')
-            ->first();
+            ->each(function ($job) {
+                return $this->attemptAssignment($job);
+            });
+    }
 
-        if($job != null) {
-            try {
-                $assignJobToBot = new AssignJobToBot($this->bot);
-                $assignJobToBot->fromJob($job);
-            }
-            catch (BotIsNotIdle $e) {
-                return;
-            }
-            catch (BotIsNotValidWorker $e) {
-                return;
-            }
-            catch (JobIsNotQueued $e) {
-                return;
-            }
-            catch (\Throwable $e) {
-                return;
-            }
+    private function attemptAssignment(Job $job)
+    {
+        try {
+            $this->assignJobToBot->fromJob($job);
+            $this->shouldKeepSearching = false;
+            return false;
+        } catch (BotIsNotIdle $e) {
+            $this->shouldKeepSearching = false;
+            return false;
+        } catch (BotIsNotValidWorker $e) {
+            return true;
+        } catch (JobIsNotQueued $e) {
+            return true;
         }
     }
 }
