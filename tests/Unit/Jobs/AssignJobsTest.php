@@ -110,8 +110,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -135,8 +135,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsNeverCalled($botWithJobWorker);
         $this->fromJobIsNeverCalled($lonelyBot);
 
-        $findJobsForBot = new AssignJobs($lonelyBot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($lonelyBot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -158,8 +158,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -183,8 +183,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNeverCalled($bot);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -218,8 +218,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $firstJobByTime);
         $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -254,8 +254,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $jobWithBotWorker);
         $this->fromJobIsNotCalledWith($bot, $jobWithClusterWorker);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -292,8 +292,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $firstJobByTime);
         $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     public static function nonIdleBotStates()
@@ -325,8 +325,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNotCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -346,8 +346,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(BotIsNotIdle::class);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test
@@ -372,8 +372,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNotCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -396,8 +396,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(BotIsNotIdle::class);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     public static function nonQueuedJobStates()
@@ -429,8 +429,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNotCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -450,8 +450,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(JobIsNotQueued::class);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test
@@ -476,8 +476,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNotCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -500,8 +500,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(JobIsNotQueued::class);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -531,8 +531,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(JobIsNotQueued::class);
         $this->fromJobIsCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -565,8 +565,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(JobIsNotQueued::class);
         $this->fromJobIsCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -596,8 +596,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(BotIsNotIdle::class);
         $this->fromJobIsNotCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -630,8 +630,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(BotIsNotIdle::class);
         $this->fromJobIsNotCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -661,8 +661,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(BotIsNotValidWorker::class);
         $this->fromJobIsCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -695,8 +695,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(BotIsNotValidWorker::class);
         $this->fromJobIsCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -726,8 +726,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(JobIsNotQueued::class);
         $this->fromJobIsCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -760,8 +760,8 @@ class AssignJobsTest extends TestCase
             ->andThrow(JobIsNotQueued::class);
         $this->fromJobIsCalledWith($bot, $secondJob);
 
-        $findJobsForBot = new AssignJobs($bot);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($bot);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -783,8 +783,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -806,8 +806,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -842,8 +842,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $jobWithBotWorker);
         $this->fromJobIsNotCalledWith($bot, $jobWithClusterWorker);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -873,8 +873,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($botAsJobWorker, $job);
         $this->fromJobIsNotCalledWith($otherBot, $job);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -898,8 +898,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNotCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($clusterWithoutJobs);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($clusterWithoutJobs);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -934,8 +934,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsNotCalledWith($botA, $jobB);
         $this->fromJobIsNotCalledWith($botB, $jobA);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -971,8 +971,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($botA, $job);
         $this->fromJobIsCalledWith($botB, $job);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test
@@ -997,8 +997,8 @@ class AssignJobsTest extends TestCase
 
         $this->fromJobIsNotCalledWith($bot, $job);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -1035,8 +1035,8 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $firstJobByTime);
         $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 
     /** @test */
@@ -1073,7 +1073,7 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $firstJobByTime);
         $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
 
-        $findJobsForBot = new AssignJobs($cluster);
-        $findJobsForBot->handle();
+        $assignJobs = new AssignJobs($cluster);
+        $assignJobs->handle();
     }
 }
