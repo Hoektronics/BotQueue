@@ -14,7 +14,7 @@ class ToIdle
         $bot->status = BotStatusEnum::IDLE;
         $bot->save();
 
-        $findJobsForBot = app()->make(AssignJobs::class, ['bot' => $bot]);
+        $findJobsForBot = app()->make(AssignJobs::class, ['model' => $bot]);
         dispatch($findJobsForBot);
     }
 }
