@@ -11,7 +11,6 @@ use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobAssignmentFailed;
 use App\Exceptions\JobIsNotQueued;
 use App\Job;
-use Carbon\Carbon;
 use Tests\TestCase;
 
 class AssignJobToBotTest extends TestCase

@@ -28,7 +28,7 @@ class CreateJobsTable extends Migration
             $table->string('worker_type');
 
             $table->integer('bot_id')->unsigned()->nullable();
-            $table->foreign('bot_id')->references('id')->on('users');
+            $table->foreign('bot_id')->references('id')->on('bots');
 
             $table->timestamps();
         });
