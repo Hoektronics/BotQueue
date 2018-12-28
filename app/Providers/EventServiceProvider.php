@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Bot;
 use App\Events;
-use App\Jobs\FindJobsForBot;
+use App\Jobs\AssignJobs;
 use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -39,7 +39,7 @@ class EventServiceProvider extends ServiceProvider
 
             if($worker instanceof Bot) {
                 /** @var $model Bot */
-                dispatch(new FindJobsForBot($worker));
+                dispatch(new AssignJobs($worker));
             }
         });
     }

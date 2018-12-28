@@ -3,7 +3,7 @@
 namespace Tests\Unit\StateTransitions\Bot;
 
 use App\Enums\BotStatusEnum;
-use App\Jobs\FindJobsForBot;
+use App\Jobs\AssignJobs;
 use App\StateTransitions\Bot\ToIdle;
 use Tests\TestCase;
 
@@ -12,7 +12,7 @@ class ToIdleTest extends TestCase
     /** @test */
     public function offlineToIdle()
     {
-        $this->expectsJobs(FindJobsForBot::class);
+        $this->expectsJobs(AssignJobs::class);
 
         $bot = $this->bot()
             ->state(BotStatusEnum::OFFLINE)

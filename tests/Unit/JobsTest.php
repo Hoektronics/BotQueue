@@ -6,7 +6,7 @@ use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
-use App\Jobs\FindJobsForBot;
+use App\Jobs\AssignJobs;
 use Tests\TestCase;
 
 class JobsTest extends TestCase
@@ -40,7 +40,7 @@ class JobsTest extends TestCase
     /** @test */
     public function jobCreatedEventDispatchesFindJobsForBot()
     {
-        $this->expectsJobs(FindJobsForBot::class);
+        $this->expectsJobs(AssignJobs::class);
 
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
