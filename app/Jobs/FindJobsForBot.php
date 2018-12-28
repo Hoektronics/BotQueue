@@ -12,6 +12,7 @@ use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobIsNotQueued;
 use App\Job;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;

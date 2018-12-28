@@ -12,32 +12,65 @@ use App\Exceptions\JobIsNotQueued;
 use App\Job;
 use App\Jobs\FindJobsForBot;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
 class FindJobsForBotTest extends TestCase
 {
-    /** @var MockInterface $assignJobToBot */
-    private $assignJobToBot;
+    /** @var Collection $assignJobToBots */
+    private $assignJobToBots;
 
     public function setUp()
     {
         parent::setUp();
+        $this->assignJobToBots = collect();
 
-        $this->assignJobToBot = \Mockery::mock(AssignJobToBot::class);
-        $this->app->bind(AssignJobToBot::class, function () {
-            return $this->assignJobToBot;
+        $this->app->bind(AssignJobToBot::class, function($app, $args) {
+            if(array_key_exists("bot", $args)) {
+                $bot = $args["bot"];
+            } else {
+                $bot = $args[0];
+            }
+
+            return $this->assignJobToBots->get($bot->id, function () use ($bot) {
+                $assignJobToBot = \Mockery::mock(AssignJobToBot::class);
+                $this->assignJobToBots->put($bot->id, $assignJobToBot);
+
+                return $assignJobToBot;
+            });
         });
     }
 
-    private function fromJobIsNeverCalled()
+    /**
+     * @param Bot $bot
+     * @return MockInterface
+     */
+    private function getAssignJobToBot(Bot $bot)
     {
-        return $this->assignJobToBot->shouldReceive('fromJob')->never();
+        return app()->makeWith(AssignJobToBot::class, ['bot' => $bot]);
     }
 
-    private function fromJobIsCalledWith(Job $job)
+    /**
+     * @param Bot $bot
+     * @return \Mockery\Expectation
+     */
+    private function fromJobIsNeverCalled(Bot $bot)
     {
-        return $this->assignJobToBot->shouldReceive('fromJob')
+        return $this->getAssignJobToBot($bot)
+            ->shouldReceive('fromJob')
+            ->never();
+    }
+
+    /**
+     * @param Bot $bot
+     * @param Job $job
+     * @return \Mockery\Expectation
+     */
+    private function fromJobIsCalledWith(Bot $bot, Job $job)
+    {
+        return $this->getAssignJobToBot($bot)
+            ->shouldReceive('fromJob')
             ->once()
             ->withArgs(function($arg) use ($job) {
                 return $arg->id == $job->id;
@@ -45,9 +78,15 @@ class FindJobsForBotTest extends TestCase
             ->andReturnUndefined();
     }
 
-    private function fromJobIsNotCalledWith(Job $job)
+    /**
+     * @param Bot $bot
+     * @param Job $job
+     * @return \Mockery\Expectation
+     */
+    private function fromJobIsNotCalledWith(Bot $bot, Job $job)
     {
-        return $this->assignJobToBot->shouldReceive('fromJob')
+        return $this->getAssignJobToBot($bot)
+            ->shouldReceive('fromJob')
             ->never()
             ->withArgs(function($arg) use ($job) {
                 return $arg->id == $job->id;
@@ -69,7 +108,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        $this->fromJobIsCalledWith($job);
+        $this->fromJobIsCalledWith($bot, $job);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -93,7 +132,8 @@ class FindJobsForBotTest extends TestCase
             ->state(BotStatusEnum::IDLE)
             ->create();
 
-        $this->fromJobIsNeverCalled();
+        $this->fromJobIsNeverCalled($botWithJobWorker);
+        $this->fromJobIsNeverCalled($lonelyBot);
 
         $findJobsForBot = new FindJobsForBot($lonelyBot);
         $findJobsForBot->handle();
@@ -116,7 +156,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        $this->fromJobIsCalledWith($job);
+        $this->fromJobIsCalledWith($bot, $job);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -141,7 +181,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($clusterForJob)
             ->create();
 
-        $this->fromJobIsNeverCalled();
+        $this->fromJobIsNeverCalled($bot);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -175,8 +215,8 @@ class FindJobsForBotTest extends TestCase
         $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
         $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
 
-        $this->fromJobIsCalledWith($firstJobByTime);
-        $this->fromJobIsNotCalledWith($secondJobByTime);
+        $this->fromJobIsCalledWith($bot, $firstJobByTime);
+        $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -211,8 +251,8 @@ class FindJobsForBotTest extends TestCase
         // The cluster job is earlier by time, but it should still pick the job with the bot worker
         $this->assertGreaterThan($jobWithBotWorker->created_at, $jobWithClusterWorker->created_at);
 
-        $this->fromJobIsCalledWith($jobWithBotWorker);
-        $this->fromJobIsNotCalledWith($jobWithClusterWorker);
+        $this->fromJobIsCalledWith($bot, $jobWithBotWorker);
+        $this->fromJobIsNotCalledWith($bot, $jobWithClusterWorker);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -249,8 +289,8 @@ class FindJobsForBotTest extends TestCase
         $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
         $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
 
-        $this->fromJobIsCalledWith($firstJobByTime);
-        $this->fromJobIsNotCalledWith($secondJobByTime);
+        $this->fromJobIsCalledWith($bot, $firstJobByTime);
+        $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -283,7 +323,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        $this->fromJobIsNotCalledWith($job);
+        $this->fromJobIsNotCalledWith($bot, $job);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -303,7 +343,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        $this->fromJobIsCalledWith($job)
+        $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(BotIsNotIdle::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
@@ -330,7 +370,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        $this->fromJobIsNotCalledWith($job);
+        $this->fromJobIsNotCalledWith($bot, $job);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -353,7 +393,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        $this->fromJobIsCalledWith($job)
+        $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(BotIsNotIdle::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
@@ -387,7 +427,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        $this->fromJobIsNotCalledWith($job);
+        $this->fromJobIsNotCalledWith($bot, $job);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -407,7 +447,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        $this->fromJobIsCalledWith($job)
+        $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(JobIsNotQueued::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
@@ -434,7 +474,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        $this->fromJobIsNotCalledWith($job);
+        $this->fromJobIsNotCalledWith($bot, $job);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -457,7 +497,7 @@ class FindJobsForBotTest extends TestCase
             ->worker($cluster)
             ->create();
 
-        $this->fromJobIsCalledWith($job)
+        $this->fromJobIsCalledWith($bot, $job)
             ->andThrow(JobIsNotQueued::class);
 
         $findJobsForBot = new FindJobsForBot($bot);
@@ -487,9 +527,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(JobIsNotQueued::class);
-        $this->fromJobIsCalledWith($secondJob);
+        $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -521,9 +561,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(JobIsNotQueued::class);
-        $this->fromJobIsCalledWith($secondJob);
+        $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -552,9 +592,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(BotIsNotIdle::class);
-        $this->fromJobIsNotCalledWith($secondJob);
+        $this->fromJobIsNotCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -586,9 +626,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(BotIsNotIdle::class);
-        $this->fromJobIsNotCalledWith($secondJob);
+        $this->fromJobIsNotCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -617,9 +657,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(BotIsNotValidWorker::class);
-        $this->fromJobIsCalledWith($secondJob);
+        $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -651,9 +691,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(BotIsNotValidWorker::class);
-        $this->fromJobIsCalledWith($secondJob);
+        $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -682,9 +722,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(JobIsNotQueued::class);
-        $this->fromJobIsCalledWith($secondJob);
+        $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
@@ -716,9 +756,9 @@ class FindJobsForBotTest extends TestCase
             ->createdAt(Carbon::now())
             ->create();
 
-        $this->fromJobIsCalledWith($firstJob)
+        $this->fromJobIsCalledWith($bot, $firstJob)
             ->andThrow(JobIsNotQueued::class);
-        $this->fromJobIsCalledWith($secondJob);
+        $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new FindJobsForBot($bot);
         $findJobsForBot->handle();
