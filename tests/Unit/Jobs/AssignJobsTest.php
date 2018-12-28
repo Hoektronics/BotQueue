@@ -239,17 +239,17 @@ class AssignJobsTest extends TestCase
         $jobWithBotWorker = $this->job()
             ->state(JobStatusEnum::QUEUED)
             ->worker($bot)
-            ->createdAt(Carbon::now()->subMinute(1))
+            ->createdAt(Carbon::now())
             ->create();
 
         $jobWithClusterWorker = $this->job()
             ->state(JobStatusEnum::QUEUED)
             ->worker($cluster)
-            ->createdAt(Carbon::now())
+            ->createdAt(Carbon::now()->subMinute(1))
             ->create();
 
         // The cluster job is earlier by time, but it should still pick the job with the bot worker
-        $this->assertGreaterThan($jobWithBotWorker->created_at, $jobWithClusterWorker->created_at);
+        $this->assertGreaterThan($jobWithClusterWorker->created_at, $jobWithBotWorker->created_at);
 
         $this->fromJobIsCalledWith($bot, $jobWithBotWorker);
         $this->fromJobIsNotCalledWith($bot, $jobWithClusterWorker);
@@ -761,6 +761,319 @@ class AssignJobsTest extends TestCase
         $this->fromJobIsCalledWith($bot, $secondJob);
 
         $findJobsForBot = new AssignJobs($bot);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function anIdleBotInAClusterWillBeAssignedAJobWhereTheBotIsTheWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->create();
+
+        $this->fromJobIsCalledWith($bot, $job);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function anIdleBotInAClusterWillBeAssignedAJobWhereTheClusterIsTheWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->create();
+
+        $this->fromJobIsCalledWith($bot, $job);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function anIdleBotInAClusterWillBeAssignedAJobWithABotWorkerFirst()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $jobWithBotWorker = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $jobWithClusterWorker = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute(1))
+            ->create();
+
+        // The cluster job is earlier by time, but it should still pick the job with the bot worker
+        $this->assertGreaterThan($jobWithClusterWorker->created_at, $jobWithBotWorker->created_at);
+
+        $this->fromJobIsCalledWith($bot, $jobWithBotWorker);
+        $this->fromJobIsNotCalledWith($bot, $jobWithClusterWorker);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function anIdleBotInAClusterWillNotBeAssignedAJobWithADifferentBotWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $otherBot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $botAsJobWorker = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($botAsJobWorker)
+            ->create();
+
+        $this->assertGreaterThan($otherBot->id, $botAsJobWorker->id);
+
+        $this->fromJobIsCalledWith($botAsJobWorker, $job);
+        $this->fromJobIsNotCalledWith($otherBot, $job);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function anIdleBotInAClusterWillNotBeAssignedAJobWithADifferentClusterWorker()
+    {
+        $this->withoutJobs();
+
+        $clusterWithJobs = $this->cluster()->create();
+
+        $clusterWithoutJobs = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($clusterWithoutJobs)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($clusterWithJobs)
+            ->create();
+
+        $this->fromJobIsNotCalledWith($bot, $job);
+
+        $findJobsForBot = new AssignJobs($clusterWithoutJobs);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function allBotSInAClusterGetAssignedAJobWithThemAsAWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $botA = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $jobA = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($botA)
+            ->create();
+
+        $botB = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $jobB = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($botB)
+            ->create();
+
+        $this->fromJobIsCalledWith($botA, $jobA);
+        $this->fromJobIsCalledWith($botB, $jobB);
+        $this->fromJobIsNotCalledWith($botA, $jobB);
+        $this->fromJobIsNotCalledWith($botB, $jobA);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function allBotsInAClusterGetAssignedAJobWithTheClusterAsTheWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        Carbon::setTestNow('now');
+
+        $botA = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute(1))
+            ->create();
+
+        $botB = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        // Both bots get called with the same job, because the job doesn't
+        // actually get modified between calls. Other tests verify that
+        // the AssignJobToBot class modifies the job correctly. Other tests
+        // in this class verify that the code will move on to the next job
+        // If the first one cannot be assigned.
+        $this->fromJobIsCalledWith($botA, $job);
+        $this->fromJobIsCalledWith($botB, $job);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test
+     * @dataProvider nonIdleBotStates
+     * @param $botState
+     */
+    public function aNonIdleBotInAClusterWillNotAttemptJobAssignment($botState)
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state($botState)
+            ->cluster($cluster)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->create();
+
+        $this->fromJobIsNotCalledWith($bot, $job);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function theEarliestJobForABotIsSelectedWithABotWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $secondJobByTime = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $firstJobByTime = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($bot)
+            ->createdAt(Carbon::now()->subMinute(1))
+            ->create();
+
+        // The first job by time should be the second job by id
+        // This is to verify that assumption
+        $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
+        $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
+
+        $this->fromJobIsCalledWith($bot, $firstJobByTime);
+        $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
+
+        $findJobsForBot = new AssignJobs($cluster);
+        $findJobsForBot->handle();
+    }
+
+    /** @test */
+    public function theEarliestJobForABotIsSelectedWithAClusterWorker()
+    {
+        $this->withoutJobs();
+
+        $cluster = $this->cluster()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->cluster($cluster)
+            ->create();
+
+        Carbon::setTestNow('now');
+
+        $secondJobByTime = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now())
+            ->create();
+
+        $firstJobByTime = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->createdAt(Carbon::now()->subMinute(1))
+            ->create();
+
+        // The first job by time should be the second job by id
+        // This is to verify that assumption
+        $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
+        $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
+
+        $this->fromJobIsCalledWith($bot, $firstJobByTime);
+        $this->fromJobIsNotCalledWith($bot, $secondJobByTime);
+
+        $findJobsForBot = new AssignJobs($cluster);
         $findJobsForBot->handle();
     }
 }

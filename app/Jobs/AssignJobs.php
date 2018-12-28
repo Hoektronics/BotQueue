@@ -54,6 +54,14 @@ class AssignJobs implements ShouldQueue
     {
         if($this->model instanceof Bot) {
             $this->forBot($this->model);
+        } else if($this->model instanceof Cluster) {
+            /** @var Cluster $cluster */
+            $cluster = $this->model;
+
+            $cluster->bots()->each(function($bot) {
+                /** @var Bot $bot */
+                $this->forBot($bot);
+            });
         }
     }
 
