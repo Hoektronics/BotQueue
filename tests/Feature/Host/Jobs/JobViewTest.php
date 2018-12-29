@@ -13,7 +13,7 @@ use Illuminate\Http\Response;
 use Tests\PassportHelper;
 use Tests\TestCase;
 
-class WorkingJobsTest extends TestCase
+class JobViewTest extends TestCase
 {
     use PassportHelper;
     
