@@ -33,14 +33,10 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Event::listen(Events\JobCreated::class, function($event) {
+        Event::listen(Events\JobCreated::class, function ($event) {
             /** @var $event Events\JobCreated */
             $worker = $event->job->worker;
-
-            if($worker instanceof Bot) {
-                /** @var $model Bot */
-                dispatch(new AssignJobs($worker));
-            }
+            dispatch(new AssignJobs($worker));
         });
     }
 }

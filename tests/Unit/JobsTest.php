@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Bot;
+use App\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
@@ -52,5 +53,20 @@ class JobsTest extends TestCase
             ->create();
 
         $this->assertTrue($job->workerIs(Bot::class));
+    }
+
+    /** @test */
+    public function jobCreatedEventDispatchesFindJobsForCluster()
+    {
+        $this->expectsJobs(AssignJobs::class);
+
+        $cluster = $this->cluster()->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::QUEUED)
+            ->worker($cluster)
+            ->create();
+
+        $this->assertTrue($job->workerIs(Cluster::class));
     }
 }
