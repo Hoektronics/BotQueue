@@ -60,4 +60,13 @@ class HostErrors
             Response::HTTP_CONFLICT
         );
     }
+
+    public function jobIsNotAssigned()
+    {
+        return new ErrorResponse(
+            1110,
+            "Job must be in an assigned state to perform this action",
+            Response::HTTP_CONFLICT
+        );
+    }
 }

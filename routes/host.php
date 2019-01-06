@@ -20,4 +20,4 @@ Route::get('bots', 'HostController@bots');
 
 
 Route::get('jobs/{job}', 'JobController@show');
-//Route::put('jobs/{job}', 'JobController@update');
+Route::put('jobs/{job}', 'JobController@update');

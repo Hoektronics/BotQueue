@@ -69,6 +69,12 @@ class JobBuilder
 
     public function bot(\App\Bot $bot)
     {
-        return $this->newWith(['bot_id' => $bot->id]);
+        $builder = $this->newWith(['bot_id' => $bot->id]);
+
+        if(! array_key_exists("worker_id", $this->attributes)) {
+            $builder = $builder->worker($bot);
+        }
+
+        return $builder;
     }
 }
