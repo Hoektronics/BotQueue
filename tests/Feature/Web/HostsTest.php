@@ -25,6 +25,6 @@ class HostsTest extends TestCase
         $this
             ->actingAs($this->mainUser)
             ->get("/hosts")
-            ->assertSee($this->mainHost->name);
+            ->assertSee(e($this->mainHost->name));
     }
 }
