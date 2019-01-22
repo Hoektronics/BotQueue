@@ -41,18 +41,6 @@ class JobUpdateTest extends TestCase
         $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
     }
 
-    // A host can not go from a non assigned state to in progress
-
-    public static function nonAssignedJobStates()
-    {
-        return JobStatusEnum::allStates()
-            ->diff(JobStatusEnum::ASSIGNED)
-            ->map(function ($item) {
-                return [$item => $item];
-            })
-            ->all();
-    }
-
     /** @test */
     public function aHostCanUpdateJobStatusFromInProgressToQualityCheck()
     {
@@ -81,8 +69,98 @@ class JobUpdateTest extends TestCase
         $this->assertEquals(JobStatusEnum::QUALITY_CHECK, $job->status);
         $this->assertEquals(BotStatusEnum::WAITING, $bot->status);
     }
-    // aHostCanNotGoFromANonAssignedStateToInProgress
-    // A host can not go from a non in progress state to quality check
-    // A host can not update a job that is not being worked on by its own bots
-    // A host can update job progress
+
+    public static function nonAssignedJobStates()
+    {
+        return JobStatusEnum::allStates()
+            ->diff(JobStatusEnum::ASSIGNED)
+            ->map(function ($item) {
+                return [$item => $item];
+            })
+            ->all();
+    }
+
+    /** @test
+     * @dataProvider nonAssignedJobStates
+     * @param $jobState
+     */
+    public function aHostCanNotGoFromANonAssignedStateToInProgress($jobState)
+    {
+        $this->withoutJobs();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::JOB_ASSIGNED)
+            ->host($this->mainHost)
+            ->create();
+
+        $job = $this->job()
+            ->state($jobState)
+            ->bot($bot)
+            ->create();
+
+        $this->withTokenFromHost($this->mainHost)
+            ->putJson("/host/jobs/{$job->id}", [
+                'status' => 'in_progress'
+            ])
+            ->assertStatus(Response::HTTP_CONFLICT);
+    }
+
+    public static function nonInProgressState()
+    {
+        return JobStatusEnum::allStates()
+            ->diff(JobStatusEnum::IN_PROGRESS)
+            ->map(function ($item) {
+                return [$item => $item];
+            })
+            ->all();
+    }
+
+    /** @test
+     * @dataProvider nonInProgressState
+     * @param $jobState
+     */
+    public function aHostCanNotGoFromANonInProgressStateToQualityCheck($jobState)
+    {
+        $this->withoutJobs();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::JOB_ASSIGNED)
+            ->host($this->mainHost)
+            ->create();
+
+        $job = $this->job()
+            ->state($jobState)
+            ->bot($bot)
+            ->create();
+
+        $this->withTokenFromHost($this->mainHost)
+            ->putJson("/host/jobs/{$job->id}", [
+                'status' => 'quality_check'
+            ])
+            ->assertStatus(Response::HTTP_CONFLICT);
+    }
+
+    /** @test */
+    public function aHostCanNotUpdateAJobThatIsNotBeingWorkedOnByItsOwnBots()
+    {
+        $this->withoutJobs();
+
+        $host = $this->host()->create();
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::JOB_ASSIGNED)
+            ->host($host)
+            ->create();
+
+        $job = $this->job()
+            ->state(JobStatusEnum::ASSIGNED)
+            ->bot($bot)
+            ->create();
+
+        $this->withTokenFromHost($this->mainHost)
+            ->putJson("/host/jobs/{$job->id}", [
+                'status' => 'in_progress'
+            ])
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
 }

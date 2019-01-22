@@ -46,21 +46,33 @@ class JobController extends Controller
         return new JobResource($job);
     }
 
-    public function update(Job $job, Request $request)
+    public function update(Job $job, Request $request, HostManager $hostManager)
     {
         $json = $request->json();
+
+        if($job->bot->host_id != $hostManager->getHost()->id) {
+            return $this->hostErrors->jobIsNotAssignedToThisHost();
+        }
 
         if($json->has("status")) {
             return $this->updateStatus($job, $json);
         }
+
+        return response()->json([], Response::HTTP_BAD_REQUEST);
     }
 
     private function updateStatus(Job $job, ParameterBag $json)
     {
         $currentStatus = $job->status;
 
+        $newStatus = $json->get("status");
+
         if($currentStatus == JobStatusEnum::ASSIGNED) {
-            $job->status = $json->get("status");
+            if($newStatus != JobStatusEnum::IN_PROGRESS) {
+                return response()->json([], Response::HTTP_CONFLICT);
+            }
+
+            $job->status = $newStatus;
 
             $bot = $job->bot;
             $bot->status = BotStatusEnum::WORKING;
@@ -69,7 +81,11 @@ class JobController extends Controller
 
             return response()->json([], Response::HTTP_OK);
         } else if($currentStatus == JobStatusEnum::IN_PROGRESS) {
-            $job->status = $json->get("status");
+            if($newStatus != JobStatusEnum::QUALITY_CHECK) {
+                return response()->json([], Response::HTTP_CONFLICT);
+            }
+
+            $job->status = $newStatus;
 
             $bot = $job->bot;
             $bot->status = BotStatusEnum::WAITING;
@@ -77,6 +93,8 @@ class JobController extends Controller
             $job->push();
 
             return response()->json([], Response::HTTP_OK);
+        } else {
+            return response()->json([], Response::HTTP_CONFLICT);
         }
     }
 }
