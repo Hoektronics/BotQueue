@@ -6,6 +6,7 @@ use App\Action\AssignJobToBot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use Illuminate\Http\Response;
+use Storage;
 use Tests\PassportHelper;
 use Tests\TestCase;
 
@@ -72,8 +73,11 @@ class BotVisibilityTest extends TestCase
             ->host($this->mainHost)
             ->create();
 
+        $file = $this->file()->stl()->create();
+
         $job = $this->job()
             ->state(JobStatusEnum::QUEUED)
+            ->file($file)
             ->worker($bot)
             ->create();
 
@@ -94,6 +98,7 @@ class BotVisibilityTest extends TestCase
                         'job' => [
                             'id' => $job->id,
                             'status' => $job->status,
+                            'url' => Storage::url($job->file->path),
                         ]
                     ]
                 ]

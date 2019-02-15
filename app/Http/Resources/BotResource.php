@@ -2,8 +2,21 @@
 
 namespace App\Http\Resources;
 
+use App\Job;
+use App\User;
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Class BotResource
+ * @package App\Http\Resources
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $status
+ * @property string $type
+ * @property User $creator
+ * @property Job $currentJob
+ */
 class BotResource extends Resource
 {
     /**
@@ -29,7 +42,8 @@ class BotResource extends Resource
             'job' => $this->whenLoaded('currentJob', function () {
                 return [
                     'id' => $this->currentJob->id,
-                    'status' => $this->currentJob->status
+                    'status' => $this->currentJob->status,
+                    'url' => $this->currentJob->file->url(),
                 ];
             }),
         ];

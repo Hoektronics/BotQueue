@@ -4,11 +4,9 @@
 namespace Tests\Feature\Host;
 
 
-use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
-use App\Job;
 use Illuminate\Http\Response;
 use Tests\PassportHelper;
 use Tests\TestCase;
@@ -27,10 +25,13 @@ class JobViewTest extends TestCase
             ->host($this->mainHost)
             ->create();
 
+        $file = $this->file()->stl()->create();
+
         $job = $this->job()
             ->state(JobStatusEnum::ASSIGNED)
             ->worker($bot)
             ->bot($bot)
+            ->file($file)
             ->create();
 
         $this->withTokenFromHost($this->mainHost)
@@ -40,6 +41,7 @@ class JobViewTest extends TestCase
                     'id' => $job->id,
                     'name' => $job->name,
                     'status' => $job->status,
+                    'url' => $file->url(),
                 ]
             ]);
     }

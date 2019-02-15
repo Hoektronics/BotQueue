@@ -89,4 +89,9 @@ class File extends Model
         $this->attributes['path'] = $path;
         $this->attributes['size'] = Storage::size($path);
     }
+
+    public function url()
+    {
+        return Storage::url($this->path);
+    }
 }

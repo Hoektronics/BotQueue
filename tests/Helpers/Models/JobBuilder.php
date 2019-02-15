@@ -3,6 +3,7 @@
 namespace Tests\Helpers\Models;
 
 
+use App\File;
 use App\Job;
 use Carbon\Carbon;
 
@@ -76,5 +77,10 @@ class JobBuilder
         }
 
         return $builder;
+    }
+
+    public function file(File $file)
+    {
+        return $this->newWith(['file_id' => $file->id]);
     }
 }

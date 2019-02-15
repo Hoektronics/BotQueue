@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereFileId($value)
+ * @property-read \App\File|null $file
  */
 class Job extends Model
 {
@@ -76,6 +77,11 @@ class Job extends Model
     public function bot()
     {
         return $this->belongsTo(Bot::class);
+    }
+
+    public function file()
+    {
+        return $this->belongsTo(File::class);
     }
 
     /**
