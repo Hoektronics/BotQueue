@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cluster whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Cluster whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Cluster newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Cluster newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Cluster query()
  */
 class Cluster extends Model
 {

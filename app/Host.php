@@ -30,6 +30,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host query()
  */
 class Host extends Model
 {

@@ -38,6 +38,11 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $cluster_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereClusterId($value)
  */
 class Bot extends Model
 {

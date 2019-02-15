@@ -18,6 +18,9 @@ use Laravel\Passport\Client;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Oauth\OauthHostClient query()
  */
 class OauthHostClient extends Model
 {

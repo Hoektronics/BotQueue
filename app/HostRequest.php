@@ -34,6 +34,9 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest query()
  */
 class HostRequest extends Model
 {

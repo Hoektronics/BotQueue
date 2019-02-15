@@ -33,6 +33,7 @@ class JobFileController extends Controller
             'name' => $request->get('job_name'),
             'status' => App\Enums\JobStatusEnum::QUEUED,
             'creator_id' => Auth::id(),
+            'file_id' => $file->id,
         ]);
 
         $worker = $request->get('bot_cluster');

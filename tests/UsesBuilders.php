@@ -6,6 +6,7 @@ use App\Enums\HostRequestStatusEnum;
 use Faker\Generator as Faker;
 use Tests\Helpers\Models\BotBuilder;
 use Tests\Helpers\Models\ClusterBuilder;
+use Tests\Helpers\Models\FileBuilder;
 use Tests\Helpers\Models\HostBuilder;
 use Tests\Helpers\Models\HostRequestBuilder;
 use Tests\Helpers\Models\JobBuilder;
@@ -97,6 +98,18 @@ trait UsesBuilders
             ->creator($this->mainUser)
             ->name($faker->name)
             ->type('3d_printer');
+    }
+
+    /**
+     * @return FileBuilder
+     */
+    public function file()
+    {
+        $faker = app(Faker::class);
+
+        return (new FileBuilder())
+            ->uploader($this->mainUser)
+            ->name($faker->name);
     }
 
     /**

@@ -32,6 +32,11 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereWorkerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereWorkerType($value)
  * @mixin \Eloquent
+ * @property int|null $file_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Job newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Job newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Job query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereFileId($value)
  */
 class Job extends Model
 {
@@ -44,6 +49,7 @@ class Job extends Model
         'name',
         'status',
         'creator_id',
+        'file_id',
     ];
 
     protected $dispatchesEvents = [

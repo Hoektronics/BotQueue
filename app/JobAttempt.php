@@ -20,6 +20,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobAttempt whereJobId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobAttempt whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\JobAttempt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\JobAttempt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\JobAttempt query()
  */
 class JobAttempt extends Model
 {
