@@ -63,8 +63,8 @@ class File extends Model
         $clientOriginalName = $uploadedFile->getClientOriginalName();
 
         $extension = FileFacade::extension($clientOriginalName);
-        $newName = Str::random(40) . '.' . $extension;
-        $uploadedFilePath = $uploadedFile->storePubliclyAs('uploads', $newName);
+        $hash = Str::random(40);
+        $uploadedFilePath = $uploadedFile->storePubliclyAs("uploads/{$hash}", $clientOriginalName);
 
         $file = new File([
             'path' => $uploadedFilePath,
