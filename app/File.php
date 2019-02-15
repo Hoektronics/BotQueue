@@ -2,8 +2,12 @@
 
 namespace App;
 
+use App\Enums\FileTypeEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * App\File
@@ -44,6 +48,33 @@ class File extends Model
         'size',
         'uploader_id'
     ];
+
+    /**
+     * @param UploadedFile $uploadedFile
+     * @param User $uploader
+     * @return File
+     * @throws \Exception
+     */
+    public static function fromUploadedFile($uploadedFile, $uploader)
+    {
+        $clientOriginalName = $uploadedFile->getClientOriginalName();
+
+        $extension = FileFacade::extension($clientOriginalName);
+        $newName = Str::random(40) . '.' . $extension;
+        $uploadedFilePath = $uploadedFile->storePubliclyAs('uploads', $newName);
+
+        $file = new File([
+            'path' => $uploadedFilePath,
+            'name' => $clientOriginalName,
+            'filesystem' => 'public',
+            'type' => FileTypeEnum::fromExtension($extension),
+            'uploader_id' => $uploader->id,
+        ]);
+
+        $file->save();
+
+        return $file;
+    }
 
     public function uploader()
     {

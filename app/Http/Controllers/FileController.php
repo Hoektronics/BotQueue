@@ -6,6 +6,7 @@ use App\Enums\FileTypeEnum;
 use App\File;
 use App\Http\Requests\FileUploadRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Str;
@@ -49,27 +50,16 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  FileUploadRequest  $request
+     * @param  FileUploadRequest $request
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function store(FileUploadRequest $request)
     {
+        /** @var UploadedFile $originalFile */
         $originalFile = $request->file('file');
-        $clientOriginalName = $originalFile->getClientOriginalName();
 
-        $extension = FileFacade::extension($clientOriginalName);
-        $newName = Str::random(40) . '.' . $extension;
-        $uploadedFilePath = $originalFile->storePubliclyAs('uploads/'.Auth::user()->id, $newName);
-
-        $file = new File([
-            'path' => $uploadedFilePath,
-            'name' => $clientOriginalName,
-            'filesystem' => 'public',
-            'type' => FileTypeEnum::fromExtension($extension),
-            'uploader_id' => Auth::id(),
-        ]);
-
-        $file->save();
+        $file = File::fromUploadedFile($originalFile, Auth::getUser());
 
         return redirect()->route('jobs.create.file', [$file]);
     }
