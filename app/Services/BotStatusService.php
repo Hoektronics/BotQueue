@@ -13,6 +13,7 @@ class BotStatusService
         BotStatusEnum::JOB_ASSIGNED => 'badge-secondary',
         BotStatusEnum::IDLE => 'badge-success',
         BotStatusEnum::WORKING => 'badge-primary',
+        BotStatusEnum::WAITING => 'badge-secondary',
     ];
 
     // Database name to human readable name
@@ -21,6 +22,7 @@ class BotStatusService
         BotStatusEnum::JOB_ASSIGNED => 'Job Assigned',
         BotStatusEnum::IDLE => 'Idle',
         BotStatusEnum::WORKING => 'Working',
+        BotStatusEnum::WAITING => 'Waiting',
     ];
 
     /**
