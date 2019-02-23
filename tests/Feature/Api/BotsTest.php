@@ -14,7 +14,13 @@ class BotsTest extends TestCase
     /** @test */
     public function botsIndex()
     {
-        $bot = $this->bot()->create();
+        $driverConfig = [
+            "type" => "dummy"
+        ];
+
+        $bot = $this->bot()
+            ->driver($driverConfig)
+            ->create();
 
         $this
             ->withTokenFromUser($this->mainUser)
@@ -27,6 +33,7 @@ class BotsTest extends TestCase
                         'name' => $bot->name,
                         'type' => '3d_printer',
                         'status' => BotStatusEnum::OFFLINE,
+                        'driver' => $driverConfig,
                         'creator' => [
                             'id' => $this->mainUser->id,
                             'username' => $this->mainUser->username,
@@ -40,7 +47,13 @@ class BotsTest extends TestCase
     /** @test */
     public function botsThatAreNotMineAreNotVisibleInIndex()
     {
-        $bot = $this->bot()->create();
+        $driverConfig = [
+            "type" => "dummy"
+        ];
+
+        $bot = $this->bot()
+            ->driver($driverConfig)
+            ->create();
 
         $other_user = $this->user()->create();
         $other_bot = $this->bot()
@@ -58,6 +71,7 @@ class BotsTest extends TestCase
                         'name' => $bot->name,
                         'type' => '3d_printer',
                         'status' => BotStatusEnum::OFFLINE,
+                        'driver' => $driverConfig,
                         'creator' => [
                             'id' => $this->mainUser->id,
                             'username' => $this->mainUser->username,
@@ -72,7 +86,13 @@ class BotsTest extends TestCase
     /** @test */
     public function canSeeMyOwnBot()
     {
-        $bot = $this->bot()->create();
+        $driverConfig = [
+            "type" => "dummy"
+        ];
+
+        $bot = $this->bot()
+            ->driver($driverConfig)
+            ->create();
 
         $this
             ->withTokenFromUser($this->mainUser)
@@ -84,6 +104,7 @@ class BotsTest extends TestCase
                     'name' => $bot->name,
                     'type' => '3d_printer',
                     'status' => BotStatusEnum::OFFLINE,
+                    'driver' => $driverConfig,
                     'creator' => [
                         'id' => $this->mainUser->id,
                         'username' => $this->mainUser->username,
@@ -96,7 +117,13 @@ class BotsTest extends TestCase
     /** @test */
     public function canSeeMyOwnBotGivenExplicitScope()
     {
-        $bot = $this->bot()->create();
+        $driverConfig = [
+            "type" => "dummy"
+        ];
+
+        $bot = $this->bot()
+            ->driver($driverConfig)
+            ->create();
 
         $this
             ->withTokenFromUser($this->mainUser, 'bots')
@@ -108,6 +135,7 @@ class BotsTest extends TestCase
                     'name' => $bot->name,
                     'type' => '3d_printer',
                     'status' => BotStatusEnum::OFFLINE,
+                    'driver' => $driverConfig,
                     'creator' => [
                         'id' => $this->mainUser->id,
                         'username' => $this->mainUser->username,

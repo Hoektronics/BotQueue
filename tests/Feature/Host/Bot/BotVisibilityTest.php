@@ -5,10 +5,15 @@ namespace Tests\Feature\Host\Bot;
 use App\Action\AssignJobToBot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Exceptions\BotIsNotIdle;
+use App\Exceptions\BotIsNotValidWorker;
+use App\Exceptions\JobAssignmentFailed;
+use App\Exceptions\JobIsNotQueued;
 use Illuminate\Http\Response;
 use Storage;
 use Tests\PassportHelper;
 use Tests\TestCase;
+use Throwable;
 
 class BotVisibilityTest extends TestCase
 {
@@ -39,7 +44,13 @@ class BotVisibilityTest extends TestCase
     /** @test */
     public function hostCanAccessBotsAssignedToIt()
     {
-        $bot = $this->bot()->create();
+        $driverConfig = [
+            "type" => "dummy"
+        ];
+
+        $bot = $this->bot()
+            ->driver($driverConfig)
+            ->create();
 
         $bot->assignTo($this->mainHost);
 
@@ -54,6 +65,7 @@ class BotVisibilityTest extends TestCase
                         'name' => $bot->name,
                         'type' => '3d_printer',
                         'status' => BotStatusEnum::OFFLINE,
+                        'driver' => $driverConfig,
                     ]
                 ]
             ])
@@ -61,16 +73,21 @@ class BotVisibilityTest extends TestCase
     }
 
     /** @test
-     * @throws \App\Exceptions\BotIsNotIdle
-     * @throws \App\Exceptions\BotIsNotValidWorker
-     * @throws \App\Exceptions\JobAssignmentFailed
-     * @throws \App\Exceptions\JobIsNotQueued
+     * @throws BotIsNotIdle
+     * @throws BotIsNotValidWorker
+     * @throws JobIsNotQueued
+     * @throws Throwable
      */
     public function hostCanSeeJobAssignedToBot()
     {
+        $driverConfig = [
+            "type" => "dummy"
+        ];
+
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
             ->host($this->mainHost)
+            ->driver($driverConfig)
             ->create();
 
         $file = $this->file()->stl()->create();
@@ -95,6 +112,7 @@ class BotVisibilityTest extends TestCase
                         'name' => $bot->name,
                         'status' => BotStatusEnum::JOB_ASSIGNED,
                         'type' => '3d_printer',
+                        'driver' => $driverConfig,
                         'job' => [
                             'id' => $job->id,
                             'status' => $job->status,

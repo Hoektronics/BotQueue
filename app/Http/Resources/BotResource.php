@@ -16,6 +16,7 @@ use Illuminate\Http\Resources\Json\Resource;
  * @property string $type
  * @property User $creator
  * @property Job $currentJob
+ * @property array $driver
  */
 class BotResource extends Resource
 {
@@ -32,6 +33,7 @@ class BotResource extends Resource
             'name' => $this->name,
             'status' => $this->status,
             'type' => $this->type,
+            'driver' => $this->driver,
             'creator' => $this->whenLoaded('creator', function () {
                 return [
                     'id' => $this->creator->id,

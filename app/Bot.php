@@ -43,6 +43,8 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereClusterId($value)
+ * @property string|null $driver
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereDriver($value)
  */
 class Bot extends Model
 {
@@ -67,6 +69,10 @@ class Bot extends Model
 
     protected $attributes = [
         'status' => BotStatusEnum::OFFLINE,
+    ];
+
+    protected $casts = [
+        'driver' => 'array'
     ];
 
     public function creator()

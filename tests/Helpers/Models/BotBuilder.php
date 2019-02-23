@@ -63,4 +63,9 @@ class BotBuilder
     {
         return $this->newWith(['type' => $type]);
     }
+
+    public function driver(array $array)
+    {
+        return $this->newWith(['driver' => $array]);
+    }
 }
