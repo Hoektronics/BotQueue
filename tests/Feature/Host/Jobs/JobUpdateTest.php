@@ -22,17 +22,28 @@ class JobUpdateTest extends TestCase
             ->host($this->mainHost)
             ->create();
 
+        $file = $this->file()->gcode()->create();
+
         $job = $this->job()
             ->state(JobStatusEnum::ASSIGNED)
             ->bot($bot)
+            ->file($file)
             ->create();
 
-        $this->withTokenFromHost($this->mainHost)
+        $this
+            ->withTokenFromHost($this->mainHost)
             ->putJson("/host/jobs/{$job->id}", [
                 'status' => 'in_progress'
             ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([]);
+            ->assertJson([
+                "data" => [
+                    "id" => $job->id,
+                    "name" => $job->name,
+                    "status" => JobStatusEnum::IN_PROGRESS,
+                    "url" => $file->url(),
+                ]
+            ]);
 
         $bot->refresh();
         $job->refresh();
@@ -51,17 +62,28 @@ class JobUpdateTest extends TestCase
             ->host($this->mainHost)
             ->create();
 
+        $file = $this->file()->gcode()->create();
+
         $job = $this->job()
             ->state(JobStatusEnum::IN_PROGRESS)
             ->bot($bot)
+            ->file($file)
             ->create();
 
-        $this->withTokenFromHost($this->mainHost)
+        $this
+            ->withTokenFromHost($this->mainHost)
             ->putJson("/host/jobs/{$job->id}", [
                 'status' => 'quality_check'
             ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([]);
+            ->assertJson([
+                "data" => [
+                    "id" => $job->id,
+                    "name" => $job->name,
+                    "status" => JobStatusEnum::QUALITY_CHECK,
+                    "url" => $file->url(),
+                ]
+            ]);
 
         $bot->refresh();
         $job->refresh();
@@ -98,7 +120,9 @@ class JobUpdateTest extends TestCase
             ->bot($bot)
             ->create();
 
-        $this->withTokenFromHost($this->mainHost)
+        $this
+            ->withExceptionHandling()
+            ->withTokenFromHost($this->mainHost)
             ->putJson("/host/jobs/{$job->id}", [
                 'status' => 'in_progress'
             ])
@@ -133,7 +157,9 @@ class JobUpdateTest extends TestCase
             ->bot($bot)
             ->create();
 
-        $this->withTokenFromHost($this->mainHost)
+        $this
+            ->withExceptionHandling()
+            ->withTokenFromHost($this->mainHost)
             ->putJson("/host/jobs/{$job->id}", [
                 'status' => 'quality_check'
             ])
@@ -157,7 +183,9 @@ class JobUpdateTest extends TestCase
             ->bot($bot)
             ->create();
 
-        $this->withTokenFromHost($this->mainHost)
+        $this
+            ->withExceptionHandling()
+            ->withTokenFromHost($this->mainHost)
             ->putJson("/host/jobs/{$job->id}", [
                 'status' => 'in_progress'
             ])

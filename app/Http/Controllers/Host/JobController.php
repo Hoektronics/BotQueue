@@ -55,7 +55,9 @@ class JobController extends Controller
         }
 
         if($json->has("status")) {
-            return $this->updateStatus($job, $json);
+            $this->updateStatus($job, $json);
+
+            return new JobResource($job);
         }
 
         return response()->json([], Response::HTTP_BAD_REQUEST);
@@ -69,7 +71,7 @@ class JobController extends Controller
 
         if($currentStatus == JobStatusEnum::ASSIGNED) {
             if($newStatus != JobStatusEnum::IN_PROGRESS) {
-                return response()->json([], Response::HTTP_CONFLICT);
+                abort(Response::HTTP_CONFLICT);
             }
 
             $job->status = $newStatus;
@@ -78,11 +80,9 @@ class JobController extends Controller
             $bot->status = BotStatusEnum::WORKING;
 
             $job->push();
-
-            return response()->json([], Response::HTTP_OK);
         } else if($currentStatus == JobStatusEnum::IN_PROGRESS) {
             if($newStatus != JobStatusEnum::QUALITY_CHECK) {
-                return response()->json([], Response::HTTP_CONFLICT);
+                abort(Response::HTTP_CONFLICT);
             }
 
             $job->status = $newStatus;
@@ -91,10 +91,8 @@ class JobController extends Controller
             $bot->status = BotStatusEnum::WAITING;
 
             $job->push();
-
-            return response()->json([], Response::HTTP_OK);
         } else {
-            return response()->json([], Response::HTTP_CONFLICT);
+            abort(Response::HTTP_CONFLICT);
         }
     }
 }

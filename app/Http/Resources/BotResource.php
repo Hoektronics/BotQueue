@@ -42,6 +42,7 @@ class BotResource extends Resource
             'job' => $this->whenLoaded('currentJob', function () {
                 return [
                     'id' => $this->currentJob->id,
+                    'name' => $this->currentJob->name,
                     'status' => $this->currentJob->status,
                     'url' => $this->currentJob->file->url(),
                 ];
