@@ -5,7 +5,19 @@
         <div class="col-md-9">
             <h1>{{ $job->name }}</h1>
 
-            Main content
+            @if($job->status == \App\Enums\JobStatusEnum::QUALITY_CHECK)
+                <form method="post" action="/jobs/{{$job->id}}/pass">
+                    {{ csrf_field() }}
+                    <input type="submit" value="Pass">
+                </form>
+
+                <form method="post" action="/jobs/{{$job->id}}/fail">
+                    {{ csrf_field() }}
+                    <input type="submit" value="Fail">
+                </form>
+            @else
+                Main content
+            @endif
         </div>
 
         <div class="col-md-3">
