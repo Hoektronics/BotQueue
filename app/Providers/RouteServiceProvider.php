@@ -30,6 +30,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::model('bot', App\Bot::class);
         Route::model('host', App\Host::class);
         Route::model('host_request', App\HostRequest::class);
+        Route::model('job', App\Job::class);
         Route::model('user', App\User::class);
     }
 

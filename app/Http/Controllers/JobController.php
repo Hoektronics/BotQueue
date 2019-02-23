@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Bot;
+use App\Enums\BotStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\File;
 use App\Http\Requests\JobFileCreationRequest;
 use App\Job;
+use App\Jobs\AssignJobs;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
@@ -97,5 +102,41 @@ class JobController extends Controller
     public function destroy(Job $job)
     {
         //
+    }
+
+    public function pass(Job $job)
+    {
+        abort_unless($job->creator_id == Auth::user()->id, Response::HTTP_FORBIDDEN);
+        abort_unless($job->status == JobStatusEnum::QUALITY_CHECK, Response::HTTP_CONFLICT);
+
+        /** @var Bot $bot */
+        $bot = $job->bot;
+        $bot->status = BotStatusEnum::IDLE;
+        $bot->current_job_id = null;
+        $job->status = JobStatusEnum::COMPLETED;
+        $job->push();
+
+        $findJobsForBot = app()->make(AssignJobs::class, ['model' => $bot]);
+        dispatch($findJobsForBot);
+
+        return redirect("/jobs/{$job->id}");
+    }
+
+    public function fail(Job $job)
+    {
+        abort_unless($job->creator_id == Auth::user()->id, Response::HTTP_FORBIDDEN);
+        abort_unless($job->status == JobStatusEnum::QUALITY_CHECK, Response::HTTP_CONFLICT);
+
+        /** @var Bot $bot */
+        $bot = $job->bot;
+        $bot->status = BotStatusEnum::IDLE;
+        $bot->current_job_id = null;
+        $job->status = JobStatusEnum::FAILED;
+        $job->push();
+
+        $findJobsForBot = app()->make(AssignJobs::class, ['model' => $bot]);
+        dispatch($findJobsForBot);
+
+        return redirect("/jobs/{$job->id}");
     }
 }
