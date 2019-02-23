@@ -14,7 +14,7 @@ class AddDriverToBots extends Migration
     public function up()
     {
         Schema::table('bots', function (Blueprint $table) {
-            $table->json("driver")->nullable();
+            $table->string("driver")->nullable();
         });
     }
 
