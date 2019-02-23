@@ -39,7 +39,7 @@ class BotsTest extends TestCase
         $this
             ->actingAs($this->mainUser)
             ->get('/bots')
-            ->assertSee($bot->name);
+            ->assertSee(e($bot->name));
     }
 
     /** @test */
