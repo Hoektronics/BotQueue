@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -86,16 +87,18 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapHostRoutes()
     {
-        Route::prefix('host')
-            ->middleware('throttle:1,10')
-            ->middleware('bindings')
-            ->namespace('App\Http\Controllers\Host')
-            ->group(function($router) {
-                /** @var Router $router */
-                $router->post('requests', 'HostRequestController@create');
-                $router->get('requests/{host_request}', 'HostRequestController@show');
-                $router->post('requests/{host_request}/access', 'HostRequestController@access');
-            });
+        Route::post('host', function (Request $request) {
+            $commandName = $request->input("command");
+
+            $classpath = "App\\Http\\HostCommands\\${commandName}Command";
+
+            if(class_exists($classpath)) {
+                $command = app()->make($classpath);
+                $data = collect($request->input("data", []));
+
+                return $command($data);
+            }
+        });
 
         Route::prefix('host')
             ->middleware('host')
