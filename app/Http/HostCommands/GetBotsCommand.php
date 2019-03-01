@@ -1,13 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Host;
+namespace App\Http\HostCommands;
+
 
 use App\HostManager;
 use App\Http\Resources\BotResource;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Collection;
 
-class HostController extends Controller
+class GetBotsCommand
 {
+    use HostCommandTrait;
+
     /**
      * @var HostManager
      */
@@ -18,7 +22,11 @@ class HostController extends Controller
         $this->hostManager = $hostManager;
     }
 
-    public function bots()
+    /**
+     * @param $data Collection
+     * @return AnonymousResourceCollection
+     */
+    public function __invoke($data)
     {
         $host = $this->hostManager->getHost();
 

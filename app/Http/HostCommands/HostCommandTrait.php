@@ -37,9 +37,9 @@ trait HostCommandTrait
         $jsonWebToken = request()->bearerToken();
 
         $parsedToken = (new Parser())->parse($jsonWebToken);
-        $jsonWebTokenId = $parsedToken->getClaim('jti');
+        $jsonWebTokenId = $parsedToken->getClaim("jti");
 
-        $host = Host::where('token_id', $jsonWebTokenId)->first();
+        $host = Host::where("token_id", $jsonWebTokenId)->first();
 
         $host->seen_at = Carbon::now();
         $host->save();

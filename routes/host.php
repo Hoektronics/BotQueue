@@ -13,9 +13,5 @@ use Illuminate\Support\Facades\Route;
 | and host resolving functionality. This file is for host use only.
 |
 */
-
-Route::get('bots', 'HostController@bots');
-
-
 Route::get('jobs/{job}', 'JobController@show');
 Route::put('jobs/{job}', 'JobController@update');

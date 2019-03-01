@@ -3,6 +3,8 @@
 namespace Tests\Helpers\Models;
 
 
+use App\Bot;
+use App\Cluster;
 use App\File;
 use App\Job;
 use Carbon\Carbon;
@@ -52,7 +54,7 @@ class JobBuilder
     }
 
     /**
-     * @param \App\Bot|\App\Cluster $worker
+     * @param Bot|Cluster $worker
      * @return JobBuilder
      */
     public function worker($worker)
@@ -68,7 +70,7 @@ class JobBuilder
         return $this->newWith(['created_at' => $createdAt]);
     }
 
-    public function bot(\App\Bot $bot)
+    public function bot(Bot $bot)
     {
         $builder = $this->newWith(['bot_id' => $bot->id]);
 
