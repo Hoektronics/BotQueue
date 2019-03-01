@@ -9,6 +9,10 @@ use Illuminate\Support\Collection;
 
 class GetHostRequestCommand
 {
+    use HostCommandTrait;
+
+    protected $ignoreHostAuth = true;
+
     /**
      * @param $data Collection
      * @return HostRequestResource

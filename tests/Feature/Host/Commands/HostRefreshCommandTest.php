@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Feature\Host;
+namespace Tests\Feature\Host\Commands;
 
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser as JwtParser;
-use Tests\PassportHelper;
 use Tests\TestCase;
+use Tests\PassportHelper;
 
-class TokenTest extends TestCase
+class HostRefreshCommandTest extends TestCase
 {
     use PassportHelper;
 
     /** @test */
-    public function refresh()
+    public function canRefreshSuccessfully()
     {
         $jwt = app(JwtParser::class);
 
@@ -25,19 +25,35 @@ class TokenTest extends TestCase
 
         $refresh_response = $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson('/host/refresh');
+            ->postJson("/host", [
+                "command" => "RefreshAccessToken"
+            ]);
 
         $refresh_response
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'access_token',
+                "access_token",
             ]);
 
-        $new_token = $refresh_response->json('access_token');
-        $later_expire_time = $jwt->parse($new_token)->getClaim('exp');
+        $new_token = $refresh_response->json("access_token");
+        $later_expire_time = $jwt->parse($new_token)->getClaim("exp");
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
 
         $this->mainHost->token->refresh();
         $this->assertEquals($later_expire_time, $this->mainHost->token->expires_at->getTimestamp());
+    }
+
+    /** @test */
+    public function refreshingExpiredHostFails()
+    {
+        $this->mainHost->revoke();
+
+        $this
+            ->withExceptionHandling()
+            ->withTokenFromHost($this->mainHost)
+            ->postJson("/host", [
+                "command" => "RefreshAccessToken"
+            ])
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }

@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('refresh', 'TokenController@refresh');
-
 Route::get('bots', 'HostController@bots');
 
 

@@ -4,9 +4,10 @@ namespace App\Providers;
 
 use App;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Auth\Factory as Auth;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -61,8 +62,8 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-             ->namespace($this->namespace)
-             ->group(base_path('routes/web.php'));
+            ->namespace($this->namespace)
+            ->group(base_path('routes/web.php'));
     }
 
     /**
@@ -75,9 +76,9 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes()
     {
         Route::prefix('api')
-             ->middleware('api')
-             ->namespace('App\Http\Controllers\Api')
-             ->group(base_path('routes/api.php'));
+            ->middleware('api')
+            ->namespace('App\Http\Controllers\Api')
+            ->group(base_path('routes/api.php'));
     }
 
     /**
@@ -92,11 +93,17 @@ class RouteServiceProvider extends ServiceProvider
 
             $classpath = "App\\Http\\HostCommands\\${commandName}Command";
 
-            if(class_exists($classpath)) {
+            if (class_exists($classpath)) {
                 $command = app()->make($classpath);
                 $data = collect($request->input("data", []));
 
+                if(method_exists($command, "verifyAuth")) {
+                    $command->verifyAuth(app()->make(Auth::class));
+                }
+
                 return $command($data);
+            } else {
+                abort(Response::HTTP_BAD_REQUEST, "Command $commandName not found");
             }
         });
 

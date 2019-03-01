@@ -13,6 +13,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ConvertRequestToHostCommand
 {
+    use HostCommandTrait;
+
+    protected $ignoreHostAuth = true;
+
     /**
      * @param $data Collection
      * @return HostResource
