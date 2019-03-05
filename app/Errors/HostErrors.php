@@ -25,6 +25,15 @@ class HostErrors
         );
     }
 
+    public static function hostRequestIsNotClaimed()
+    {
+        return new ErrorResponse(
+            1002,
+            "Host request is not claimed",
+            Response::HTTP_CONFLICT
+        );
+    }
+
     public static function botHasNoHost()
     {
         return new ErrorResponse(

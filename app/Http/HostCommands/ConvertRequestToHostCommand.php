@@ -4,12 +4,12 @@ namespace App\Http\HostCommands;
 
 
 use App\Enums\HostRequestStatusEnum;
+use App\Errors\ErrorResponse;
+use App\Errors\HostErrors;
 use App\Exceptions\CannotConvertHostRequestToHost;
 use App\HostRequest;
 use App\Http\Resources\HostResource;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ConvertRequestToHostCommand
 {
@@ -19,17 +19,20 @@ class ConvertRequestToHostCommand
 
     /**
      * @param $data Collection
-     * @return HostResource
+     * @return ErrorResponse|HostResource
      * @throws CannotConvertHostRequestToHost
      */
     public function __invoke($data)
     {
         $host_request = HostRequest::find($data->get("id"));
 
-        abort_if($host_request === null, Response::HTTP_NOT_FOUND);
+        if($host_request == null) {
+            return HostErrors::hostRequestNotFound();
+        }
 
-        if($host_request->status !== HostRequestStatusEnum::CLAIMED)
-            throw new BadRequestHttpException;
+        if($host_request->status !== HostRequestStatusEnum::CLAIMED) {
+            return HostErrors::hostRequestIsNotClaimed();
+        }
 
         $host = $host_request->toHost();
 

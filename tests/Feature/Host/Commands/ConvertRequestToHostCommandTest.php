@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Host\Commands;
 
+use App\Errors\HostErrors;
 use App\Exceptions\HostAlreadyClaimed;
 use App\Host;
 use Illuminate\Http\Response;
@@ -24,7 +25,8 @@ class ConvertRequestToHostCommandTest extends TestCase
                     "id" => $host_request->id,
                 ],
             ])
-            ->assertStatus(Response::HTTP_BAD_REQUEST);
+            ->assertStatus(Response::HTTP_CONFLICT)
+            ->assertExactJson(HostErrors::hostRequestIsNotClaimed()->toArray());
     }
 
     /** @test
@@ -112,7 +114,22 @@ class ConvertRequestToHostCommandTest extends TestCase
                     "id" => $host_request->id,
                 ],
             ])
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertExactJson(HostErrors::hostRequestNotFound()->toArray());
+    }
+
+    /** @test */
+    public function conversionToHostOnRequestThatDoesNotExistThrowsAnError()
+    {
+        $this
+            ->postJson("/host", [
+                "command" => "ConvertRequestToHost",
+                "data" => [
+                    "id" => "000000",
+                ],
+            ])
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertExactJson(HostErrors::hostRequestNotFound()->toArray());
     }
 
     /** @test
