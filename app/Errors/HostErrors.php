@@ -7,7 +7,16 @@ use Illuminate\Http\Response;
 
 class HostErrors
 {
-    public function botHasNoHost()
+    public static function invalidCommand()
+    {
+        return new ErrorResponse(
+            1000,
+            "Invalid host command",
+            Response::HTTP_BAD_REQUEST
+        );
+    }
+
+    public static function botHasNoHost()
     {
         return new ErrorResponse(
             1001,
@@ -16,7 +25,7 @@ class HostErrors
         );
     }
 
-    public function botIsNotAssignedToThisHost()
+    public static function botIsNotAssignedToThisHost()
     {
         return new ErrorResponse(
             1002,
@@ -25,7 +34,7 @@ class HostErrors
         );
     }
 
-    public function botMustBeIdle()
+    public static function botMustBeIdle()
     {
         return new ErrorResponse(
             1010,
@@ -34,7 +43,7 @@ class HostErrors
         );
     }
 
-    public function jobHasNoBot()
+    public static function jobHasNoBot()
     {
         return new ErrorResponse(
             1101,
@@ -43,7 +52,7 @@ class HostErrors
         );
     }
 
-    public function jobIsNotAssignedToThisHost()
+    public static function jobIsNotAssignedToThisHost()
     {
         return new ErrorResponse(
             1102,
@@ -52,7 +61,7 @@ class HostErrors
         );
     }
 
-    public function jobIsAssignedToABotWithNoHost()
+    public static function jobIsAssignedToABotWithNoHost()
     {
         return new ErrorResponse(
             1103,
@@ -61,7 +70,7 @@ class HostErrors
         );
     }
 
-    public function jobIsNotAssigned()
+    public static function jobIsNotAssigned()
     {
         return new ErrorResponse(
             1110,

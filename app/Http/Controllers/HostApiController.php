@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Errors\HostErrors;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class HostApiController extends Controller
 {
@@ -24,7 +24,7 @@ class HostApiController extends Controller
 
             return $command($data);
         } else {
-            abort(Response::HTTP_BAD_REQUEST, "Command $commandName not found");
+            return HostErrors::invalidCommand();
         }
     }
 }
