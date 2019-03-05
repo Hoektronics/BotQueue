@@ -106,11 +106,6 @@ class RouteServiceProvider extends ServiceProvider
                 abort(Response::HTTP_BAD_REQUEST, "Command $commandName not found");
             }
         });
-
-        Route::prefix('host')
-            ->middleware('host')
-            ->namespace('App\Http\Controllers\Host')
-            ->group(base_path('routes/host.php'));
     }
 
     /**
