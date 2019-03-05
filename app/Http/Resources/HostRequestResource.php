@@ -2,15 +2,25 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\HostRequestStatusEnum;
+use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Class HostRequestResource
+ * @package App\Http\Resources
+ *
+ * @property int id
+ * @property string status
+ * @property array expires_at
+ * @property User claimer
+ */
 class HostRequestResource extends Resource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  Request $request
      * @return array
      */
     public function toArray($request)
@@ -28,11 +38,6 @@ class HostRequestResource extends Resource
                     ];
                 }),
             ],
-            'links' => [
-                'to_host' => $this->when($this->status == HostRequestStatusEnum::CLAIMED, function () {
-                    return url("/host/requests/{$this->id}/access");
-                })
-            ]
         ];
     }
 }

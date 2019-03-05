@@ -3,6 +3,7 @@
 namespace Tests\Feature\Host\Commands;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Errors\HostErrors;
 use App\Exceptions\HostAlreadyClaimed;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -57,5 +58,19 @@ class GetHostRequestCommandTest extends TestCase
                     ],
                 ],
             ]);
+    }
+
+    /** @test */
+    public function viewingHostRequestThatDoesNotExistThrowsAnError()
+    {
+        $this
+            ->postJson("/host", [
+                "command" => "GetHostRequest",
+                "data" => [
+                    "id" => "000000"
+                ],
+            ])
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertExactJson(HostErrors::hostRequestNotFound()->toArray());
     }
 }
