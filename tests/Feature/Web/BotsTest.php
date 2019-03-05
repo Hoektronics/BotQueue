@@ -3,8 +3,6 @@
 namespace Tests\Feature\Web;
 
 use App\Bot;
-use App\Cluster;
-use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -105,12 +103,14 @@ class BotsTest extends TestCase
     {
         $bot = $this->bot()->create();
 
+        $username = e($this->mainUser->username);
+
         $this
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee(e($bot->name))
             ->assertSee($bot->status)
-            ->assertSee("Creator: {$this->mainUser->name}");
+            ->assertSee("Creator: $username");
     }
 
     /** @test */
@@ -122,12 +122,14 @@ class BotsTest extends TestCase
             ->cluster($cluster)
             ->create();
 
+        $username = e($this->mainUser->username);
+
         $this
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee(e($bot->name))
             ->assertSee($bot->status)
-            ->assertSee("Creator: {$this->mainUser->name}")
+            ->assertSee("Creator: $username")
             ->assertSee(e($cluster->name));
     }
 
