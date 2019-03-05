@@ -96,10 +96,10 @@ class JobUpdateTest extends TestCase
     {
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::ASSIGNED)
-            ->map(function ($item) {
-                return [$item => $item];
-            })
-            ->all();
+            ->reduce(function ($lookup, $item) {
+                $lookup[$item] = array($item);
+                return $lookup;
+            }, []);
     }
 
     /** @test
@@ -133,10 +133,10 @@ class JobUpdateTest extends TestCase
     {
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::IN_PROGRESS)
-            ->map(function ($item) {
-                return [$item => $item];
-            })
-            ->all();
+            ->reduce(function ($lookup, $item) {
+                $lookup[$item] = array($item);
+                return $lookup;
+            }, []);
     }
 
     /** @test

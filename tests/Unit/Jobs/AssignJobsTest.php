@@ -300,10 +300,10 @@ class AssignJobsTest extends TestCase
     {
         return BotStatusEnum::allStates()
             ->diff(BotStatusEnum::IDLE)
-            ->map(function($item) {
-                return [$item => $item];
-            })
-            ->all();
+            ->reduce(function ($lookup, $item) {
+                $lookup[$item] = array($item);
+                return $lookup;
+            }, []);
     }
 
     /** @test
@@ -404,10 +404,10 @@ class AssignJobsTest extends TestCase
     {
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::QUEUED)
-            ->map(function($item) {
-                return [$item => $item];
-            })
-            ->all();
+            ->reduce(function ($lookup, $item) {
+                $lookup[$item] = array($item);
+                return $lookup;
+            }, []);
     }
 
     /** @test
