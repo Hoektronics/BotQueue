@@ -88,24 +88,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapHostRoutes()
     {
-        Route::post('host', function (Request $request) {
-            $commandName = $request->input("command");
-
-            $classpath = "App\\Http\\HostCommands\\${commandName}Command";
-
-            if (class_exists($classpath)) {
-                $command = app()->make($classpath);
-                $data = collect($request->input("data", []));
-
-                if(method_exists($command, "verifyAuth")) {
-                    $command->verifyAuth(app()->make(Auth::class));
-                }
-
-                return $command($data);
-            } else {
-                abort(Response::HTTP_BAD_REQUEST, "Command $commandName not found");
-            }
-        });
+        Route::post('host', 'App\Http\Controllers\HostApiController@command');
     }
 
     /**
