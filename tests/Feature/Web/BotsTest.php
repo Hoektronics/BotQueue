@@ -125,10 +125,10 @@ class BotsTest extends TestCase
         $this
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
-            ->assertSee($bot->name)
+            ->assertSee(e($bot->name))
             ->assertSee($bot->status)
             ->assertSee("Creator: {$this->mainUser->name}")
-            ->assertSee($cluster->name);
+            ->assertSee(e($cluster->name));
     }
 
     /** @test */
