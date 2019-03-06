@@ -34,6 +34,24 @@ class HostErrors
         );
     }
 
+    public static function oauthHostClientIsNotSetup()
+    {
+        return new ErrorResponse(
+            1003,
+            "Oauth Host client is not set up",
+            Response::HTTP_INTERNAL_SERVER_ERROR
+        );
+    }
+
+    public static function oauthHostKeysMissing()
+    {
+        return new ErrorResponse(
+            1004,
+            "Oauth Host keys are missing",
+            Response::HTTP_INTERNAL_SERVER_ERROR
+        );
+    }
+
     public static function botHasNoHost()
     {
         return new ErrorResponse(

@@ -98,7 +98,7 @@ class User extends Authenticatable
                 ->update([
                     'claimer_id' => $this->id,
                     'status' => HostRequestStatusEnum::CLAIMED,
-                    'name' => $name,
+                    'hostname' => $name,
                 ]);
 
             $request->refresh();

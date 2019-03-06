@@ -4,6 +4,7 @@ namespace Tests\Helpers\Models;
 
 
 use App\HostRequest;
+use App\User;
 use Carbon\Carbon;
 
 class HostRequestBuilder
@@ -58,5 +59,10 @@ class HostRequestBuilder
     public function state(string $state)
     {
         return $this->newWith(['status' => $state]);
+    }
+
+    public function claimer(User $user)
+    {
+        return $this->newWith(['claimer_id' => $user->id]);
     }
 }

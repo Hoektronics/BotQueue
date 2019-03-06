@@ -4,6 +4,9 @@ namespace App;
 
 use App\Enums\HostRequestStatusEnum;
 use App\Exceptions\CannotConvertHostRequestToHost;
+use App\Exceptions\HostRequestAlreadyDeleted;
+use App\Exceptions\OauthHostClientNotSetup;
+use App\Exceptions\OauthHostKeysMissing;
 use App\ModelTraits\HostRequestDynamicAttributes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +24,6 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $hostname
  * @property string $status
  * @property int|null $claimer_id
- * @property string|null $name
  * @property-read \App\User|null $claimer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereClaimerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereCreatedAt($value)
@@ -29,7 +31,6 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereHostname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereLocalIp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereRemoteIp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereUpdatedAt($value)
@@ -74,20 +75,36 @@ class HostRequest extends Model
     /**
      * @return Host
      * @throws CannotConvertHostRequestToHost
+     * @throws OauthHostClientNotSetup
+     * @throws OauthHostKeysMissing
+     * @throws HostRequestAlreadyDeleted
      */
     public function toHost()
     {
         $host = Host::make([
             'local_ip' => $this->local_ip,
             'remote_ip' => $this->remote_ip,
-            'name' => $this->name,
+            'name' => $this->hostname,
             'owner_id' => $this->claimer_id,
         ]);
 
+        if(! file_exists(passport_private_key_path())) {
+            throw new OauthHostKeysMissing("Private key for oauth is missing");
+        }
+
         try {
-            $this->delete();
+            $rowsAffected = HostRequest::whereId($this->id)
+                ->delete();
+
+            if($rowsAffected == 0) {
+                throw new HostRequestAlreadyDeleted("Host request {$this->id} was already deleted and cannot become a host");
+            }
 
             $host->save();
+        } catch (OauthHostClientNotSetup $e) {
+            throw $e;
+        } catch (HostRequestAlreadyDeleted $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new CannotConvertHostRequestToHost("Unknown exception causing host to not be created");
         }

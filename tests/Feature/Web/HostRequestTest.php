@@ -123,7 +123,7 @@ class HostRequestTest extends TestCase
 
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
         $this->assertEquals($this->mainUser->id, $host_request->claimer_id);
-        $this->assertEquals($newHostName, $host_request->name);
+        $this->assertEquals($newHostName, $host_request->hostname);
     }
 
     /** @test

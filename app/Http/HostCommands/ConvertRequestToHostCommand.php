@@ -7,6 +7,9 @@ use App\Enums\HostRequestStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\Exceptions\CannotConvertHostRequestToHost;
+use App\Exceptions\HostRequestAlreadyDeleted;
+use App\Exceptions\OauthHostClientNotSetup;
+use App\Exceptions\OauthHostKeysMissing;
 use App\HostRequest;
 use App\Http\Resources\HostResource;
 use Illuminate\Support\Collection;
@@ -34,7 +37,15 @@ class ConvertRequestToHostCommand
             return HostErrors::hostRequestIsNotClaimed();
         }
 
-        $host = $host_request->toHost();
+        try {
+            $host = $host_request->toHost();
+        } catch (OauthHostClientNotSetup $e) {
+            return HostErrors::oauthHostClientIsNotSetup();
+        } catch (OauthHostKeysMissing $e) {
+            return HostErrors::oauthHostKeysMissing();
+        } catch (HostRequestAlreadyDeleted $e) {
+            return HostErrors::hostRequestNotFound();
+        }
 
         return new HostResource($host);
     }

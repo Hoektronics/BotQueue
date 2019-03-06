@@ -5,6 +5,9 @@ namespace Tests\Unit;
 use App\Enums\HostRequestStatusEnum;
 use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostAlreadyClaimed;
+use App\Exceptions\HostRequestAlreadyDeleted;
+use App\Exceptions\OauthHostClientNotSetup;
+use App\Exceptions\OauthHostKeysMissing;
 use App\HostRequest;
 use Tests\TestCase;
 
@@ -22,7 +25,7 @@ class HostRequestTest extends TestCase
         $host_request->refresh();
 
         $this->assertEquals($this->mainUser->id, $host_request->claimer_id);
-        $this->assertEquals("Test Host", $host_request->name);
+        $this->assertEquals("Test Host", $host_request->hostname);
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
 
@@ -42,13 +45,15 @@ class HostRequestTest extends TestCase
         $this->mainUser->claim($host_request, "No I want this host!");
 
         $this->assertEquals($otherUser->id, $host_request->claimer_id);
-        $this->assertEquals("Test Host", $host_request->name);
+        $this->assertEquals("Test Host", $host_request->hostname);
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
 
     /** @test
-     * @throws \App\Exceptions\HostAlreadyClaimed
      * @throws CannotConvertHostRequestToHost
+     * @throws HostAlreadyClaimed
+     * @throws OauthHostClientNotSetup
+     * @throws OauthHostKeysMissing
      */
     public function hostRequestThatWasConvertedIntoAHostIsGone()
     {
@@ -72,11 +77,15 @@ class HostRequestTest extends TestCase
      */
     public function deletingAHostRequestThenTryingToConvertItIntoAHostIsNotAllowed()
     {
-        $host_request = $this->hostRequest()->create();
+        $host_request = $this->hostRequest()
+            ->state(HostRequestStatusEnum::CLAIMED)
+            ->hostname("My Test Host")
+            ->claimer($this->mainUser)
+            ->create();
 
         $host_request->delete();
 
-        $this->expectException(CannotConvertHostRequestToHost::class);
+        $this->expectException(HostRequestAlreadyDeleted::class);
 
         $host_request->toHost();
     }

@@ -2,10 +2,13 @@
 
 namespace Tests\Feature\Host\Commands;
 
+use App\Enums\HostRequestStatusEnum;
 use App\Errors\HostErrors;
 use App\Exceptions\HostAlreadyClaimed;
 use App\Host;
+use App\Oauth\OauthHostClient;
 use Illuminate\Http\Response;
+use Laravel\Passport\Passport;
 use Lcobucci\JWT\Parser as JwtParser;
 use Lcobucci\JWT\Token;
 use Tests\TestCase;
@@ -142,7 +145,7 @@ class ConvertRequestToHostCommandTest extends TestCase
         $host_request = $this->hostRequest()->create();
         $this->mainUser->claim($host_request, "My Test Host");
 
-        $access_token = $this
+        $response = $this
             ->postJson("/host", [
                 "command" => "ConvertRequestToHost",
                 "data" => [
@@ -154,8 +157,9 @@ class ConvertRequestToHostCommandTest extends TestCase
                 "data" => [
                     "access_token",
                 ],
-            ])
-            ->json("data.access_token");
+            ]);
+
+        $access_token = $response->json("data.access_token");
 
         /** @var Host $host */
         $host = Host::query()->where("name", "My Test Host")->first();
@@ -168,5 +172,55 @@ class ConvertRequestToHostCommandTest extends TestCase
         $this->assertEquals($this->mainUser->id, $jwt->getClaim("sub"));
         $this->assertEquals($host->token->client_id, $jwt->getClaim("aud"));
         $this->assertArraySubset(["host"], $jwt->getClaim("scopes"));
+    }
+
+    /** @test
+     * @throws \Exception
+     */
+    public function missingOauthHostClientReturnsAnErrorResponse()
+    {
+        $hostRequest = $this->hostRequest()
+            ->state(HostRequestStatusEnum::CLAIMED)
+            ->hostname("My Test Host")
+            ->claimer($this->mainUser)
+            ->create();
+
+        // Delete the host client created with the above host request
+        OauthHostClient::first()->delete();
+
+        $this
+            ->postJson("/host", [
+                "command" => "ConvertRequestToHost",
+                "data" => [
+                    "id" => $hostRequest->id,
+                ],
+            ])
+            ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
+            ->assertExactJson(HostErrors::oauthHostClientIsNotSetup()->toArray());
+    }
+
+    /** @test */
+    public function missingOauthKeysReturnsAnErrorResponse()
+    {
+        $originalKeyPath = Passport::$keyPath;
+        Passport::loadKeysFrom(storage_path('nonexistent_directory'));
+
+        $hostRequest = $this->hostRequest()
+            ->state(HostRequestStatusEnum::CLAIMED)
+            ->hostname("My Test Host")
+            ->claimer($this->mainUser)
+            ->create();
+
+        $this
+            ->postJson("/host", [
+                "command" => "ConvertRequestToHost",
+                "data" => [
+                    "id" => $hostRequest->id,
+                ],
+            ])
+            ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
+            ->assertExactJson(HostErrors::oauthHostKeysMissing()->toArray());
+
+        Passport::loadKeysFrom($originalKeyPath);
     }
 }
