@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Enums\HostRequestStatusEnum;
-use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostAlreadyClaimed;
 use App\Exceptions\HostRequestAlreadyDeleted;
 use App\Exceptions\OauthHostClientNotSetup;
@@ -50,8 +49,8 @@ class HostRequestTest extends TestCase
     }
 
     /** @test
-     * @throws CannotConvertHostRequestToHost
      * @throws HostAlreadyClaimed
+     * @throws HostRequestAlreadyDeleted
      * @throws OauthHostClientNotSetup
      * @throws OauthHostKeysMissing
      */

@@ -52,6 +52,15 @@ class HostErrors
         );
     }
 
+    public static function unknownError()
+    {
+        return new ErrorResponse(
+            1005,
+            "Unknown error occurred. Sorry, we tried",
+            Response::HTTP_INTERNAL_SERVER_ERROR
+        );
+    }
+
     public static function botHasNoHost()
     {
         return new ErrorResponse(

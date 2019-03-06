@@ -3,14 +3,13 @@
 namespace App;
 
 use App\Enums\HostRequestStatusEnum;
-use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostRequestAlreadyDeleted;
 use App\Exceptions\OauthHostClientNotSetup;
 use App\Exceptions\OauthHostKeysMissing;
 use App\ModelTraits\HostRequestDynamicAttributes;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 /**
  * App\HostRequest
@@ -74,10 +73,10 @@ class HostRequest extends Model
 
     /**
      * @return Host
-     * @throws CannotConvertHostRequestToHost
-     * @throws OauthHostClientNotSetup
      * @throws OauthHostKeysMissing
      * @throws HostRequestAlreadyDeleted
+     * @throws OauthHostClientNotSetup See HostAuthTrait::client
+     * @throws Exception
      */
     public function toHost()
     {
@@ -88,26 +87,18 @@ class HostRequest extends Model
             'owner_id' => $this->claimer_id,
         ]);
 
-        if(! file_exists(passport_private_key_path())) {
+        if (!file_exists(passport_private_key_path())) {
             throw new OauthHostKeysMissing("Private key for oauth is missing");
         }
 
-        try {
-            $rowsAffected = HostRequest::whereId($this->id)
-                ->delete();
+        $rowsAffected = HostRequest::whereId($this->id)
+            ->delete();
 
-            if($rowsAffected == 0) {
-                throw new HostRequestAlreadyDeleted("Host request {$this->id} was already deleted and cannot become a host");
-            }
-
-            $host->save();
-        } catch (OauthHostClientNotSetup $e) {
-            throw $e;
-        } catch (HostRequestAlreadyDeleted $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            throw new CannotConvertHostRequestToHost("Unknown exception causing host to not be created");
+        if ($rowsAffected == 0) {
+            throw new HostRequestAlreadyDeleted("Host request {$this->id} was already deleted and cannot become a host");
         }
+
+        $host->save();
 
         return $host;
     }

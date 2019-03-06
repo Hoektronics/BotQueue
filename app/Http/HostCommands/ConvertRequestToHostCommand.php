@@ -6,7 +6,6 @@ namespace App\Http\HostCommands;
 use App\Enums\HostRequestStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\Exceptions\CannotConvertHostRequestToHost;
 use App\Exceptions\HostRequestAlreadyDeleted;
 use App\Exceptions\OauthHostClientNotSetup;
 use App\Exceptions\OauthHostKeysMissing;
@@ -23,7 +22,6 @@ class ConvertRequestToHostCommand
     /**
      * @param $data Collection
      * @return ErrorResponse|HostResource
-     * @throws CannotConvertHostRequestToHost
      */
     public function __invoke($data)
     {
@@ -40,11 +38,19 @@ class ConvertRequestToHostCommand
         try {
             $host = $host_request->toHost();
         } catch (OauthHostClientNotSetup $e) {
+            report($e);
+
             return HostErrors::oauthHostClientIsNotSetup();
         } catch (OauthHostKeysMissing $e) {
+            report($e);
+
             return HostErrors::oauthHostKeysMissing();
         } catch (HostRequestAlreadyDeleted $e) {
             return HostErrors::hostRequestNotFound();
+        } catch (\Exception $e) {
+            report($e);
+
+            return HostErrors::unknownError();
         }
 
         return new HostResource($host);

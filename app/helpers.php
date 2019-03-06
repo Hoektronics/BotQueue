@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\Handler;
+use App\User;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\CryptKey;
 
@@ -14,7 +16,6 @@ if (! function_exists('passport_private_key_file')) {
 }
 
 if (! function_exists('passport_private_key')) {
-
     /**
      * @return CryptKey
      */
