@@ -4,6 +4,7 @@ namespace Tests\Feature\Host\Commands;
 
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Errors\HostErrors;
 use Illuminate\Http\Response;
 use Tests\PassportHelper;
 use Tests\TestCase;
@@ -92,7 +93,8 @@ class FinishJobCommandTest extends TestCase
                     "id" => $job->id,
                 ],
             ])
-            ->assertStatus(Response::HTTP_CONFLICT);
+            ->assertStatus(Response::HTTP_CONFLICT)
+            ->assertExactJson(HostErrors::jobIsNotAssigned()->toArray());
     }
 
     /** @test */
@@ -121,6 +123,7 @@ class FinishJobCommandTest extends TestCase
                     "id" => $job->id,
                 ],
             ])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertExactJson(HostErrors::jobIsNotAssignedToThisHost()->toArray());
     }
 }

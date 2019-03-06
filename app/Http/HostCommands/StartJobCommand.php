@@ -43,7 +43,9 @@ class StartJobCommand
 
         $currentStatus = $job->status;
 
-        abort_unless(JobStatusEnum::ASSIGNED == $currentStatus, Response::HTTP_CONFLICT);
+        if($currentStatus != JobStatusEnum::ASSIGNED) {
+            return HostErrors::jobIsNotAssigned();
+        }
 
         $bot = $job->bot;
 

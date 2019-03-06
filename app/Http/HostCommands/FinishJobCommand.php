@@ -43,7 +43,9 @@ class FinishJobCommand
 
         $currentStatus = $job->status;
 
-        abort_unless(JobStatusEnum::IN_PROGRESS == $currentStatus, Response::HTTP_CONFLICT);
+        if($currentStatus != JobStatusEnum::IN_PROGRESS) {
+            return HostErrors::jobIsNotAssigned();
+        }
 
         $bot = $job->bot;
 
