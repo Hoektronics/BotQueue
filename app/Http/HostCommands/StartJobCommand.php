@@ -10,7 +10,6 @@ use App\Errors\HostErrors;
 use App\HostManager;
 use App\Http\Resources\JobResource;
 use App\Job;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 
 class StartJobCommand
@@ -21,16 +20,10 @@ class StartJobCommand
      * @var HostManager
      */
     private $hostManager;
-    /**
-     * @var HostErrors
-     */
-    private $hostErrors;
 
-    public function __construct(HostManager $hostManager,
-                                HostErrors $hostErrors)
+    public function __construct(HostManager $hostManager)
     {
         $this->hostManager = $hostManager;
-        $this->hostErrors = $hostErrors;
     }
 
     /**
@@ -50,7 +43,7 @@ class StartJobCommand
         $bot = $job->bot;
 
         if($bot->host_id != $this->hostManager->getHost()->id) {
-            return $this->hostErrors->jobIsNotAssignedToThisHost();
+            return HostErrors::jobIsNotAssignedToThisHost();
         }
 
         $job->status = JobStatusEnum::IN_PROGRESS;
