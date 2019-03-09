@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tests;
+namespace Tests\Helpers;
 
 use App;
 use Illuminate\Support\Arr;

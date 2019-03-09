@@ -3,7 +3,7 @@
 namespace Tests\Feature\Host;
 
 use Illuminate\Http\Response;
-use Tests\PassportHelper;
+use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
 
 class ChannelTest extends TestCase

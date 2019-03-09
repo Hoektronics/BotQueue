@@ -6,7 +6,7 @@ use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
-use Tests\PassportHelper;
+use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
 
 class FinishJobCommandTest extends TestCase

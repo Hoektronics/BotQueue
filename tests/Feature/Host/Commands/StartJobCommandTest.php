@@ -7,7 +7,7 @@ use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Tests\PassportHelper;
+use Tests\Helpers\PassportHelper;
 
 class StartJobCommandTest extends TestCase
 {

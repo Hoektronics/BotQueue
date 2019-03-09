@@ -7,7 +7,7 @@ use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
 use Storage;
-use Tests\PassportHelper;
+use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
 
 class GetBotsCommandTest extends TestCase

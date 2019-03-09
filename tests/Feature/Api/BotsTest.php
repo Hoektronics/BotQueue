@@ -4,7 +4,7 @@ namespace Tests\Feature\Api;
 
 use App\Enums\BotStatusEnum;
 use Illuminate\Http\Response;
-use Tests\PassportHelper;
+use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
 
 class BotsTest extends TestCase

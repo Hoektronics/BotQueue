@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Helpers;
 
 use App\Enums\HostRequestStatusEnum;
 use Faker\Generator as Faker;

@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser as JwtParser;
 use Tests\TestCase;
-use Tests\PassportHelper;
+use Tests\Helpers\PassportHelper;
 
 class HostRefreshCommandTest extends TestCase
 {
