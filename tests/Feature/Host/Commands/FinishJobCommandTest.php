@@ -14,6 +14,17 @@ class FinishJobCommandTest extends TestCase
     use PassportHelper;
 
     /** @test */
+    public function unauthenticatedHostCannotPerformThisAction()
+    {
+        $this
+            ->postJson("/host", [
+                "command" => "FinishJob"
+            ])
+            ->assertStatus(Response::HTTP_UNAUTHORIZED)
+            ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
+    }
+
+    /** @test */
     public function aHostCanUpdateJobStatusFromInProgressToQualityCheck()
     {
         $this->withoutJobs();

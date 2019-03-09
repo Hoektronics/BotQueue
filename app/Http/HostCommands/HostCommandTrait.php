@@ -3,10 +3,11 @@
 namespace App\Http\HostCommands;
 
 
+use App\Errors\ErrorResponse;
+use App\Errors\HostErrors;
 use App\Host;
 use App\HostManager;
 use Carbon\Carbon;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Lcobucci\JWT\Parser;
 
@@ -14,7 +15,7 @@ trait HostCommandTrait
 {
     /**
      * @param Auth $auth
-     * @throws AuthenticationException
+     * @return ErrorResponse|void
      */
     public function verifyAuth(Auth $auth)
     {
@@ -29,7 +30,7 @@ trait HostCommandTrait
 
             $this->setUpHost();
         } else {
-            throw new AuthenticationException("Unauthenticated.", [$guard]);
+            return HostErrors::oauthAuthorizationInvalid();
         }
     }
 

@@ -61,6 +61,15 @@ class HostErrors
         );
     }
 
+    public static function oauthAuthorizationInvalid()
+    {
+        return new ErrorResponse(
+            1006,
+            "Authorization used was invalid",
+            Response::HTTP_UNAUTHORIZED
+        );
+    }
+
     public static function botHasNoHost()
     {
         return new ErrorResponse(

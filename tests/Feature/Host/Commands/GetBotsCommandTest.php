@@ -4,6 +4,7 @@ namespace Tests\Feature\Host\Commands;
 
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Errors\HostErrors;
 use Illuminate\Http\Response;
 use Storage;
 use Tests\PassportHelper;
@@ -12,6 +13,17 @@ use Tests\TestCase;
 class GetBotsCommandTest extends TestCase
 {
     use PassportHelper;
+
+    /** @test */
+    public function unauthenticatedHostCannotPerformThisAction()
+    {
+        $this
+            ->postJson("/host", [
+                "command" => "GetBots"
+            ])
+            ->assertStatus(Response::HTTP_UNAUTHORIZED)
+            ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
+    }
 
     /** @test */
     public function hostCanAccessBotsAssignedToIt()

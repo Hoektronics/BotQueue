@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Host\Commands;
 
+use App\Errors\HostErrors;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser as JwtParser;
@@ -11,6 +12,17 @@ use Tests\PassportHelper;
 class HostRefreshCommandTest extends TestCase
 {
     use PassportHelper;
+
+    /** @test */
+    public function unauthenticatedHostCannotPerformThisAction()
+    {
+        $this
+            ->postJson("/host", [
+                "command" => "RefreshAccessToken"
+            ])
+            ->assertStatus(Response::HTTP_UNAUTHORIZED)
+            ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
+    }
 
     /** @test */
     public function canRefreshSuccessfully()

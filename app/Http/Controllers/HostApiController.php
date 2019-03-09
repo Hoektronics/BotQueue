@@ -19,7 +19,11 @@ class HostApiController extends Controller
             $data = collect($request->input("data", []));
 
             if (method_exists($command, "verifyAuth")) {
-                $command->verifyAuth(app()->make(Auth::class));
+                $response = $command->verifyAuth(app()->make(Auth::class));
+
+                if($response !== null) {
+                    return $response;
+                }
             }
 
             return $command($data);
