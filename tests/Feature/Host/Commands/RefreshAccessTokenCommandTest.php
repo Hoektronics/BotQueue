@@ -9,7 +9,7 @@ use Lcobucci\JWT\Parser as JwtParser;
 use Tests\TestCase;
 use Tests\Helpers\PassportHelper;
 
-class RefreshAccessTokenCommand extends TestCase
+class RefreshAccessTokenCommandTest extends TestCase
 {
     use PassportHelper;
 
@@ -45,13 +45,24 @@ class RefreshAccessTokenCommand extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
                 "status" => "success",
+                "data" => [
+                    "host" => [
+                        "id" => $this->mainHost->id,
+                        "name" => $this->mainHost->name,
+                        "owner" => [
+                            "id" => $this->mainUser->id,
+                            "username" => $this->mainUser->username,
+                        ],
+                    ],
+                ],
             ])
             ->assertJsonStructure([
-                "status",
-                "access_token",
+                "data" => [
+                    "access_token",
+                ],
             ]);
 
-        $new_token = $refresh_response->json("access_token");
+        $new_token = $refresh_response->json("data.access_token");
         $later_expire_time = $jwt->parse($new_token)->getClaim("exp");
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
 

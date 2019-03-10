@@ -4,6 +4,7 @@ namespace App\Http\HostCommands;
 
 
 use App\HostManager;
+use App\Http\Resources\HostResource;
 
 class RefreshAccessTokenCommand
 {
@@ -23,13 +24,8 @@ class RefreshAccessTokenCommand
     {
         $host = $this->hostManager->getHost();
 
-        $accessToken = $host->refreshAccessToken();
+        $host->refreshAccessToken();
 
-        $jwtToken = $accessToken->convertToJWT(passport_private_key());
-
-        return response()->json([
-            "status" => "success",
-            "access_token" => (string)$jwtToken,
-        ]);
+        return new HostResource($host);
     }
 }
