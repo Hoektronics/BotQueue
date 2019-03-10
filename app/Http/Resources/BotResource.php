@@ -51,4 +51,11 @@ class BotResource extends Resource
             }),
         ];
     }
+
+    public function with($request)
+    {
+        return [
+            "status" => "success",
+        ];
+    }
 }

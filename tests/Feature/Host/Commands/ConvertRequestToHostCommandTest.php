@@ -42,7 +42,7 @@ class ConvertRequestToHostCommandTest extends TestCase
         $host_name = "My super unique test name";
         $this->mainUser->claim($host_request, $host_name);
 
-        $host_access_response = $this
+        $convert_to_host_response = $this
             ->postJson("/host", [
                 "command" => "ConvertRequestToHost",
                 "data" => [
@@ -59,7 +59,7 @@ class ConvertRequestToHostCommandTest extends TestCase
                 ],
             ]);
 
-        $host_id = $host_access_response->json("data.host.id");
+        $host_id = $convert_to_host_response->json("data.host.id");
 
         /** @var Host $host */
         $host = Host::query()->find($host_id);
@@ -67,8 +67,9 @@ class ConvertRequestToHostCommandTest extends TestCase
         $this->assertNotNull($host);
         $this->assertEquals($host_name, $host->name);
 
-        $host_access_response
+        $convert_to_host_response
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "host" => [
                         "id" => $host->id,
@@ -100,6 +101,9 @@ class ConvertRequestToHostCommandTest extends TestCase
                 ],
             ])
             ->assertStatus(Response::HTTP_CREATED)
+            ->assertJson([
+                "status" => "success",
+            ])
             ->assertJsonStructure([
                 "data" => [
                     "access_token",
@@ -145,7 +149,7 @@ class ConvertRequestToHostCommandTest extends TestCase
         $host_request = $this->hostRequest()->create();
         $this->mainUser->claim($host_request, "My Test Host");
 
-        $response = $this
+        $convert_to_host_response = $this
             ->postJson("/host", [
                 "command" => "ConvertRequestToHost",
                 "data" => [
@@ -154,12 +158,21 @@ class ConvertRequestToHostCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
+                "status",
                 "data" => [
                     "access_token",
                 ],
             ]);
 
-        $access_token = $response->json("data.access_token");
+        $access_token = $convert_to_host_response->json("data.access_token");
+
+        $convert_to_host_response
+            ->assertJson([
+                "status" => "success",
+                "data" => [
+                    "access_token" => $access_token,
+                ],
+            ]);
 
         /** @var Host $host */
         $host = Host::query()->where("name", "My Test Host")->first();

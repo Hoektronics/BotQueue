@@ -25,6 +25,7 @@ class CreateHostRequestCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
+                "status",
                 "data" => [
                     "id",
                     "status",
@@ -42,6 +43,7 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "id" => $host_request->id,
                     "status" => HostRequestStatusEnum::REQUESTED,
@@ -59,6 +61,7 @@ class CreateHostRequestCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
+                "status",
                 'data' => [
                     'id',
                     'status',
@@ -76,6 +79,7 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "id" => $host_request->id,
                     "status" => HostRequestStatusEnum::REQUESTED,
@@ -92,6 +96,7 @@ class CreateHostRequestCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
+                "status",
                 "data" => [
                     "id",
                     "status",
@@ -109,6 +114,7 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "id" => $host_request->id,
                     "status" => HostRequestStatusEnum::REQUESTED,
@@ -128,12 +134,20 @@ class CreateHostRequestCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
+                "status",
                 "data" => [
                     "id"
                 ],
             ]);
 
         $host_request_id = $response->json("data.id");
+
+        $response->assertJson([
+            "status" => "success",
+            "data" => [
+                "id" => $host_request_id,
+            ],
+        ]);
 
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);

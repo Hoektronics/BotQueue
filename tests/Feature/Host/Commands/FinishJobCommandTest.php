@@ -52,12 +52,13 @@ class FinishJobCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "id" => $job->id,
                     "name" => $job->name,
                     "status" => JobStatusEnum::QUALITY_CHECK,
                     "url" => $file->url(),
-                ]
+                ],
             ]);
 
         $bot->refresh();

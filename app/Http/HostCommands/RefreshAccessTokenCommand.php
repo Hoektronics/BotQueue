@@ -26,8 +26,10 @@ class RefreshAccessTokenCommand
         $accessToken = $host->refreshAccessToken();
 
         $jwtToken = $accessToken->convertToJWT(passport_private_key());
+
         return response()->json([
-            'access_token' => (string)$jwtToken,
+            "status" => "success",
+            "access_token" => (string)$jwtToken,
         ]);
     }
 }

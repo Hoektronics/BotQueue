@@ -44,6 +44,7 @@ class GetBotsCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     [
                         "id" => $bot->id,
@@ -88,6 +89,7 @@ class GetBotsCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     [
                         "id" => $bot->id,
@@ -128,6 +130,7 @@ class GetBotsCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
+                "status" => "success",
                 "data" => [
                 ],
             ]);

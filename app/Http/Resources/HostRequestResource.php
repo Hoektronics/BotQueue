@@ -20,24 +20,29 @@ class HostRequestResource extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
     {
         return [
-            'data' => [
-                'id' => $this->id,
-                'status' => $this->status,
-                'expires_at' => $this->expires_at,
-                'claimer' => $this->whenLoaded('claimer', function () {
-                    return [
-                        'id' => $this->claimer->id,
-                        'username' => $this->claimer->username,
-                        'link' => url('/api/users', $this->claimer->id),
-                    ];
-                }),
-            ],
+            "id" => $this->id,
+            "status" => $this->status,
+            "expires_at" => $this->expires_at,
+            "claimer" => $this->whenLoaded("claimer", function () {
+                return [
+                    "id" => $this->claimer->id,
+                    "username" => $this->claimer->username,
+                    "link" => url('/api/users', $this->claimer->id),
+                ];
+            }),
+        ];
+    }
+
+    public function with($request)
+    {
+        return [
+            "status" => "success",
         ];
     }
 }

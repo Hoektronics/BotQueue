@@ -24,6 +24,7 @@ class GetHostRequestCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "id" => $host_request->id,
                     'status' => HostRequestStatusEnum::REQUESTED,
@@ -49,6 +50,7 @@ class GetHostRequestCommandTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
+                "status" => "success",
                 "data" => [
                     "id" => $host_request->id,
                     "status" => HostRequestStatusEnum::CLAIMED,

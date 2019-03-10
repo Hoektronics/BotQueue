@@ -9,7 +9,7 @@ use Lcobucci\JWT\Parser as JwtParser;
 use Tests\TestCase;
 use Tests\Helpers\PassportHelper;
 
-class HostRefreshCommandTest extends TestCase
+class RefreshAccessTokenCommand extends TestCase
 {
     use PassportHelper;
 
@@ -43,7 +43,11 @@ class HostRefreshCommandTest extends TestCase
 
         $refresh_response
             ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                "status" => "success",
+            ])
             ->assertJsonStructure([
+                "status",
                 "access_token",
             ]);
 

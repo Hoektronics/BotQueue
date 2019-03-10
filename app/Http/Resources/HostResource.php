@@ -20,22 +20,29 @@ class HostResource extends Resource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
     {
         return [
-            'access_token' => $this->getJWT(),
-            'host' => [
-                'id' => $this->id,
-                'name' => $this->name,
-                'owner' => [
-                    'id' => $this->owner->id,
-                    'username' => $this->owner->username,
-                    'link' => url('/api/users', $this->owner->id),
+            "access_token" => $this->getJWT(),
+            "host" => [
+                "id" => $this->id,
+                "name" => $this->name,
+                "owner" => [
+                    "id" => $this->owner->id,
+                    "username" => $this->owner->username,
+                    "link" => url('/api/users', $this->owner->id),
                 ],
-            ]
+            ],
+        ];
+    }
+
+    public function with($request)
+    {
+        return [
+            "status" => "success",
         ];
     }
 }

@@ -4,8 +4,7 @@ namespace App\Http\HostCommands;
 
 
 use App\HostManager;
-use App\Http\Resources\BotResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Http\Resources\BotCollection;
 use Illuminate\Support\Collection;
 
 class GetBotsCommand
@@ -24,7 +23,7 @@ class GetBotsCommand
 
     /**
      * @param $data Collection
-     * @return AnonymousResourceCollection
+     * @return BotCollection
      */
     public function __invoke($data)
     {
@@ -32,6 +31,6 @@ class GetBotsCommand
 
         $bots = $host->bots()->with('currentJob')->get();
 
-        return BotResource::collection($bots);
+        return new BotCollection($bots);
     }
 }
