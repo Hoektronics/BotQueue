@@ -46,6 +46,12 @@
                             </a>
                         @endif
                     </div>
+
+                    @if($job->status == \App\Enums\JobStatusEnum::IN_PROGRESS)
+                        <div class="row">
+                            Progress: {{ number_format($job->progress, 2) }}%
+                        </div>
+                    @endif
                 </div>
             </div>
 
