@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereFileId($value)
  * @property-read \App\File|null $file
+ * @property float|null $progress
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Job whereProgress($value)
  */
 class Job extends Model
 {

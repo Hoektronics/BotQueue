@@ -13,6 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int id
  * @property string $name
  * @property string $status
+ * @property float progress
  * @property File $file
  */
 class JobResource extends JsonResource
@@ -29,6 +30,7 @@ class JobResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "status" => $this->status,
+            "progress" => $this->progress,
             "url" => $this->file->url(),
         ];
     }
