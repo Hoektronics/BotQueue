@@ -33,6 +33,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Host query()
+ * @property string|null $available_connections
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Host whereAvailableConnections($value)
  */
 class Host extends Model
 {
