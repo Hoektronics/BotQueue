@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
 
-class UpdateJobProgressTest extends TestCase
+class UpdateJobProgressCommandTest extends TestCase
 {
     use PassportHelper;
 
