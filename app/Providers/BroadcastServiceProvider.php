@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Channels\BotChannel;
+use App\Channels\HostChannel;
 use App\Channels\UserChannel;
 use App\HostManager;
 use App\Managers\BroadcastAuthManager;
@@ -11,8 +12,9 @@ use Illuminate\Support\ServiceProvider;
 class BroadcastServiceProvider extends ServiceProvider
 {
     protected $channels = [
-        'private-user.{user}' => UserChannel::class,
         'private-bot.{bot}' => BotChannel::class,
+        'private-host.{host}' => HostChannel::class,
+        'private-user.{user}' => UserChannel::class,
     ];
 
     public function register()

@@ -9,7 +9,7 @@ use Tests\TestCase;
 class ChannelTest extends TestCase
 {
     use PassportHelper;
-    
+
     protected function authChannel($channel)
     {
         return $this->postJson('/broadcasting/auth', [
@@ -25,6 +25,16 @@ class ChannelTest extends TestCase
             ->withTokenFromHost($this->mainHost)
             ->post('/broadcasting/auth')
             ->assertStatus(Response::HTTP_BAD_REQUEST);
+    }
+
+    /** @test */
+    public function aHostCanListenToTheirOwnChannel()
+    {
+        $this
+            ->withExceptionHandling()
+            ->withTokenFromHost($this->mainHost)
+            ->authChannel('private-host.' . $this->mainHost->id)
+            ->assertStatus(Response::HTTP_OK);
     }
 
     /** @test */
@@ -52,9 +62,9 @@ class ChannelTest extends TestCase
     /** @test */
     public function aHostCanListenToABotsChannelIfThatBotIsAssignedToIt()
     {
-        $bot = $this->bot()->create();
-
-        $bot->assignTo($this->mainHost);
+        $bot = $this->bot()
+            ->host($this->mainHost)
+            ->create();
 
         $this
             ->withExceptionHandling()
