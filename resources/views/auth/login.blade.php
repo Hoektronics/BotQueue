@@ -1,54 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-md-center">
-        <div class="card w-50">
-            <div class="card-header">Login</div>
-            <div class="card-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ route('login') }}">
+    <div class="flex">
+        <div class="mx-auto w-1/3 rounded-lg border">
+            <div class="text-center text-xl bg-gray-200">Login</div>
+            <div class="p-4">
+                <form role="form" method="POST" action="{{ route('login') }}">
                     {{ csrf_field() }}
 
-                    <div class="form-group">
-                        <label for="username" class="control-label">Username</label>
+                    <div class="flex mb-3">
+                        <label for="username" class="w-1/3">Username</label>
 
-                        <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username"
-                               value="{{ old('username') }}" required autofocus>
+                        <div class="flex flex-col flex-grow">
+                            <input id="username" type="text" name="username"
+                                   value="{{ old('username') }}"
+                                   class="border rounded"
+                                   required autofocus>
 
-                        @if ($errors->has('username'))
-                            <span class="form-text">
-                                <strong>{{ $errors->first('username') }}</strong>
-                            </span>
-                        @endif
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password" class="control-label">Password</label>
-
-                        <input id="password" type="password" class="form-control" name="password" required>
-
-                        @if ($errors->has('password'))
-                            <span class="form-text">
-                                <strong>{{ $errors->first('password') }}</strong>
-                            </span>
-                        @endif
-                    </div>
-
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
-                            </label>
+                            @if ($errors->has('username'))
+                                <span class="text-red-800">{{ $errors->first('username') }}</span>
+                            @endif
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
-                            Login
-                        </button>
+                    <div class="flex my-3">
+                        <label for="password" class="w-1/3">Password</label>
 
-                        <a class="btn btn-link" href="{{ route('password.request') }}">
+                        <input id="password" type="password" name="password" required
+                        class="flex-grow border rounded">
+                    </div>
+
+                    <div class="flex my-3">
+                        <label for="remember" class="w-1/3">Remember Me</label>
+                        <input type="checkbox" id="remember" name="remember"
+                               class="flex-grow my-auto border rounded"
+                                {{ old('remember') ? 'checked' : '' }}>
+                    </div>
+
+                    <div class="flex">
+                        <a class="text-sm align-text-bottom mt-auto text-gray-600 flex-grow"
+                                href="{{ route('password.request') }}">
                             Forgot Your Password?
                         </a>
+
+                        <div class="flex justify-end mt-4">
+                            <button type="submit" class="btn-blue">
+                                Login
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

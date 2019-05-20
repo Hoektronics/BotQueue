@@ -1,64 +1,67 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-md-center">
-            <div class="card w-50">
-                <div class="card-header">Register</div>
-                <div class="card-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ route('register') }}">
-                        {{ csrf_field() }}
+    <div class="flex">
+        <div class="mx-auto w-1/3 rounded-lg border">
+            <div class="text-center text-xl bg-gray-200">Register</div>
+            <div class="p-4">
+                <form role="form" method="POST" action="{{ route('register') }}">
+                    {{ csrf_field() }}
 
-                        <div class="form-group">
-                            <label for="username" class="control-label">Username</label>
+                    <div class="flex mb-3">
+                        <label for="username" class="w-1/3">Username</label>
 
-                            <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required autofocus>
+                        <div class="flex flex-col flex-grow">
+                        <input id="username" type="text" name="username" value="{{ old('username') }}" required
+                               class="border rounded"
+                               autofocus>
 
                             @if ($errors->has('username'))
-                                <span class="form-text">
-                                    <strong>{{ $errors->first('username') }}</strong>
-                                </span>
+                                <span class="text-red-800">{{ $errors->first('username') }}</span>
                             @endif
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="email" class="control-label">E-Mail Address</label>
+                    <div class="flex my-3">
+                        <label for="email" class="w-1/3">E-Mail Address</label>
 
-                            <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
+                        <div class="flex flex-col flex-grow">
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                               class="border rounded">
 
                             @if ($errors->has('email'))
-                                <span class="form-text">
-                                    <strong>{{ $errors->first('email') }}</strong>
-                                </span>
+                                <span class="text-red-800">{{ $errors->first('email') }}</span>
                             @endif
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="password" class="control-label">Password</label>
+                    <div class="flex my-3">
+                        <label for="password" class="w-1/3">Password</label>
 
-                            <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+                        <div class="flex flex-col flex-grow">
+                        <input id="password" type="password" name="password" required
+                               class="border rounded">
 
                             @if ($errors->has('password'))
-                                <span class="form-text">
-                                    <strong>{{ $errors->first('password') }}</strong>
-                                </span>
+                                <span class="text-red-800">{{ $errors->first('password') }}</span>
                             @endif
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="password-confirm" class="control-label">Confirm Password</label>
+                    <div class="flex my-3">
+                        <label for="password-confirm" class="w-1/3">Confirm Password</label>
 
-                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
-                        </div>
+                        <input id="password-confirm" type="password" name="password_confirmation" required
+                               class="flex-grow border rounded">
+                    </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">
-                                Register
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="flex justify-end mt-4">
+                        <button type="submit" class="btn-blue">
+                            Register
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
 @endsection

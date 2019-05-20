@@ -2,4 +2,11 @@
 
 @tailwind components;
 
+.btn-blue {
+    @apply p-2 rounded-lg border border-blue-500 bg-blue-500
+}
+.btn-blue:hover {
+    @apply bg-blue-300
+}
+
 @tailwind utilities;
