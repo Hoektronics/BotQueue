@@ -11,7 +11,7 @@
             </a>
         </div>
 
-        <div class="flex flex-col w-1/2 mx-auto">
+        <div class="mt-4 flex flex-col w-full md:w-1/2 md:mx-auto">
             <div class="flex w-full">
                 <div class="w-1/2 text-center text-xl p-1 border-l border-t border-b rounded-tl">Cluster Name</div>
                 <div class="flex w-1/2 border-r border-t border-b rounded-tr">

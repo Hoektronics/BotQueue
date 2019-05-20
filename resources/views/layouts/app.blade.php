@@ -22,12 +22,12 @@
             <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('files.index') }}">Files</a>
         @endif
     </div>
-    <div class="flex flex-none">
+    <div class="hidden md:flex flex-none">
     @if (Auth::guest())
         <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('register') }}">Register</a>
         <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('login') }}">Login</a>
     @else
-        <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="#"
+        <a class="invisible md:visible my-auto mx-2 text-blue-500 hover:text-blue-800" href="#"
            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             Logout
         </a>

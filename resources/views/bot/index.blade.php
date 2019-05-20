@@ -22,7 +22,7 @@
                 Click the "Create a Bot" button to make one
             </h4>
         @else
-            <div class="flex flex-col w-1/2 mx-auto">
+            <div class="mt-4 flex flex-col w-full md:w-1/2 md:mx-auto">
                 <div class="flex w-full">
                     <a class="w-1/3 text-center text-xl p-1 border-l border-t border-b rounded-tl">Bot Name</a>
                     <a class="w-1/3 text-center text-xl p-1 border-t border-b">Status</a>

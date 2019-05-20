@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="flex">
-        <div class="mx-auto w-1/3 rounded-lg border">
+        <div class="mx-4 w-full rounded-lg border md:w-1/3 md:mx-auto">
             <div class="text-center text-xl bg-gray-200">Create Bot</div>
             <div class="p-4 border-green-500">
                 <form role="form" method="POST" action="{{ route('bots.store') }}">
