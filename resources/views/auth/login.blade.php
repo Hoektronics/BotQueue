@@ -37,14 +37,14 @@
                                 {{ old('remember') ? 'checked' : '' }}>
                     </div>
 
-                    <div class="flex">
+                    <div class="flex mt-4">
                         <a class="text-sm align-text-bottom mt-auto text-gray-600 flex-grow"
                                 href="{{ route('password.request') }}">
                             Forgot Your Password?
                         </a>
 
-                        <div class="flex justify-end mt-4">
-                            <button type="submit" class="btn-blue">
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn-blue btn-lg btn-interactive">
                                 Login
                             </button>
                         </div>

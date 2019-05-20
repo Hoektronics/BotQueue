@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="flex justify-end mt-4">
-                        <button type="submit" class="btn-blue">
+                        <button type="submit" class="btn-blue btn-lg btn-interactive">
                             Register
                         </button>
                     </div>

@@ -9,9 +9,9 @@ class BotStatusService
 {
     // Database name to label class
     protected $statusToLabelClass = [
-        BotStatusEnum::OFFLINE => 'badge-dark',
+        BotStatusEnum::OFFLINE => 'btn-sm border-black bg-black text-white',
         BotStatusEnum::JOB_ASSIGNED => 'badge-secondary',
-        BotStatusEnum::IDLE => 'badge-success',
+        BotStatusEnum::IDLE => 'p-1 rounded border bg-green-500 text-white',
         BotStatusEnum::WORKING => 'badge-primary',
         BotStatusEnum::WAITING => 'badge-secondary',
     ];
@@ -33,7 +33,7 @@ class BotStatusService
     {
         $labelClass = $this->label_class($status);
 
-        return "<span class=\"badge $labelClass\">$status</span>";
+        return "<span class=\"$labelClass\">$status</span>";
     }
 
     /**

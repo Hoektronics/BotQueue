@@ -3,10 +3,23 @@
 @tailwind components;
 
 .btn-blue {
-    @apply p-2 rounded-lg border border-blue-500 bg-blue-500
+    @apply border border-blue-500 bg-blue-500 text-white
 }
-.btn-blue:hover {
-    @apply bg-blue-300
+
+.btn-blue.btn-interactive:hover {
+    @apply bg-blue-300 text-black
+}
+
+.btn-black {
+    @apply border border-black bg-black text-white
+}
+
+.btn-sm {
+    @apply p-1 rounded
+}
+
+.btn-lg {
+    @apply p-2 rounded-lg
 }
 
 @tailwind utilities;
