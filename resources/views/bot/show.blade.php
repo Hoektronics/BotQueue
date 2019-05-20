@@ -7,7 +7,8 @@
         <div class="flex-grow">
             <span class="text-3xl">{{ $bot->name }}</span>
         </div>
-        <div class="flex-1/8">
+
+        <div class="w-1/8">
             <div class="border rounded">
                 <div class="text-center bg-gray-200">Info</div>
                 <div class="p-4">

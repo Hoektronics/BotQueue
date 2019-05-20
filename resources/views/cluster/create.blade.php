@@ -1,28 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-md-center">
-        <div class="card w-50">
-            <div class="card-header">Create Cluster</div>
-            <div class="card-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ route('clusters.store') }}">
+    <div class="flex">
+        <div class="mx-auto w-1/3 rounded-lg border">
+            <div class="text-center text-xl bg-gray-200">Create Cluster</div>
+            <div class="p-4">
+                <form role="form" method="POST" action="{{ route('clusters.store') }}">
                     {{ csrf_field() }}
 
-                    <div class="form-group">
-                        <label for="name" class="control-label">Name</label>
+                    <div class="flex mb-3">
+                        <label for="name" class="w-1/3">Name</label>
 
-                        <input name="name" id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
-                               value="{{ old('name') }}" required autofocus>
+                        <div class="flex flex-col flex-grow">
+                            <input name="name" id="name" type="text"
+                                   value="{{ old('name') }}"
+                                   class="border rounded"
+                                   required autofocus>
 
-                        @if ($errors->has('name'))
-                            <span class="form-text">
-                                <strong>{{ $errors->first('name') }}</strong>
-                            </span>
-                        @endif
+                            @if ($errors->has('name'))
+                                <span class="text-red-800">{{ $errors->first('name') }}</span>
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn-blue btn-lg btn-interactive">
                             Create Cluster
                         </button>
                     </div>

@@ -3,38 +3,34 @@
 @inject('bot_status', 'App\Services\BotStatusService')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-9">
-            <h1>{{ $cluster->name }}</h1>
-
-            Main content
+    <div class="flex mx-4">
+        <div class="flex-grow">
+            <span class="text-3xl">{{ $cluster->name }}</span>
         </div>
 
-        <div class="col-md-3">
-            <div class="card mb-3">
-                <div class="card-header">
-                    Info
-                </div>
-                <div class="card-body">
+        <div class="w-1/8">
+            <div class="border rounded mb-4">
+                <div class="text-center bg-gray-200">Info</div>
+                <div class="p-4">
                     Creator: {{ $cluster->creator->username }}
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    Bots
-                </div>
-                <div class="card-body">
-                    @foreach($cluster->bots as $bot)
-                        <div class="row">
-                            <h4>
-                                <a class="badge {{ $bot_status->label_class($bot->status) }}"
-                                   href="{{ route('bots.show', [$bot]) }}">
-                                    {{ $bot->name }}
-                                </a>
-                            </h4>
-                        </div>
-                    @endforeach
+            <div class="border rounded mb-4">
+                <div class="text-center bg-gray-200">Bots</div>
+                <div class="flex flex-col p-4">
+                    @forelse($cluster->bots as $bot)
+                            <a href="{{ route('bots.show', [$bot]) }}"
+                            class="{{ $bot_status->label_class($bot->status) }} w-full text-center mt-1 mb-1">
+                                {{ $bot->name }}
+                            </a>
+                    @empty
+                        No bots found.
+                        <a href="{{ route('bots.create') }}"
+                        class="hover:text-gray-700">
+                            Create one?
+                        </a>
+                    @endforelse
                 </div>
             </div>
 
