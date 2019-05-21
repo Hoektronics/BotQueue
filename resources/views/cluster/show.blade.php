@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="flex mx-4">
-        <div class="flex-grow">
+        <div class="flex-grow mr-4">
             <span class="text-3xl">{{ $cluster->name }}</span>
         </div>
 

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="flex">
-        <div class="mx-4 w-full rounded-lg border md:w-1/3 md:mx-auto">
+        <div class="mx-4 w-full rounded-lg border lg:w-1/3 lg:mx-auto">
             <div class="text-center text-xl bg-gray-200">Login</div>
             <div class="p-4">
                 <form role="form" method="POST" action="{{ route('login') }}">
@@ -27,19 +27,21 @@
                         <label for="password" class="w-1/3">Password</label>
 
                         <input id="password" type="password" name="password" required
-                        class="flex-grow border rounded">
+                               class="flex-grow border rounded">
                     </div>
 
                     <div class="flex my-3">
                         <label for="remember" class="w-1/3">Remember Me</label>
-                        <input type="checkbox" id="remember" name="remember"
-                               class="flex-grow my-auto border rounded"
-                                {{ old('remember') ? 'checked' : '' }}>
+                        <div class="flex-grow flex justify-end">
+                            <input type="checkbox" id="remember" name="remember"
+                                   class="my-auto border rounded"
+                                    {{ old('remember') ? 'checked' : '' }}>
+                        </div>
                     </div>
 
                     <div class="flex mt-4">
                         <a class="text-sm align-text-bottom mt-auto text-gray-600 flex-grow"
-                                href="{{ route('password.request') }}">
+                           href="{{ route('password.request') }}">
                             Forgot Your Password?
                         </a>
 

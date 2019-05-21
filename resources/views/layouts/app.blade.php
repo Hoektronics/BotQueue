@@ -14,7 +14,7 @@
 <body>
 <nav class="flex border-b border-gray-400 justify-between p-4 mb-4">
     <a class="flex-none text-2xl" href="/">BotQueue</a>
-    <div class="flex flex-grow mx-8">
+    <div class="flex flex-grow mx-4">
         @if(Auth::check())
             <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('bots.index') }}">Bots</a>
             <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('clusters.index') }}">Clusters</a>
@@ -22,21 +22,23 @@
             <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('files.index') }}">Files</a>
         @endif
     </div>
-    <div class="hidden md:flex flex-none">
     @if (Auth::guest())
-        <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('register') }}">Register</a>
-        <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('login') }}">Login</a>
+        <div class="flex flex-none">
+            <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('register') }}">Register</a>
+            <a class="my-auto mx-2 text-blue-500 hover:text-blue-800" href="{{ route('login') }}">Login</a>
+        </div>
     @else
-        <a class="invisible md:visible my-auto mx-2 text-blue-500 hover:text-blue-800" href="#"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            Logout
-        </a>
-        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-              style="display: none;">
-            {{ csrf_field() }}
-        </form>
+        <div class="hidden md:flex flex-none">
+            <a class="invisible md:visible my-auto mx-2 text-blue-500 hover:text-blue-800" href="#"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Logout
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                  style="display: none;">
+                {{ csrf_field() }}
+            </form>
+        </div>
     @endif
-    </div>
 </nav>
 
 @yield('content')

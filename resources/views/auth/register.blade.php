@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="flex">
-        <div class="mx-4 w-full rounded-lg border md:w-1/3 md:mx-auto">
+        <div class="mx-4 w-full rounded-lg border lg:w-1/3 lg:mx-auto">
             <div class="text-center text-xl bg-gray-200">Register</div>
             <div class="p-4">
                 <form role="form" method="POST" action="{{ route('register') }}">

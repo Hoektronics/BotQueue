@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="flex">
-        <div class="mx-4 w-full rounded-lg border md:mx-auto md:w-1/3">
+        <div class="mx-4 w-full rounded-lg border lg:mx-auto lg:w-1/3">
             <div class="text-center text-xl bg-gray-200">Create Cluster</div>
             <div class="p-4">
                 <form role="form" method="POST" action="{{ route('clusters.store') }}">
