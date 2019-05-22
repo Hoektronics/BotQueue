@@ -11,7 +11,7 @@ class BotStatusService
     protected $statusToLabelClass = [
         BotStatusEnum::OFFLINE => 'btn-sm border-black bg-black text-white',
         BotStatusEnum::JOB_ASSIGNED => 'badge-secondary',
-        BotStatusEnum::IDLE => 'p-1 rounded border bg-green-500 text-white',
+        BotStatusEnum::IDLE => 'btn-sm bg-green-500 text-white',
         BotStatusEnum::WORKING => 'badge-primary',
         BotStatusEnum::WAITING => 'badge-secondary',
     ];

@@ -13,8 +13,8 @@ class JobStatusService
         JobStatusEnum::ASSIGNED => 'badge-secondary',
         JobStatusEnum::IN_PROGRESS => 'badge-info',
         JobStatusEnum::QUALITY_CHECK => 'badge-warning',
-        JobStatusEnum::COMPLETED => 'badge-success',
-        JobStatusEnum::FAILED => 'badge-danger',
+        JobStatusEnum::COMPLETED => 'btn-sm bg-green-500 text-white',
+        JobStatusEnum::FAILED => 'btn-sm bg-red-700 text-white',
         JobStatusEnum::CANCELLED => 'badge-inverse',
     ];
 

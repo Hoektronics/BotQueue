@@ -7,67 +7,60 @@
 @endsection
 
 @section('content')
-    <div class="btn-toolbar float-right">
-        <a role="button"
-           class="btn btn-primary btn-lg"
-           href="{{ route('jobs.file.store', $file) }}"
-           onclick="event.preventDefault(); document.getElementById('job-create-form').submit();">
-            Create Job
-        </a>
-    </div>
-    <h1>Create Job</h1>
+    <div class="mx-4">
+        <div class="flex justify-between">
+            <span class="text-xl">Create Job</span>
+            <a role="button"
+               href="{{ route('jobs.file.store', $file) }}"
+               class="btn-lg btn-blue btn-interactive"
+               onclick="event.preventDefault(); document.getElementById('job-create-form').submit();">
+                Create Job
+            </a>
+        </div>
 
-    <form class="form-horizontal" id="job-create-form" role="form" method="POST" action="{{ route('jobs.file.store', $file) }}">
-        {{ csrf_field() }}
+        <form id="job-create-form" role="form" method="POST" action="{{ route('jobs.file.store', $file) }}">
+            {{ csrf_field() }}
 
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-header">
-                        Info
-                    </div>
-                    <div class="card-body">
+            <div class="flex w-2/3 mx-auto">
+                <div class="w-1/3 m-2 rounded-lg border">
+                    <div class="text-center text-xl bg-gray-200">Info</div>
+                    <div class="p-4">
                         Creator: {{ $file->uploader->username }}
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <input type="checkbox" name="add_to_job" checked>
-                                </div>
-                            </div>
-
-                            <input type="text" value="{{ old('job_name', pathinfo($file->name, PATHINFO_FILENAME)) }}"
-                                   name="job_name" class="form-control{{ $errors->has('job_name') ? ' is-invalid' : '' }}">
+                <div class="w-2/3 m-2 rounded-lg border">
+                    <div class="flex bg-gray-200">
+                        <div class="py-4 pl-4 pr-2">
+                            <input type="checkbox" name="add_to_job"
+                                   checked>
                         </div>
+
+                        <input type="text"
+                               value="{{ old('job_name', pathinfo($file->name, PATHINFO_FILENAME)) }}"
+                               class="flex-grow m-2 p-2"
+                               name="job_name">
 
                         @if ($errors->has('job_name'))
-                            <span class="form-text">
-                                <strong>{{ $errors->first('job_name') }}</strong>
-                            </span>
+                            <span class="text-red-800">{{ $errors->first('job_name') }}</span>
                         @endif
                     </div>
-
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="file_type" class="control-label">File Type</label>
-                            <input type="text" id="file_type" class="form-control{{ $errors->has('file_type') ? ' is-invalid' : '' }}" value="{{ $file->type }}" disabled>
+                    <div class="p-4">
+                        <div class="flex mb-3">
+                            <label for="file_type" class="w-1/3">File Type</label>
+                            <input type="text" class="flex-grow" id="file_type" value="{{ $file->type }}" disabled>
                         </div>
 
-                        <div class="form-group">
-                            <label for="bot_cluster" class="control-label">Bot/Cluster</label>
+                        <div class="flex mb-3">
+                            <label for="bot_cluster" class="w-1/3">Bot/Cluster</label>
 
-                            <select name="bot_cluster" id="bot_cluster" class="form-control select{{ $errors->has('bot_cluster') ? ' is-invalid' : '' }}">
+                            <select name="bot_cluster" id="bot_cluster"
+                                    class="flex-grow select-all">
                                 @if(count($clusters) > 0)
                                     <optgroup label="Clusters">
                                         @foreach($clusters as $cluster)
                                             <option value="clusters_{{ $cluster->id }}"
-                                                @if(old('bot_cluster') == "clusters_".$cluster->id) selected @endif
+                                                    @if(old('bot_cluster') == "clusters_".$cluster->id) selected @endif
                                             >
                                                 {{ $cluster->name }}
                                             </option>
@@ -80,7 +73,7 @@
                                     <optgroup label="Bots">
                                         @foreach($bots as $bot)
                                             <option value="bots_{{ $bot->id }}"
-                                                @if(old('bot_cluster') == "bots_".$bot->id) selected @endif
+                                                    @if(old('bot_cluster') == "bots_".$bot->id) selected @endif
                                             >
                                                 {{ $bot->name }}
                                             </option>
@@ -90,24 +83,23 @@
                             </select>
 
                             @if ($errors->has('bot_cluster'))
-                                <span class="form-text">
-                                    <strong>{{ $errors->first('bot_cluster') }}</strong>
-                                </span>
+                                <span class="w-1/3">{{ $errors->first('bot_cluster') }}</span>
                             @endif
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-    </form>
+        </form>
+    </div>
 @endsection
 
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <script type="text/javascript">
-        $('.select').select2({
-            theme: "bootstrap"
+        $(document).ready(function () {
+            $('#bot_cluster').select2({
+                theme: "classic"
+            });
         });
     </script>
 @endsection

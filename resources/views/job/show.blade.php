@@ -1,54 +1,48 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-9">
-            <h1>{{ $job->name }}</h1>
+    <div class="flex mx-4">
+        <div class="flex flex-col flex-grow mr-4">
+            <span class="text-3xl">{{ $job->name }}</span>
 
-            @if($job->status == \App\Enums\JobStatusEnum::QUALITY_CHECK)
-                <form method="post" action="/jobs/{{$job->id}}/pass">
-                    {{ csrf_field() }}
-                    <input type="submit" value="Pass">
-                </form>
+            <div class="flex">
+                @if($job->status == \App\Enums\JobStatusEnum::QUALITY_CHECK)
+                    <form method="post" action="/jobs/{{$job->id}}/pass">
+                        {{ csrf_field() }}
+                        <input type="submit" value="Pass">
+                    </form>
 
-                <form method="post" action="/jobs/{{$job->id}}/fail">
-                    {{ csrf_field() }}
-                    <input type="submit" value="Fail">
-                </form>
-            @else
-                Main content
-            @endif
+                    <form method="post" action="/jobs/{{$job->id}}/fail">
+                        {{ csrf_field() }}
+                        <input type="submit" value="Fail">
+                    </form>
+                @endif
+            </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    Info
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        Creator: {{ $job->creator->username }}
-                    </div>
+        <div class="w-1/8">
+            <div class="border rounded">
+                <div class="text-center bg-gray-200">Info</div>
+                <div class="p-4">
+                    Creator: {{ $job->creator->username }}<br>
+                    Worker:
+                    @if(is_a($job->worker, App\Bot::class))
+                        @inject('bot_status', 'App\Services\BotStatusService')
 
-                    <div class="row">
-                        Worker:
-                        @if(is_a($job->worker, App\Bot::class))
-                            @inject('bot_status', 'App\Services\BotStatusService')
-
-                            <a class="badge {{ $bot_status->label_class($job->worker->status) }}"
-                               href="{{ route('bots.show', [$job->worker]) }}">
-                                {{ $job->worker->name }}
-                            </a>
-                        @else
-                            <a class="badge badge-secondary"
-                               href="{{ route('clusters.show', [$job->worker]) }}">
-                                {{ $job->worker->name }}
-                            </a>
-                        @endif
-                    </div>
+                        <a
+                           href="{{ route('bots.show', [$job->worker]) }}">
+                            {{ $job->worker->name }}
+                        </a>
+                    @else
+                        <a class="hover:text-gray-700"
+                           href="{{ route('clusters.show', [$job->worker]) }}">
+                            {{ $job->worker->name }}
+                        </a>
+                    @endif
+                    <br>
 
                     @if($job->status == \App\Enums\JobStatusEnum::IN_PROGRESS)
-                        <div class="row">
+                        <div>
                             Progress: {{ number_format($job->progress, 2) }}%
                         </div>
                     @endif
