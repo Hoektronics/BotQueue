@@ -8,15 +8,15 @@
             <span class="text-3xl">Jobs</span>
             <a role="button"
                href="{{ route('files.create') }}"
-            class="btn-lg btn-blue btn-interactive">
+               class="btn-lg btn-blue btn-interactive">
                 Create a Job
             </a>
         </div>
 
         <div class="mt-4 flex flex-col w-full md:w-1/2 md:mx-auto">
             <div class="flex w-full">
-                <a class="w-1/2 text-center text-xl p-1 border-l border-t border-b border-tl">Name</a>
-                <a class="w-1/2 text-center text-xl p-1 border-r border-t border-b border-tr">Status</a>
+                <a class="w-1/2 text-center text-xl p-1 border-l border-t border-b rounded-tl">Name</a>
+                <a class="w-1/2 text-center text-xl p-1 border-r border-t border-b rounded-tr">Status</a>
             </div>
             @foreach($jobs as $job)
                 <div class="flex w-full p-2 border-l border-r border-b">
