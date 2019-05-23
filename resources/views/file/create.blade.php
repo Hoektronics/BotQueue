@@ -11,9 +11,11 @@
                     <div class="mb-3">
                         <div class="flex  border border-blue-500 rounded position-relative inline-block mb-0 cursor-pointer">
                             <input id="file" class="flex-none m-0 opacity-0 w-0" name="file" type="file">
-                            <label class="flex flex-grow cursor-pointer" for="file">
-                                <span id="file-label" class="flex-grow my-auto p-1 overflow-hidden"></span>
-                                <span class="my-auto bg-blue-500 text-white text-xl p-1">Choose file</span>
+                            <label class="flex flex-grow cursor-pointer file-label" for="file">
+                                <span id="file-label" class="flex-grow my-auto p-2 overflow-hidden"></span>
+                                <span class="bg-blue-500 p-2 flex flex-col choose-file">
+                                    <span class="my-auto text-white text-xl whitespace-no-wrap choose-file">Choose file</span>
+                                </span>
                             </label>
                         </div>
 
@@ -23,7 +25,7 @@
                     </div>
 
                     <div class="flex justify-end mt-4">
-                        <button type="submit" class="btn-blue btn-lg">
+                        <button type="submit" class="btn-blue btn-lg btn-interactive">
                             Upload
                         </button>
                     </div>

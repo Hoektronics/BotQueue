@@ -22,4 +22,8 @@
     @apply p-2 rounded-lg
 }
 
+.file-label:hover .choose-file {
+    @apply bg-blue-300 text-black
+}
+
 @tailwind utilities;
