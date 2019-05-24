@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@inject('job_status', 'App\Services\JobStatusService')
+
 @section('content')
     <div class="flex mx-4">
         <div class="flex flex-col flex-grow mr-4">
@@ -9,12 +11,12 @@
                 @if($job->status == \App\Enums\JobStatusEnum::QUALITY_CHECK)
                     <form method="post" action="/jobs/{{$job->id}}/pass">
                         {{ csrf_field() }}
-                        <input type="submit" value="Pass">
+                        <input type="submit" class="btn-green btn-lg btn-interactive m-2" value="Pass">
                     </form>
 
                     <form method="post" action="/jobs/{{$job->id}}/fail">
                         {{ csrf_field() }}
-                        <input type="submit" value="Fail">
+                        <input type="submit" class="btn-red btn-lg btn-interactive m-2" value="Fail">
                     </form>
                 @endif
             </div>
@@ -25,10 +27,9 @@
                 <div class="text-center bg-gray-200">Info</div>
                 <div class="p-4">
                     Creator: {{ $job->creator->username }}<br>
+                    Status: {!! $job_status->label($job->status) !!}<br>
                     Worker:
                     @if(is_a($job->worker, App\Bot::class))
-                        @inject('bot_status', 'App\Services\BotStatusService')
-
                         <a
                                 href="{{ route('bots.show', [$job->worker]) }}">
                             {{ $job->worker->name }}

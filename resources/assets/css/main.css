@@ -10,6 +10,22 @@
     @apply bg-blue-300 text-black
 }
 
+.btn-green {
+    @apply border border-green-400 bg-green-400 text-white
+}
+
+.btn-green.btn-interactive:hover {
+    @apply bg-green-200 text-black
+}
+
+.btn-red {
+    @apply border border-red-500 bg-red-500 text-white
+}
+
+.btn-red.btn-interactive:hover {
+    @apply bg-red-300 text-black
+}
+
 .btn-black {
     @apply border border-black bg-black text-white
 }
