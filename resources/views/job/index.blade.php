@@ -28,6 +28,10 @@
                     </div>
                 </div>
             @endforeach
+
+            <div class="mt-4 flex justify-center">
+                {{ $jobs->links() }}
+            </div>
         </div>
     </div>
 @endsection

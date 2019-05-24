@@ -38,6 +38,14 @@
     @apply p-2 rounded-lg
 }
 
+.pagination > div:first-child > .page-marker {
+    @apply rounded-tl rounded-bl
+}
+
+.pagination > div:last-child > .page-marker {
+    @apply rounded-tr rounded-br
+}
+
 .input-with-error {
     @apply flex flex-col-reverse rounded
 }

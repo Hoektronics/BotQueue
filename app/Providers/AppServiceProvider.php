@@ -5,6 +5,7 @@ namespace App\Providers;
 use App;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
 
             return $user->is_admin;
         });
+
+        Paginator::defaultView('vendor.pagination.paginator');
     }
 
     /**

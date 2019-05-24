@@ -32,7 +32,7 @@ class JobController extends Controller
     public function index()
     {
         return view('job.index', [
-            'jobs' => Job::mine()->get(),
+            'jobs' => Job::mine()->paginate(15),
         ]);
     }
 
