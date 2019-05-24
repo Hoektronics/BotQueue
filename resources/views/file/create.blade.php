@@ -8,8 +8,12 @@
                 <form role="form" method="POST" action="{{ route('files.store') }}" enctype="multipart/form-data">
                     {{ csrf_field() }}
 
-                    <div class="mb-3">
-                        <div class="flex  border border-blue-500 rounded position-relative inline-block mb-0 cursor-pointer">
+                    <div class="input-with-error mb-3">
+                        @if ($errors->has('file'))
+                            <span class="input-error">{{ $errors->first('file') }}</span>
+                        @endif
+
+                        <div class="flex border border-blue-500 rounded position-relative inline-block mb-0 overflow-hidden cursor-pointer input">
                             <input id="file" class="flex-none m-0 opacity-0 w-0" name="file" type="file">
                             <label class="flex flex-grow cursor-pointer file-label" for="file">
                                 <span id="file-label" class="flex-grow my-auto p-2 overflow-hidden"></span>
@@ -18,10 +22,6 @@
                                 </span>
                             </label>
                         </div>
-
-                        @if ($errors->has('file'))
-                            <span class="text-red-800">{{ $errors->first('file') }}</span>
-                        @endif
                     </div>
 
                     <div class="flex justify-end mt-4">

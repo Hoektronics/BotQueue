@@ -16,14 +16,14 @@
                         <div class="flex mb-3">
                             <label for="email" class="w-1/3">E-Mail Address</label>
 
-                            <div class="flex flex-col flex-grow">
-                                <input id="email" type="email" name="email" value="{{ old('email') }}"
-                                       class="border rounded"
-                                       required>
-
+                            <div class="input-with-error flex-grow">
                                 @if ($errors->has('email'))
-                                    <span class="text-red-800">{{ $errors->first('email') }}</span>
+                                    <span class="input-error">{{ $errors->first('email') }}</span>
                                 @endif
+
+                                <input id="email" type="email" name="email" value="{{ old('email') }}"
+                                       class="input"
+                                       required>
                             </div>
                         </div>
 

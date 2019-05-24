@@ -14,39 +14,37 @@
                     <div class="flex mb-3">
                         <label for="email" class="w-1/3">E-Mail Address</label>
 
-                        <div class="flex flex-col flex-grow">
-                            <input id="email" type="email" name="email" value="{{ $email or old('email') }}"
-                                   class="border rounded"
-                                   required autofocus>
-
+                        <div class="input-with-error flex-grow">
                             @if ($errors->has('email'))
-                                <span class="text-red-800">{{ $errors->first('email') }}</span>
+                                <span class="input-error">{{ $errors->first('email') }}</span>
                             @endif
+
+                            <input id="email" type="email" name="email" value="{{ $email or old('email') }}"
+                                   class="input"
+                                   required autofocus>
                         </div>
                     </div>
 
                     <div class="flex mb-3">
                         <label for="password" class="w-1/3">Password</label>
 
-                        <div class="flex flex-col flex-grow">
-                            <input id="password" type="password" name="password"
-                                   class="border rounded"
-                                   required>
-
+                        <div class="input-with-error flex-grow">
                             @if ($errors->has('password'))
-                                <span class="text-red-800">{{ $errors->first('password') }}</span>
+                                <span class="input-error">{{ $errors->first('password') }}</span>
                             @endif
+
+                            <input id="password" type="password" name="password"
+                                   class="input"
+                                   required>
                         </div>
                     </div>
 
                     <div class="flex mb-3">
                         <label for="password-confirm" class="w-1/3">Confirm Password</label>
 
-                        <div class="flex flex-col flex-grow">
-                            <input id="password-confirm" type="password" name="password_confirmation"
-                                   class="border rounded"
-                                   required>
-                        </div>
+                        <input id="password-confirm" type="password" name="password_confirmation"
+                               class="flex-grow input"
+                               required>
                     </div>
 
                     <div class="flex justify-end mt-4">

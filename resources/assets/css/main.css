@@ -22,6 +22,42 @@
     @apply p-2 rounded-lg
 }
 
+.input-with-error {
+    @apply flex flex-col-reverse rounded
+}
+
+.input-with-error:focus-within {
+    @apply shadow
+}
+
+.input {
+    @apply border rounded outline-none px-1
+}
+
+select.input {
+    @apply appearance-none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' height='1rem'><path d='M1 4h2v2H1V4zm4 0h14v2H5V4zM1 9h2v2H1V9zm4 0h14v2H5V9zm-4 5h2v2H1v-2zm4 0h14v2H5v-2z'></path></svg>");
+    background-repeat: no-repeat;
+    background-size: 1rem;
+    background-position: calc(100% - .25rem) center;
+}
+
+.input-error {
+    @apply text-white bg-red-500 border-red-500 rounded-bl rounded-br px-1
+}
+
+.input-with-error > .input-error + .input {
+    @apply rounded-bl-none rounded-br-none border-red-500
+}
+
+div.input {
+    @apply px-0
+}
+
+div:not(.input-with-error) > .input:focus {
+    @apply shadow
+}
+
 .file-label:hover .choose-file {
     @apply bg-blue-300 text-black
 }

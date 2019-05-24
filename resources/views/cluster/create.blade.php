@@ -11,15 +11,15 @@
                     <div class="flex mb-3">
                         <label for="name" class="w-1/3">Name</label>
 
-                        <div class="flex flex-col flex-grow">
+                        <div class="input-with-error flex-grow">
+                            @if ($errors->has('name'))
+                                <span class="input-error">{{ $errors->first('name') }}</span>
+                            @endif
+
                             <input name="name" id="name" type="text"
                                    value="{{ old('name') }}"
-                                   class="border rounded"
+                                   class="input"
                                    required autofocus>
-
-                            @if ($errors->has('name'))
-                                <span class="text-red-800">{{ $errors->first('name') }}</span>
-                            @endif
                         </div>
                     </div>
 

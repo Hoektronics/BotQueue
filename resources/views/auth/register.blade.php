@@ -11,40 +11,40 @@
                     <div class="flex mb-3">
                         <label for="username" class="w-1/3">Username</label>
 
-                        <div class="flex flex-col flex-grow">
-                        <input id="username" type="text" name="username" value="{{ old('username') }}" required
-                               class="border rounded"
-                               autofocus>
-
+                        <div class="input-with-error flex-grow">
                             @if ($errors->has('username'))
-                                <span class="text-red-800">{{ $errors->first('username') }}</span>
+                                <span class="input-error">{{ $errors->first('username') }}</span>
                             @endif
+
+                            <input id="username" type="text" name="username" value="{{ old('username') }}" required
+                                   class="input"
+                                   autofocus>
                         </div>
                     </div>
 
                     <div class="flex my-3">
                         <label for="email" class="w-1/3">E-Mail Address</label>
 
-                        <div class="flex flex-col flex-grow">
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                               class="border rounded">
-
+                        <div class="input-with-error flex-grow">
                             @if ($errors->has('email'))
-                                <span class="text-red-800">{{ $errors->first('email') }}</span>
+                                <span class="input-error">{{ $errors->first('email') }}</span>
                             @endif
+
+                            <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                                   class="input">
                         </div>
                     </div>
 
                     <div class="flex my-3">
                         <label for="password" class="w-1/3">Password</label>
 
-                        <div class="flex flex-col flex-grow">
-                        <input id="password" type="password" name="password" required
-                               class="border rounded">
-
+                        <div class="input-with-error flex-grow">
                             @if ($errors->has('password'))
-                                <span class="text-red-800">{{ $errors->first('password') }}</span>
+                                <span class="input-error">{{ $errors->first('password') }}</span>
                             @endif
+
+                            <input id="password" type="password" name="password" required
+                                   class="input">
                         </div>
                     </div>
 
@@ -52,7 +52,7 @@
                         <label for="password-confirm" class="w-1/3">Confirm Password</label>
 
                         <input id="password-confirm" type="password" name="password_confirmation" required
-                               class="flex-grow border rounded">
+                               class="flex-grow input">
                     </div>
 
                     <div class="flex justify-end mt-4">

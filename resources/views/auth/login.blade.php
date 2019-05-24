@@ -11,15 +11,15 @@
                     <div class="flex mb-3">
                         <label for="username" class="w-1/3">Username</label>
 
-                        <div class="flex flex-col flex-grow">
+                        <div class="input-with-error flex-grow">
+                            @if ($errors->has('username'))
+                                <span class="input-error">{{ $errors->first('username') }}</span>
+                            @endif
+
                             <input id="username" type="text" name="username"
                                    value="{{ old('username') }}"
-                                   class="border rounded"
+                                   class="input"
                                    required autofocus>
-
-                            @if ($errors->has('username'))
-                                <span class="text-red-800">{{ $errors->first('username') }}</span>
-                            @endif
                         </div>
                     </div>
 
@@ -27,7 +27,7 @@
                         <label for="password" class="w-1/3">Password</label>
 
                         <input id="password" type="password" name="password" required
-                               class="flex-grow border rounded">
+                               class="flex-grow input">
                     </div>
 
                     <div class="flex my-3">

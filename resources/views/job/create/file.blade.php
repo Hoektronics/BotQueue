@@ -36,14 +36,16 @@
                                    checked>
                         </div>
 
-                        <input type="text"
-                               value="{{ old('job_name', pathinfo($file->name, PATHINFO_FILENAME)) }}"
-                               class="flex-grow m-2 p-2"
-                               name="job_name">
+                        <div class="input-with-error flex-grow m-2">
+                            @if ($errors->has('job_name'))
+                                <span class="input-error">{{ $errors->first('job_name') }}</span>
+                            @endif
 
-                        @if ($errors->has('job_name'))
-                            <span class="text-red-800">{{ $errors->first('job_name') }}</span>
-                        @endif
+                            <input type="text"
+                                   value="{{ old('job_name', pathinfo($file->name, PATHINFO_FILENAME)) }}"
+                                   class="input p-2"
+                                   name="job_name">
+                        </div>
                     </div>
                     <div class="p-4">
                         <div class="flex mb-3">
