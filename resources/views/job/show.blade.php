@@ -21,7 +21,7 @@
         </div>
 
         <div class="w-1/8">
-            <div class="border rounded">
+            <div class="border rounded mb-4">
                 <div class="text-center bg-gray-200">Info</div>
                 <div class="p-4">
                     Creator: {{ $job->creator->username }}<br>
@@ -30,7 +30,7 @@
                         @inject('bot_status', 'App\Services\BotStatusService')
 
                         <a
-                           href="{{ route('bots.show', [$job->worker]) }}">
+                                href="{{ route('bots.show', [$job->worker]) }}">
                             {{ $job->worker->name }}
                         </a>
                     @else
@@ -46,6 +46,29 @@
                             Progress: {{ number_format($job->progress, 2) }}%
                         </div>
                     @endif
+                </div>
+            </div>
+
+            <div class="border rounded mb-4">
+                <div class="text-center bg-gray-200">Actions</div>
+                <div class="p-4 flex justify-center">
+                    <a href="{{ Storage::url($job->file->path) }}"
+                       class="my-auto hover:text-white hover:bg-blue-300 m-1 p-1 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                             height="2rem"
+                             class="fill-current">
+                            <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"></path>
+                        </svg>
+                    </a>
+
+                    <a href="{{ route('jobs.create.file', $job->file) }}"
+                       class="my-auto hover:text-white hover:bg-blue-300 m-1 p-1 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                             height="2rem"
+                             class="fill-current">
+                            <path d="M5 4a2 2 0 0 0-2 2v6H0l4 4 4-4H5V6h7l2-2H5zm10 4h-3l4-4 4 4h-3v6a2 2 0 0 1-2 2H6l2-2h7V8z"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
 
