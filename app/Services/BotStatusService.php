@@ -9,11 +9,11 @@ class BotStatusService
 {
     // Database name to label class
     protected $statusToLabelClass = [
-        BotStatusEnum::OFFLINE => 'btn-sm border-black bg-black text-white',
-        BotStatusEnum::JOB_ASSIGNED => 'badge-secondary',
+        BotStatusEnum::OFFLINE => 'btn-sm bg-black text-white',
+        BotStatusEnum::JOB_ASSIGNED => 'btn-sm bg-gray-600 text-white',
         BotStatusEnum::IDLE => 'btn-sm bg-green-500 text-white',
-        BotStatusEnum::WORKING => 'badge-primary',
-        BotStatusEnum::WAITING => 'badge-secondary',
+        BotStatusEnum::WORKING => 'btn-sm bg-blue-400 text-white',
+        BotStatusEnum::WAITING => 'btn-sm bg-gray-600 text-white',
     ];
 
     // Database name to human readable name
@@ -32,8 +32,9 @@ class BotStatusService
     public function label($status)
     {
         $labelClass = $this->label_class($status);
+        $statusName = $this->statusToName[$status];
 
-        return "<span class=\"$labelClass\">$status</span>";
+        return "<span class=\"$labelClass\">$statusName</span>";
     }
 
     /**
