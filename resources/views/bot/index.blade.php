@@ -26,7 +26,7 @@
                 <div class="flex w-full">
                     <a class="w-1/3 text-center text-xl p-1 border-l border-t border-b rounded-tl">Bot Name</a>
                     <a class="w-1/3 text-center text-xl p-1 border-t border-b">Status</a>
-                    <a class="w-1/3 text-center text-xl p-1 border-r border-t border-b rounded-tr">Clusters</a>
+                    <a class="w-1/3 text-center text-xl p-1 border-r border-t border-b rounded-tr">Cluster</a>
                 </div>
                 @foreach($bots as $bot)
                     <div class="flex w-full p-2 border-l border-r border-b">

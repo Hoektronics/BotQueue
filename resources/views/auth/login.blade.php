@@ -40,10 +40,12 @@
                     </div>
 
                     <div class="flex mt-4">
-                        <a class="text-sm align-text-bottom mt-auto text-gray-600 flex-grow"
-                           href="{{ route('password.request') }}">
-                            Forgot Your Password?
-                        </a>
+                        <div class="flex-grow mt-auto justify-start">
+                            <a class="text-sm align-text-bottom text-gray-600"
+                               href="{{ route('password.request') }}">
+                                Forgot Your Password?
+                            </a>
+                        </div>
 
                         <div class="flex justify-end">
                             <button type="submit" class="btn-blue btn-lg btn-interactive">
