@@ -73,6 +73,16 @@ return [
     */
 
     'environments' => [
+        'development' => [
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'queue' => ['queue'],
+                'balance' => 'simple',
+                'processes' => 5,
+                'tries' => 3,
+            ],
+        ],
+
         'production' => [
             'supervisor-1' => [
                 'connection' => 'redis',
