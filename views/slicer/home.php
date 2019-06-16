@@ -1,42 +1,42 @@
 <div class="row">
     <div class="span12">
-        <? if (User::isAdmin()): ?>
+        <?php if (User::isAdmin()): ?>
             <p>
                 <a class="btn btn-primary" href="/slicer/create">Create New Slice Engine</a>
                 <a class="btn btn-primary" href="/slicer/import">Import from github</a>
             </p>
-        <? endif ?>
-        <? if (!empty($slicers)): ?>
+        <?php endif ?>
+        <?php if (!empty($slicers)): ?>
             <table class="table table-striped table-bordered table-condensed">
                 <thead>
                 <th>Slicer</th>
                 <th>Added</th>
-                <? if (User::isAdmin()): ?>
+                <?php if (User::isAdmin()): ?>
                     <th>Manage</th>
-                <? endif ?>
+                <?php endif ?>
                 </thead>
                 <tbody>
-                <? foreach ($slicers AS $row): ?>
-                    <? $engine = $row['SliceEngine'] ?>
+                <?php foreach ($slicers AS $row): ?>
+                    <?php $engine = $row['SliceEngine'] ?>
                     <tr>
                         <td><?php echo $engine->getLink() ?></td>
                         <td><?php echo Utility::formatDateTime($engine->get('add_date')) ?></td>
-                        <? if (User::isAdmin()): ?>
+                        <?php if (User::isAdmin()): ?>
                             <td>
                                 <a class="btn btn-mini" href="<?php echo $engine->getUrl() ?>/edit"><i class="icon-cog"></i>
                                     edit</a>
                                 <a class="btn btn-mini" href="<?php echo $engine->getUrl() ?>/delete"><i
                                         class="icon-remove"></i> delete</a>
                             </td>
-                        <? endif ?>
+                        <?php endif ?>
                     </tr>
-                <? endforeach ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
-        <? endif ?>
+        <?php endif ?>
     </div>
 </div>
-<? if (User::isLoggedIn()): ?>
+<?php if (User::isLoggedIn()): ?>
     <h2>My Slice Engine Configurations <a class="btn btn-primary" href="/slicer/createconfig">Create New Config</a></h2>
     <div class="row">
         <div class="span12">
@@ -51,9 +51,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <? foreach ($configs AS $row): ?>
-                    <? $config = $row['SliceConfig'] ?>
-                    <? $engine = $row['SliceEngine'] ?>
+                <?php foreach ($configs AS $row): ?>
+                    <?php $config = $row['SliceConfig'] ?>
+                    <?php $engine = $row['SliceEngine'] ?>
                     <tr>
                         <td><?php echo $config->getLink() ?></td>
                         <td><?php echo $engine->getLink() ?></td>
@@ -66,9 +66,9 @@
                                 delete</a>
                         </td>
                     </tr>
-                <? endforeach ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
-<? endif ?>
+<?php endif ?>

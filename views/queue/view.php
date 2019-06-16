@@ -1,6 +1,6 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span8">
 			<h3>
@@ -49,7 +49,7 @@
 				<a class="btn btn-danger" href="<?php echo $queue->getUrl() ?>/delete">Delete Queue</a>
 			</p>
 
-			<h3>Delay: <? if($queue->get('delay')==0) {echo "none";} else {echo $queue->get('delay')." seconds";} ?></h3>
+			<h3>Delay: <?php if($queue->get('delay')==0) {echo "none";} else {echo $queue->get('delay')." seconds";} ?></h3>
 
 			<h3>Bots</h3>
 			<?php echo Controller::byName('bot')->renderView('draw_bots_small', array('bots' => $bots)) ?>
@@ -117,12 +117,12 @@
 			</table>
 		</div>
 	</div>
-	<? if (!empty($errors)): ?>
+	<?php if (!empty($errors)): ?>
 		<div class="row">
 			<div class="span12">
 				<h3>Error Log</h3>
 				<?php echo Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'queue')) ?>
 			</div>
 		</div>
-	<? endif ?>
-<? endif ?>
+	<?php endif ?>
+<?php endif ?>

@@ -1,13 +1,13 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
  * @var OAuthToken $token
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<div class="MegaError"><?php echo $megaerror ?></div>
-<? else: ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span9">
 			<table class="table table-striped table-bordered table-condensed">
@@ -24,7 +24,7 @@
 					<th>Consumer:</th>
 					<td><?php echo $token->getConsumer()->getLink() ?></td>
 				</tr>
-				<? if ($token->isMine()): ?>
+				<?php if ($token->isMine()): ?>
 					<tr>
 						<th>API Key:</th>
 						<td><?php echo $token->get('token') ?></td>
@@ -38,23 +38,23 @@
 						<td><a href="<?php echo $token->getUrl() ?>/edit">Edit App</a> or <a
 								href="<?php echo $token->getUrl() ?>/revoke">Revoke App</a></td>
 					</tr>
-				<? endif ?>
+				<?php endif ?>
 				<tbody>
 			</table>
 		</div>
 		<div class="span3">
 			<h3>Bots</h3>
-			<? if (!empty($bots)): ?>
+			<?php if (!empty($bots)): ?>
 				<p>These bots are assigned to this app:</p>
 				<ul>
-					<? foreach ($bots AS $row): ?>
-						<? $b = $row['Bot'] ?>
+					<?php foreach ($bots AS $row): ?>
+						<?php $b = $row['Bot'] ?>
 						<li><?php echo $b->getLink() ?></li>
-					<? endforeach ?>
+					<?php endforeach; ?>
 				</ul>
-			<? else: ?>
+			<?php else: ?>
 				<p>No bots are assigned to this app.</p>
-			<? endif ?>
+			<?php endif ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

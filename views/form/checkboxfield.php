@@ -1,13 +1,13 @@
 <div class="control-group">
 	<div class="controls">
-	  <? if ($field->label): ?>
+	  <?php if ($field->label): ?>
     	<label class="checkbox">
     	  <input type="checkbox" <?php echo $field->getAttributes() ?> <?php echo ($field->is_checked) ? 'checked="true"' : '' ?> value="1">
     	  <strong><?php echo $field->label ?></strong>
       </label>
-    <? endif ?>
-		<? if ($field->help): ?>
+    <?php endif ?>
+		<?php if ($field->help): ?>
     	<p class="help-block"><?php echo $field->help ?></p>
-  	<? endif ?>
+  	<?php endif ?>
 	</div>
 </div>

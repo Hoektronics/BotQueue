@@ -5,12 +5,12 @@
 			if(tab_id == 'admin_<?php echo $active_form ?>') {
 				$(this).attr("class", "active");
 			}
-			<? if(!$setup_mode): ?>
+			<?php if(!$setup_mode): ?>
 			$(this).children('a').each(function() {
 				$(this).attr('href', '#'.concat(tab_id).concat('_content'));
 				$(this).attr('data-toggle', 'tab');
 			});
-			<? endif ?>
+			<?php endif ?>
 		});
 		var content = $('#editTabContent');
 		content.children('div').each(function() {

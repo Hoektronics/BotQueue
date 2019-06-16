@@ -1,6 +1,6 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
   <div class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
       <li class="active"><a href="#tab1" data-toggle="tab">Upload Config</a></li>
@@ -15,4 +15,4 @@
       </div>
     </div>
   </div>
-<? endif ?>
+<?php endif ?>

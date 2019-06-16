@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_job
  * @var string $megaerror
@@ -10,19 +10,19 @@
  * @var StorageInterface $gcode_file
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 
 	<h2>Awesome! The printer <?php echo $bot->getLink() ?> has completed the <?php echo $job->getLink() ?> job.</h2>
 
 	<div class="row">
 		<div class="span6">
-			<? if ($webcam->isHydrated()): ?>
+			<?php if ($webcam->isHydrated()): ?>
 				<img src="<?php echo $webcam->getDownloadURL() ?>">
-			<? else: ?>
+			<?php else: ?>
 				<img src="/img/colorbars.gif">
-			<? endif ?>
+			<?php endif ?>
 		</div>
 		<div class="span6">
 			<div class="row">
@@ -65,21 +65,21 @@
 	<div class="row">
 		<div class="span6">
 			<h3>Source File: <?php echo $source_file->getLink() ?></h3>
-			<? if ($source_file->isHydrated()): ?>
+			<?php if ($source_file->isHydrated()): ?>
 				<iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400"
 				        src="<?php echo $source_file->getUrl() ?>/render"></iframe>
-			<? else: ?>
+			<?php else: ?>
 				Source file does not exist.
-			<? endif ?>
+			<?php endif ?>
 		</div>
 		<div class="span6">
 			<h3>GCode File: <?php echo $gcode_file->getLink() ?></h3>
-			<? if ($gcode_file->isHydrated()): ?>
+			<?php if ($gcode_file->isHydrated()): ?>
 				<iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400"
 				        src="<?php echo $gcode_file->getUrl() ?>/render"></iframe>
-			<? else: ?>
+			<?php else: ?>
 				GCode file does not exist yet.
-			<? endif ?>
+			<?php endif ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

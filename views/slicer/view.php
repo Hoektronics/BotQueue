@@ -1,11 +1,11 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
     <?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
     <div class="row">
         <div class="span12">
             <table class="table table-striped table-bordered table-condensed">
                 <tbody>
-                <? if (User::isAdmin()): ?>
+                <?php if (User::isAdmin()): ?>
                     <tr>
                         <th>Manage:</th>
                         <td>
@@ -15,7 +15,7 @@
                                 delete</a>
                         </td>
                     </tr>
-                <? endif ?>
+                <?php endif ?>
                 <tr>
                     <th>Engine Name:</th>
                     <td><?php echo $engine->getLink() ?></td>
@@ -48,22 +48,22 @@
                 <thead>
                 <tr>
                     <th>Config Name</th>
-                    <? if (User::isAdmin()): ?>
+                    <?php if (User::isAdmin()): ?>
                         <th>User</th>
-                    <? endif ?>
+                    <?php endif ?>
                     <th>Add Date</th>
                     <th>Edit Date</th>
                     <th>Manage</th>
                 </tr>
                 </thead>
                 <tbody>
-                <? foreach ($configs AS $row): ?>
-                    <? $config = $row['SliceConfig'] ?>
+                <?php foreach ($configs AS $row): ?>
+                    <?php $config = $row['SliceConfig'] ?>
                     <tr>
                         <td><?php echo $config->getLink() ?></td>
-                        <? if (User::isAdmin()): ?>
+                        <?php if (User::isAdmin()): ?>
                             <td><?php echo $config->getUser()->getLink() ?></td>
-                        <? endif ?>
+                        <?php endif ?>
                         <td><?php echo Utility::formatDateTime($config->get('add_date')) ?></td>
                         <td><?php echo Utility::formatDateTime($config->get('edit_date')) ?></td>
                         <td>
@@ -73,9 +73,9 @@
                                 delete</a>
                         </td>
                     </tr>
-                <? endforeach ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
-<? endif ?>
+<?php endif ?>

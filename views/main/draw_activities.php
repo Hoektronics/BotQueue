@@ -1,4 +1,4 @@
-<? if (!empty($activities)): ?>
+<?php if (!empty($activities)): ?>
 	<table class="table table-striped table-bordered table-condensed">
 		<thead>
 		<tr>
@@ -8,17 +8,17 @@
 		</tr>
 		</thead>
 		<tbody>
-		<? foreach ($activities AS $row): ?>
-			<? $activity = $row['Activity'] ?>
-			<? $datetime = $activity->get('action_date') ?>
+		<?php foreach ($activities AS $row): ?>
+			<?php $activity = $row['Activity'] ?>
+			<?php $datetime = $activity->get('action_date') ?>
 			<tr>
 				<td><?php echo $user->getLink() ?></td>
 				<td><?php echo $activity->get('activity') ?></td>
 				<td><span class="muted"><?php echo Utility::getTimeAgo($datetime) ?></span></td>
 			</tr>
-		<? endforeach ?>
+		<?php endforeach; ?>
 		</tbody>
 	</table>
-<? else: ?>
+<?php else: ?>
 	<b>No activity found.</b>
-<? endif ?>
+<?php endif ?>

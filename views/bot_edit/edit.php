@@ -1,6 +1,6 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<?php echo $wizard->render() ?>
 	<script>
 		function update_driver_form() {
@@ -45,4 +45,4 @@
 			});
 		}
 	</script>
-<? endif ?>
+<?php endif ?>

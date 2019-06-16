@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
@@ -7,27 +7,27 @@
  * @var Bot $b
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span9">
 			<?php echo $form->render() ?>
 		</div>
 		<div class="span3">
 			<h3>Bots</h3>
-			<? if (!empty($bots)): ?>
+			<?php if (!empty($bots)): ?>
 				<p>These bots are assigned to this app:</p>
 				<ul>
-					<? foreach ($bots AS $row): ?>
-						<? $b = $row['Bot'] ?>
+					<?php foreach ($bots AS $row): ?>
+						<?php $b = $row['Bot'] ?>
 						<li><?php echo $b->getLink() ?></li>
-					<? endforeach ?>
+					<?php endforeach; ?>
 				</ul>
-			<? else: ?>
+			<?php else: ?>
 				<p>No bots are assigned to this app.</p>
-			<? endif ?>
+			<?php endif ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>
 

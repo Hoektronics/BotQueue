@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_job
  * @var string $megaerror
@@ -45,16 +45,16 @@
   <body>
     <div id="GCodeErrorDiv" class="alert alert-error" style="display: none"></div>
     <div id="GCodeStatusDiv" class="alert alert-success" style="display: none"></div>
-    <? if (!$megaerror): ?>
-      <? if ($file->isGCode()): ?>
+    <?php if (!$megaerror): ?>
+      <?php if ($file->isGCode()): ?>
         <?php echo Controller::byName('job')->renderView('render_gcode', array('file' => $file, 'width' => $width, 'height' => $height)) ?>
-      <? elseif ($file->is3DModel()): ?>
+      <?php elseif ($file->is3DModel()): ?>
         <?php echo Controller::byName('job')->renderView('render_model', array('file' => $file, 'width' => $width, 'height' => $height)) ?>
-      <? else: ?>
+      <?php else: ?>
         <h3>Error: I do not know how to render <?php echo $file->getLink() ?></h3>
-      <? endif ?>
-    <? else: ?>
+      <?php endif ?>
+    <?php else: ?>
       <h3><?php echo $megaerror ?></h3>
-    <? endif ?>
+    <?php endif ?>
   </body>
 </html>

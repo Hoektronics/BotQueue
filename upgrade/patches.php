@@ -1,4 +1,4 @@
-<?
+<?php
 $base_dir = dirname(__FILE__) . "/..";
 $base_dir = realpath($base_dir);
 require($base_dir . "/extensions/global.php");

@@ -1,6 +1,6 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span12">
 			<table class="table table-striped table-bordered table-condensed">
@@ -20,12 +20,12 @@
 						<th>Slice Engine Name:</th>
 						<td><?php echo $engine->getLink() ?></td>
 					</tr>
-					<? if (User::isAdmin()): ?>
+					<?php if (User::isAdmin()): ?>
   					<tr>
   						<th>User:</th>
   						<td><?php echo $user->getLink() ?></td>
   					</tr>
-  				<? endif ?>
+  				<?php endif ?>
 					<tr>
 						<th>Add Date:</th>
 						<td><?php echo Utility::formatDateTime($config->get('add_date')) ?></td>
@@ -57,4 +57,4 @@
       <?php echo Controller::byName('bot')->renderView('draw_bots_small', array('bots' => $bots)) ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

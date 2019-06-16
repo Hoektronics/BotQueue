@@ -1,4 +1,4 @@
-<? if (!empty($queues)): ?>
+<?php if (!empty($queues)): ?>
 	<table class="table table-striped table-bordered table-condensed">
 		<thead>
 		<tr>
@@ -12,10 +12,10 @@
 		</tr>
 		</thead>
 		<tbody>
-		<? foreach ($queues AS $row): ?>
-			<? $q = $row['Queue'] ?>
-			<? $stats = QueueStats::getStats($q) ?>
-			<?
+		<?php foreach ($queues AS $row): ?>
+			<?php $q = $row['Queue'] ?>
+			<?php $stats = QueueStats::getStats($q) ?>
+			<?php
 			$total['available'] += $stats['available'];
 			$total['slicing'] += $stats['slicing'];
 			$total['taken'] += $stats['taken'];
@@ -46,8 +46,8 @@
 				<td><?php echo round($stats['failure_pct'], 2) ?>%</td>
 				<td><span class="label label-inverse"><?php echo (int)$stats['total'] ?></span></td>
 			</tr>
-		<? endforeach ?>
-		<? if (count($queues) > 1): ?>
+		<?php endforeach; ?>
+		<?php if (count($queues) > 1): ?>
 			<tr>
 				<th>Total</th>
 				<th><span
@@ -71,9 +71,9 @@
 				<th><?php echo round(($total['failure'] / $total['total']) * 100, 2) ?>%</th>
 				<th><span class="label label-inverse"><?php echo (int)$total['total'] ?></span></th>
 			</tr>
-		<? endif ?>
+		<?php endif ?>
 		</tbody>
 	</table>
-<? else: ?>
+<?php else: ?>
 	<b>No queues.</b>
-<? endif ?>
+<?php endif ?>

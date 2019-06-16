@@ -1,4 +1,4 @@
-<?
+<?php
 	echo Controller::byName('browse')->renderView('pagination_info', array(
 		'collection' => $activities,
 		'word' => 'activity'
@@ -10,7 +10,7 @@
 	'user' => $user
 )); ?>
 
-<?
+<?php
 	echo Controller::byName('browse')->renderView('pagination', array(
 		'collection' => $activities,
 		'base_url' => '/activity'

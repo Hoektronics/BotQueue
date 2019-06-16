@@ -1,4 +1,4 @@
-<? if (count($request_tokens)): ?>
+<?php if (count($request_tokens)): ?>
 	<div class="alert alert-info">
 		<div class="row">
 			<div class="span3" style="margin-top: 8px; margin-bottom: 8px;">
@@ -7,9 +7,9 @@
 			</div>
 			<div class="span8">
 				<div class="row">
-					<? foreach ($request_tokens AS $row): ?>
-						<? $token = $row['OAuthToken'] ?>
-						<? $app = $row['OAuthConsumer'] ?>
+					<?php foreach ($request_tokens AS $row): ?>
+						<?php $token = $row['OAuthToken'] ?>
+						<?php $app = $row['OAuthConsumer'] ?>
 						<div class="span4" style="margin-top: 8px; margin-bottom: 8px;">
 							<?php echo $app->getLink() ?> requested access
 							on <?php echo Utility::formatDateTime($token->get('last_seen')) ?>
@@ -17,12 +17,12 @@
 							   class="btn btn-primary btn-mini">view</a>
 							<a href="<?php echo $token->getUrl() ?>/revoke" class="btn btn-danger btn-mini">deny</a>
 						</div>
-					<? endforeach ?>
+					<?php endforeach; ?>
 				</div>
 			</div>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>
 
 <div class="row">
 	<div id="dashtronView" class="span12"></div>

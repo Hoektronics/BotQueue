@@ -1,5 +1,5 @@
-<? if (User::isLoggedIn()): ?>
-	<? $style = User::$me->get('dashboard_style') ?>
+<?php if (User::isLoggedIn()): ?>
+	<?php $style = User::$me->get('dashboard_style') ?>
 	<div id="DashtronController">
 		<h3 class="pull-left" style="margin: 0px;">Live Dashboard
 			<a class="btn btn-primary" href="/upload">Create Job</a>
@@ -27,7 +27,7 @@
 	</div>
 	<div id="Dashtron"><?php echo Controller::byName('main')->renderView('dashboard') ?></div>
 
-<? else: ?>
+<?php else: ?>
 	<div class="hero-unit">
 		<h1>BotQueue has arrived!</h1>
 
@@ -53,4 +53,4 @@
 				entry about the launch of BotQueue</a>.
 		</p>
 	</div>
-<? endif ?>
+<?php endif ?>

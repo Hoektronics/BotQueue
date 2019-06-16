@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
@@ -7,9 +7,9 @@
  * @var Form $approve_form
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<div class="alert alert-block">
 	  <h4 class="alert-heading">Warning!</h4>
 		<p>
@@ -40,5 +40,5 @@
 			</div>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>
 

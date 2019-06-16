@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_email
  * @var User $user

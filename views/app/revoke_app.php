@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
@@ -6,8 +6,8 @@
  * @var OAuthConsumer $app
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<?php echo $form->render(); ?>
-<? endif ?>
+<?php endif ?>

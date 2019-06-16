@@ -1,7 +1,7 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
-	<? if (!empty($kids)): ?>
+<?php else: ?>
+	<?php if (!empty($kids)): ?>
 		<script>
 			$(document).ready(function () {
 				$('#global_queue').on('change', function (e) {
@@ -41,10 +41,10 @@
 					</p>
 					<select id="global_queue" onchange="">
 						<option value="0">Change all Queues</option>
-						<? foreach ($queues AS $row2): ?>
-							<? $q = $row2['Queue'] ?>
+						<?php foreach ($queues AS $row2): ?>
+							<?php $q = $row2['Queue'] ?>
 							<option value="<?php echo $q->id ?>"><?php echo $q->getName() ?></option>
-						<? endforeach ?>
+						<?php endforeach; ?>
 					</select>
 
 					<div class="input-prepend input-append">
@@ -69,8 +69,8 @@
 						</tr>
 						</thead>
 						<tbody>
-						<? foreach ($kids AS $row): ?>
-							<? $kid = $row['StorageInterface'] ?>
+						<?php foreach ($kids AS $row): ?>
+							<?php $kid = $row['StorageInterface'] ?>
 							<tr>
 								<td align="center"><input type="checkbox" class="job_use" name="use[<?php echo $kid->id ?>]"
 														  value="1" checked></td>
@@ -81,20 +81,20 @@
 														  name="priority[<?php echo $kid->id ?>]"></td>
 								<td>
 									<select class="job_queue" name="queues[<?php echo $kid->id ?>]">
-										<? foreach ($queues AS $row2): ?>
-											<? $q = $row2['Queue'] ?>
+										<?php foreach ($queues AS $row2): ?>
+											<?php $q = $row2['Queue'] ?>
 											<option value="<?php echo $q->id ?>"><?php echo $q->getName() ?></option>
-										<? endforeach ?>
+										<?php endforeach; ?>
 									</select>
 								</td>
 							</tr>
-						<? endforeach ?>
+						<?php endforeach; ?>
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</form>
-	<? else: ?>
+	<?php else: ?>
 		<?php echo $form->render() ?>
-	<? endif ?>
-<? endif ?>
+	<?php endif ?>
+<?php endif ?>

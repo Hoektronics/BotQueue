@@ -1,7 +1,7 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
-  <? if ($job->get('status') == 'pending'): ?>
+<?php else: ?>
+  <?php if ($job->get('status') == 'pending'): ?>
   <h2>Oh no!  Something went wrong with the slicing process.</h2>
 
   <div class="alert alert-error">
@@ -24,7 +24,7 @@
       </div>
     </div>
   </div>
-  <? endif ?>
+  <?php endif ?>
   
   <div class="row">
 		<div class="span6">
@@ -33,11 +33,11 @@
   	</div>
 		<div class="span6">
 		  <h3>Output File: <?php echo $outputfile->getLink() ?></h3>
-		  <? if ($outputfile->isHydrated()): ?>
+		  <?php if ($outputfile->isHydrated()): ?>
   		  <iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400" src="<?php echo $outputfile->getUrl() ?>/render"></iframe>
-      <? else: ?>
+      <?php else: ?>
         Output file does not exist yet.
-      <? endif ?>
+      <?php endif ?>
 		</div>
 	</div>
 	  
@@ -66,30 +66,30 @@
 						<th>Add Date:</th>
 						<td><?php echo Utility::formatDateTime($job->get('add_date')) ?></td>
 					</tr>
-					<? if(strtotime($job->get('taken_date')) > 0): ?>
+					<?php if(strtotime($job->get('taken_date')) > 0): ?>
   					<tr>
   						<th>Taken Date:</th>
   						<td><?php echo Utility::formatDateTime($job->get('taken_date')) ?></td>
   					</tr>
-  				<? endif ?>
-					<? if(strtotime($job->get('finish_date')) > 0): ?>
+  				<?php endif ?>
+					<?php if(strtotime($job->get('finish_date')) > 0): ?>
   					<tr>
   						<th>Finished Date:</th>
   						<td><?php echo Utility::formatDateTime($job->get('finish_date')) ?></td>
   					</tr>
-  				<? endif ?>
-					<? if ($job->get('output_log')): ?>
+  				<?php endif ?>
+					<?php if ($job->get('output_log')): ?>
   					<tr>
   						<th>Output Log:</th>
   						<td><?php echo nl2br(Utility::sanitize($job->get('output_log'))) ?></td>
   					</tr>
-  				<? endif ?>
-					<? if ($job->get('error_log')): ?>
+  				<?php endif ?>
+					<?php if ($job->get('error_log')): ?>
             <tr>
   						<th>Error Log:</th>
   						<td><?php echo nl2br(Utility::sanitize($job->get('error_log'))) ?></td>
   					</tr>
-  				<? endif ?>
+  				<?php endif ?>
           <tr>
 						<th>Slice Config Snapshot:</th>
 						<td><button class="btn" onclick="$('#config_snapshot').show()">Click to display config snapshot information</button></td>
@@ -101,4 +101,4 @@
 			</table>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

@@ -1,7 +1,7 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>	
-<?
+<?php else: ?>	
+<?php
 		echo Controller::byName('browse')->renderView('pagination_info', array(
 			'collection' => $activities,
 			'word' => 'activity'
@@ -11,10 +11,10 @@
 		'activities' => $activities->getAll(),
 		'user' => $user
 	)); ?>
-	<?
+	<?php
 		echo Controller::byName('browse')->renderView('pagination', array(
 			'collection' => $activities,
 			'base_url' => '/user:' . $user->id . '/activity'
 		));
 	?>
-<? endif ?>
+<?php endif ?>

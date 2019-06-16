@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
@@ -6,9 +6,9 @@
  * @var OAuthToken $app
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<div class="MegaError"><?php echo $megaerror ?></div>
-<? else: ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span9">
 			<table class="table table-striped table-bordered table-condensed">
@@ -25,7 +25,7 @@
 					<th>Active:</th>
 					<td><?php echo ($consumer->get('active') == 1) ? 'yes' : 'no' ?></td>
 				</tr>
-				<? if ($consumer->canEdit()): ?>
+				<?php if ($consumer->canEdit()): ?>
 					<tr>
 						<th>API Key:</th>
 						<td><?php echo $consumer->get('consumer_key') ?></td>
@@ -39,23 +39,23 @@
 						<td><a href="<?php echo $consumer->getUrl() ?>/edit">Edit App</a> or <a href="<?php echo $consumer->getUrl() ?>/delete">Delete
 								App</a></td>
 					</tr>
-				<? endif ?>
+				<?php endif ?>
 				<tbody>
 			</table>
 		</div>
 		<div class="span3">
 			<h3>Apps</h3>
-			<? if(!empty($apps)): ?>
+			<?php if(!empty($apps)): ?>
 				<p>These apps are using this consumer:</p>
 				<ul>
-					<? foreach ($apps AS $row): ?>
-						<? $app = $row['OAuthToken'] ?>
+					<?php foreach ($apps AS $row): ?>
+						<?php $app = $row['OAuthToken'] ?>
 						<li><?php echo $app->getLink() ?></li>
-					<? endforeach ?>
+					<?php endforeach; ?>
 				</ul>
-			<? else: ?>
+			<?php else: ?>
 				<p>No apps are using this consumer.</p>
-			<? endif ?>
+			<?php endif ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

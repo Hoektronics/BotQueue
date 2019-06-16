@@ -1,3 +1,3 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo $megaerror ?>
-<? endif ?>
+<?php endif ?>

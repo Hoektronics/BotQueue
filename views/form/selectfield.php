@@ -1,26 +1,26 @@
 <div class="control-group <?php echo ($field->hasError) ? 'error' : '' ?>">
-	<? if ($field->label): ?>
+	<?php if ($field->label): ?>
 		<label class="control-label" for="<?php echo $field->id ?>"><strong><?php echo $field->label ?></strong></label>
-	<? endif ?>
+	<?php endif ?>
 	<div class="controls">
-		<? if (!empty($field->options)): ?>
+		<?php if (!empty($field->options)): ?>
 			<select <?php echo $field->getAttributes() ?>>
-				<? foreach ($field->options AS $key => $option): ?>
-					<? if ($key == $field->getValue()): ?>
+				<?php foreach ($field->options AS $key => $option): ?>
+					<?php if ($key == $field->getValue()): ?>
 						<option value="<?php echo $key ?>" selected><?php echo $option ?></option>
-					<? else: ?>
+					<?php else: ?>
 						<option value="<?php echo $key ?>"><?php echo $option ?></option>
-					<? endif ?>
-				<? endforeach ?>
+					<?php endif ?>
+				<?php endforeach; ?>
 			</select>
-		<? else: ?>
+		<?php else: ?>
 			<span class="help-inline">Oops!  You need to pass in options to the SelectField constructor.</span>
-		<? endif ?>
-		<? if ($field->hasError): ?>
+		<?php endif ?>
+		<?php if ($field->hasError): ?>
 			<span class="help-inline"><?php echo $field->errorText ?></span>
-		<? endif ?>
-		<? if ($field->help): ?>
+		<?php endif ?>
+		<?php if ($field->help): ?>
 			<p class="help-block"><?php echo $field->help ?></p>
-		<? endif ?>
+		<?php endif ?>
 	</div>
 </div>

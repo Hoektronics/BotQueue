@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<? if ($title): ?>
+	<?php if ($title): ?>
 		<title><?php echo strip_tags($title) ?> - <?php echo RR_PROJECT_NAME ?></title>
-	<? else: ?>
+	<?php else: ?>
 		<title><?php echo RR_PROJECT_NAME ?>: Internets + Digital Fabrication = Win</title>
-	<? endif ?>
+	<?php endif ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
 	<meta name="author" content="Zach Hoeken / Justin Nesselrotte">
@@ -34,7 +34,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js" type="text/javascript"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js" type="text/javascript"></script>
 
-	<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
+	<?php if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', '<?php echo GOOGLE_ANALYTICS_TRACKING_CODE ?>']);
@@ -51,13 +51,13 @@
 				s.parentNode.insertBefore(ga, s);
 			})();
 		</script>
-	<? endif ?>
-	<? if (!empty(Controller::$rssFeeds)): ?>
-		<? foreach (Controller::$rssFeeds AS $feed): ?>
+	<?php endif ?>
+	<?php if (!empty(Controller::$rssFeeds)): ?>
+		<?php foreach (Controller::$rssFeeds AS $feed): ?>
 			<link rel="alternate" type="application/rss+xml" title="<?php echo RR_PROJECT_NAME ?> - <?php echo $feed['title'] ?>"
 				  href="<?php echo $feed['url'] ?>"/>
-		<? endforeach ?>
-	<? endif ?>
+		<?php endforeach; ?>
+	<?php endif ?>
 
 </head>
 <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="50">
@@ -66,11 +66,11 @@
 	<?php echo Controller::byName('htmltemplate')->renderView('menubar', array('area' => $area)); ?>
 
 	<section id="content" style="margin-top:60px">
-		<? if ($title): ?>
+		<?php if ($title): ?>
 			<div class="page-header">
 				<h1><?php echo $title ?></h1>
 			</div>
-		<? endif ?>
+		<?php endif ?>
 
 		<div class="row">
 			<div class="span12">
@@ -112,18 +112,18 @@
 
 </div>
 
-<? if (!empty(Controller::$scriptContents)): ?>
-	<? foreach (Controller::$scriptContents AS $id => $content): ?>
+<?php if (!empty(Controller::$scriptContents)): ?>
+	<?php foreach (Controller::$scriptContents AS $id => $content): ?>
 		<script type="<?php echo Controller::$scriptTypes[$id] ?>" id="<?php echo $id ?>">
 			<?php echo $content ?>
 		</script>
-	<? endforeach ?>
-<? endif ?>
-<? if (!empty(Controller::$scripts)): ?>
-	<? foreach (Controller::$scripts AS $src): ?>
+	<?php endforeach; ?>
+<?php endif ?>
+<?php if (!empty(Controller::$scripts)): ?>
+	<?php foreach (Controller::$scripts AS $src): ?>
 		<script src="<?php echo $src ?>"></script>
-	<? endforeach ?>
-<? endif ?>
+	<?php endforeach; ?>
+<?php endif ?>
 <script src="/js/botqueue.js"></script>
 <script src="/bootstrap/2.3.0/js/bootstrap.js"></script>
 <script src='https://www.google.com/recaptcha/api.js'></script>

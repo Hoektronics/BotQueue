@@ -1,13 +1,13 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? elseif (!$nodriver): ?>
-	<? if (!is_object($devices)): ?>
+<?php elseif (!$nodriver): ?>
+	<?php if (!is_object($devices)): ?>
 		<div class="alert alert-error">
 			<strong>Warning</strong> The client has not reported the results of the device scan yet, wait a moment and
 			reload to see the device scan results for easier configuration of serial ports, webcams, etc.
 		</div>
-	<? endif ?>
-	<? if ($driver == 'dummy'): ?>
+	<?php endif ?>
+	<?php if ($driver == 'dummy'): ?>
 		<div class="control-group ">
 			<label class="control-label" for="idelay"><strong>Delay</strong></label>
 
@@ -16,7 +16,7 @@
 				<span class="muted">(in seconds between gcode commands)</span>
 			</div>
 		</div>
-	<? else: ?>
+	<?php else: ?>
 		<div class="control-group ">
 			<label class="control-label" for="iserial_port"><strong>Serial Port</strong></label>
 
@@ -31,13 +31,13 @@
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu">
-							<? if (!empty($devices->bots->printcoredriver)): ?>
-								<? foreach ($devices->bots->printcoredriver AS $idx => $port): ?>
+							<?php if (!empty($devices->bots->printcoredriver)): ?>
+								<?php foreach ($devices->bots->printcoredriver AS $idx => $port): ?>
 									<li><a tabindex="-1" href="#"
 									       onclick="return set_serialport(this, <?php echo $idx ?>)"><?php echo $port[0] ?></a></li>
 									<input type="hidden" id="port_id_<?php echo $idx ?>" value="<?php echo $port[2] ?>">
-								<? endforeach ?>
-							<? endif ?>
+								<?php endforeach; ?>
+							<?php endif ?>
 						</ul>
 					</div>
 				</div>
@@ -56,22 +56,22 @@
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu">
-							<? foreach ($baudrates AS $rate): ?>
+							<?php foreach ($baudrates AS $rate): ?>
 								<li><a tabindex="-1" href="#" onclick="return set_baudrate(this)"><?php echo $rate ?></a></li>
-							<? endforeach ?>
+							<?php endforeach; ?>
 						</ul>
 					</div>
 				</div>
 				<span class="muted">(likely 115200 or 250000)</span>
 			</div>
 		</div>
-	<? endif ?>
+	<?php endif ?>
 
-	<? if ($driver == 'printcore' || $driver == 'dummy' || $driver == 's3g'): ?>
+	<?php if ($driver == 'printcore' || $driver == 'dummy' || $driver == 's3g'): ?>
 		<input type="hidden" id="webcam_id" name="webcam_id" value="<?php echo $webcam_id ?>">
 
-		<? if (is_object($devices)): ?>
-			<? if (!empty($devices->camera_files)): ?>
+		<?php if (is_object($devices)): ?>
+			<?php if (!empty($devices->camera_files)): ?>
 				<div class="control-group ">
 					<label class="control-label" for="iwebcam">
 						<strong>Webcam Setup</strong><br/>
@@ -88,8 +88,8 @@
 							<span class="webcam_name">No Camera</span>
 							<img src="/img/colorbars.gif">
 						</div>
-						<? foreach ($devices->camera_files AS $idx => $file_id): ?>
-							<? $webcam_file = Storage::get($file_id); ?>
+						<?php foreach ($devices->camera_files AS $idx => $file_id): ?>
+							<?php $webcam_file = Storage::get($file_id); ?>
 							<div
 								class="span3 webcam_preview <?php echo ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : '' ?>"
 								id="webcam_preview_<?php echo $idx ?>" onclick="set_webcam(<?php echo $idx ?>)">
@@ -102,11 +102,11 @@
 								<span class="webcam_name"><?php echo $devices->cameras[$idx]->name ?></span>
 								<img src="<?php echo $webcam_file->getDownloadURL() ?>">
 							</div>
-						<? endforeach ?>
+						<?php endforeach; ?>
 					</div>
 				</div>
-			<? endif ?>
-		<? endif ?>
+			<?php endif ?>
+		<?php endif ?>
 
 		<div class="control-group ">
 			<label class="control-label" for="webcam_name"><strong>Webcam Name</strong></label>
@@ -144,7 +144,7 @@
 				<span class="muted">%</span>
 			</div>
 		</div>
-	<? endif ?>
+	<?php endif ?>
 
 	<script>
 		function set_serialport(ele, idx) {
@@ -169,4 +169,4 @@
 			$('#webcam_preview_' + id).addClass('active');
 		}
 	</script>
-<? endif ?>
+<?php endif ?>

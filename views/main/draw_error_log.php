@@ -1,44 +1,44 @@
-<? if (!empty($errors)): ?>
+<?php if (!empty($errors)): ?>
   <table class="table table-striped table-bordered table-condensed">
   	<thead>
   	  <th>Error</th>
-  	  <? if ($hide != 'job'): ?>
+  	  <?php if ($hide != 'job'): ?>
   			<th>Job</th>
-  		<? endif ?>
-  	  <? if ($hide != 'bot'): ?>
+  		<?php endif ?>
+  	  <?php if ($hide != 'bot'): ?>
   		  <th>Bot</th>
-  	  <? endif ?>
-  		<? if ($hide != 'queue'): ?>
+  	  <?php endif ?>
+  		<?php if ($hide != 'queue'): ?>
   			<th>Queue</th>
-  		<? endif ?>
-  		<? /* if ($hide != 'user'): ?>
+  		<?php endif ?>
+  		<?php /* if ($hide != 'user'): ?>
   			<th>User</th>
-  		<? endif */ ?>
+  		<?php endif */ ?>
   		<th>Date</th>
   	</thead>
   	<tbody>
-    <? foreach ($errors AS $row): ?>
-      <? $log = $row['ErrorLog'] ?>
+    <?php foreach ($errors AS $row): ?>
+      <?php $log = $row['ErrorLog'] ?>
       <tr>
     	  <td><span class="text-error"><?php echo Utility::sanitize($log->get('reason')) ?></span></td>
-    	  <? if ($hide != 'job'): ?>
+    	  <?php if ($hide != 'job'): ?>
     			<td><?php echo $log->getJob()->getLink() ?></td>
-    		<? endif ?>
-    	  <? if ($hide != 'bot'): ?>
+    		<?php endif ?>
+    	  <?php if ($hide != 'bot'): ?>
     		  <td><?php echo $log->getBot()->getLink() ?></td>
-    	  <? endif ?>
-    		<? if ($hide != 'queue'): ?>
+    	  <?php endif ?>
+    		<?php if ($hide != 'queue'): ?>
     			<td><?php echo $log->getQueue()->getLink() ?></td>
-    		<? endif ?>
-    		<? /*if ($hide != 'user'): ?>
+    		<?php endif ?>
+    		<?php /*if ($hide != 'user'): ?>
     			<td><?php echo $log->getUser()->getLink() ?></td>
-    		<? endif*/ ?>
+    		<?php endif*/ ?>
     		<td><?php echo Utility::formatDateTime($log->get('error_date')) ?></td>        
       </tr>
-    <? endforeach ?>
+    <?php endforeach; ?>
   </table>
-<? else: ?>
+<?php else: ?>
   <div class="alert alert-success ">
     Yay!  No errors!!
   </div>
-<? endif ?>
+<?php endif ?>

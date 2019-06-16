@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_job
  * @var string $megaerror
@@ -17,27 +17,27 @@
  * @var User $creator
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a href="#details" data-toggle="tab">Details</a></li>
 		<li><a href="#temperature" id="temperatureTab" data-toggle="tab">Temperature Log</a></li>
 		<li><a href="#files" data-toggle="tab">Files</a></li>
-		<li><a href="#comments" data-toggle="tab">Comments<? if ($comment_count > 0): ?> <span
-					class="badge badge-info"><?php echo $comment_count ?></span><? endif ?></a></li>
-		<li><a href="#errors" data-toggle="tab">Error Log<? if (count($errors) > 0): ?> <span
-					class="badge badge-important"><?php echo count($errors) ?></span><? endif ?></a></li>
+		<li><a href="#comments" data-toggle="tab">Comments<?php if ($comment_count > 0): ?> <span
+					class="badge badge-info"><?php echo $comment_count ?></span><?php endif ?></a></li>
+		<li><a href="#errors" data-toggle="tab">Error Log<?php if (count($errors) > 0): ?> <span
+					class="badge badge-important"><?php echo count($errors) ?></span><?php endif ?></a></li>
 	</ul>
 
 	<div id="myTabContent" class="tab-content">
 		<div class="row tab-pane fade in active" id="details">
 			<div class="span6">
-				<? if ($webcam->isHydrated()): ?>
+				<?php if ($webcam->isHydrated()): ?>
 					<img src="<?php echo $webcam->getDownloadURL() ?>">
-				<? else: ?>
+				<?php else: ?>
 					<img src="/img/colorbars.gif">
-				<? endif ?>
+				<?php endif ?>
 			</div>
 			<div class="span6">
 				<table class="table table-striped table-bordered table-condensed">
@@ -45,21 +45,21 @@
 					<tr>
 						<th>Manage:</th>
 						<td>
-							<? if ($job->get('status') == 'available'): ?>
+							<?php if ($job->get('status') == 'available'): ?>
 								<a class="btn btn-mini" href="<?php echo $job->getUrl() ?>/bump"><i class="icon-arrow-up"></i>
 									bump</a>
 								<a class="btn btn-mini" href="<?php echo $job->getUrl() ?>/edit"><i class="icon-cog"></i> edit</a>
 								<a class="btn btn-mini" href="<?php echo $job->getUrl() ?>/cancel"><i class="icon-eject"></i>
 									cancel</a>
-							<? endif ?>
-							<? if ($job->get('status') == 'qa'): ?>
+							<?php endif ?>
+							<?php if ($job->get('status') == 'qa'): ?>
 								<a class="btn btn-mini" href="<?php echo $job->getUrl() ?>/qa"><i class="icon-check"></i>
 									verify</a>
-							<? endif ?>
-							<? if ($job->get('status') != 'taken' && $job->get('status') != 'qa' && $job->get('status') != 'slicing'): ?>
+							<?php endif ?>
+							<?php if ($job->get('status') != 'taken' && $job->get('status') != 'qa' && $job->get('status') != 'slicing'): ?>
 								<a class="btn btn-mini" href="<?php echo $job->getUrl() ?>/delete"><i class="icon-remove"></i>
 									delete</a>
-							<? endif ?>
+							<?php endif ?>
 							<a class="btn btn-mini" href="/job/create/job:<?php echo $job->id ?>"><i class="icon-repeat"></i>
 								re-run</a>
 						</td>
@@ -83,118 +83,118 @@
 					</tr>
 					<tr>
 						<th>Grabbed:</th>
-						<? if (strtotime($job->get('taken_time')) > 0): ?>
+						<?php if (strtotime($job->get('taken_time')) > 0): ?>
 							<td><?php echo Utility::formatDateTime($job->get('taken_time')) ?> <span
 									class="muted">(<?php echo Utility::relativeTime($job->get('taken_time')) ?>)</span></td>
-						<? else: ?>
+						<?php else: ?>
 							<td><span class="muted">n/a</span></td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Sliced:</th>
-						<? if (strtotime($job->get('slice_complete_time')) > 0): ?>
+						<?php if (strtotime($job->get('slice_complete_time')) > 0): ?>
 							<td><?php echo Utility::formatDateTime($job->get('slice_complete_time')) ?> <span
 									class="muted">(<?php echo Utility::relativeTime($job->get('slice_complete_time')) ?>
 									)</span>
 							</td>
-						<? else: ?>
+						<?php else: ?>
 							<td><span class="muted">n/a</span></td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Downloaded:</th>
-						<? if (strtotime($job->get('downloaded_time')) > 0): ?>
+						<?php if (strtotime($job->get('downloaded_time')) > 0): ?>
 							<td><?php echo Utility::formatDateTime($job->get('downloaded_time')) ?> <span
 									class="muted">(<?php echo Utility::relativeTime($job->get('downloaded_time')) ?>)</span>
 							</td>
-						<? else: ?>
+						<?php else: ?>
 							<td><span class="muted">n/a</span></td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Print Complete:</th>
-						<? if (strtotime($job->get('finished_time')) > 0): ?>
+						<?php if (strtotime($job->get('finished_time')) > 0): ?>
 							<td><?php echo Utility::formatDateTime($job->get('finished_time')) ?> <span
 									class="muted">(<?php echo Utility::relativeTime($job->get('finished_time')) ?>)</span></td>
-						<? else: ?>
+						<?php else: ?>
 							<td><span class="muted">n/a</span></td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Finished:</th>
-						<? if (strtotime($job->get('verified_time')) > 0): ?>
+						<?php if (strtotime($job->get('verified_time')) > 0): ?>
 							<td><?php echo Utility::formatDateTime($job->get('verified_time')) ?> <span
 									class="muted">(<?php echo Utility::relativeTime($job->get('verified_time')) ?>)</span></td>
-						<? else: ?>
+						<?php else: ?>
 							<td><span class="muted">n/a</span></td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Elapsed:</th>
 						<td><?php echo $job->getElapsedText() ?></td>
 					</tr>
-					<? if ($job->get('status') == 'taken'): ?>
+					<?php if ($job->get('status') == 'taken'): ?>
 						<tr>
 							<th>Remaining:</th>
 							<td><?php echo $job->getEstimatedText() ?></td>
 						</tr>
-					<? endif ?>
-					<? if ($parent_file->isHydrated()): ?>
+					<?php endif ?>
+					<?php if ($parent_file->isHydrated()): ?>
 						<tr>
 							<th>Parent File:</th>
 							<td><?php echo $parent_file->getLink() ?></td>
 						</tr>
-					<? endif ?>
+					<?php endif ?>
 					<tr>
 						<th>Source File:</th>
-						<? if ($source_file->isHydrated()): ?>
+						<?php if ($source_file->isHydrated()): ?>
 							<td><?php echo $source_file->getLink() ?></td>
-						<? else: ?>
+						<?php else: ?>
 							<td class="muted">n/a</td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>GCode File:</th>
-						<? if ($gcode_file->isHydrated()): ?>
+						<?php if ($gcode_file->isHydrated()): ?>
 							<td><?php echo $gcode_file->getLink() ?></td>
-						<? else: ?>
+						<?php else: ?>
 							<td class="muted">n/a</td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Slice Job:</th>
-						<? if ($slicejob->isHydrated()): ?>
+						<?php if ($slicejob->isHydrated()): ?>
 							<td><?php echo $slicejob->getLink() ?></td>
-						<? else: ?>
+						<?php else: ?>
 							<td class="muted">n/a</td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Slice Engine:</th>
-						<? if ($sliceengine->isHydrated()): ?>
+						<?php if ($sliceengine->isHydrated()): ?>
 							<td><?php echo $sliceengine->getLink() ?></td>
-						<? else: ?>
+						<?php else: ?>
 							<td class="muted">n/a</td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Slice Config:</th>
-						<? if ($sliceconfig->isHydrated()): ?>
+						<?php if ($sliceconfig->isHydrated()): ?>
 							<td><?php echo $sliceconfig->getLink() ?></td>
-						<? else: ?>
+						<?php else: ?>
 							<td class="muted">n/a</td>
-						<? endif ?>
+						<?php endif ?>
 					</tr>
 					<tr>
 						<th>Queue:</th>
 						<td><?php echo $queue->getLink() ?></td>
 					</tr>
-					<? if ($bot->isHydrated()): ?>
+					<?php if ($bot->isHydrated()): ?>
 						<tr>
 							<th>Bot:</th>
 							<td><?php echo $bot->getLink() ?>
 						</tr>
-					<? endif ?>
+					<?php endif ?>
 					<tr>
 						<th>Creator:</th>
 						<td><?php echo $creator->getLink() ?></td>
@@ -204,18 +204,18 @@
 			</div>
 		</div>
 
-		<? $temps = JSON::decode($job->get('temperature_data')) ?>
+		<?php $temps = JSON::decode($job->get('temperature_data')) ?>
 
 		<div class="row tab-pane fade" id="temperature">
 			<div class="span12">
-				<? if (is_object($temps) && $temps != false): ?>
+				<?php if (is_object($temps) && $temps != false): ?>
 					<div id="temperature_graph" style="width:100%; height:420px;"></div>
 					<br clear="all"/>
 
 					<script type="text/javascript">
 						function graphme() {
 							var tempData = [];
-							<?
+							<?php
 								// Indent 6 times to match tempData;
 								$tabIndent = "\t\t\t\t\t";
 								echo $tabIndent."var bed = [];\n";
@@ -281,32 +281,32 @@
 								graphme();
 						});
 					</script>
-				<? else: ?>
+				<?php else: ?>
 					<div class="alert alert-error">
 						No temperature data recorded.
 					</div>
-				<? endif ?>
+				<?php endif ?>
 			</div>
 		</div>
 
 		<div class="row tab-pane fade" id="files">
 			<div class="span6">
 				<h3>Source File: <?php echo $source_file->getLink() ?></h3>
-				<? if ($source_file->isHydrated()): ?>
+				<?php if ($source_file->isHydrated()): ?>
 					<iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400"
 					        src="<?php echo $source_file->getUrl() ?>/render"></iframe>
-				<? else: ?>
+				<?php else: ?>
 					Source file does not exist.
-				<? endif ?>
+				<?php endif ?>
 			</div>
 			<div class="span6">
 				<h3>GCode File: <?php echo $gcode_file->getLink() ?></h3>
-				<? if ($gcode_file->isHydrated()): ?>
+				<?php if ($gcode_file->isHydrated()): ?>
 					<iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400"
 					        src="<?php echo $gcode_file->getUrl() ?>/render"></iframe>
-				<? else: ?>
+				<?php else: ?>
 					GCode file does not exist yet.
-				<? endif ?>
+				<?php endif ?>
 			</div>
 		</div>
 
@@ -322,4 +322,4 @@
 			</div>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

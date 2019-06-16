@@ -1,11 +1,11 @@
-<?
+<?php
 /**
  * @package botqueue_job
  * @var string $megaerror
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
   Hmm.  This shouldn't happen.
-<? endif ?>
+<?php endif ?>

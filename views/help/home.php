@@ -1,4 +1,4 @@
-<? $i = 1 ?>
+<?php $i = 1 ?>
 <div class="row">
 	<div class="span8">
 		<h2>How Do I Get Started?</h2>

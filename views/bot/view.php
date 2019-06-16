@@ -1,17 +1,17 @@
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
-	<? if ($bot->get('status') == 'error'): ?>
+<?php else: ?>
+	<?php if ($bot->get('status') == 'error'): ?>
 		<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => "This bot is offline with the following error: " . $bot->get('error_text'))) ?>
-	<? endif ?>
+	<?php endif ?>
 	<div class="row">
 		<div class="span6">
-			<? if ($webcam->isHydrated()): ?>
+			<?php if ($webcam->isHydrated()): ?>
 				<h3>Latest Image - <span class="muted"><?php echo Utility::getTimeAgo($webcam->get('add_date')) ?></span></h3>
 				<img src="<?php echo $webcam->getDownloadURL() ?>">
-			<? else: ?>
+			<?php else: ?>
 				<img src="/img/colorbars.gif">
-			<? endif ?>
+			<?php endif ?>
 		</div>
 		<div class="span6">
 			<h3>Basic Info</h3>
@@ -21,101 +21,101 @@
 					<th>Status:</th>
 					<td><?php echo BotStatus::getStatusHTML($bot) ?></td>
 				</tr>
-				<? if ($bot->get('remote_ip')): ?>
+				<?php if ($bot->get('remote_ip')): ?>
 					<tr>
 						<th>Remote IP:</th>
 						<td><?php echo $bot->get('remote_ip') ?></td>
 					</tr>
-				<? endif ?>
-				<? if ($bot->get('local_ip')): ?>
+				<?php endif ?>
+				<?php if ($bot->get('local_ip')): ?>
 					<tr>
 						<th>Local IP:</th>
 						<td><?php echo $bot->get('local_ip') ?></td>
 					</tr>
-				<? endif ?>
+				<?php endif ?>
 				<tr>
 					<th>Current Job:</th>
 					<td>
-						<? if ($job->isHydrated()): ?>
+						<?php if ($job->isHydrated()): ?>
 							<?php echo $job->getLink() ?>
-						<? else: ?>
+						<?php else: ?>
 							none
-						<? endif ?>
+						<?php endif ?>
 					</td>
 				</tr>
 				<tr>
 					<th>Owner:</th>
 					<td><?php echo $owner->getLink() ?></td>
 				</tr>
-				<? if ($app->isHydrated()): ?>
+				<?php if ($app->isHydrated()): ?>
 					<tr>
 						<th>Assigned to:</th>
 						<td><a href="<?php echo $app->getUrl() ?>"><?php echo $app->getName() ?></a></td>
 					</tr>
-				<? else: ?>
+				<?php else: ?>
 					<tr>
 						<th>Assigned to:</th>
 						<td><span class="text-error">No controlling app found.</span></td>
 					</tr>
-				<? endif ?>
+				<?php endif ?>
 				<tr>
 					<th>Queue(s):<br></th>
 					<td>
-						<? foreach ($queue as $row): ?>
+						<?php foreach ($queue as $row): ?>
 							<?php echo $row['Queue']->getLink() ?><br>
-						<? endforeach ?>
+						<?php endforeach; ?>
 					</td>
 				</tr>
 				<tr>
 					<th>Slice Engine:</th>
-					<? if ($engine->isHydrated()): ?>
-						<? if ($bot->getDriverConfig()->can_slice): ?>
+					<?php if ($engine->isHydrated()): ?>
+						<?php if ($bot->getDriverConfig()->can_slice): ?>
 							<td><?php echo $engine->getLink() ?></td>
-						<? else: ?>
+						<?php else: ?>
 							<td><?php echo $engine->getLink() ?> (Slicing disabled)</td>
-						<? endif ?>
-					<? else: ?>
+						<?php endif ?>
+					<?php else: ?>
 						<td><span class="text-error">No slice engine selected!</span></td>
-					<? endif ?>
+					<?php endif ?>
 				</tr>
 				<tr>
 					<th>Engine Config:</th>
-					<? if ($config->isHydrated()): ?>
+					<?php if ($config->isHydrated()): ?>
 						<td><?php echo $config->getLink() ?></td>
-					<? else: ?>
+					<?php else: ?>
 						<td><span class="text-error">No slice config selected!</span></td>
-					<? endif ?>
+					<?php endif ?>
 				</tr>
-				<? if ($bot->get('manufacturer')): ?>
+				<?php if ($bot->get('manufacturer')): ?>
 					<tr>
 						<th>Maker:</th>
 						<td><?php echo $bot->get('manufacturer') ?></td>
 					</tr>
-				<? endif ?>
-				<? if ($bot->get('model')): ?>
+				<?php endif ?>
+				<?php if ($bot->get('model')): ?>
 					<tr>
 						<th>Model:</th>
 						<td><?php echo $bot->get('model') ?></td>
 					</tr>
-				<? endif ?>
-				<? if ($bot->get('electronics')): ?>
+				<?php endif ?>
+				<?php if ($bot->get('electronics')): ?>
 					<tr>
 						<th>Electronics:</th>
 						<td><?php echo $bot->get('electronics') ?></td>
 					</tr>
-				<? endif ?>
-				<? if ($bot->get('firmware')): ?>
+				<?php endif ?>
+				<?php if ($bot->get('firmware')): ?>
 					<tr>
 						<th>Firmware:</th>
 						<td><?php echo $bot->get('firmware') ?></td>
 					</tr>
-				<? endif ?>
-				<? if ($bot->get('extruder')): ?>
+				<?php endif ?>
+				<?php if ($bot->get('extruder')): ?>
 					<tr>
 						<th>Extruder:</th>
 						<td><?php echo $bot->get('extruder') ?></td>
 					</tr>
-				<? endif ?>
+				<?php endif ?>
 				<tr>
 					<th>Total Run Time</th>
 					<td><?php echo Utility::getHours($stats['total_runtime']) ?></td>
@@ -153,12 +153,12 @@
 			<?php echo Controller::byName('job')->renderView('draw_jobs', array('jobs' => $jobs)) ?>
 		</div>
 	</div>
-	<? if (!empty($errors)): ?>
+	<?php if (!empty($errors)): ?>
 		<div class="row">
 			<div class="span12">
 				<h3>Error Log</h3>
 				<?php echo Controller::byName('main')->renderView('draw_error_log', array('errors' => $errors, 'hide' => 'bot')) ?>
 			</div>
 		</div>
-	<? endif ?>
-<? endif ?>
+	<?php endif ?>
+<?php endif ?>

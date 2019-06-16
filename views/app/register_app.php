@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
@@ -6,12 +6,12 @@
  * @var Form $form
  */
 ?>
-<? if ($megaerror): ?>
+<?php if ($megaerror): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span12">
 			<?php echo $form->render() ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

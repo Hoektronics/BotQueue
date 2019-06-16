@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var array $requesting
@@ -33,7 +33,7 @@
 		</ul>
 		<p>
 			The <a href="https://github.com/Hoektronics/Bumblebee">latest version</a> of Bumblebee is
-			<strong>v<? $c = Controller::byName('APIV1');
+			<strong>v<?php $c = Controller::byName('APIV1');
 				echo $c::$api_version ?></strong>
 		</p>
 
@@ -46,8 +46,8 @@
 		</p>
 	</div>
 	<div class="span6">
-		<? if (User::isLoggedIn()): ?>
-			<? if (!empty($requesting)): ?>
+		<?php if (User::isLoggedIn()): ?>
+			<?php if (!empty($requesting)): ?>
 				<h2>Apps Requesting Access</h2>
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>
@@ -57,9 +57,9 @@
 					</tr>
 					</thead>
 					<tbody>
-					<? foreach ($requesting AS $row): ?>
-						<? $a = $row['OAuthConsumer'] ?>
-						<? $t = $row['OAuthToken'] ?>
+					<?php foreach ($requesting AS $row): ?>
+						<?php $a = $row['OAuthConsumer'] ?>
+						<?php $t = $row['OAuthToken'] ?>
 
 						<tr>
 							<td><?php echo $a->getLink() ?></td>
@@ -69,17 +69,17 @@
 								<a href="<?php echo $t->getUrl() ?>/revoke" class="btn btn-danger btn-mini">deny</a>
 							</td>
 						</tr>
-					<? endforeach ?>
+					<?php endforeach; ?>
 					</tbody>
 				</table>
-			<? endif ?>
+			<?php endif ?>
 			<h2>Users - Your Authorized Apps</h2>
 			<p>
 				These are the apps that you have authorized to have access to your account. If you use multiple
 				computers, the same app may be listed multiple times below. If you want to remove an app's access to
 				your account, simply click the revoke link.
 			</p>
-			<? if (!empty($authorized)): ?>
+			<?php if (!empty($authorized)): ?>
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
@@ -89,9 +89,9 @@
 					</tr>
 					</thead>
 					<tbody>
-					<? foreach ($authorized AS $row): ?>
-						<? $a = $row['OAuthConsumer'] ?>
-						<? $t = $row['OAuthToken'] ?>
+					<?php foreach ($authorized AS $row): ?>
+						<?php $a = $row['OAuthConsumer'] ?>
+						<?php $t = $row['OAuthToken'] ?>
 
 						<tr>
 							<td><?php echo $t->getLink() ?></td>
@@ -101,12 +101,12 @@
 								<a href="<?php echo $t->getUrl() ?>/revoke" class="btn btn-danger btn-mini">revoke</a>
 							</td>
 						</tr>
-					<? endforeach ?>
+					<?php endforeach; ?>
 					</tbody>
 				</table>
-			<? else: ?>
+			<?php else: ?>
 				<b>No authorized apps found.</b>
-			<? endif ?>
+			<?php endif ?>
 
 			<h2>Developers - Your Registered Apps</h2>
 			<p>
@@ -114,7 +114,7 @@
 					one</a>, and then it will be listed below. Next, you'll want to visit our <a href="/api/v1">API
 					documentation page</a>.
 			</p>
-			<? if (!empty($apps)): ?>
+			<?php if (!empty($apps)): ?>
 				<table class="table table-striped table-bordered table-condensed">
 					<thead>
 					<tr>
@@ -123,23 +123,23 @@
 					</tr>
 					</thead>
 					<tbody>
-					<? foreach ($apps AS $row): ?>
-						<? $a = $row['OAuthConsumer'] ?>
+					<?php foreach ($apps AS $row): ?>
+						<?php $a = $row['OAuthConsumer'] ?>
 						<tr>
 							<td><?php echo $a->getLink() ?></td>
 							<td><?php echo $a->isActive() ? 'yes' : 'no' ?></td>
 						</tr>
-					<? endforeach ?>
+					<?php endforeach; ?>
 					</tbody>
 				</table>
-			<? else: ?>
+			<?php else: ?>
 				<b>No registered apps found.</b>
-			<? endif ?>
-		<? else: ?>
+			<?php endif ?>
+		<?php else: ?>
 			<h2>App Management</h2>
 			<p>
 				You need to login to the site in order to manage your apps.
 			</p>
-		<? endif ?>
+		<?php endif ?>
 	</div>
 </div>
