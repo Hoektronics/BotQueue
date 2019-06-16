@@ -37,7 +37,7 @@ class FinishJobCommand
         $currentStatus = $job->status;
 
         if($currentStatus != JobStatusEnum::IN_PROGRESS) {
-            return HostErrors::jobIsNotAssigned();
+            return HostErrors::jobIsNotInProgress();
         }
 
         $bot = $job->bot;

@@ -141,6 +141,15 @@ class HostErrors
         );
     }
 
+    public static function jobIsNotInProgress()
+    {
+        return new ErrorResponse(
+            1211,
+            "Job must be in an in progress state to perform this action.",
+            Response::HTTP_CONFLICT
+        );
+    }
+
     public static function jobPercentageCanOnlyIncrease()
     {
         return new ErrorResponse(

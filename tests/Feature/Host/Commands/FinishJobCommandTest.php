@@ -106,7 +106,7 @@ class FinishJobCommandTest extends TestCase
                 ],
             ])
             ->assertStatus(Response::HTTP_CONFLICT)
-            ->assertExactJson(HostErrors::jobIsNotAssigned()->toArray());
+            ->assertExactJson(HostErrors::jobIsNotInProgress()->toArray());
     }
 
     /** @test */
