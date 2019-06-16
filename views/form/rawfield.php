@@ -1,1 +1,1 @@
-<?=$field->getValue()?>
+<?php echo $field->getValue() ?>

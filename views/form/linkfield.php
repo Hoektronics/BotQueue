@@ -1,5 +1,5 @@
-<div class="control-group <?= ($field->hasError) ? 'error' : '' ?>">
+<div class="control-group <?php echo ($field->hasError) ? 'error' : '' ?>">
 	<div class="controls">
-		<a title="<?= $field->label ?>" href="<?= $field->link ?>"><?=$field->getValue() ?></a>
+		<a title="<?php echo $field->label ?>" href="<?php echo $field->link ?>"><?php echo $field->getValue() ?></a>
 	</div>
 </div>

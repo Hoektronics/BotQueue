@@ -9,14 +9,14 @@
       <? foreach ($jobs AS $row): ?>
         <? $job = $row['SliceJob'] ?>
         <tr>
-          <td><?=$job->getLink()?></td>
-          <td><?=JobStatus::getStatusHTML($job)?></td>
+          <td><?php echo $job->getLink() ?></td>
+          <td><?php echo JobStatus::getStatusHTML($job) ?></td>
           <? if ($job->get('status') == 'available'): ?>
-            <td><?=Utility::relativeTime($job->get('add_date'))?></td>
+            <td><?php echo Utility::relativeTime($job->get('add_date')) ?></td>
           <? elseif ($job->get('status') == 'slicing'): ?>
-            <td><?=Utility::relativeTime($job->get('taken_date'))?></td>
+            <td><?php echo Utility::relativeTime($job->get('taken_date')) ?></td>
           <? else: ?>
-            <td><?=Utility::relativeTime($job->get('finish_date'))?></td>
+            <td><?php echo Utility::relativeTime($job->get('finish_date')) ?></td>
           <? endif ?>
         </tr>
       <? endforeach ?>

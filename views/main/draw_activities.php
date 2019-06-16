@@ -12,9 +12,9 @@
 			<? $activity = $row['Activity'] ?>
 			<? $datetime = $activity->get('action_date') ?>
 			<tr>
-				<td><?= $user->getLink() ?></td>
-				<td><?= $activity->get('activity') ?></td>
-				<td><span class="muted"><?= Utility::getTimeAgo($datetime) ?></span></td>
+				<td><?php echo $user->getLink() ?></td>
+				<td><?php echo $activity->get('activity') ?></td>
+				<td><span class="muted"><?php echo Utility::getTimeAgo($datetime) ?></span></td>
 			</tr>
 		<? endforeach ?>
 		</tbody>

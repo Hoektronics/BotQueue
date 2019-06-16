@@ -20,7 +20,7 @@ $max_page = min($page + 4, ceil($total / $per_page));
 	<div class="pagination">
 		<ul>
 			<? if ($page > 1): ?>
-				<li><a href="<?= $base_url ?>/page:<?= $page - 1 ?>">&laquo; prev</a></li>
+				<li><a href="<?php echo $base_url ?>/page:<?php echo $page - 1 ?>">&laquo; prev</a></li>
 			<? endif ?>
 
 			<? for ($i = $min_page; $i < $max_page + 1; $i++): ?>
@@ -29,12 +29,12 @@ $max_page = min($page + 4, ceil($total / $per_page));
 				<? else: ?>
 					<li>
 				<? endif ?>
-				<a href="<?= $base_url ?>/page:<?= $i ?>"><?= $i ?></a>
+				<a href="<?php echo $base_url ?>/page:<?php echo $i ?>"><?php echo $i ?></a>
 				</li>
 			<? endfor ?>
 
 			<? if ($page < $max_page): ?>
-				<li><a href="<?= $base_url ?>/page:<?= $page + 1 ?>">next &raquo;</a></li>
+				<li><a href="<?php echo $base_url ?>/page:<?php echo $page + 1 ?>">next &raquo;</a></li>
 			<? endif ?>
 	</div>
 <? endif ?>

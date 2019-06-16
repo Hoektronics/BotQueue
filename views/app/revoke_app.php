@@ -7,7 +7,7 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
-	<?= $form->render(); ?>
+	<?php echo $form->render(); ?>
 <? endif ?>

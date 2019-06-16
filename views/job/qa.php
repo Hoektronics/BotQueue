@@ -11,15 +11,15 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 
-	<h2>Awesome! The printer <?= $bot->getLink() ?> has completed the <?= $job->getLink() ?> job.</h2>
+	<h2>Awesome! The printer <?php echo $bot->getLink() ?> has completed the <?php echo $job->getLink() ?> job.</h2>
 
 	<div class="row">
 		<div class="span6">
 			<? if ($webcam->isHydrated()): ?>
-				<img src="<?= $webcam->getDownloadURL() ?>">
+				<img src="<?php echo $webcam->getDownloadURL() ?>">
 			<? else: ?>
 				<img src="/img/colorbars.gif">
 			<? endif ?>
@@ -37,7 +37,7 @@
 					</div>
 				</div>
 				<div class="span6">
-					<form method="post" autocomplete="off" action="<?= $job->getUrl() ?>/qa/pass">
+					<form method="post" autocomplete="off" action="<?php echo $job->getUrl() ?>/qa/pass">
 						<div class="alert alert-success">
 							<input type="hidden" name="submit" value="1">
 							<button class="btn btn-large btn-success" style="float:right;" type="submit">PASS</button>
@@ -59,24 +59,24 @@
 
 	<div id="qa_fail" style="display:none">
 		<h3>Please enter some details on the print failure, and determine what should be done with the bot and job.</h3>
-		<?= $form->render() ?>
+		<?php echo $form->render() ?>
 	</div>
 
 	<div class="row">
 		<div class="span6">
-			<h3>Source File: <?= $source_file->getLink() ?></h3>
+			<h3>Source File: <?php echo $source_file->getLink() ?></h3>
 			<? if ($source_file->isHydrated()): ?>
 				<iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400"
-				        src="<?= $source_file->getUrl() ?>/render"></iframe>
+				        src="<?php echo $source_file->getUrl() ?>/render"></iframe>
 			<? else: ?>
 				Source file does not exist.
 			<? endif ?>
 		</div>
 		<div class="span6">
-			<h3>GCode File: <?= $gcode_file->getLink() ?></h3>
+			<h3>GCode File: <?php echo $gcode_file->getLink() ?></h3>
 			<? if ($gcode_file->isHydrated()): ?>
 				<iframe id="output_frame" frameborder="0" scrolling="no" width="100%" height="400"
-				        src="<?= $gcode_file->getUrl() ?>/render"></iframe>
+				        src="<?php echo $gcode_file->getUrl() ?>/render"></iframe>
 			<? else: ?>
 				GCode file does not exist yet.
 			<? endif ?>

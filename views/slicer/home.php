@@ -19,13 +19,13 @@
                 <? foreach ($slicers AS $row): ?>
                     <? $engine = $row['SliceEngine'] ?>
                     <tr>
-                        <td><?= $engine->getLink() ?></td>
-                        <td><?= Utility::formatDateTime($engine->get('add_date')) ?></td>
+                        <td><?php echo $engine->getLink() ?></td>
+                        <td><?php echo Utility::formatDateTime($engine->get('add_date')) ?></td>
                         <? if (User::isAdmin()): ?>
                             <td>
-                                <a class="btn btn-mini" href="<?= $engine->getUrl() ?>/edit"><i class="icon-cog"></i>
+                                <a class="btn btn-mini" href="<?php echo $engine->getUrl() ?>/edit"><i class="icon-cog"></i>
                                     edit</a>
-                                <a class="btn btn-mini" href="<?= $engine->getUrl() ?>/delete"><i
+                                <a class="btn btn-mini" href="<?php echo $engine->getUrl() ?>/delete"><i
                                         class="icon-remove"></i> delete</a>
                             </td>
                         <? endif ?>
@@ -55,14 +55,14 @@
                     <? $config = $row['SliceConfig'] ?>
                     <? $engine = $row['SliceEngine'] ?>
                     <tr>
-                        <td><?= $config->getLink() ?></td>
-                        <td><?= $engine->getLink() ?></td>
-                        <td><?= Utility::formatDateTime($config->get('add_date')) ?></td>
-                        <td><?= Utility::formatDateTime($config->get('edit_date')) ?></td>
+                        <td><?php echo $config->getLink() ?></td>
+                        <td><?php echo $engine->getLink() ?></td>
+                        <td><?php echo Utility::formatDateTime($config->get('add_date')) ?></td>
+                        <td><?php echo Utility::formatDateTime($config->get('edit_date')) ?></td>
                         <td>
-                            <a class="btn btn-mini" href="<?= $config->getUrl() ?>/edit"><i class="icon-cog"></i>
+                            <a class="btn btn-mini" href="<?php echo $config->getUrl() ?>/edit"><i class="icon-cog"></i>
                                 edit</a>
-                            <a class="btn btn-mini" href="<?= $config->getUrl() ?>/delete"><i class="icon-remove"></i>
+                            <a class="btn btn-mini" href="<?php echo $config->getUrl() ?>/delete"><i class="icon-remove"></i>
                                 delete</a>
                         </td>
                     </tr>

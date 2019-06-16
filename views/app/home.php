@@ -62,11 +62,11 @@
 						<? $t = $row['OAuthToken'] ?>
 
 						<tr>
-							<td><?= $a->getLink() ?></td>
+							<td><?php echo $a->getLink() ?></td>
 							<td>
-								<a href="/app/authorize?oauth_token=<?= $t->get('token') ?>"
+								<a href="/app/authorize?oauth_token=<?php echo $t->get('token') ?>"
 								   class="btn btn-primary btn-mini">view</a>
-								<a href="<?= $t->getUrl() ?>/revoke" class="btn btn-danger btn-mini">deny</a>
+								<a href="<?php echo $t->getUrl() ?>/revoke" class="btn btn-danger btn-mini">deny</a>
 							</td>
 						</tr>
 					<? endforeach ?>
@@ -94,11 +94,11 @@
 						<? $t = $row['OAuthToken'] ?>
 
 						<tr>
-							<td><?= $t->getLink() ?></td>
-							<td><?= $a->getLink() ?></td>
+							<td><?php echo $t->getLink() ?></td>
+							<td><?php echo $a->getLink() ?></td>
 							<td>
-								<a href="<?= $t->getUrl() ?>/edit" class="btn btn-primary btn-mini">manage</a>
-								<a href="<?= $t->getUrl() ?>/revoke" class="btn btn-danger btn-mini">revoke</a>
+								<a href="<?php echo $t->getUrl() ?>/edit" class="btn btn-primary btn-mini">manage</a>
+								<a href="<?php echo $t->getUrl() ?>/revoke" class="btn btn-danger btn-mini">revoke</a>
 							</td>
 						</tr>
 					<? endforeach ?>
@@ -126,8 +126,8 @@
 					<? foreach ($apps AS $row): ?>
 						<? $a = $row['OAuthConsumer'] ?>
 						<tr>
-							<td><?= $a->getLink() ?></td>
-							<td><?= $a->isActive() ? 'yes' : 'no' ?></td>
+							<td><?php echo $a->getLink() ?></td>
+							<td><?php echo $a->isActive() ? 'yes' : 'no' ?></td>
 						</tr>
 					<? endforeach ?>
 					</tbody>

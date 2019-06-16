@@ -47,14 +47,14 @@
     <div id="GCodeStatusDiv" class="alert alert-success" style="display: none"></div>
     <? if (!$megaerror): ?>
       <? if ($file->isGCode()): ?>
-        <?= Controller::byName('job')->renderView('render_gcode', array('file' => $file, 'width' => $width, 'height' => $height))?>
+        <?php echo Controller::byName('job')->renderView('render_gcode', array('file' => $file, 'width' => $width, 'height' => $height)) ?>
       <? elseif ($file->is3DModel()): ?>
-        <?= Controller::byName('job')->renderView('render_model', array('file' => $file, 'width' => $width, 'height' => $height))?>
+        <?php echo Controller::byName('job')->renderView('render_model', array('file' => $file, 'width' => $width, 'height' => $height)) ?>
       <? else: ?>
-        <h3>Error: I do not know how to render <?=$file->getLink()?></h3>
+        <h3>Error: I do not know how to render <?php echo $file->getLink() ?></h3>
       <? endif ?>
     <? else: ?>
-      <h3><?=$megaerror?></h3>
+      <h3><?php echo $megaerror ?></h3>
     <? endif ?>
   </body>
 </html>

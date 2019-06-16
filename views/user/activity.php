@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>	
 <?
 		echo Controller::byName('browse')->renderView('pagination_info', array(
@@ -7,7 +7,7 @@
 			'word' => 'activity'
 		));
 	?>
-	<?= Controller::byName('main')->renderView('draw_activities', array(
+	<?php echo Controller::byName('main')->renderView('draw_activities', array(
 		'activities' => $activities->getAll(),
 		'user' => $user
 	)); ?>

@@ -13,16 +13,16 @@
 			<? $b = $row['Bot'] ?>
 			<? $j = $row['Job'] ?>
 			<tr>
-				<td><?=$b->getLink()?></td>
-				<td><?=BotStatus::getStatusHTML($b);?></td>
-				<td><?=Utility::relativeTime($b->get('last_seen'))?></td>
+				<td><?php echo $b->getLink() ?></td>
+				<td><?php echo BotStatus::getStatusHTML($b); ?></td>
+				<td><?php echo Utility::relativeTime($b->get('last_seen')) ?></td>
 				<? if ($j->isHydrated()): ?>
-					<td><?=$j->getLink()?></td>
+					<td><?php echo $j->getLink() ?></td>
 				<? else: ?>
 					<td>none</td>
 				<? endif ?>
 			</tr>
-		<?endforeach?>
+		<?endforeach ?>
 		</tbody>
 	</table>
 <? else: ?>

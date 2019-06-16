@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
   <div class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
@@ -8,10 +8,10 @@
     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="tab1">
-      	<?= $uploadform->render() ?>
+      	<?php echo $uploadform->render() ?>
       </div>
       <div class="tab-pane" id="tab2">
-      	<?= $rawform->render() ?>
+      	<?php echo $rawform->render() ?>
       </div>
     </div>
   </div>

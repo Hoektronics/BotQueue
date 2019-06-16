@@ -3,7 +3,7 @@
 		<? $user = $row['User'] ?>
 		<div class="user_row">
 			<div class="user_name">
-				<?= $user->getLink() ?>
+				<?php echo $user->getLink() ?>
 			</div>
 		</div>
 	<? endforeach ?>

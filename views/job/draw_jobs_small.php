@@ -14,13 +14,13 @@
 				<? $j = $row['Job'] ?>
 				<? $bot = $j->getBot() ?>
 				<tr>
-					<td><?=$j->id?></td>
-					<td><?=$j->getLink()?></td>
-					<td><?=JobStatus::getStatusHTML($j)?></td>
-					<td><?=round($j->get('progress'), 2)?>%</td>
-					<td><?=$j->getElapsedText()?></td>
+					<td><?php echo $j->id ?></td>
+					<td><?php echo $j->getLink() ?></td>
+					<td><?php echo JobStatus::getStatusHTML($j) ?></td>
+					<td><?php echo round($j->get('progress'), 2) ?>%</td>
+					<td><?php echo $j->getElapsedText() ?></td>
 				</tr>
-			<?endforeach?>
+			<?endforeach ?>
 		</tbody>
 	</table>
 <? else: ?>

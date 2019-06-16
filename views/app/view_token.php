@@ -6,7 +6,7 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<div class="MegaError"><?= $megaerror ?></div>
+	<div class="MegaError"><?php echo $megaerror ?></div>
 <? else: ?>
 	<div class="row">
 		<div class="span9">
@@ -14,29 +14,29 @@
 				<tbody>
 				<tr>
 					<th>Application Name:</th>
-					<td><?= $token->getName() ?></td>
+					<td><?php echo $token->getName() ?></td>
 				</tr>
 				<tr>
 					<th>Verified:</th>
-					<td><?= $token->isVerified() ? 'yes' : 'no' ?></td>
+					<td><?php echo $token->isVerified() ? 'yes' : 'no' ?></td>
 				</tr>
 				<tr>
 					<th>Consumer:</th>
-					<td><?= $token->getConsumer()->getLink() ?></td>
+					<td><?php echo $token->getConsumer()->getLink() ?></td>
 				</tr>
 				<? if ($token->isMine()): ?>
 					<tr>
 						<th>API Key:</th>
-						<td><?= $token->get('token') ?></td>
+						<td><?php echo $token->get('token') ?></td>
 					</tr>
 					<tr>
 						<th>API Secret:</th>
-						<td><?= $token->get('token_secret') ?></td>
+						<td><?php echo $token->get('token_secret') ?></td>
 					</tr>
 					<tr>
 						<th>Manage</th>
-						<td><a href="<?= $token->getUrl() ?>/edit">Edit App</a> or <a
-								href="<?= $token->getUrl() ?>/revoke">Revoke App</a></td>
+						<td><a href="<?php echo $token->getUrl() ?>/edit">Edit App</a> or <a
+								href="<?php echo $token->getUrl() ?>/revoke">Revoke App</a></td>
 					</tr>
 				<? endif ?>
 				<tbody>
@@ -49,7 +49,7 @@
 				<ul>
 					<? foreach ($bots AS $row): ?>
 						<? $b = $row['Bot'] ?>
-						<li><?= $b->getLink() ?></li>
+						<li><?php echo $b->getLink() ?></li>
 					<? endforeach ?>
 				</ul>
 			<? else: ?>

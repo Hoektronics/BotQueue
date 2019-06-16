@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 	<? if (!empty($kids)): ?>
 		<script>
@@ -26,7 +26,7 @@
 				});
 			});
 		</script>
-		<form method="post" action="/job/create/file:<?= $file->id ?>">
+		<form method="post" action="/job/create/file:<?php echo $file->id ?>">
 			<div class="row">
 				<div class="span3">
 					<h3>Bulk Add Jobs</h3>
@@ -43,7 +43,7 @@
 						<option value="0">Change all Queues</option>
 						<? foreach ($queues AS $row2): ?>
 							<? $q = $row2['Queue'] ?>
-							<option value="<?= $q->id ?>"><?= $q->getName() ?></option>
+							<option value="<?php echo $q->id ?>"><?php echo $q->getName() ?></option>
 						<? endforeach ?>
 					</select>
 
@@ -72,18 +72,18 @@
 						<? foreach ($kids AS $row): ?>
 							<? $kid = $row['StorageInterface'] ?>
 							<tr>
-								<td align="center"><input type="checkbox" class="job_use" name="use[<?= $kid->id ?>]"
+								<td align="center"><input type="checkbox" class="job_use" name="use[<?php echo $kid->id ?>]"
 														  value="1" checked></td>
-								<td><input type="text" name="qty[<?= $kid->id ?>]" value="1" class="job_qty input-mini">
+								<td><input type="text" name="qty[<?php echo $kid->id ?>]" value="1" class="job_qty input-mini">
 								</td>
-								<td style="font-size: 125%"><?= $kid->getLink() ?></td>
+								<td style="font-size: 125%"><?php echo $kid->getLink() ?></td>
 								<td align="center"><input type="checkbox" class="job_priority"
-														  name="priority[<?= $kid->id ?>]"></td>
+														  name="priority[<?php echo $kid->id ?>]"></td>
 								<td>
-									<select class="job_queue" name="queues[<?= $kid->id ?>]">
+									<select class="job_queue" name="queues[<?php echo $kid->id ?>]">
 										<? foreach ($queues AS $row2): ?>
 											<? $q = $row2['Queue'] ?>
-											<option value="<?= $q->id ?>"><?= $q->getName() ?></option>
+											<option value="<?php echo $q->id ?>"><?php echo $q->getName() ?></option>
 										<? endforeach ?>
 									</select>
 								</td>
@@ -95,6 +95,6 @@
 			</div>
 		</form>
 	<? else: ?>
-		<?= $form->render() ?>
+		<?php echo $form->render() ?>
 	<? endif ?>
 <? endif ?>

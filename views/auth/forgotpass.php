@@ -7,13 +7,13 @@
  */
 ?>
 <? if ($status): ?>
-	<?= Controller::byName('htmltemplate')->renderView('statusbar', array('message' => $status))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('statusbar', array('message' => $status)) ?>
 <? else: ?>
 	<? if ($error): ?>
-		<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $error))?>
+		<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $error)) ?>
 	<? endif ?>
 
 	<div>
-		<?= $form->render() ?>
+		<?php echo $form->render() ?>
 	</div>
 <? endif ?>

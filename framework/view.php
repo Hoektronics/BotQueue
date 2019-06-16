@@ -44,7 +44,7 @@ class View
 		if (file_exists($view_file))
 			//include actually echos stuff the the buffer - for example, check htmltemplate.header.php
 			//You'll see this file dropping in and out of php code all over the place
-			//Anytime you see the <?= tag, this is telling php to echo whatever is to the right of this tag
+			//Anytime you see the <?php echo tag, this is telling php to echo whatever is to the right of this tag
 			include($view_file);
 		else
 			throw new ViewException("The {$this->controller}.{$this->view} page does not exist!");

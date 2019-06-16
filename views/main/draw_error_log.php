@@ -20,20 +20,20 @@
     <? foreach ($errors AS $row): ?>
       <? $log = $row['ErrorLog'] ?>
       <tr>
-    	  <td><span class="text-error"><?=Utility::sanitize($log->get('reason'))?></span></td>
+    	  <td><span class="text-error"><?php echo Utility::sanitize($log->get('reason')) ?></span></td>
     	  <? if ($hide != 'job'): ?>
-    			<td><?=$log->getJob()->getLink()?></td>
+    			<td><?php echo $log->getJob()->getLink() ?></td>
     		<? endif ?>
     	  <? if ($hide != 'bot'): ?>
-    		  <td><?=$log->getBot()->getLink()?></td>
+    		  <td><?php echo $log->getBot()->getLink() ?></td>
     	  <? endif ?>
     		<? if ($hide != 'queue'): ?>
-    			<td><?=$log->getQueue()->getLink()?></td>
+    			<td><?php echo $log->getQueue()->getLink() ?></td>
     		<? endif ?>
     		<? /*if ($hide != 'user'): ?>
-    			<td><?=$log->getUser()->getLink()?></td>
+    			<td><?php echo $log->getUser()->getLink() ?></td>
     		<? endif*/ ?>
-    		<td><?=Utility::formatDateTime($log->get('error_date'))?></td>        
+    		<td><?php echo Utility::formatDateTime($log->get('error_date')) ?></td>        
       </tr>
     <? endforeach ?>
   </table>

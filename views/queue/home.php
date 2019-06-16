@@ -4,7 +4,7 @@
 		'word' => 'queue'
 	));
 ?>
-<?= Controller::byName('queue')->renderView('draw_queues', array('queues' => $queues->getAll())); ?>
+<?php echo Controller::byName('queue')->renderView('draw_queues', array('queues' => $queues->getAll())); ?>
 <?
 	echo Controller::byName('browse')->renderView('pagination', array(
 		'collection' => $queues,

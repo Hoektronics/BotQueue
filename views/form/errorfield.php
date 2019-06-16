@@ -1,7 +1,7 @@
-<div class="control-group <?= ($field->hasError) ? 'error' : '' ?>">
+<div class="control-group <?php echo ($field->hasError) ? 'error' : '' ?>">
 	<div class="controls">
 	  <div class="alert alert-error">
-      <?=$field->getValue()?>
+      <?php echo $field->getValue() ?>
     </div>
 	</div>
 </div>

@@ -1,9 +1,9 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? elseif ($status): ?>
-	<div class="BaseStatus"><?=$status?></div>
+	<div class="BaseStatus"><?php echo $status ?></div>
 <? else: ?>
-	<form class="form-horizontal" method="post" autocomplete="off" action="/user:<?=$user->id?>/delete">
+	<form class="form-horizontal" method="post" autocomplete="off" action="/user:<?php echo $user->id ?>/delete">
 		<input type="hidden" name="submit" value="1">
 		<div class="alert alert-block">
 			<h4 class="alert-heading">Warning!</h4>

@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? elseif (!$nodriver): ?>
 	<? if (!is_object($devices)): ?>
 		<div class="alert alert-error">
@@ -12,7 +12,7 @@
 			<label class="control-label" for="idelay"><strong>Delay</strong></label>
 
 			<div class="controls">
-				<input type="text" class="input-mini" id="idelay" name="delay" value="<?= $delay ?>">
+				<input type="text" class="input-mini" id="idelay" name="delay" value="<?php echo $delay ?>">
 				<span class="muted">(in seconds between gcode commands)</span>
 			</div>
 		</div>
@@ -23,8 +23,8 @@
 			<div class="controls">
 				<div class="input-append">
 					<input type="text" class="input-xlarge" id="iserial_port" name="serial_port"
-					       value="<?= $serial_port ?>">
-					<input type="hidden" id="port_id" name="port_id" value="<?= $serial_port_id ?>">
+					       value="<?php echo $serial_port ?>">
+					<input type="hidden" id="port_id" name="port_id" value="<?php echo $serial_port_id ?>">
 
 					<div class="btn-group">
 						<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -34,8 +34,8 @@
 							<? if (!empty($devices->bots->printcoredriver)): ?>
 								<? foreach ($devices->bots->printcoredriver AS $idx => $port): ?>
 									<li><a tabindex="-1" href="#"
-									       onclick="return set_serialport(this, <?= $idx ?>)"><?= $port[0] ?></a></li>
-									<input type="hidden" id="port_id_<?= $idx ?>" value="<?= $port[2] ?>">
+									       onclick="return set_serialport(this, <?php echo $idx ?>)"><?php echo $port[0] ?></a></li>
+									<input type="hidden" id="port_id_<?php echo $idx ?>" value="<?php echo $port[2] ?>">
 								<? endforeach ?>
 							<? endif ?>
 						</ul>
@@ -49,7 +49,7 @@
 
 			<div class="controls">
 				<div class="input-append">
-					<input type="text" class="input-small" id="ibaudrate" name="baudrate" value="<?= $baudrate ?>">
+					<input type="text" class="input-small" id="ibaudrate" name="baudrate" value="<?php echo $baudrate ?>">
 
 					<div class="btn-group">
 						<button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -57,7 +57,7 @@
 						</button>
 						<ul class="dropdown-menu">
 							<? foreach ($baudrates AS $rate): ?>
-								<li><a tabindex="-1" href="#" onclick="return set_baudrate(this)"><?= $rate ?></a></li>
+								<li><a tabindex="-1" href="#" onclick="return set_baudrate(this)"><?php echo $rate ?></a></li>
 							<? endforeach ?>
 						</ul>
 					</div>
@@ -68,7 +68,7 @@
 	<? endif ?>
 
 	<? if ($driver == 'printcore' || $driver == 'dummy' || $driver == 's3g'): ?>
-		<input type="hidden" id="webcam_id" name="webcam_id" value="<?= $webcam_id ?>">
+		<input type="hidden" id="webcam_id" name="webcam_id" value="<?php echo $webcam_id ?>">
 
 		<? if (is_object($devices)): ?>
 			<? if (!empty($devices->camera_files)): ?>
@@ -79,7 +79,7 @@
 					</label>
 
 					<div class="controls">
-						<div class="span3 webcam_preview <?= (!$webcam_device) ? 'active' : '' ?>"
+						<div class="span3 webcam_preview <?php echo (!$webcam_device) ? 'active' : '' ?>"
 						     id="webcam_preview_foo"
 						     onclick="set_webcam('foo')">
 							<input type="hidden" id="webcam_id_foo" value="">
@@ -91,16 +91,16 @@
 						<? foreach ($devices->camera_files AS $idx => $file_id): ?>
 							<? $webcam_file = Storage::get($file_id); ?>
 							<div
-								class="span3 webcam_preview <?= ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : '' ?>"
-								id="webcam_preview_<?= $idx ?>" onclick="set_webcam(<?= $idx ?>)">
-								<input type="hidden" id="webcam_id_<?= $idx ?>"
-								       value="<?= $devices->cameras[$idx]->id ?>">
-								<input type="hidden" id="webcam_name_<?= $idx ?>"
-								       value="<?= $devices->cameras[$idx]->name ?>">
-								<input type="hidden" id="webcam_device_<?= $idx ?>"
-								       value="<?= $devices->cameras[$idx]->device ?>">
-								<span class="webcam_name"><?= $devices->cameras[$idx]->name ?></span>
-								<img src="<?= $webcam_file->getDownloadURL() ?>">
+								class="span3 webcam_preview <?php echo ($devices->cameras[$idx]->device == $webcam_device) ? 'active' : '' ?>"
+								id="webcam_preview_<?php echo $idx ?>" onclick="set_webcam(<?php echo $idx ?>)">
+								<input type="hidden" id="webcam_id_<?php echo $idx ?>"
+								       value="<?php echo $devices->cameras[$idx]->id ?>">
+								<input type="hidden" id="webcam_name_<?php echo $idx ?>"
+								       value="<?php echo $devices->cameras[$idx]->name ?>">
+								<input type="hidden" id="webcam_device_<?php echo $idx ?>"
+								       value="<?php echo $devices->cameras[$idx]->device ?>">
+								<span class="webcam_name"><?php echo $devices->cameras[$idx]->name ?></span>
+								<img src="<?php echo $webcam_file->getDownloadURL() ?>">
 							</div>
 						<? endforeach ?>
 					</div>
@@ -112,7 +112,7 @@
 			<label class="control-label" for="webcam_name"><strong>Webcam Name</strong></label>
 
 			<div class="controls">
-				<input type="text" class="input-xlarge" id="webcam_name" name="webcam_name" value="<?= $webcam_name ?>">
+				<input type="text" class="input-xlarge" id="webcam_name" name="webcam_name" value="<?php echo $webcam_name ?>">
 			</div>
 		</div>
 
@@ -121,7 +121,7 @@
 
 			<div class="controls">
 				<input type="text" class="input-xlarge" id="webcam_device" name="webcam_device"
-				       value="<?= $webcam_device ?>">
+				       value="<?php echo $webcam_device ?>">
 			</div>
 		</div>
 
@@ -130,7 +130,7 @@
 
 			<div class="controls">
 				<input type="text" class="input-mini" id="webcam_brightness" name="webcam_brightness"
-				       value="<?= $webcam_brightness ?>">
+				       value="<?php echo $webcam_brightness ?>">
 				<span class="muted">%</span>
 			</div>
 		</div>
@@ -140,7 +140,7 @@
 
 			<div class="controls">
 				<input type="text" class="input-mini" id="webcam_contrast" name="webcam_contrast"
-				       value="<?= $webcam_contrast ?>">
+				       value="<?php echo $webcam_contrast ?>">
 				<span class="muted">%</span>
 			</div>
 		</div>

@@ -11,9 +11,9 @@
 		<? foreach ($bots AS $row): ?>
 			<? $bot = $row['Bot'] ?>
 			<tr>
-				<td><?=$bot->getLink()?></td>
-				<td><?=BotStatus::getStatusHTML($bot)?></td>
-				<td><?=Utility::relativeTime($bot->get('last_seen'))?></td>
+				<td><?php echo $bot->getLink() ?></td>
+				<td><?php echo BotStatus::getStatusHTML($bot) ?></td>
+				<td><?php echo Utility::relativeTime($bot->get('last_seen')) ?></td>
 			</tr>
 		<? endforeach ?>
 	<? else: ?>

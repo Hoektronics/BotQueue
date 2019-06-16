@@ -7,7 +7,7 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<div class="MegaError"><?= $megaerror ?></div>
+	<div class="MegaError"><?php echo $megaerror ?></div>
 <? else: ?>
 	<div class="row">
 		<div class="span9">
@@ -15,28 +15,28 @@
 				<tbody>
 				<tr>
 					<th>Application Name:</th>
-					<td><?= $consumer->getName() ?></td>
+					<td><?php echo $consumer->getName() ?></td>
 				</tr>
 				<tr>
 					<th>Application URL:</th>
-					<td><a href="<?= $consumer->get('app_url') ?>"><?= $consumer->get('app_url') ?></a></td>
+					<td><a href="<?php echo $consumer->get('app_url') ?>"><?php echo $consumer->get('app_url') ?></a></td>
 				</tr>
 				<tr>
 					<th>Active:</th>
-					<td><?= ($consumer->get('active') == 1) ? 'yes' : 'no' ?></td>
+					<td><?php echo ($consumer->get('active') == 1) ? 'yes' : 'no' ?></td>
 				</tr>
 				<? if ($consumer->canEdit()): ?>
 					<tr>
 						<th>API Key:</th>
-						<td><?= $consumer->get('consumer_key') ?></td>
+						<td><?php echo $consumer->get('consumer_key') ?></td>
 					</tr>
 					<tr>
 						<th>API Secret:</th>
-						<td><?= $consumer->get('consumer_secret') ?></td>
+						<td><?php echo $consumer->get('consumer_secret') ?></td>
 					</tr>
 					<tr>
 						<th>Manage</th>
-						<td><a href="<?= $consumer->getUrl() ?>/edit">Edit App</a> or <a href="<?= $consumer->getUrl() ?>/delete">Delete
+						<td><a href="<?php echo $consumer->getUrl() ?>/edit">Edit App</a> or <a href="<?php echo $consumer->getUrl() ?>/delete">Delete
 								App</a></td>
 					</tr>
 				<? endif ?>
@@ -50,7 +50,7 @@
 				<ul>
 					<? foreach ($apps AS $row): ?>
 						<? $app = $row['OAuthToken'] ?>
-						<li><?= $app->getLink() ?></li>
+						<li><?php echo $app->getLink() ?></li>
 					<? endforeach ?>
 				</ul>
 			<? else: ?>

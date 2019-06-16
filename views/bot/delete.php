@@ -1,7 +1,7 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
-	<form class="form-horizontal" method="post" autocomplete="off" action="<?=$bot->getUrl()?>/delete">
+	<form class="form-horizontal" method="post" autocomplete="off" action="<?php echo $bot->getUrl() ?>/delete">
 	 <input type="hidden" name="submit" value="1">
 		<div class="alert alert-block">
 		  <h4 class="alert-heading">Warning!</h4>

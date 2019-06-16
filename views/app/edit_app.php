@@ -8,11 +8,11 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 	<div class="row">
 		<div class="span9">
-			<?= $form->render() ?>
+			<?php echo $form->render() ?>
 		</div>
 		<div class="span3">
 			<h3>Apps</h3>
@@ -21,7 +21,7 @@
 				<ul>
 					<? foreach ($apps AS $row): ?>
 						<? $app = $row['OAuthToken'] ?>
-						<li><?= $app->getLink() ?></li>
+						<li><?php echo $app->getLink() ?></li>
 					<? endforeach ?>
 				</ul>
 			<? else: ?>

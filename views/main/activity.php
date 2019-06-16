@@ -5,7 +5,7 @@
 	));
 ?>
 
-<?= Controller::byName('main')->renderView('draw_activities', array(
+<?php echo Controller::byName('main')->renderView('draw_activities', array(
 	'activities' => $activities->getAll(),
 	'user' => $user
 )); ?>

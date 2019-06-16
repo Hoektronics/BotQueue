@@ -1,5 +1,5 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 	<div class="row">
 		<div class="span6">
@@ -8,43 +8,43 @@
 				<tbody>
 				<tr>
 					<th>Download URL:</th>
-					<td><a href="<?= $file->getDownloadURL() ?>"><?= $file->getName() ?></a></td>
+					<td><a href="<?php echo $file->getDownloadURL() ?>"><?php echo $file->getName() ?></a></td>
 				</tr>
 				<? if ($file->get('source_url')): ?>
 					<tr>
 						<th>Source:</th>
-						<td><a href="<?= $file->get('source_url') ?>"><?= $file->get('source_url') ?></a></td>
+						<td><a href="<?php echo $file->get('source_url') ?>"><?php echo $file->get('source_url') ?></a></td>
 					</tr>
 				<? endif ?>
 				<? if ($parent_file->isHydrated()): ?>
 					<tr>
 						<th>Parent File:</th>
-						<td><?= $parent_file->getLink() ?></td>
+						<td><?php echo $parent_file->getLink() ?></td>
 					</tr>
 				<? endif ?>
 				<tr>
 					<th>Creator:</th>
-					<td><?= $creator->getLink() ?></td>
+					<td><?php echo $creator->getLink() ?></td>
 				</tr>
 				<tr>
 					<th>Type:</th>
-					<td><?= $file->get('type') ?></td>
+					<td><?php echo $file->get('type') ?></td>
 				</tr>
 				<tr>
 					<th>Size:</th>
-					<td><?= Utility::filesizeFormat($file->get('size')) ?></td>
+					<td><?php echo Utility::filesizeFormat($file->get('size')) ?></td>
 				</tr>
 				<tr>
 					<th>MD5 Hash:</th>
-					<td><?= $file->get('hash') ?></td>
+					<td><?php echo $file->get('hash') ?></td>
 				</tr>
 				<tr>
 					<th>Add Date:</th>
-					<td><?= Utility::formatDateTime($file->get('add_date')) ?></td>
+					<td><?php echo Utility::formatDateTime($file->get('add_date')) ?></td>
 				</tr>
 				<tr>
 					<th>Manage:</th>
-					<td><a class="btn btn-mini" href="/job/create/file:<?= $file->id ?>"><i class="icon-repeat"></i>
+					<td><a class="btn btn-mini" href="/job/create/file:<?php echo $file->id ?>"><i class="icon-repeat"></i>
 							re-run</a></td>
 				</tr>
 				</tbody>
@@ -52,10 +52,10 @@
 			<? if (empty($kids)): ?>
 				<h3>
 					Jobs With This File
-					:: 1-<?= min(10, $job_count) ?> of <?= $job_count ?> :: <a href="<?= $file->getUrl() ?>/jobs">see
+					:: 1-<?php echo min(10, $job_count) ?> of <?php echo $job_count ?> :: <a href="<?php echo $file->getUrl() ?>/jobs">see
 						all</a>
 				</h3>
-				<?= Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $jobs)); ?>
+				<?php echo Controller::byName('job')->renderView('draw_jobs_small', array('jobs' => $jobs)); ?>
 			<? endif ?>
 		</div>
 		<div class="span6">
@@ -73,9 +73,9 @@
 					<? foreach ($kids AS $row): ?>
 						<? $kid = $row['StorageInterface'] ?>
 						<tr>
-							<td><?= $kid->getLink() ?></td>
-							<td><?= Utility::filesizeFormat($kid->get('size')) ?></td>
-							<td><a class="btn btn-mini" href="/job/create/file:<?= $kid->id ?>"><i
+							<td><?php echo $kid->getLink() ?></td>
+							<td><?php echo Utility::filesizeFormat($kid->get('size')) ?></td>
+							<td><a class="btn btn-mini" href="/job/create/file:<?php echo $kid->id ?>"><i
 										class="icon-repeat"></i> re-run</a></td>
 						</tr>
 					<? endforeach ?>
@@ -83,7 +83,7 @@
 				</table>
 			<? else: ?>
 				<iframe id="input_frame" frameborder="0" scrolling="no" width="100%" height="400"
-				        src="<?= $file->getUrl() ?>/render"></iframe>
+				        src="<?php echo $file->getUrl() ?>/render"></iframe>
 			<? endif ?>
 		</div>
 	</div>

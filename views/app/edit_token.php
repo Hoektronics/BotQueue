@@ -8,11 +8,11 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 	<div class="row">
 		<div class="span9">
-			<?= $form->render() ?>
+			<?php echo $form->render() ?>
 		</div>
 		<div class="span3">
 			<h3>Bots</h3>
@@ -21,7 +21,7 @@
 				<ul>
 					<? foreach ($bots AS $row): ?>
 						<? $b = $row['Bot'] ?>
-						<li><?= $b->getLink() ?></li>
+						<li><?php echo $b->getLink() ?></li>
 					<? endforeach ?>
 				</ul>
 			<? else: ?>

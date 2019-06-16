@@ -16,8 +16,8 @@
 						<li>
 							<a href="/notifications">
 								<div id="notification-icon"
-								     class="notification<?= ($notifications > 0 ? ' active' : '') ?>">
-									<?= $notifications ?>
+								     class="notification<?php echo ($notifications > 0 ? ' active' : '') ?>">
+									<?php echo $notifications ?>
 								</div>
 							</a>
 						</li>
@@ -29,12 +29,12 @@
 						<span class="icon-bar"></span>
 					</button>
 				</div>
-				<a class="brand" style="margin-left:0" href="/"><?= RR_PROJECT_NAME ?></a>
+				<a class="brand" style="margin-left:0" href="/"><?php echo RR_PROJECT_NAME ?></a>
 
 				<div id="menu-bar" class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="<?= ($area == 'dashboard') ? 'active' : '' ?>"><a href="/">Dashboard</a></li>
-						<li class="<?= ($area == 'create') ? 'active' : '' ?> dropdown">
+						<li class="<?php echo ($area == 'dashboard') ? 'active' : '' ?>"><a href="/">Dashboard</a></li>
+						<li class="<?php echo ($area == 'create') ? 'active' : '' ?> dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions<b class="caret"></b></a>
 							<ul class="dropdown-menu">
 								<li><a href="/upload">Create Job</a></li>
@@ -42,15 +42,15 @@
 								<li><a href="/queue/create">Create Queue</a></li>
 							</ul>
 						</li>
-						<li class="<?= ($area == 'bots') ? 'active' : '' ?>"><a href="/bots">Bots</a></li>
-						<li class="<?= ($area == 'queues') ? 'active' : '' ?>"><a href="/queues">Queues</a></li>
-						<li class="<?= ($area == 'jobs') ? 'active' : '' ?>"><a href="/jobs">Jobs</a></li>
-						<li class="<?= ($area == 'app') ? 'active' : '' ?>"><a href="/apps">App</a></li>
-						<li class="<?= ($area == 'slicers') ? 'active' : '' ?>"><a href="/slicers">Slicers</a></li>
-						<li class="<?= ($area == 'stats') ? 'active' : '' ?>"><a href="/stats">Stats</a></li>
-						<li class="<?= ($area == 'help') ? 'active' : '' ?>"><a href="/help">Help</a></li>
+						<li class="<?php echo ($area == 'bots') ? 'active' : '' ?>"><a href="/bots">Bots</a></li>
+						<li class="<?php echo ($area == 'queues') ? 'active' : '' ?>"><a href="/queues">Queues</a></li>
+						<li class="<?php echo ($area == 'jobs') ? 'active' : '' ?>"><a href="/jobs">Jobs</a></li>
+						<li class="<?php echo ($area == 'app') ? 'active' : '' ?>"><a href="/apps">App</a></li>
+						<li class="<?php echo ($area == 'slicers') ? 'active' : '' ?>"><a href="/slicers">Slicers</a></li>
+						<li class="<?php echo ($area == 'stats') ? 'active' : '' ?>"><a href="/stats">Stats</a></li>
+						<li class="<?php echo ($area == 'help') ? 'active' : '' ?>"><a href="/help">Help</a></li>
 						<? if (User::isAdmin()): ?>
-							<li class="<?= ($area == 'admin') ? 'active' : '' ?> dropdown">
+							<li class="<?php echo ($area == 'admin') ? 'active' : '' ?> dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b
 										class="caret"></b></a>
 								<ul class="dropdown-menu">
@@ -65,7 +65,7 @@
 						<? if (User::isLoggedIn()): ?>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle"
-								   data-toggle="dropdown">Hello, <?= User::$me->getName() ?>
+								   data-toggle="dropdown">Hello, <?php echo User::$me->getName() ?>
 									<b class="caret"></b>
 								</a>
 								<ul class="dropdown-menu">

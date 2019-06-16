@@ -7,11 +7,11 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 	<div class="row">
 		<div class="span12">
-			<?= $form->render() ?>
+			<?php echo $form->render() ?>
 		</div>
 	</div>
 <? endif ?>

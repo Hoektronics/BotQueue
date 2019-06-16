@@ -3,9 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<? if ($title): ?>
-		<title><?= strip_tags($title) ?> - <?= RR_PROJECT_NAME ?></title>
+		<title><?php echo strip_tags($title) ?> - <?php echo RR_PROJECT_NAME ?></title>
 	<? else: ?>
-		<title><?= RR_PROJECT_NAME ?>: Internets + Digital Fabrication = Win</title>
+		<title><?php echo RR_PROJECT_NAME ?>: Internets + Digital Fabrication = Win</title>
 	<? endif ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
@@ -37,8 +37,8 @@
 	<? if (defined('GOOGLE_ANALYTICS_TRACKING_CODE')): ?>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', '<?=GOOGLE_ANALYTICS_TRACKING_CODE?>']);
-			_gaq.push(['_setDomainName', "<?=SITE_HOSTNAME?>"]);
+			_gaq.push(['_setAccount', '<?php echo GOOGLE_ANALYTICS_TRACKING_CODE ?>']);
+			_gaq.push(['_setDomainName', "<?php echo SITE_HOSTNAME ?>"]);
 			_gaq.push(['_setAllowLinker', true]);
 			_gaq.push(['_trackPageview']);
 
@@ -54,8 +54,8 @@
 	<? endif ?>
 	<? if (!empty(Controller::$rssFeeds)): ?>
 		<? foreach (Controller::$rssFeeds AS $feed): ?>
-			<link rel="alternate" type="application/rss+xml" title="<?= RR_PROJECT_NAME ?> - <?= $feed['title'] ?>"
-				  href="<?= $feed['url'] ?>"/>
+			<link rel="alternate" type="application/rss+xml" title="<?php echo RR_PROJECT_NAME ?> - <?php echo $feed['title'] ?>"
+				  href="<?php echo $feed['url'] ?>"/>
 		<? endforeach ?>
 	<? endif ?>
 
@@ -63,18 +63,18 @@
 <body class="preview" data-spy="scroll" data-target=".subnav" data-offset="50">
 <div class="container">
 
-	<?= Controller::byName('htmltemplate')->renderView('menubar', array('area' => $area)); ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('menubar', array('area' => $area)); ?>
 
 	<section id="content" style="margin-top:60px">
 		<? if ($title): ?>
 			<div class="page-header">
-				<h1><?= $title ?></h1>
+				<h1><?php echo $title ?></h1>
 			</div>
 		<? endif ?>
 
 		<div class="row">
 			<div class="span12">
-				<?= $content ?>
+				<?php echo $content ?>
 			</div>
 		</div>
 
@@ -102,9 +102,9 @@
 				Made by Zach Hoeken and Justin Nesselrotte. (<a href="/about">about</a>)<br/>
 				Software licensed under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL v3.0</a>. Code at <a
 					href="https://github.com/Hoektronics/BotQueue">GitHub</a>.<br/>
-				&copy; <?= date("Y") ?> <a href="http://www.hoektronics.com"><?= COMPANY_NAME ?></a>. Powered by <a
+				&copy; <?php echo date("Y") ?> <a href="http://www.hoektronics.com"><?php echo COMPANY_NAME ?></a>. Powered by <a
 					href="http://www.botqueue.com">BotQueue</a>.<br/>
-				Page generated in <?= round(microtime(true) - START_TIME, 3) ?> seconds.
+				Page generated in <?php echo round(microtime(true) - START_TIME, 3) ?> seconds.
 			</div>
 		</div>
 		<br/>
@@ -114,14 +114,14 @@
 
 <? if (!empty(Controller::$scriptContents)): ?>
 	<? foreach (Controller::$scriptContents AS $id => $content): ?>
-		<script type="<?= Controller::$scriptTypes[$id] ?>" id="<?= $id ?>">
-			<?= $content ?>
+		<script type="<?php echo Controller::$scriptTypes[$id] ?>" id="<?php echo $id ?>">
+			<?php echo $content ?>
 		</script>
 	<? endforeach ?>
 <? endif ?>
 <? if (!empty(Controller::$scripts)): ?>
 	<? foreach (Controller::$scripts AS $src): ?>
-		<script src="<?= $src ?>"></script>
+		<script src="<?php echo $src ?>"></script>
 	<? endforeach ?>
 <? endif ?>
 <script src="/js/botqueue.js"></script>

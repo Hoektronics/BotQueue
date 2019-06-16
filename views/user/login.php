@@ -1,8 +1,8 @@
 <div id="signin" class="span6">
 	<? if($error): ?>
-		<?= $error ?>
+		<?php echo $error ?>
 	<? else: ?>
 		<div class="title">Already a member? Sign in:</div>
-		<?= $login_form->render() ?>
+		<?php echo $login_form->render() ?>
 	<? endif ?>
 </div>

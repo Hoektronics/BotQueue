@@ -1,7 +1,7 @@
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
-	<?= $wizard->render() ?>
+	<?php echo $wizard->render() ?>
 	<script>
 		function update_driver_form() {
 			$(':submit').attr("disabled", "disabled");
@@ -10,7 +10,7 @@
 
 			var edit_area = $('#driver_edit_area');
 			edit_area.html("<span class='muted'>Loading...</span>");
-			edit_area.load('/bot:<?=$bot_id?>/driverform:' + driver + '/token:' + token_id,
+			edit_area.load('/bot:<?php echo $bot_id ?>/driverform:' + driver + '/token:' + token_id,
 				function () {
 					$(':submit').removeAttr("disabled");
 				});

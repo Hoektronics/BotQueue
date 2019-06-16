@@ -10,7 +10,7 @@
  */
 ?>
 <? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror))?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <? else: ?>
 	<?
 		echo Controller::byName('browse')->renderView('pagination_info', array(
@@ -18,7 +18,7 @@
 			'word' => 'job'
 		));
 	?>
-	<?= Controller::byName('job')->renderView('draw_jobs'.($status == JobState::Available ? '_available' : ''), array('jobs' => $jobs->getAll())); ?>
+	<?php echo Controller::byName('job')->renderView('draw_jobs'.($status == JobState::Available ? '_available' : ''), array('jobs' => $jobs->getAll())); ?>
 	<?
 	echo Controller::byName('browse')->renderView('pagination', array(
 		'collection' => $jobs,
