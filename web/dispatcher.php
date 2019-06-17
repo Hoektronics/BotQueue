@@ -21,6 +21,9 @@ define("START_TIME", microtime(true));
 try {
 	include("../extensions/global.php");
 	include(EXTENSIONS_DIR . "session.php");
+	if (defined('SENTRY_DSN')) {
+		Sentry\init(['dsn' => SENTRY_DSN ]);
+	}
 
 	//are we in the right place?
 	if ($_SERVER['HTTP_HOST'] != SITE_HOSTNAME) {
