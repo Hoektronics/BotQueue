@@ -1,4 +1,4 @@
-<? $i = 1 ?>
+<?php $i = 1 ?>
 <div class="row">
 	<div class="span8">
 		<h2>How Do I Get Started?</h2>
@@ -13,12 +13,12 @@
 			</li>
 		</ul>
 
-		<h4>Step <?= $i++ ?>: Register an account</h4>
+		<h4>Step <?php echo $i++ ?>: Register an account</h4>
 
 		<p>Super easy - just visit the <a href="/register">register</a> page and sign up. Totally free.</p>
 
 
-		<h4>Step <?= $i++ ?>: Install BumbleBee, the client software</h4>
+		<h4>Step <?php echo $i++ ?>: Install BumbleBee, the client software</h4>
 
 		<p>
 		</p>
@@ -44,11 +44,11 @@
 				</div>
 
 				<div class="tab-pane" id="osx_install">
-					<?= Controller::byName('help')->renderView('osx_installation') ?>
+					<?php echo Controller::byName('help')->renderView('osx_installation') ?>
 				</div>
 
 				<div class="tab-pane" id="raspi_install">
-					<?= Controller::byName('help')->renderView('raspberry_pi_installation') ?>
+					<?php echo Controller::byName('help')->renderView('raspberry_pi_installation') ?>
 				</div>
 
 				<div class="tab-pane" id="windows_install">
@@ -57,7 +57,7 @@
 			</div>
 		</div>
 
-		<h4>Step <?= $i++ ?>: Authorize the client software</h4>
+		<h4>Step <?php echo $i++ ?>: Authorize the client software</h4>
 
 		<p>From the command line, run this command: <strong>bumblebee</strong></p>
 
@@ -76,13 +76,13 @@
 			the app, please wait 1-2 minutes for this scan data to upload to the site.
 		</div>
 
-		<h4>Step <?= $i++ ?>: Register and Configure your Bots</h4>
+		<h4>Step <?php echo $i++ ?>: Register and Configure your Bots</h4>
 
 		<p>Once you <a href="/bot/register">register a bot</a>, configure the slicer and driver settings. Follow the
 			instructions in the bot config area for more details. No need to touch Bumblebee after you config your bot.
 			The new config will be automatically downloaded.</p>
 
-		<h4>Step <?= $i++ ?>: Bring your Bot Online</h4>
+		<h4>Step <?php echo $i++ ?>: Bring your Bot Online</h4>
 
 		<p>
 			Bots default to the offline mode so that you have time to configure it. From the dashboard, select the
@@ -90,7 +90,7 @@
 			stop processing jobs, use the same dropdown to take it offline again.
 		</p>
 
-		<h4>Step <?= $i++ ?>: Upload a job to BotQueue</h4>
+		<h4>Step <?php echo $i++ ?>: Upload a job to BotQueue</h4>
 
 		<p>
 			Next, <a href="/upload">upload STL or GCode files to the site.</a> These files will be automatically
@@ -98,7 +98,7 @@
 			download and process uploaded jobs.
 		</p>
 
-		<h4>Step <?= $i++ ?>: Removing a print upon completion</h4>
+		<h4>Step <?php echo $i++ ?>: Removing a print upon completion</h4>
 
 		<p>
 			When a job is complete is done, you must go to the Botqueue site to go through the output verification (QA)

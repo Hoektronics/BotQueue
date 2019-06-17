@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
@@ -7,26 +7,26 @@
  * @var OAuthToken $app
  */
 ?>
-<? if ($megaerror): ?>
-	<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
-<? else: ?>
+<?php if ($megaerror): ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
+<?php else: ?>
 	<div class="row">
 		<div class="span9">
-			<?= $form->render() ?>
+			<?php echo $form->render() ?>
 		</div>
 		<div class="span3">
 			<h3>Apps</h3>
-			<? if(!empty($apps)): ?>
+			<?php if(!empty($apps)): ?>
 				<p>These apps are using this consumer:</p>
 				<ul>
-					<? foreach ($apps AS $row): ?>
-						<? $app = $row['OAuthToken'] ?>
-						<li><?= $app->getLink() ?></li>
-					<? endforeach ?>
+					<?php foreach ($apps AS $row): ?>
+						<?php $app = $row['OAuthToken'] ?>
+						<li><?php echo $app->getLink() ?></li>
+					<?php endforeach; ?>
 				</ul>
-			<? else: ?>
+			<?php else: ?>
 				<p>No apps are using this consumer.</p>
-			<? endif ?>
+			<?php endif ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

@@ -917,7 +917,7 @@ class Utility
 }
 
 // mainly for use on things like cycling between the background colors on tables
-// Usage: $bg = new Cycle("","highlight"); for each <tr class="<?= $bg->next();
+// Usage: $bg = new Cycle("","highlight"); for each <tr class="<?php echo $bg->next();
 class Cycle
 {
 	public $data;

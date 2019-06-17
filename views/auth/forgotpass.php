@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * @package botqueue_auth
  * @var string $status
@@ -6,14 +6,14 @@
  * @var Form $form
  */
 ?>
-<? if ($status): ?>
-	<?= Controller::byName('htmltemplate')->renderView('statusbar', array('message' => $status))?>
-<? else: ?>
-	<? if ($error): ?>
-		<?= Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $error))?>
-	<? endif ?>
+<?php if ($status): ?>
+	<?php echo Controller::byName('htmltemplate')->renderView('statusbar', array('message' => $status)) ?>
+<?php else: ?>
+	<?php if ($error): ?>
+		<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $error)) ?>
+	<?php endif ?>
 
 	<div>
-		<?= $form->render() ?>
+		<?php echo $form->render() ?>
 	</div>
-<? endif ?>
+<?php endif ?>

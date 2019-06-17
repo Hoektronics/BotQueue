@@ -5,25 +5,25 @@
       <th>Status</th>
       <th>Date</th>
     </tr>
-    <? if (!empty($jobs)): ?>
-      <? foreach ($jobs AS $row): ?>
-        <? $job = $row['SliceJob'] ?>
+    <?php if (!empty($jobs)): ?>
+      <?php foreach ($jobs AS $row): ?>
+        <?php $job = $row['SliceJob'] ?>
         <tr>
-          <td><?=$job->getLink()?></td>
-          <td><?=JobStatus::getStatusHTML($job)?></td>
-          <? if ($job->get('status') == 'available'): ?>
-            <td><?=Utility::relativeTime($job->get('add_date'))?></td>
-          <? elseif ($job->get('status') == 'slicing'): ?>
-            <td><?=Utility::relativeTime($job->get('taken_date'))?></td>
-          <? else: ?>
-            <td><?=Utility::relativeTime($job->get('finish_date'))?></td>
-          <? endif ?>
+          <td><?php echo $job->getLink() ?></td>
+          <td><?php echo JobStatus::getStatusHTML($job) ?></td>
+          <?php if ($job->get('status') == 'available'): ?>
+            <td><?php echo Utility::relativeTime($job->get('add_date')) ?></td>
+          <?php elseif ($job->get('status') == 'slicing'): ?>
+            <td><?php echo Utility::relativeTime($job->get('taken_date')) ?></td>
+          <?php else: ?>
+            <td><?php echo Utility::relativeTime($job->get('finish_date')) ?></td>
+          <?php endif ?>
         </tr>
-      <? endforeach ?>
-    <? else: ?>
+      <?php endforeach; ?>
+    <?php else: ?>
       <tr>
         <td colspan="3"><strong>No jobs found!</strong></td>
       </tr>
-    <? endif ?>
+    <?php endif ?>
   </tbody>
 </table>

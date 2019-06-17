@@ -2,20 +2,20 @@
 	function setActiveForm() {
 		$('#editTab').children('li').each(function() {
 			var tab_id = $(this).attr('id');
-			if(tab_id == 'admin_<?=$active_form?>') {
+			if(tab_id == 'admin_<?php echo $active_form ?>') {
 				$(this).attr("class", "active");
 			}
-			<? if(!$setup_mode): ?>
+			<?php if(!$setup_mode): ?>
 			$(this).children('a').each(function() {
 				$(this).attr('href', '#'.concat(tab_id).concat('_content'));
 				$(this).attr('data-toggle', 'tab');
 			});
-			<? endif ?>
+			<?php endif ?>
 		});
 		var content = $('#editTabContent');
 		content.children('div').each(function() {
 			var content_id = $(this).attr('id');
-			if(content_id == 'admin_<?=$active_form?>_content') {
+			if(content_id == 'admin_<?php echo $active_form ?>_content') {
 				$(this).attr('class', 'tab-pane fade active in');
 			} else {
 				$(this).attr('class', 'tab-pane fade');

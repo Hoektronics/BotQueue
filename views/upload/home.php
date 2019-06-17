@@ -18,12 +18,12 @@
 	</div>
 	<div class="span6">
 		<h2>Option 1: Upload a File</h2>
-		<?= Controller::byName('upload')->renderView('uploader'); ?>
+		<?php echo Controller::byName('upload')->renderView('uploader'); ?>
 		<br/>
 
 		<h2>Option 2: Use a URL</h2>
 
-		<?= Controller::byName('upload')->renderView('url'); ?>
+		<?php echo Controller::byName('upload')->renderView('url'); ?>
 		<ul class="muted">
 			<li>The URL should point to an acceptable filetype.</li>
 			<li>thingiverse.com/thing:#### format URLs will work too.</li>

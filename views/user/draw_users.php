@@ -1,13 +1,13 @@
-<? if (!empty($users)): ?>
-	<? foreach ($users AS $row): ?>
-		<? $user = $row['User'] ?>
+<?php if (!empty($users)): ?>
+	<?php foreach ($users AS $row): ?>
+		<?php $user = $row['User'] ?>
 		<div class="user_row">
 			<div class="user_name">
-				<?= $user->getLink() ?>
+				<?php echo $user->getLink() ?>
 			</div>
 		</div>
-	<? endforeach ?>
+	<?php endforeach; ?>
 	<div class="clear"></div>
-<? else: ?>
+<?php else: ?>
 	<b>No users found.</b>
-<? endif ?>
+<?php endif ?>

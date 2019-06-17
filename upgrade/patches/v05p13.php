@@ -1,4 +1,4 @@
-<?
+<?php
 include("../patches.php");
 
 $patch = new Patch(25);

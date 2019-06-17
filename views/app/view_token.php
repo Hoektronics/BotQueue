@@ -1,60 +1,60 @@
-<?
+<?php
 /**
  * @package botqueue_app
  * @var string $megaerror
  * @var OAuthToken $token
  */
 ?>
-<? if ($megaerror): ?>
-	<div class="MegaError"><?= $megaerror ?></div>
-<? else: ?>
+<?php if ($megaerror): ?>
+	<div class="MegaError"><?php echo $megaerror ?></div>
+<?php else: ?>
 	<div class="row">
 		<div class="span9">
 			<table class="table table-striped table-bordered table-condensed">
 				<tbody>
 				<tr>
 					<th>Application Name:</th>
-					<td><?= $token->getName() ?></td>
+					<td><?php echo $token->getName() ?></td>
 				</tr>
 				<tr>
 					<th>Verified:</th>
-					<td><?= $token->isVerified() ? 'yes' : 'no' ?></td>
+					<td><?php echo $token->isVerified() ? 'yes' : 'no' ?></td>
 				</tr>
 				<tr>
 					<th>Consumer:</th>
-					<td><?= $token->getConsumer()->getLink() ?></td>
+					<td><?php echo $token->getConsumer()->getLink() ?></td>
 				</tr>
-				<? if ($token->isMine()): ?>
+				<?php if ($token->isMine()): ?>
 					<tr>
 						<th>API Key:</th>
-						<td><?= $token->get('token') ?></td>
+						<td><?php echo $token->get('token') ?></td>
 					</tr>
 					<tr>
 						<th>API Secret:</th>
-						<td><?= $token->get('token_secret') ?></td>
+						<td><?php echo $token->get('token_secret') ?></td>
 					</tr>
 					<tr>
 						<th>Manage</th>
-						<td><a href="<?= $token->getUrl() ?>/edit">Edit App</a> or <a
-								href="<?= $token->getUrl() ?>/revoke">Revoke App</a></td>
+						<td><a href="<?php echo $token->getUrl() ?>/edit">Edit App</a> or <a
+								href="<?php echo $token->getUrl() ?>/revoke">Revoke App</a></td>
 					</tr>
-				<? endif ?>
+				<?php endif ?>
 				<tbody>
 			</table>
 		</div>
 		<div class="span3">
 			<h3>Bots</h3>
-			<? if (!empty($bots)): ?>
+			<?php if (!empty($bots)): ?>
 				<p>These bots are assigned to this app:</p>
 				<ul>
-					<? foreach ($bots AS $row): ?>
-						<? $b = $row['Bot'] ?>
-						<li><?= $b->getLink() ?></li>
-					<? endforeach ?>
+					<?php foreach ($bots AS $row): ?>
+						<?php $b = $row['Bot'] ?>
+						<li><?php echo $b->getLink() ?></li>
+					<?php endforeach; ?>
 				</ul>
-			<? else: ?>
+			<?php else: ?>
 				<p>No bots are assigned to this app.</p>
-			<? endif ?>
+			<?php endif ?>
 		</div>
 	</div>
-<? endif ?>
+<?php endif ?>

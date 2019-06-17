@@ -1,12 +1,12 @@
-<?
+<?php
 /**
  * @package botqueue_job
  * @var StorageInterface $file
  * @var int $width
  * @var int $height
  */
-?><button id="displayButton" class="btn btn-primary centered"  onclick="loadRenderer()">Load GCode Viewer<br/>(<?= Utility::filesizeFormat($file->get('size'))?>)</button>
-<div id="renderArea" style="width: <?=$width?>; height: <?=$height?>; display: none;"></div>
+?><button id="displayButton" class="btn btn-primary centered"  onclick="loadRenderer()">Load GCode Viewer<br/>(<?php echo Utility::filesizeFormat($file->get('size')) ?>)</button>
+<div id="renderArea" style="width: <?php echo $width ?>; height: <?php echo $height ?>; display: none;"></div>
 
 <script src="/gcode-viewer/lib/Three.js"></script>
 <script src="/gcode-viewer/lib/bootstrap-modal.js"></script>
@@ -24,7 +24,7 @@
     $('#displayButton').hide();
     $('#renderArea').show();
     
-    initializeGCodeViewer("/passthru:<?=$file->id?>");
+    initializeGCodeViewer("/passthru:<?php echo $file->id ?>");
   }
 </script>
 
