@@ -17,6 +17,7 @@
         "php": ">=7.2",
         "aws/aws-sdk-php": "2.6.*",
         "swiftmailer/swiftmailer": "@stable",
-        "sentry/sdk": "2.0.3"
+        "sentry/sdk": "2.0.3",
+        "ext-json": "*"
     }
 }

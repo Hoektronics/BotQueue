@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70c1b4589f9579dfff96587dee373a87",
+    "content-hash": "6c0fb13947e39a731d293aa3a51dba33",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -346,12 +346,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "868353eb117c202ee1f3b214eef9717e3d871297"
+                "reference": "e113254d23b24c548f0b4d8f671828c4eeb876d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/868353eb117c202ee1f3b214eef9717e3d871297",
-                "reference": "868353eb117c202ee1f3b214eef9717e3d871297",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/e113254d23b24c548f0b4d8f671828c4eeb876d2",
+                "reference": "e113254d23b24c548f0b4d8f671828c4eeb876d2",
                 "shasum": ""
             },
             "require": {
@@ -372,7 +372,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.6-dev"
                 }
             },
             "autoload": {
@@ -409,7 +409,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2019-06-09T22:25:39+00:00"
+            "time": "2019-06-17T23:10:01+00:00"
         },
         {
             "name": "http-interop/http-factory-guzzle",
@@ -1961,7 +1961,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "ext-json": "*"
     },
     "platform-dev": []
 }
