@@ -222,6 +222,8 @@ class UserController extends Controller
 	public function resetpass()
 	{
 		try {
+            $this->setTitle("Reset Password");
+
 			//how do we find them?
 			if ($this->args('id'))
 				$user = new User($this->args('id'));
