@@ -1,7 +1,7 @@
 <?php
 include("../patches.php");
 
-$patch = new Patch(25);
+$patch = new Patch(26);
 
 if (!$patch->exists()) {
 
