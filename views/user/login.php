@@ -1,5 +1,5 @@
 <div id="signin" class="span6">
-	<?php if($error): ?>
+	<?php if(isset($error)): ?>
 		<?php echo $error ?>
 	<?php else: ?>
 		<div class="title">Already a member? Sign in:</div>
