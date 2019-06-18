@@ -172,10 +172,13 @@ class Controller
 
 	public function args($key = null)
 	{
-		if ($key === null)
-			return $this->args;
-		else
-			return $this->args[$key];
+        if ($key === null) {
+            return $this->args;
+        } else if(array_key_exists($key, $this->args)) {
+            return $this->args[$key];
+        } else {
+            return null;
+        }
 	}
 
 	protected function setArg($key)
