@@ -21,8 +21,8 @@ class Controller
 {
 	private $view_name;
 	private $controller_name;
-	private $args;
-	private $data;
+	private $args = array();
+	private $data = array();
 
 	public static $scriptContents = array();
 	public static $scriptTypes = array();
