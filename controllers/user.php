@@ -238,13 +238,27 @@ class UserController extends Controller
 			if ($user->get('pass_reset_hash') != $this->args('hash'))
 				throw new Exception("Invalid hash.  Die hacker scum.");
 
-			//one time use only.
-			$user->set('pass_reset_hash', '');
-			$user->save();
+            $form = $this->_createResetPasswordForm();
 
-			User::createLogin($user);
+            if ($form->checkSubmitAndValidate($this->args())) {
+                if ($this->args('changepass1') != $this->args('changepass2')) {
+                    /** @var PasswordField $field */
+                    $field = $form->get('changepass2');
+                    $field->error("The passwords did not match");
+                }
 
-			$this->forwardToUrl('/user/changepass');
+                if (!$form->hasError()) {
+                    $user->set('pass_hash', User::hashPass($this->args('changepass1')));
+                    $user->set('pass_reset_hash', '');
+                    $user->save();
+
+                    User::createLogin($user);
+
+                    $this->forwardToURL($user->getUrl());
+                }
+            }
+
+            $this->set('form', $form);
 		} catch (Exception $e) {
 			$this->setTitle('Reset Pass - Error');
 			$this->set('megaerror', $e->getMessage());
@@ -551,6 +565,31 @@ class UserController extends Controller
 
 		return $form;
 	}
+
+    /**
+     * @return Form
+     */
+    private function _createResetPasswordForm()
+    {
+        $form = new Form();
+        $form->submitText = "Reset password";
+
+        $form->add(
+            PasswordField::name('changepass1')
+                ->label("New Password")
+                ->help("Your new password")
+                ->required(true)
+        );
+
+        $form->add(
+            PasswordField::name('changepass2')
+                ->label("Password again")
+                ->help("Your new password again")
+                ->required(true)
+        );
+
+        return $form;
+    }
 
 	/**
 	 * @return Form
