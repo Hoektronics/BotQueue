@@ -556,10 +556,17 @@ class GoogleCaptchaField extends FormField
 {
 	public function validate($data)
 	{
-		$url = "https://www.google.com/recaptcha/api/siteverify".
-		"?secret=".GOOGLE_CAPTCHA_SECRET_KEY.
-		"&response=".$data['g-recaptcha-response'].
-		"&remoteip=".$_SERVER['REMOTE_ADDR'];
+        $captcha_response_key = 'g-recaptcha-response';
+        if(!array_key_exists($captcha_response_key, $data)) {
+            $this->error('No captcha response');
+            return false;
+        }
+
+        $url = "https://www.google.com/recaptcha/api/siteverify".
+        "?secret=".GOOGLE_CAPTCHA_SECRET_KEY.
+        "&response=".$data[$captcha_response_key].
+        "&remoteip=".$_SERVER['REMOTE_ADDR'];
+
 		$result = json_decode(file_get_contents($url), true);
 
 		return $result['success'];
