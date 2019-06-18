@@ -81,6 +81,17 @@ class Model
 		return $this->getName();
 	}
 
+
+    /**
+     * This function helps us know if this model has an attribute defined
+     * @param $name string is the name of the field
+     * @return bool if that field exists on this object
+     */
+    public function has($name)
+    {
+        return array_key_exists($name, $this->data);
+	}
+
 	/**
 	 * This function is for getting at the various data internal to the object
 	 * @param $name string is the name of the field
@@ -102,7 +113,7 @@ class Model
 	    if(array_key_exists($name, $this->data) && $this->data[$name] === $value) {
 	        return;
         }
-	    
+
         $this->dirtyFields[$name] = 1;
         $this->data[$name] = $value;
 	}

@@ -34,7 +34,7 @@ class Email extends Model
 	public static function queue($user, $subject, $text, $html)
 	{
 		$to_email = $user->get('email');
-		if ($user->get('name'))
+		if ($user->has('name'))
 			$to_name = $user->get('name');
 		else
 			$to_name = $user->get('username');
