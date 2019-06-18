@@ -156,10 +156,13 @@ class Controller
 
 	public function get($key = null)
 	{
-		if ($key === null)
-			return $this->data;
-		else
-			return $this->data[$key];
+		if ($key === null) {
+            return $this->data;
+        } else if(array_key_exists($key, $this->data)) {
+            return $this->data[$key];
+        } else {
+		    return null;
+        }
 	}
 
 	public function set($key, $data)
