@@ -107,9 +107,7 @@ class Form
 
 	public function render($template = 'vertical')
 	{
-	    $controller = Controller::byName('form');
-	    $controller->set('form', $this);
-	    return $controller->renderView($template . "_form");
+		return Controller::byName('form')->renderView($template . "_form", array('form' => $this));
 	}
 
 	public function renderFields()
