@@ -94,11 +94,14 @@ class Form
 
 	public function hasError()
 	{
-		if (!empty($this->fields))
-			foreach ($this->fields AS $field)
-				if ($field->error)
+		if (!empty($this->fields)) {
+			foreach ($this->fields AS $field) {
+			    /** @var $field FormField */
+				if ($field->hasError) {
 					return true;
-
+                }
+            }
+        }
 		return false;
 	}
 
