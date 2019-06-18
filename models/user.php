@@ -84,9 +84,19 @@ class User extends Model
             self::createLogin($user);
     }
 
+    /**
+     * @param User $user
+     * @param bool $createSession
+     */
     public static function createLogin($user, $createSession = true)
     {
         self::$me = $user;
+
+        if (defined('SENTRY_DSN')) {
+            Sentry\configureScope(function (Sentry\State\Scope $scope) use ($user) {
+                $scope->setUser(['email' => $user->get('email')]);
+            });
+        }
 
         if ($createSession == true)
             $_SESSION['userid'] = $user->id;

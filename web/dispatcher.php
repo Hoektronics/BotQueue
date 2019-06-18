@@ -69,4 +69,5 @@ try {
 	));
 } catch (Exception $ex) {
 	echo "Something bad happened: " . $ex->getMessage();
+    Sentry\captureException($ex);
 }
