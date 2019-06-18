@@ -140,7 +140,7 @@ class Email extends Model
 
 	public function smtpSend()
 	{
-		$message = Swift_Message::newInstance();
+		$message = new Swift_Message();
 		$message->setSubject($this->get('subject'));
 		$message->setFrom(array(EMAIL_USERNAME => EMAIL_NAME));
 		$message->setTo(array($this->get('to_email')));
@@ -148,11 +148,11 @@ class Email extends Model
 		// addPart doesn't currently exist
 		//$message->addPart($this->get('text_body'), "text/plain");
 
-		$transport = Swift_SmtpTransport::newInstance(EMAIL_SMTP_SERVER, EMAIL_SMTP_SERVER_PORT, 'ssl');
+		$transport = (new Swift_SmtpTransport(EMAIL_SMTP_SERVER, EMAIL_SMTP_SERVER_PORT, 'ssl'));
 		$transport->setUsername(EMAIL_USERNAME);
 		$transport->setPassword(EMAIL_PASSWORD);
 
-		$mailer = Swift_Mailer::newInstance($transport);
+		$mailer = new Swift_Mailer($transport);
 		$result = $mailer->send($message);
 
 		// result is 0 if no messages were sent
