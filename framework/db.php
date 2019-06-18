@@ -89,7 +89,7 @@ class DatabaseSocket
 			$this->db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 			ob_end_clean();
 		} catch (PDOException $e) {
-			throw new Exception("Failed to connect to database!");
+			throw new Exception("Failed to connect to database!", 0, $e);
 		}
 	}
 
