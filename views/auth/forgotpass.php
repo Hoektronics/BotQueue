@@ -6,10 +6,10 @@
  * @var Form $form
  */
 ?>
-<?php if ($status): ?>
+<?php if (isset($status)): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('statusbar', array('message' => $status)) ?>
 <?php else: ?>
-	<?php if ($error): ?>
+	<?php if (isset($error)): ?>
 		<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $error)) ?>
 	<?php endif ?>
 
