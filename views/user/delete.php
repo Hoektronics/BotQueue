@@ -1,4 +1,4 @@
-<?php if ($megaerror): ?>
+<?php if (defined($megaerror)): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <?php elseif ($status): ?>
 	<div class="BaseStatus"><?php echo $status ?></div>

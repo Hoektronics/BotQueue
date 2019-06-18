@@ -7,7 +7,7 @@
 				<?php $id = $name.'_'.$form->name ?>
 				<?php $class = ($form->name === $active ? 'active' : '') ?>
 				<li id="<?php echo $id ?>" class="<?php echo $class ?>">
-					<a <?php if(!$wizardMode): ?>href="#<?php echo $id ?>_content" data-toggle="tab"<? endif ?>  style="padding: 15px"><?php echo $title ?></a>
+					<a <?php if(!$wizardMode): ?>href="#<?php echo $id ?>_content" data-toggle="tab"<?php endif ?>  style="padding: 15px"><?php echo $title ?></a>
 				</li>
 			<?php endforeach; ?>
 		</ul>

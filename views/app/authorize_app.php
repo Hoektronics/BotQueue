@@ -7,7 +7,7 @@
  * @var Form $approve_form
  */
 ?>
-<?php if ($megaerror): ?>
+<?php if (defined($megaerror)): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <?php else: ?>
 	<div class="alert alert-block">

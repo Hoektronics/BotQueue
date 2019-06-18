@@ -1,4 +1,4 @@
-<?php if ($megaerror): ?>
+<?php if (defined($megaerror)): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <?php else: ?>
 	<form class="form-horizontal" method="post" autocomplete="off" action="<?php echo $queue->getUrl() ?>/empty">

@@ -5,7 +5,7 @@
  * @var OAuthToken $token
  */
 ?>
-<?php if ($megaerror): ?>
+<?php if (defined($megaerror)): ?>
 	<div class="MegaError"><?php echo $megaerror ?></div>
 <?php else: ?>
 	<div class="row">

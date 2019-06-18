@@ -33,7 +33,7 @@
 						<td><?php echo $bot->getLink() ?></td>
 					<?php else: ?>
 						<td>n/a</td>
-					<? endif ?>
+					<?php endif ?>
 					<td>
 						<?php if ($j->get('status') == 'available'): ?>
   						<a class="btn btn-mini" href="<?php echo $j->getUrl() ?>/bump"><i class="icon-arrow-up"></i> bump</a>
