@@ -45,7 +45,6 @@ try {
     } else {
         $mode = 'html';
     }
-	$mode = $_GET['mode'];
 	$controller = $_GET['controller'];
 	$view = $_GET['view'];
 
