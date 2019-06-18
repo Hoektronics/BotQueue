@@ -98,11 +98,13 @@ class Model
 	 */
 	public function set($name, $value)
 	{
-		//its not dirty if its the same.
-		if ($this->data[$name] !== $value) {
-			$this->dirtyFields[$name] = 1;
-			$this->data[$name] = $value;
-		}
+        //its not dirty if its the same.
+	    if(array_key_exists($name, $this->data) && $this->data[$name] === $value) {
+	        return;
+        }
+	    
+        $this->dirtyFields[$name] = 1;
+        $this->data[$name] = $value;
 	}
 
 	/**
