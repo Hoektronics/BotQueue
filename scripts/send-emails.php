@@ -1,7 +1,12 @@
 <?php
+
 $base_dir = dirname(__FILE__) . "/..";
 $base_dir = realpath($base_dir);
 require($base_dir . "/extensions/global.php");
+if (defined('SENTRY_DSN')) {
+    Sentry\init(['dsn' => SENTRY_DSN ]);
+}
+
 $start_time = microtime(true);
 
 //get and send our emails.
