@@ -39,14 +39,15 @@ try {
 		exit();
 	}
 
-	//get our stuff.
+	// What mode are we looking at, ajax or html. Default is html
+    if(array_key_exists('mode', $_GET)) {
+        $mode = $_GET['mode'];
+    } else {
+        $mode = 'html';
+    }
 	$mode = $_GET['mode'];
 	$controller = $_GET['controller'];
 	$view = $_GET['view'];
-
-	// What mode are we looking at, ajax or html
-	if (!$mode)
-		$mode = 'html';
 
 	// The main controller is the default
 	if (!$controller)
