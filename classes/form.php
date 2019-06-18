@@ -59,7 +59,8 @@ class Form
 
 	public function isSubmitted($data)
 	{
-		return (boolean)$data["{$this->name}_is_submitted"];
+        $submitted_field = "{$this->name}_is_submitted";
+        return array_key_exists($submitted_field, $data) && (boolean)$data[$submitted_field];
 	}
 
 	/**
