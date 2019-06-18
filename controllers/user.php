@@ -422,7 +422,7 @@ class UserController extends Controller
 
 		if(defined('GOOGLE_CAPTCHA_SECRET_KEY') && defined('GOOGLE_CAPTCHA_SITE_KEY')) {
 			$form->add(
-				GoogleCaptcha::name('ignored')
+				GoogleCaptchaField::name('ignored')
 			);
 		}
 

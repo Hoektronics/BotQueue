@@ -552,7 +552,7 @@ class SuccessField extends DisplayField {}
 
 class InformationField extends DisplayField {}
 
-class GoogleCaptcha extends FormField
+class GoogleCaptchaField extends FormField
 {
 	public function validate($data)
 	{
