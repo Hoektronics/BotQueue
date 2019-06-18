@@ -43,7 +43,7 @@ class Database
 			$key = 'main';
 
 		//RR_DB_USER, RR_DB_PASS, RR_DB_HOST and RR_DB_PORT are global variables in extensions/config.php
-		if (self::$sockets[$key] === null)
+		if (!array_key_exists($key, self::$sockets) || self::$sockets[$key] === null)
 			self::$sockets[$key] = new DatabaseSocket(RR_DB_USER, RR_DB_PASS, RR_DB_HOST, RR_DB_PORT);
 
 		return self::$sockets[$key];
