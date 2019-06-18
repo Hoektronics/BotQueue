@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `email_queue` (
   `to_email` varchar(255) NOT NULL,
   `to_name` varchar(255) NOT NULL,
   `queue_date` datetime NOT NULL,
-  `sent_date` datetime NOT NULL,
+  `sent_date` datetime NULL,
   `status` enum('queued','sent') NOT NULL DEFAULT 'queued',
   PRIMARY KEY `id` (`id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`) ON DELETE CASCADE,
