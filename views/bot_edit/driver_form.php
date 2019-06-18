@@ -1,4 +1,4 @@
-<?php if (defined($megaerror)): ?>
+<?php if (isset($megaerror)): ?>
 	<?php echo Controller::byName('htmltemplate')->renderView('errorbar', array('message' => $megaerror)) ?>
 <?php elseif (!$nodriver): ?>
 	<?php if (!is_object($devices)): ?>
