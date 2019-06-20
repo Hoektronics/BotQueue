@@ -16,14 +16,18 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
+use function Sentry\init;
+
 define("START_TIME", microtime(true));
 
 try {
 	include("../extensions/global.php");
+
+    if (defined('SENTRY_DSN')) {
+        Sentry\init(['dsn' => SENTRY_DSN ]);
+    }
+
 	include(EXTENSIONS_DIR . "session.php");
-	if (defined('SENTRY_DSN')) {
-		Sentry\init(['dsn' => SENTRY_DSN ]);
-	}
 
 	// Are we in the right place?
 	if (array_key_exists('HTTP_HOST', $_SERVER) && $_SERVER['HTTP_HOST'] != SITE_HOSTNAME) {
