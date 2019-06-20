@@ -66,10 +66,11 @@
               <?php foreach ($user_leaderboard_30 AS $row): ?>
                 <?php $rank++ ?>
                 <?php $user = new User($row['user_id']) ?>
-                <tr <?php echo ($user->id == User::$me->id) ? 'class="success"' : '' ?>>
+                <tr <?php echo $user->isMe() ? 'class="success"' : '' ?>>
                   <td><?php echo $rank ?></td>
                   <td><?php echo $user->getName() ?></td>
                   <td><?php echo $row['hours'] ?></td>
+                </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
@@ -86,10 +87,11 @@
               <?php foreach ($user_leaderboard AS $row): ?>
                 <?php $rank++ ?>
                 <?php $user = new User($row['user_id']) ?>
-                <tr <?php echo ($user->id == User::$me->id) ? 'class="success"' : '' ?>>
+                <tr <?php echo $user->isMe() ? 'class="success"' : '' ?>>
                   <td><?php echo $rank ?></td>
                   <td><?php echo $user->getName() ?></td>
                   <td><?php echo $row['hours'] ?></td>
+                </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
@@ -123,11 +125,13 @@
               <?php foreach ($bot_leaderboard_30 AS $row): ?>
                 <?php $rank++ ?>
                 <?php $bot = new Bot($row['bot_id']) ?>
-                <tr <?php echo ($bot->get('user_id') == User::$me->id) ? 'class="success"' : '' ?>>
+                <?php $user = new User($bot->get('user_id')) ?>
+                <tr <?php echo $user->isMe() ? 'class="success"' : '' ?>>
                   <td><?php echo $rank ?></td>
                   <td><?php echo $bot->getName() ?></td>
                   <td><?php echo $bot->getUser()->getName() ?></td>
                   <td><?php echo $row['hours'] ?></td>
+                </tr>
               <?php endforeach; ?>
             </tbody>
           </table>
@@ -145,11 +149,13 @@
               <?php foreach ($bot_leaderboard AS $row): ?>
                 <?php $rank++ ?>
                 <?php $bot = new Bot($row['bot_id']) ?>
-                <tr <?php echo ($bot->get('user_id') == User::$me->id) ? 'class="success"' : '' ?>>
+                <?php $user = new User($bot->get('user_id')) ?>
+                <tr <?php echo $user->isMe() ? 'class="success"' : '' ?>>
                   <td><?php echo $rank ?></td>
                   <td><?php echo $bot->getName() ?></td>
                   <td><?php echo $bot->getUser()->getName() ?></td>
                   <td><?php echo $row['hours'] ?></td>
+                </tr>
               <?php endforeach; ?>
             </tbody>
           </table>        </div>
