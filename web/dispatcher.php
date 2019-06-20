@@ -25,8 +25,8 @@ try {
 		Sentry\init(['dsn' => SENTRY_DSN ]);
 	}
 
-	//are we in the right place?
-	if ($_SERVER['HTTP_HOST'] != SITE_HOSTNAME) {
+	// Are we in the right place?
+	if (array_key_exists('HTTP_HOST', $_SERVER) && $_SERVER['HTTP_HOST'] != SITE_HOSTNAME) {
 		header("Location: http://" . SITE_HOSTNAME . $_SERVER['REQUEST_URI']);
 		exit();
 	}
