@@ -45,7 +45,7 @@
   <body>
     <div id="GCodeErrorDiv" class="alert alert-error" style="display: none"></div>
     <div id="GCodeStatusDiv" class="alert alert-success" style="display: none"></div>
-    <?php if (!$megaerror): ?>
+    <?php if (! isset($megaerror)): ?>
       <?php if ($file->isGCode()): ?>
         <?php echo Controller::byName('job')->renderView('render_gcode', array('file' => $file, 'width' => $width, 'height' => $height)) ?>
       <?php elseif ($file->is3DModel()): ?>
