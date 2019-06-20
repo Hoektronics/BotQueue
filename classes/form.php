@@ -465,7 +465,12 @@ class CheckboxField extends FormField
 	public function validate($data)
 	{
 		$this->hasError = false;
-		$this->value((int)$data[$this->name]);
+
+		if(array_key_exists($this->name, $data)) {
+		    $this->value((int)$data[$this->name]);
+        } else {
+		    $this->value(0);
+        }
 
 		return true;
 	}
