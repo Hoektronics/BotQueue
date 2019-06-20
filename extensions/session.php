@@ -16,6 +16,9 @@
 	along with BotQueue.  If not, see <http://www.gnu.org/licenses/>.
   */
 
+use Sentry\State\Scope;
+use function Sentry\configureScope;
+
 session_start();
 // Create the CSRF token if it doesn't exist
 if(!array_key_exists('CSRFToken', $_SESSION)) {
@@ -26,6 +29,12 @@ User::authenticate();
 
 //handle any login payloads.
 if (User::isLoggedIn()) {
+    if (defined('SENTRY_DSN')) {
+        Sentry\configureScope(function (Sentry\State\Scope $scope) {
+            $scope->setUser(['email' => User::$me->get('email')]);
+        });
+    }
+
 	if (!empty($_SESSION['payload'])) {
 		$payload = $_SESSION['payload'];
 		if ($payload['type'] == 'redirect') {

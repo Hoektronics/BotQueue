@@ -92,12 +92,6 @@ class User extends Model
     {
         self::$me = $user;
 
-        if (defined('SENTRY_DSN')) {
-            Sentry\configureScope(function (Sentry\State\Scope $scope) use ($user) {
-                $scope->setUser(['email' => $user->get('email')]);
-            });
-        }
-
         if ($createSession == true)
             $_SESSION['userid'] = $user->id;
     }
