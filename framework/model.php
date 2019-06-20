@@ -99,7 +99,7 @@ class Model
 	 */
 	public function get($name)
 	{
-		return $this->data[$name];
+		return $this->has($name) ? $this->data[$name] : null;
 	}
 
 	/**
