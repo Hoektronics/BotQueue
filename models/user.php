@@ -34,7 +34,7 @@ class User extends Model
     public static function authenticate()
     {
         //are we already authenticated?
-        if ($_SESSION['userid']) {
+        if (array_key_exists('userid', $_SESSION)) {
             //attempt to load our user.
             self::$me = new User($_SESSION['userid']);
 
@@ -50,7 +50,7 @@ class User extends Model
                 //  }
             }
         } //okay, how about our cookie?
-        else if ($_COOKIE['token'])
+        else if (array_key_exists('token', $_COOKIE))
             self::loginWithToken($_COOKIE['token']);
 
         //if that user wasn't found, bail!
