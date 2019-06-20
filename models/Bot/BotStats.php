@@ -32,7 +32,9 @@ class BotStats {
 				GROUP BY status";
 
 		$stats = db()->getArray($sql, array($bot->id));
-        $data = array();
+        $data = array(
+            'total' => 0,
+        );
         if (!empty($stats)) {
             //load up our stats
             foreach ($stats AS $row) {
@@ -60,7 +62,7 @@ class BotStats {
         $sql = "SELECT sum(unix_timestamp(end_date) - unix_timestamp(start_date)) FROM job_clock WHERE status != 'working' AND bot_id = ?";
         $data['total_runtime'] = (int)db()->getValue($sql, array($bot->id));
 
-        if ($data['total']) {
+        if ($data['total'] > 0) {
             $data['avg_waittime'] = $stats[0]['wait'] / $data['total'];
             $data['avg_runtime'] = $stats[0]['runtime'] / $data['total'];
             $data['avg_time'] = $stats[0]['total'] / $data['total'];
