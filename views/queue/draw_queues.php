@@ -38,23 +38,23 @@
 				<th>Total</th>
 				<th><span
 						class="label <?php echo JobStatus::getStatusHTMLClass('available') ?>"><?php echo (int)$total['available'] ?></span>
-				</th>
-				<th><?php echo round(($total['available'] / $total['total']) * 100, 2) ?>%</th>
+                    <?php echo round(($total['available'] / $total['total']) * 100, 2) ?>%
+                </th>
 				<th><span
 						class="label <?php echo JobStatus::getStatusHTMLClass('slicing') ?>"><?php echo (int)$total['slicing'] ?></span>
-				</th>
-				<th><?php echo round(($total['slicing'] / $total['total']) * 100, 2) ?>%</th>
+                    <?php echo round(($total['slicing'] / $total['total']) * 100, 2) ?>%
+                </th>
 				<th><span class="label <?php echo JobStatus::getStatusHTMLClass('taken') ?>"><?php echo (int)$total['taken'] ?></span>
-				</th>
-				<th><?php echo round(($total['taken'] / $total['total']) * 100, 2) ?>%</th>
+                    <?php echo round(($total['taken'] / $total['total']) * 100, 2) ?>%
+                </th>
 				<th><span
 						class="label <?php echo JobStatus::getStatusHTMLClass('complete') ?>"><?php echo (int)$total['complete'] ?></span>
-				</th>
-				<th><?php echo round(($total['complete'] / $total['total']) * 100, 2) ?>%</th>
+                    <?php echo round(($total['complete'] / $total['total']) * 100, 2) ?>%
+                </th>
 				<th><span
 						class="label <?php echo JobStatus::getStatusHTMLClass('failure') ?>"><?php echo (int)$total['failure'] ?></span>
-				</th>
-				<th><?php echo round(($total['failure'] / $total['total']) * 100, 2) ?>%</th>
+                    <?php echo round(($total['failure'] / $total['total']) * 100, 2) ?>%
+                </th>
 				<th><span class="label label-inverse"><?php echo (int)$total['total'] ?></span></th>
 			</tr>
 		<?php endif ?>
