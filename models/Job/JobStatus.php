@@ -44,10 +44,12 @@ class JobStatus {
 
     public static function getStatsHtml($stats, $status)
     {
+        $status_count = array_key_exists($status, $stats) ? $stats[$status] : 0;
+        $status_pct = round(array_key_exists($status, $stats) ? $stats[$status . "_pct"] : 0, 2);
         return "<span class=\"label " . JobStatus::getStatusHTMLClass($status) . "\">"
-            . array_key_exists($status, $stats) ? $stats[$status] : 0
+            . $status_count
             . "</span>"
-            . "(" . round(array_key_exists($status, $stats) ? $stats[$status."_pct"] : 0, 2) . "%)";
+            . "(" . $status_pct . "%)";
     }
 
 }
