@@ -3,11 +3,11 @@
 		<thead>
 		<tr>
 			<th>Name</th>
-			<th colspan="2">Available</th>
-			<th colspan="2">Slicing</th>
-			<th colspan="2">Working</th>
-			<th colspan="2">Completed</th>
-			<th colspan="2">Failed</th>
+			<th>Available</th>
+			<th>Slicing</th>
+			<th>Working</th>
+			<th>Completed</th>
+			<th>Failed</th>
 			<th>Total</th>
 		</tr>
 		</thead>
@@ -25,25 +25,11 @@
 			?>
 			<tr>
 				<td><?php echo $q->getLink() ?></td>
-				<td><span
-						class="label <?php echo JobStatus::getStatusHTMLClass('available') ?>"><?php echo (int)$stats['available'] ?></span>
-				</td>
-				<td><?php echo round($stats['available_pct'], 2) ?>%</td>
-				<td><span
-						class="label <?php echo JobStatus::getStatusHTMLClass('slicing') ?>"><?php echo (int)$stats['slicing'] ?></span>
-				</td>
-				<td><?php echo round($stats['slicing_pct'], 2) ?>%</td>
-				<td><span class="label <?php echo JobStatus::getStatusHTMLClass('taken') ?>"><?php echo (int)$stats['taken'] ?></span>
-				</td>
-				<td><?php echo round($stats['taken_pct'], 2) ?>%</td>
-				<td><span
-						class="label <?php echo JobStatus::getStatusHTMLClass('complete') ?>"><?php echo (int)$stats['complete'] ?></span>
-				</td>
-				<td><?php echo round($stats['complete_pct'], 2) ?>%</td>
-				<td><span
-						class="label <?php echo JobStatus::getStatusHTMLClass('failure') ?>"><?php echo (int)$stats['failure'] ?></span>
-				</td>
-				<td><?php echo round($stats['failure_pct'], 2) ?>%</td>
+                <td><?php echo JobStatus::getStatsHtml($stats, "available") ?></td>
+                <td><?php echo JobStatus::getStatsHtml($stats, "slicing") ?></td>
+                <td><?php echo JobStatus::getStatsHtml($stats, "taken") ?></td>
+                <td><?php echo JobStatus::getStatsHtml($stats, "complete") ?></td>
+                <td><?php echo JobStatus::getStatsHtml($stats, "failure") ?></td>
 				<td><span class="label label-inverse"><?php echo (int)$stats['total'] ?></span></td>
 			</tr>
 		<?php endforeach; ?>
