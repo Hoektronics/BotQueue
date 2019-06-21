@@ -31,6 +31,7 @@ class JobStatus {
     public static function getStatusHTMLClass($status)
     {
         $s2c = array(
+            'available' => '', // default
             'taken' => 'label-info',
             'qa' => 'label-warning',
             'slicing' => 'label-slicing',
