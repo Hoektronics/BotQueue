@@ -123,27 +123,13 @@
 				<tr>
 					<th>Complete Jobs</th>
 					<td>
-                        <?php if (array_key_exists('complete', $stats)): ?>
-                            <span class="label <?php echo JobStatus::getStatusHTMLClass('complete') ?>">
-                                <?php echo (int)$stats['complete'] ?>
-                            </span>
-                            (<?php echo round($stats['complete_pct'], 2) ?>%)
-                        <?php else: ?>
-                            None
-                        <?php endif ?>
+                        <?php echo JobStatus::getStatsHtml($stats, "complete") ?>
 					</td>
 				</tr>
 				<tr>
 					<th>Failed Jobs</th>
 					<td>
-                        <?php if (array_key_exists('failure', $stats)): ?>
-                            <span class="label <?php echo JobStatus::getStatusHTMLClass('failure') ?>">
-                                <?php echo (int)$stats['failure'] ?>
-                            </span>
-                            (<?php echo round($stats['failure_pct'], 2) ?>%)
-                        <?php else: ?>
-                            None
-                        <?php endif ?>
+                        <?php echo JobStatus::getStatsHtml($stats, "failure") ?>
 					</td>
 				</tr>
 				<!-- >

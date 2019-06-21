@@ -83,30 +83,26 @@
 				</tr>
 				<tr>
 					<th>Available Jobs</th>
-					<td><span
-							class="label <?php echo JobStatus::getStatusHTMLClass('available') ?>"><?php echo (int)$stats['available'] ?></span>
-						(<?php echo round($stats['available_pct'], 2) ?>%)
+					<td>
+                        <?php echo JobStatus::getStatsHtml($stats, "available") ?>
 					</td>
 				</tr>
 				<tr>
 					<th>Taken Jobs</th>
-					<td><span
-							class="label <?php echo JobStatus::getStatusHTMLClass('taken') ?>"><?php echo (int)$stats['taken'] ?></span>
-						(<?php echo round($stats['taken_pct'], 2) ?>%)
+					<td>
+                        <?php echo JobStatus::getStatsHtml($stats, "taken") ?>
 					</td>
 				</tr>
 				<tr>
 					<th>Complete Jobs</th>
-					<td><span
-							class="label <?php echo JobStatus::getStatusHTMLClass('complete') ?>"><?php echo (int)$stats['complete'] ?></span>
-						(<?php echo round($stats['complete_pct'], 2) ?>%)
+					<td>
+                        <?php echo JobStatus::getStatsHtml($stats, "complete") ?>
 					</td>
 				</tr>
 				<tr>
 					<th>Failed Jobs</th>
-					<td><span
-							class="label <?php echo JobStatus::getStatusHTMLClass('failure') ?>"><?php echo (int)$stats['failure'] ?></span>
-						(<?php echo round($stats['failure_pct'], 2) ?>%)
+					<td>
+                        <?php echo JobStatus::getStatsHtml($stats, "failure") ?>
 					</td>
 				</tr>
 				<tr>
