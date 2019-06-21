@@ -32,7 +32,9 @@ class QueueStats {
 				GROUP BY status";
 
 		$stats = db()->getArray($sql, array($queue->id));
-        $data = array();
+        $data = array(
+            'total' => 0,
+        );
         if (!empty($stats)) {
             //load up our stats
             foreach ($stats AS $row) {
