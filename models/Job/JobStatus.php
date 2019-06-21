@@ -49,7 +49,7 @@ class JobStatus {
         return "<span class=\"label " . JobStatus::getStatusHTMLClass($status) . "\">"
             . $status_count
             . "</span>"
-            . "(" . $status_pct . "%)";
+            . " (" . $status_pct . "%)";
     }
 
 }
