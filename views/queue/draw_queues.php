@@ -12,16 +12,26 @@
 		</tr>
 		</thead>
 		<tbody>
+        <?php
+        $total = array(
+            'available' => 0,
+            'slicing' => 0,
+            'taken' => 0,
+            'complete' => 0,
+            'failure' => 0,
+            'total' => 0,
+        )
+        ?>
 		<?php foreach ($queues AS $row): ?>
 			<?php $q = $row['Queue'] ?>
 			<?php $stats = QueueStats::getStats($q) ?>
 			<?php
-			$total['available'] += $stats['available'];
-			$total['slicing'] += $stats['slicing'];
-			$total['taken'] += $stats['taken'];
-			$total['complete'] += $stats['complete'];
-			$total['failure'] += $stats['failure'];
-			$total['total'] += $stats['total'];
+			$total['available'] += array_key_exists('available', $stats) ? $stats['available'] : 0;
+			$total['slicing'] += array_key_exists('slicing', $stats) ? $stats['slicing'] : 0;
+			$total['taken'] += array_key_exists('taken', $stats) ? $stats['taken'] : 0;
+			$total['complete'] += array_key_exists('complete', $stats) ? $stats['complete'] : 0;
+			$total['failure'] += array_key_exists('failure', $stats) ? $stats['failure'] : 0;
+			$total['total'] += array_key_exists('total', $stats) ? $stats['total'] : 0;
 			?>
 			<tr>
 				<td><?php echo $q->getLink() ?></td>
