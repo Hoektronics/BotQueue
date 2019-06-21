@@ -292,10 +292,13 @@ class SlicerController extends Controller
 			$this->setTitle("Slice Engine - " . $engine->getLink());
 
 			//pull in our configs
-			if (User::isAdmin())
-				$this->set('configs', $engine->getAllConfigs()->getAll());
-			else
-				$this->set('configs', $engine->getMyConfigs()->getAll());
+			if (User::isAdmin()) {
+                $this->set('configs', $engine->getAllConfigs()->getAll());
+            } elseif (User::isLoggedIn()) {
+                $this->set('configs', $engine->getMyConfigs()->getAll());
+            } else {
+			    $this->set('configs', $engine->getPublicConfigs());
+            }
 		} catch (Exception $e) {
 			$this->setTitle("Slice Engine - Error");
 			$this->set('megaerror', $e->getMessage());

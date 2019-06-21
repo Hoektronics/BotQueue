@@ -122,6 +122,20 @@ class SliceEngine extends Model
 		return $configs;
     }
 
+    public function getPublicConfigs()
+    {
+        $sql = "SELECT id
+		    	FROM slice_configs
+		    	WHERE engine_id = ?
+		      	AND id = ?
+		    	ORDER BY config_name";
+
+        $configs = new Collection($sql, array($this->id, $this->get('default_config_id')));
+        $configs->bindType('id', 'SliceConfig');
+
+        return $configs;
+    }
+
     public function delete()
     {
         $configs = $this->getAllConfigs()->getAll();
