@@ -25,10 +25,10 @@
                     @foreach ($element as $page => $url)
                         @if ($page == $paginator->currentPage())
                             <div aria-current="page">
-                                <span class="page-marker bg-blue-400 text-white border p-2 text-xl">{{ $page }}</span>
+                                <span class="page-marker bg-blue-400 text-white border m-1/2 p-2 text-xl">{{ $page }}</span>
                             </div>
                         @else
-                            <div><a class="page-marker border p-2 text-xl" href="{{ $url }}">{{ $page }}</a></div>
+                            <div><a class="page-marker hover:bg-gray-700 hover:text-white border m-1/2 p-2 text-xl" href="{{ $url }}">{{ $page }}</a></div>
                         @endif
                     @endforeach
                 @endif
