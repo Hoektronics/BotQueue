@@ -58,7 +58,7 @@
     @apply border rounded outline-none px-1
 }
 
-.input[type=text] {
+.input[type=text], .input[type=email], .input[type=password] {
     @apply px-2 py-1
 }
 

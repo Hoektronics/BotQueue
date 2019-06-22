@@ -40,12 +40,12 @@
                         </div>
                         <div class="p-4">
                             <div class="flex mb-3">
-                                <label for="file_type" class="w-1/3">File Type</label>
+                                <label for="file_type" class="w-1/3 my-auto">File Type</label>
                                 <input type="text" class="flex-grow" id="file_type" value="{{ $file->type }}" disabled>
                             </div>
 
                             <div class="flex mb-3">
-                                <label for="bot_cluster" class="w-1/3">Bot/Cluster</label>
+                                <label for="bot_cluster" class="w-1/3 my-auto">Bot/Cluster</label>
 
                                 <select name="bot_cluster" id="bot_cluster"
                                         class="flex-grow select-all">

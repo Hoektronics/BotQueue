@@ -9,7 +9,7 @@
                     {{ csrf_field() }}
 
                     <div class="flex mb-3">
-                        <label for="username" class="w-1/3">Username</label>
+                        <label for="username" class="w-1/3 my-auto">Username</label>
 
                         <div class="input-with-error flex-grow">
                             @if ($errors->has('username'))
@@ -24,14 +24,14 @@
                     </div>
 
                     <div class="flex my-3">
-                        <label for="password" class="w-1/3">Password</label>
+                        <label for="password" class="w-1/3 my-auto">Password</label>
 
                         <input id="password" type="password" name="password" required
                                class="flex-grow input">
                     </div>
 
                     <div class="flex my-3">
-                        <label for="remember" class="w-1/3">Remember Me</label>
+                        <label for="remember" class="w-1/3 my-auto">Remember Me</label>
                         <div class="flex-grow flex justify-end">
                             <input type="checkbox" id="remember" name="remember"
                                    class="my-auto border rounded"

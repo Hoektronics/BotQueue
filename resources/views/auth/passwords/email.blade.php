@@ -14,7 +14,7 @@
                         {{ csrf_field() }}
 
                         <div class="flex mb-3">
-                            <label for="email" class="w-1/3">E-Mail Address</label>
+                            <label for="email" class="w-1/3 my-auto">E-Mail Address</label>
 
                             <div class="input-with-error flex-grow">
                                 @if ($errors->has('email'))

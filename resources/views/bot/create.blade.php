@@ -9,7 +9,7 @@
                     {{ csrf_field() }}
 
                     <div class="flex mb-3">
-                        <label for="name" class="w-1/3">Name</label>
+                        <label for="name" class="w-1/3 my-auto">Name</label>
 
                         <div class="input-with-error flex-grow">
                             @if ($errors->has('name'))
@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="flex mb-3">
-                        <label for="type" class="w-1/3">Bot Type</label>
+                        <label for="type" class="w-1/3 my-auto">Bot Type</label>
 
                         <div class="input-with-error flex-grow">
                             @if ($errors->has('type'))
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="flex mb-3">
-                        <label for="cluster" class="w-1/3">Cluster</label>
+                        <label for="cluster" class="w-1/3 my-auto">Cluster</label>
 
                         <div class="input-with-error flex-grow">
                             @if ($errors->has('cluster'))

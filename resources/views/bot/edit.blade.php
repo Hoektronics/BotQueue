@@ -10,7 +10,7 @@
                     {{ method_field('PATCH') }}
 
                     <div class="flex mb-3">
-                        <label for="name" class="w-1/3">Name</label>
+                        <label for="name" class="w-1/3 my-auto">Name</label>
 
                         <div class="input-with-error flex-grow">
                             @if ($errors->has('name'))
