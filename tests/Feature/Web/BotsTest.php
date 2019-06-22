@@ -233,4 +233,83 @@ class BotsTest extends TestCase
             ->postBot(['cluster' => null])
             ->assertSessionHasErrors('cluster');
     }
+
+    /** @test */
+    public function userCanEditTheirOwnBot()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->actingAs($this->mainUser)
+            ->get("/bots/{$bot->id}/edit")
+            ->assertStatus(Response::HTTP_OK);
+    }
+
+    /** @test */
+    public function userCannotEditAnotherUsersBots()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->withExceptionHandling()
+            ->actingAs($this->user()->create())
+            ->get("/bots/{$bot->id}/edit")
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    /** @test */
+    public function userCanUpdateTheirOwnBot()
+    {
+        $bot = $this->bot()->create();
+
+        $newBotName = 'Some new Name';
+        $this
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'name' => $newBotName,
+            ])
+            ->assertRedirect("/bots/{$bot->id}");
+
+        $bot->refresh();
+
+        $this->assertEquals($newBotName, $bot->name);
+    }
+
+    /** @test */
+    public function botUpdateCannotHaveEmptyName()
+    {
+        $bot = $this->bot()->create();
+        $originalName= $bot->name;
+
+        $this
+            ->withExceptionHandling()
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'name' => '',
+            ])
+            ->assertSessionHasErrors('name');
+
+        $bot->refresh();
+
+        $this->assertEquals($originalName, $bot->name);
+    }
+
+    /** @test */
+    public function userCannotUpdateAnotherUsersBot()
+    {
+        $bot = $this->bot()->create();
+        $originalName= $bot->name;
+
+        $this
+            ->withExceptionHandling()
+            ->actingAs($this->user()->create())
+            ->patch("/bots/{$bot->id}", [
+                'name' => 'Some new Name',
+            ])
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+
+        $bot->refresh();
+
+        $this->assertEquals($originalName, $bot->name);
+    }
 }

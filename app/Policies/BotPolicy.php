@@ -42,7 +42,7 @@ class BotPolicy
      */
     public function update(User $user, Bot $bot)
     {
-        //
+        return $bot->creator_id == $user->id;
     }
 
     /**

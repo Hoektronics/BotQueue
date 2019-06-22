@@ -3,9 +3,18 @@
 @inject('bot_status', 'App\Services\BotStatusService')
 
 @section('content')
-    <div class="flex mx-4">
-        <div class="flex-grow mr-4">
-            <span class="text-3xl">{{ $bot->name }}</span>
+    <div class="flex items-start mx-4">
+        <div class="flex-col flex-grow mr-4">
+            <div class="flex">
+                <span class="text-3xl mr-2">{{ $bot->name }}</span>
+                <a href="{{ route('bots.edit', [$bot]) }}"
+                   class="my-auto text-gray-500 hover:text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                         class="h-6 fill-current">
+                        <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"></path>
+                    </svg>
+                </a>
+            </div>
         </div>
 
         <div class="w-1/8">

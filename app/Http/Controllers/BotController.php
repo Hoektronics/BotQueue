@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Bot;
 use App\Cluster;
 use App\Http\Requests\BotCreationRequest;
+use App\Http\Requests\BotUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -90,24 +91,35 @@ class BotController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Bot  $bot
+     * @param \App\Bot $bot
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(Bot $bot)
     {
-        //
+        $this->authorize('update', $bot);
+
+        return view('bot.edit', [
+            'bot' => $bot
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Bot  $bot
-     * @return \Illuminate\Http\Response
+     * @param BotUpdateRequest $request
+     * @param \App\Bot $bot
+     * @return void
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, Bot $bot)
+    public function update(BotUpdateRequest $request, Bot $bot)
     {
-        //
+        $this->authorize('update', $bot);
+
+        $bot->name = $request->get('name');
+        $bot->save();
+
+        return redirect()->route('bots.show', [$bot]);
     }
 
     /**
