@@ -4,9 +4,14 @@
             <label for="driver" class="w-1/3 my-auto">Driver</label>
 
             <div class="input-with-error flex-grow">
+                <span v-if="errors.driver"
+                      class="input-error">
+                    {{ errors.driver[0] }}
+                </span>
+
                 <select id="driver" name="driver"
                         class="flex-grow select-all"
-                        v-model="selected">
+                        v-model="driver">
                     <option value="printrun">Printrun Driver</option>
                     <option value="dummy">Dummy Driver</option>
                 </select>
@@ -17,6 +22,11 @@
             <label for="serial_port" class="w-1/3 my-auto">Serial Port</label>
 
             <div class="input-with-error flex-grow">
+                <span v-if="errors.serial_port"
+                      class="input-error">
+                    {{ errors.serial_port[0] }}
+                </span>
+
                 <input id="serial_port" type="text" name="serial_port"
                        class="input"
                        v-bind:required="isPrintrunDriver">
@@ -27,6 +37,11 @@
             <label for="baud_rate" class="w-1/3 my-auto">Baud Rate</label>
 
             <div class="input-with-error flex-grow">
+                <span v-if="errors.baud_rate"
+                      class="input-error">
+                    {{ errors.baud_rate[0] }}
+                </span>
+
                 <input id="baud_rate" type="text" name="baud_rate"
                        class="input"
                        v-bind:required="isPrintrunDriver">
@@ -37,6 +52,11 @@
             <label for="delay" class="w-1/3 my-auto">Command Delay (sec)</label>
 
             <div class="input-with-error flex-grow">
+                <span v-if="errors.delay"
+                      class="input-error">
+                    {{ errors.delay[0] }}
+                </span>
+
                 <input id="delay" type="text" name="delay"
                        class="input">
             </div>
@@ -47,17 +67,16 @@
 <script>
     export default {
         name: "DriverSelection",
-        data: function () {
-            return {
-                selected: "printrun"
-            }
-        },
+        props: [
+            'errors',
+            'driver'
+        ],
         computed: {
             isPrintrunDriver: function () {
-                return this.selected === "printrun";
+                return this.driver === "printrun";
             },
             isDummyDriver: function () {
-                return this.selected === "dummy";
+                return this.driver === "dummy";
             }
         }
     }

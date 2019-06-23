@@ -24,7 +24,12 @@
                         </div>
                     </div>
 
-                    <driver-selection></driver-selection>
+                    <driver-selection
+                            :errors="{{ $errors->toJson() }}"
+                            driver="{{ old('driver', 'printrun') }}"
+                    >
+
+                    </driver-selection>
 
                     <div class="flex mt-4 justify-end">
                         <button type="submit" class="btn-blue btn-lg btn-interactive">
