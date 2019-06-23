@@ -341,6 +341,21 @@ class BotsTest extends TestCase
     }
 
     /** @test */
+    public function serialPortIsRequiredWithPrintrunDriver()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->withExceptionHandling()
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'driver' => 'printrun',
+                "baud_rate" => 115200,
+            ])
+            ->assertSessionHasErrors('serial_port');
+    }
+
+    /** @test */
     public function userCanChangeDriverToDummyDriver()
     {
         $bot = $this->bot()->create();
@@ -356,8 +371,49 @@ class BotsTest extends TestCase
 
         $jsonString = json_encode([
             "driver" => "dummy",
+            "config" => [],
         ]);
 
         $this->assertEquals($jsonString, $bot->driver);
+    }
+
+    /** @test */
+    public function dummyDriverCanHaveDelay()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'driver' => 'dummy',
+                'delay' => 0.01,
+            ])
+            ->assertRedirect("/bots/{$bot->id}");
+
+        $bot->refresh();
+
+        $jsonString = json_encode([
+            "driver" => "dummy",
+            "config" => [
+                "command_delay" => 0.01,
+            ],
+        ]);
+
+        $this->assertEquals($jsonString, $bot->driver);
+    }
+
+    /** @test */
+    public function dummyDriverDelayMustBeANumber()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->withExceptionHandling()
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'driver' => 'dummy',
+                'delay' => "foo"
+            ])
+            ->assertSessionHasErrors('delay');
     }
 }

@@ -32,6 +32,7 @@ class BotController extends Controller
             'bots' => Auth::user()->bots()->with('cluster')->get()
         ]);
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -49,7 +50,7 @@ class BotController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(BotCreationRequest $request)
@@ -73,7 +74,7 @@ class BotController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Bot $bot
+     * @param \App\Bot $bot
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -118,18 +119,23 @@ class BotController extends Controller
 
         $bot->name = $request->get('name', $bot->name);
 
-        if($request->has('driver')) {
+        if ($request->has('driver')) {
             $driverName = $request->get('driver');
             $driverObject = [
                 'driver' => $driverName,
+                'config' => []
             ];
 
             switch ($driverName) {
                 case 'printrun':
-                    $driverObject['config'] = [
-                        'port' => $request->get('serial_port'),
-                        'baud' => $request->get('baud_rate'),
-                    ];
+                    $driverObject['config']['port'] = $request->get('serial_port');
+                    $driverObject['config']['baud'] = $request->get('baud_rate');
+                    break;
+                case 'dummy':
+                    if ($request->has('delay')) {
+                        $driverObject['config']['command_delay'] = $request->get('delay');
+                    }
+                    break;
             }
 
             $bot->driver = json_encode($driverObject);
@@ -143,7 +149,7 @@ class BotController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Bot  $bot
+     * @param \App\Bot $bot
      * @return \Illuminate\Http\Response
      */
     public function destroy(Bot $bot)
