@@ -20,9 +20,11 @@
                             <input id="name" type="text" name="name"
                                    value="{{ old('name', $bot->name) }}"
                                    class="input"
-                                   required autofocus>
+                                   required>
                         </div>
                     </div>
+
+                    <driver-selection></driver-selection>
 
                     <div class="flex mt-4 justify-end">
                         <button type="submit" class="btn-blue btn-lg btn-interactive">

@@ -18,7 +18,8 @@
         "laravel/passport": "~5.0",
         "laravel/tinker": "~1.0",
         "predis/predis": "^1.1",
-        "sentry/sentry-laravel": "^0.8.0"
+        "sentry/sentry-laravel": "^0.8.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.1",

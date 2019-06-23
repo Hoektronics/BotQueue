@@ -312,4 +312,52 @@ class BotsTest extends TestCase
 
         $this->assertEquals($originalName, $bot->name);
     }
+
+    /** @test */
+    public function userCanChangeDriverToPrintrunDriver()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'driver' => 'printrun',
+                "serial_port" => "/dev/ttyACM0",
+                "baud_rate" => 115200,
+            ])
+            ->assertRedirect("/bots/{$bot->id}");
+
+        $bot->refresh();
+
+        $jsonString = json_encode([
+            "driver" => "printrun",
+            "config" => [
+                "port" => "/dev/ttyACM0",
+                "baud" => 115200,
+            ],
+        ]);
+
+        $this->assertEquals($jsonString, $bot->driver);
+    }
+
+    /** @test */
+    public function userCanChangeDriverToDummyDriver()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->actingAs($this->mainUser)
+            ->patch("/bots/{$bot->id}", [
+                'driver' => 'dummy',
+            ])
+            ->assertRedirect("/bots/{$bot->id}");
+
+        $bot->refresh();
+
+        $jsonString = json_encode([
+            "driver" => "dummy",
+        ]);
+
+        $this->assertEquals($jsonString, $bot->driver);
+    }
 }

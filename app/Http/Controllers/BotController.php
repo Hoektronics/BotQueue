@@ -116,7 +116,25 @@ class BotController extends Controller
     {
         $this->authorize('update', $bot);
 
-        $bot->name = $request->get('name');
+        $bot->name = $request->get('name', $bot->name);
+
+        if($request->has('driver')) {
+            $driverName = $request->get('driver');
+            $driverObject = [
+                'driver' => $driverName,
+            ];
+
+            switch ($driverName) {
+                case 'printrun':
+                    $driverObject['config'] = [
+                        'port' => $request->get('serial_port'),
+                        'baud' => $request->get('baud_rate'),
+                    ];
+            }
+
+            $bot->driver = json_encode($driverObject);
+        }
+
         $bot->save();
 
         return redirect()->route('bots.show', [$bot]);
