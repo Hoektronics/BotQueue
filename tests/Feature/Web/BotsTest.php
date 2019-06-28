@@ -279,7 +279,7 @@ class BotsTest extends TestCase
     public function botUpdateCannotHaveEmptyName()
     {
         $bot = $this->bot()->create();
-        $originalName= $bot->name;
+        $originalName = $bot->name;
 
         $this
             ->withExceptionHandling()
@@ -298,7 +298,7 @@ class BotsTest extends TestCase
     public function userCannotUpdateAnotherUsersBot()
     {
         $bot = $this->bot()->create();
-        $originalName= $bot->name;
+        $originalName = $bot->name;
 
         $this
             ->withExceptionHandling()
@@ -314,14 +314,14 @@ class BotsTest extends TestCase
     }
 
     /** @test */
-    public function userCanChangeDriverToPrintrunDriver()
+    public function userCanChangeDriverToGcodeDriver()
     {
         $bot = $this->bot()->create();
 
         $this
             ->actingAs($this->mainUser)
             ->patch("/bots/{$bot->id}", [
-                'driver' => 'printrun',
+                'driver' => 'gcode',
                 "serial_port" => "/dev/ttyACM0",
                 "baud_rate" => 115200,
             ])
@@ -330,10 +330,12 @@ class BotsTest extends TestCase
         $bot->refresh();
 
         $jsonString = json_encode([
-            "driver" => "printrun",
-            "config" => [
-                "port" => "/dev/ttyACM0",
-                "baud" => 115200,
+            'type' => 'gcode',
+            'config' => [
+                'connection' => [
+                    'port' => '/dev/ttyACM0',
+                    'baud' => 115200,
+                ]
             ],
         ]);
 
@@ -341,7 +343,7 @@ class BotsTest extends TestCase
     }
 
     /** @test */
-    public function serialPortIsRequiredWithPrintrunDriver()
+    public function serialPortIsRequiredWithGcodeDriver()
     {
         $bot = $this->bot()->create();
 
@@ -349,8 +351,8 @@ class BotsTest extends TestCase
             ->withExceptionHandling()
             ->actingAs($this->mainUser)
             ->patch("/bots/{$bot->id}", [
-                'driver' => 'printrun',
-                "baud_rate" => 115200,
+                'driver' => 'gcode',
+                'baud_rate' => 115200,
             ])
             ->assertSessionHasErrors('serial_port');
     }
@@ -370,8 +372,8 @@ class BotsTest extends TestCase
         $bot->refresh();
 
         $jsonString = json_encode([
-            "driver" => "dummy",
-            "config" => [],
+            'type' => 'dummy',
+            'config' => [],
         ]);
 
         $this->assertEquals($jsonString, $bot->driver);
@@ -393,9 +395,9 @@ class BotsTest extends TestCase
         $bot->refresh();
 
         $jsonString = json_encode([
-            "driver" => "dummy",
-            "config" => [
-                "command_delay" => 0.01,
+            'type' => 'dummy',
+            'config' => [
+                'command_delay' => 0.01,
             ],
         ]);
 
@@ -412,7 +414,7 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->patch("/bots/{$bot->id}", [
                 'driver' => 'dummy',
-                'delay' => "foo"
+                'delay' => 'foo'
             ])
             ->assertSessionHasErrors('delay');
     }

@@ -26,7 +26,7 @@
 
                     <driver-selection
                             :errors="{{ $errors->toJson() }}"
-                            driver="{{ old('driver', 'printrun') }}"
+                            driver="{{ old('driver', 'gcode') }}"
                     >
 
                     </driver-selection>

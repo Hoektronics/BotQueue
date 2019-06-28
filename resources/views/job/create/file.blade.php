@@ -20,9 +20,9 @@
                 </div>
 
                 <div class="w-2/3 m-2 flex flex-col">
-                    <div class="rounded-lg border">
+                    <div class="rounded-lg border overflow-hidden">
                         <div class="flex bg-gray-200">
-                            <div class="py-4 pl-4 pr-2">
+                            <div class="my-auto ml-4 mr-2">
                                 <input type="checkbox" name="add_to_job"
                                        checked>
                             </div>

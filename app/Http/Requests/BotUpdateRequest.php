@@ -26,12 +26,12 @@ class BotUpdateRequest extends FormRequest
             'driver' => [
                 'sometimes',
                 'filled',
-                Rule::in('printrun', 'dummy'),
+                Rule::in('gcode', 'dummy'),
             ]
         ]);
 
         $validator->sometimes('serial_port', 'required', function($input) {
-            return $this->isPrintrunDriver($input);
+            return $this->isGcodeDriver($input);
         });
 
         $validator->sometimes('delay', 'sometimes|numeric', function($input) {
@@ -41,9 +41,9 @@ class BotUpdateRequest extends FormRequest
         return $validator;
     }
 
-    protected function isPrintrunDriver($input)
+    protected function isGcodeDriver($input)
     {
-        return $input->driver === 'printrun';
+        return $input->driver === 'gcode';
     }
 
     protected function isDummyDriver($input)

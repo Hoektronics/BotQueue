@@ -122,14 +122,16 @@ class BotController extends Controller
         if ($request->has('driver')) {
             $driverName = $request->get('driver');
             $driverObject = [
-                'driver' => $driverName,
+                'type' => $driverName,
                 'config' => []
             ];
 
             switch ($driverName) {
-                case 'printrun':
-                    $driverObject['config']['port'] = $request->get('serial_port');
-                    $driverObject['config']['baud'] = $request->get('baud_rate');
+                case 'gcode':
+                    $connection = [];
+                    $connection['port'] = $request->get('serial_port');
+                    $connection['baud'] = $request->get('baud_rate');
+                    $driverObject['config']['connection'] = $connection;
                     break;
                 case 'dummy':
                     if ($request->has('delay')) {
