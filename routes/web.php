@@ -11,6 +11,9 @@
 |
 */
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect('dashboard');
@@ -24,6 +27,7 @@ Auth::routes();
 Route::get('dashboard', 'HomeController@index')
     ->name('dashboard');
 
+Route::get('bots/{bot}/delete', 'BotController@delete')->name('bots.delete');
 Route::resource('bots', 'BotController');
 Route::resource('clusters', 'ClusterController');
 Route::resource('files', 'FileController');

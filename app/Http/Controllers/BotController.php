@@ -148,14 +148,24 @@ class BotController extends Controller
         return redirect()->route('bots.show', [$bot]);
     }
 
+    public function delete(Bot $bot)
+    {
+        return view('bot.delete', [
+            'bot' => $bot,
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
      * @param \App\Bot $bot
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Bot $bot)
     {
-        //
+        $bot->delete();
+
+        return redirect()->route('bots.index');
     }
 }

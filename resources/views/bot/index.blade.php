@@ -16,10 +16,10 @@
         <div class="flex flex-wrap -mx-2">
             @forelse($bots as $bot)
                 <div class="w-full pt-4 px-2 md:w-1/3">
-                    <div class="border rounded-t">
+                    <div class="border rounded-t shadow-md">
                         <div class="flex p-2 text-lg bg-gray-300">
                             <a href="{{ route('bots.show', [$bot]) }}"
-                                    class="text-lg flex-grow">
+                                    class="text-lg flex-grow mr-2">
                                 {{ $bot->name }}
                             </a>
 

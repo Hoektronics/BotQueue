@@ -2,28 +2,28 @@
 
 @tailwind components;
 
-.btn-blue {
-    @apply border border-blue-500 bg-blue-500 text-white
+.btn-interactive:active {
+    @apply shadow-none
 }
 
-.btn-blue.btn-interactive:hover {
-    @apply bg-blue-300 text-black
+.btn-interactive:focus {
+    @apply outline-none
+}
+
+.btn-plain {
+    @apply border text-black border-black
+}
+
+.btn-blue {
+    @apply border border-blue-500 bg-blue-500 text-white
 }
 
 .btn-green {
     @apply border border-green-400 bg-green-400 text-white
 }
 
-.btn-green.btn-interactive:hover {
-    @apply bg-green-200 text-black
-}
-
 .btn-red {
     @apply border border-red-500 bg-red-500 text-white
-}
-
-.btn-red.btn-interactive:hover {
-    @apply bg-red-300 text-black
 }
 
 .btn-black {
@@ -31,11 +31,11 @@
 }
 
 .btn-sm {
-    @apply p-1 rounded
+    @apply p-1 rounded shadow
 }
 
 .btn-lg {
-    @apply p-2 rounded-lg
+    @apply p-2 rounded-lg shadow
 }
 
 .pagination > div:first-child > .page-marker {
@@ -88,6 +88,16 @@ div:not(.input-with-error) > .input:focus {
 
 .file-label:hover .choose-file {
     @apply bg-blue-300 text-black
+}
+
+.dialog-box {
+    @apply mx-4 w-full rounded-lg border shadow overflow-hidden
+}
+
+@screen lg {
+    .dialog-box {
+        @apply w-1/3 mx-auto
+    }
 }
 
 @tailwind utilities;

@@ -8,10 +8,17 @@
             <div class="flex">
                 <span class="text-3xl mr-2">{{ $bot->name }}</span>
                 <a href="{{ route('bots.edit', [$bot]) }}"
-                   class="my-auto text-gray-500 hover:text-blue-500">
+                   class="my-auto text-gray-500 hover:text-blue-500 mx-1">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                          class="h-6 fill-current">
                         <path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"></path>
+                    </svg>
+                </a>
+                <a href="{{ route('bots.delete', [$bot]) }}"
+                   class="my-auto text-gray-500 hover:text-red-500 mx-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                         class="h-6 fill-current">
+                        <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"></path>
                     </svg>
                 </a>
             </div>
