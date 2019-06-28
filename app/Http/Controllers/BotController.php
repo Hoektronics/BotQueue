@@ -29,7 +29,7 @@ class BotController extends Controller
     public function index()
     {
         return view('bot.index', [
-            'bots' => Auth::user()->bots()->with('cluster')->get()
+            'bots' => Auth::user()->bots()->with('cluster', 'currentJob')->get()
         ]);
     }
 
