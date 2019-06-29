@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Tests\Helpers\UsesBuilders;
@@ -39,5 +40,15 @@ abstract class TestCase extends BaseTestCase
         $this->app
             ->make(BusDispatcherContract::class)
             ->shouldIgnoreMissing();
+    }
+
+    /**
+     * @param Model $model
+     */
+    public function assertDeleted($model)
+    {
+        $this->assertDatabaseMissing($model->getTable(), [
+            $model->getKeyName() => $model->getKey(),
+        ]);
     }
 }

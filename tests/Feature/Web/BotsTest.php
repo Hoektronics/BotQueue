@@ -418,4 +418,18 @@ class BotsTest extends TestCase
             ])
             ->assertSessionHasErrors('delay');
     }
+
+    /** @test */
+    public function userCanDeleteTheirBot()
+    {
+        $bot = $this->bot()->create();
+
+        $this
+            ->withExceptionHandling()
+            ->actingAs($this->mainUser)
+            ->delete("/bots/{$bot->id}")
+            ->assertRedirect("/bots");
+
+        $this->assertDeleted($bot);
+    }
 }
