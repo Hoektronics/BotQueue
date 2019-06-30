@@ -28,17 +28,7 @@ class ClusterController extends Controller
      */
     public function index()
     {
-        $clusters = Auth::user()->clusters()->withCount([
-            'bots AS offline_bots_count' => function ($query) {
-                $query->where('status', BotStatusEnum::OFFLINE);
-            },
-            'bots AS idle_bots_count' => function ($query) {
-                $query->where('status', BotStatusEnum::IDLE);
-            },
-            'bots AS working_bots_count' => function ($query) {
-                $query->where('status', BotStatusEnum::WORKING);
-            }
-        ])->get();
+        $clusters = Auth::user()->clusters()->withCount('bots')->get();
         return view('cluster.index', compact('clusters'));
     }
 

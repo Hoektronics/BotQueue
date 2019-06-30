@@ -11,31 +11,26 @@
             </a>
         </div>
 
-        <div class="mt-4 flex flex-col w-full md:w-1/2 md:mx-auto">
-            <div class="flex w-full">
-                <div class="w-1/2 text-center text-xl p-1 border-l border-t border-b rounded-tl">Cluster Name</div>
-                <div class="flex w-1/2 border-r border-t border-b rounded-tr">
-                    <div class="w-1/3 text-center text-xl p-1">Offline Bots</div>
-                    <div class="w-1/3 text-center text-xl p-1">Idle Bots</div>
-                    <div class="w-1/3 text-center text-xl p-1">Working Bots</div>
-                </div>
-            </div>
-
+        <div class="flex flex-wrap -mx-2">
             @foreach($clusters as $cluster)
-                <div class="flex w-full p-2 border-l border-r border-b">
-                    <div class="w-1/2 text-center">
-                        <a href="{{ route('clusters.show', [$cluster]) }}"
-                           class="hover:text-gray-700">{{ $cluster->name }}</a>
-                    </div>
-                    <div class="flex w-1/2">
-                        <div class="w-1/3 text-center">
-                            {{ $cluster->offline_bots_count }}
+                <div class="w-full pt-4 px-2 md:w-1/3">
+                    <div class="border rounded-t shadow-md">
+                        <div class="flex p-2 text-lg bg-gray-300">
+                            <a href="{{ route('clusters.show', [$cluster]) }}"
+                               class="text-lg flex-grow mr-2">
+                                {{ $cluster->name }}
+                            </a>
                         </div>
-                        <div class="w-1/3 text-center">
-                            {{ $cluster->idle_bots_count }}
-                        </div>
-                        <div class="w-1/3 text-center">
-                            {{ $cluster->working_bots_count }}
+
+                        <div class="p-2 flex justify-around">
+                            <div>
+                                <div class="text-4xl text-center">
+                                    {{ $cluster->bots_count }}
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    Bots
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
