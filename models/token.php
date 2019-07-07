@@ -51,6 +51,6 @@ class Token extends Model
             'token' => $this->get('hash')
         );
 
-        return base64_encode(serialize($data));
+        return base64_encode(json_encode($data));
     }
 }

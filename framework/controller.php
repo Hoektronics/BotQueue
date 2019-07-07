@@ -88,7 +88,7 @@ class Controller
 				'type' => 'redirect',
 				'data' => $_SERVER['REQUEST_URI']
 			);
-			$payloadEncoded = base64_encode(serialize($payload));
+			$payloadEncoded = base64_encode(json_encode($payload));
 
 			$this->forwardToUrl("/login/{$payloadEncoded}");
 		}

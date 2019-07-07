@@ -165,7 +165,7 @@ class UploadController extends Controller
 
 			$thingiverse_token = User::$me->getThingiverseToken();
 			if ($thingiverse_token === '') {
-				$this->forwardToURL("/thingiverse/url/" . base64_encode(serialize($url)));
+				$this->forwardToURL("/thingiverse/url/" . base64_encode(json_encode($url)));
 			}
 
 			$api = new ThingiverseAPI(THINGIVERSE_API_CLIENT_ID, THINGIVERSE_API_CLIENT_SECRET, User::$me->getThingiverseToken());

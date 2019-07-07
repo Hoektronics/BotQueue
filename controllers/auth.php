@@ -24,24 +24,7 @@ class AuthController extends Controller
 		if (User::isLoggedIn()) {
 			Activity::log("logged out.");
 
-			//remove our token, if we got one.
-			if ($_COOKIE['token']) {
-				$data = unserialize(base64_decode($_COOKIE['token']));
-				$token = Token::byToken($data['token']);
-				$token->delete();
-			}
-
-			//unset specific variables.
-			setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
-			unset($_SESSION['userid']);
-			unset($_SESSION['CSRFToken']);
-
-			//nuke the session.
-			if (isset($_COOKIE[session_name()]))
-				setcookie(session_name(), '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
-
-			session_unset();
-			session_destroy();
+			User::forceLogOut();
 
 			$this->forwardToUrl("/");
 		}

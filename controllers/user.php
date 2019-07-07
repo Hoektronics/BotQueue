@@ -312,7 +312,7 @@ class UserController extends Controller
 
 		//did we get a redirect payload or anything?
 		if ($this->args('payload')) {
-			$payload = unserialize(base64_decode($this->args('payload')));
+			$payload = json_decode(base64_decode($this->args('payload')));
 			if (is_array($payload) && $payload['type'] && $payload['data'])
 				$_SESSION['payload'] = $payload;
 		}
@@ -323,7 +323,7 @@ class UserController extends Controller
 			User::loginWithToken($this->args('token'));
 			if (User::isLoggedIn()) {
 				//fully log them in.
-				$data = unserialize(base64_decode($this->args('token')));
+				$data = json_decode(base64_decode($this->args('token')));
 				$token = Token::byToken($data['token']);
 				$token->setCookie();
 

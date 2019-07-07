@@ -63,7 +63,7 @@ class User extends Model
 
     public static function loginWithToken($token, $createSession = true)
     {
-        $data = unserialize(base64_decode($token));
+        $data = json_decode(base64_decode($token));
 
         if (is_array($data) && $data['id'] && $data['token']) {
             $user = new User($data['id']);
@@ -119,6 +119,28 @@ class User extends Model
     public static function isLoggedIn()
     {
         return (self::$me instanceOf User && self::$me->isHydrated());
+    }
+
+    public static function forceLogOut()
+    {
+        //remove our token, if we got one.
+        if ($_COOKIE['token']) {
+            $data = json_decode(base64_decode($_COOKIE['token']));
+            $token = Token::byToken($data['token']);
+            $token->delete();
+        }
+
+        //unset specific variables.
+        setcookie('token', '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
+        unset($_SESSION['userid']);
+        unset($_SESSION['CSRFToken']);
+
+        //nuke the session.
+        if (isset($_COOKIE[session_name()]))
+            setcookie(session_name(), '', time() - 420000, '/', SITE_HOSTNAME, FORCE_SSL, true);
+
+        session_unset();
+        session_destroy();
     }
 
     public function checkToken($t)
