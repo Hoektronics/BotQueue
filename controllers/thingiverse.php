@@ -24,7 +24,7 @@ class ThingiverseController extends Controller
 		$this->assertLoggedIn();
 
 		if($this->args('payload')) {
-			$_SESSION['thing_url'] = json_decode(base64_decode($this->args('payload')));
+			$_SESSION['thing_url'] = json_decode(base64_decode($this->args('payload')), true);
 		}
 
 		if (User::$me->get('thingiverse_token')) {

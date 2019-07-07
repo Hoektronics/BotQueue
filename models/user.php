@@ -63,7 +63,7 @@ class User extends Model
 
     public static function loginWithToken($token, $createSession = true)
     {
-        $data = json_decode(base64_decode($token));
+        $data = json_decode(base64_decode($token), true);
 
         if (is_array($data) && $data['id'] && $data['token']) {
             $user = new User($data['id']);
@@ -125,7 +125,7 @@ class User extends Model
     {
         //remove our token, if we got one.
         if ($_COOKIE['token']) {
-            $data = json_decode(base64_decode($_COOKIE['token']));
+            $data = json_decode(base64_decode($_COOKIE['token']), true);
             $token = Token::byToken($data['token']);
             $token->delete();
         }
