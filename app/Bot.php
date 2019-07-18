@@ -45,6 +45,8 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereClusterId($value)
  * @property string|null $driver
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereDriver($value)
+ * @property string|null $error_text
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereErrorText($value)
  */
 class Bot extends Model
 {

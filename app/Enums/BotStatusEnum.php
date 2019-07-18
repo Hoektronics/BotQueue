@@ -9,6 +9,7 @@ class BotStatusEnum
     const OFFLINE = 'offline';
     const WORKING = 'working';
     const WAITING = 'waiting';
+    const ERROR = 'error';
 
     public static function allStates()
     {
@@ -18,6 +19,7 @@ class BotStatusEnum
             self::OFFLINE,
             self::WORKING,
             self::WAITING,
+            self::ERROR,
         ]);
     }
 }
