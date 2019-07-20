@@ -31,11 +31,11 @@
 }
 
 .btn-sm {
-    @apply p-1 rounded shadow
+    @apply p-1 rounded shadow whitespace-no-wrap
 }
 
 .btn-lg {
-    @apply p-2 rounded-lg shadow
+    @apply p-2 rounded-lg shadow whitespace-no-wrap
 }
 
 .pagination > div:first-child > .page-marker {
