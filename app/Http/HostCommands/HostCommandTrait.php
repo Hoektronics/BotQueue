@@ -28,7 +28,7 @@ trait HostCommandTrait
         if($auth->guard($guard)->check()) {
             $auth->shouldUse($guard);
 
-            $this->setUpHost();
+            return $this->setUpHost();
         } else {
             return HostErrors::oauthAuthorizationInvalid();
         }
@@ -40,11 +40,17 @@ trait HostCommandTrait
         $parsedToken = (new Parser())->parse($jsonWebToken);
         $jsonWebTokenId = $parsedToken->getClaim("jti");
 
-        $host = Host::where("token_id", $jsonWebTokenId)->first();
+        $host = Host::whereTokenId($jsonWebTokenId)->first();
+
+        if($host === null) {
+            return HostErrors::noHostFound();
+        }
 
         $host->seen_at = Carbon::now();
         $host->save();
 
         app(HostManager::class)->setHost($host);
+
+        return null;
     }
 }

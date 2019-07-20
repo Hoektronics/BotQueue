@@ -32,7 +32,7 @@ class HostErrorDuplicationTest extends TestCase
 
                 if (!array_key_exists($method->name, $this->testParameters)) {
                     $name = $method->name;
-                    self::fail("$name has parameters by test parameters have not been defined for this test.");
+                    self::fail("$name has parameters but test parameters have not been defined for this test.");
                 }
 
                 return $method->invokeArgs(null, $this->testParameters[$method->name]);

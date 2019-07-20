@@ -71,11 +71,21 @@ class HostErrors
     }
 
     public static function missingParameter($parameter)
-    {return new ErrorResponse(
-        1007,
-        "Missing parameter \"$parameter\".",
-        Response::HTTP_BAD_REQUEST
-    );
+    {
+        return new ErrorResponse(
+            1007,
+            "Missing parameter \"$parameter\".",
+            Response::HTTP_BAD_REQUEST
+        );
+    }
+
+    public static function noHostFound()
+    {
+        return new ErrorResponse(
+            1008,
+            "No host was found for that access token",
+            Response::HTTP_UNAUTHORIZED
+        );
     }
 
     public static function botHasNoHost()
