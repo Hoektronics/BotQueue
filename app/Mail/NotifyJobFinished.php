@@ -2,27 +2,27 @@
 
 namespace App\Mail;
 
-use App\User;
+use App\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeNewUser extends Mailable
+class NotifyJobFinished extends Mailable
 {
     use Queueable, SerializesModels;
     /**
-     * @var User
+     * @var Job
      */
-    protected $user;
+    private $job;
 
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param Job $job
      */
-    public function __construct(User $user)
+    public function __construct(Job $job)
     {
-        $this->user = $user;
+        $this->job = $job;
     }
 
     /**
@@ -33,9 +33,9 @@ class WelcomeNewUser extends Mailable
     public function build()
     {
         return $this
-            ->subject('Welcome to BotQueue!')
-            ->view('emails.user.welcome', [
-                'user' => $this->user,
+            ->subject("Job #{$this->job->id} is done!")
+            ->view('emails.jobs.finished', [
+                'job' => $this->job,
             ]);
     }
 }

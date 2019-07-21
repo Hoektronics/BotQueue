@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\UserCreated;
-use App\Mail\WelcomeNewUser;
+use App\Events\JobFinished;
+use App\Mail\NotifyJobFinished;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class EmailNewUser implements ShouldQueue
+class EmailJobFinished implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -22,14 +22,14 @@ class EmailNewUser implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  UserCreated  $event
+     * @param JobFinished $event
      * @return void
      */
-    public function handle(UserCreated $event)
+    public function handle(JobFinished $event)
     {
-        $user = $event->user;
+        $job = $event->job;
 
-        Mail::to($event->user->email)
-            ->send(new WelcomeNewUser($user));
+        Mail::to($job->creator->email)
+            ->send(new NotifyJobFinished($job));
     }
 }

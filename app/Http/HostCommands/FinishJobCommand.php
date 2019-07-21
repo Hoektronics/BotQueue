@@ -7,6 +7,7 @@ use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
+use App\Events\JobFinished;
 use App\HostManager;
 use App\Http\Resources\JobResource;
 use App\Job;
@@ -50,6 +51,8 @@ class FinishJobCommand
         $bot->status = BotStatusEnum::WAITING;
 
         $job->push();
+
+        event(new JobFinished($job));
 
         return new JobResource($job);
     }

@@ -32,8 +32,8 @@ Route::resource('bots', 'BotController');
 Route::resource('clusters', 'ClusterController');
 Route::resource('files', 'FileController');
 
-Route::post('jobs/{job}/pass', 'JobController@pass');
-Route::post('jobs/{job}/fail', 'JobController@fail');
+Route::post('jobs/{job}/pass', 'JobController@pass')->name('jobs.pass');
+Route::post('jobs/{job}/fail', 'JobController@fail')->name('jobs.fail');
 
 Route::resource('jobs', 'JobController');
 

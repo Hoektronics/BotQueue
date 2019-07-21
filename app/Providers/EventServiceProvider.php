@@ -20,7 +20,8 @@ class EventServiceProvider extends ServiceProvider
         Events\UserCreated::class => [
             Listeners\EmailNewUser::class,
         ],
-        Events\BotCreated::class => [
+        Events\JobFinished::class => [
+            Listeners\EmailJobFinished::class,
         ],
     ];
 

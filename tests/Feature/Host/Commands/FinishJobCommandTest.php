@@ -5,6 +5,7 @@ namespace Tests\Feature\Host\Commands;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
+use App\Events\JobFinished;
 use Illuminate\Http\Response;
 use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
@@ -28,6 +29,8 @@ class FinishJobCommandTest extends TestCase
     public function aHostCanUpdateJobStatusFromInProgressToQualityCheck()
     {
         $this->withoutJobs();
+
+        $this->fakesEvents(JobFinished::class);
 
         $bot = $this->bot()
             ->state(BotStatusEnum::WORKING)
@@ -66,6 +69,12 @@ class FinishJobCommandTest extends TestCase
 
         $this->assertEquals(JobStatusEnum::QUALITY_CHECK, $job->status);
         $this->assertEquals(BotStatusEnum::WAITING, $bot->status);
+
+        $this->assertDispatched(JobFinished::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var JobFinished $event */
+                $this->assertEquals($job->id, $event->job->id);
+            });
     }
 
     public static function nonInProgressState()
