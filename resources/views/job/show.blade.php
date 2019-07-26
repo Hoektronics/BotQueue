@@ -71,20 +71,22 @@
                         </svg>
                     </a>
 
-                    <a href="#"
-                       onclick="event.preventDefault(); document.getElementById('delete-job-form').submit();"
-                       class="my-auto hover:text-white hover:bg-red-500 m-1 p-1 rounded">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                             class="h-6 fill-current">
-                            <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"></path>
-                        </svg>
-                    </a>
+                    @if($job->status == \App\Enums\JobStatusEnum::QUEUED)
+                        <a href="#"
+                           onclick="event.preventDefault(); document.getElementById('delete-job-form').submit();"
+                           class="my-auto hover:text-white hover:bg-red-500 m-1 p-1 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                 class="h-6 fill-current">
+                                <path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"></path>
+                            </svg>
+                        </a>
 
-                    <form id="delete-job-form" action="{{ route('jobs.destroy', [$job]) }}" method="POST"
-                          style="display: none;">
-                        {{ csrf_field() }}
-                        {{ method_field('DELETE') }}
-                    </form>
+                        <form id="delete-job-form" action="{{ route('jobs.destroy', [$job]) }}" method="POST"
+                              style="display: none;">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
+                        </form>
+                    @endif
                 </div>
             </div>
 
