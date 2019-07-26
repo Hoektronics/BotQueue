@@ -101,7 +101,10 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
-        //
+        // UNIT TESTS
+        $job->delete();
+
+        return redirect()->route('jobs.index');
     }
 
     public function pass(Job $job)
