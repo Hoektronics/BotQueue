@@ -654,6 +654,7 @@ class JobController extends Controller
 				$this->set('form', $form);
 			}
 		} catch (Exception $e) {
+			Sentry\captureException($e);
 			$this->set('megaerror', $e->getMessage());
 		}
 	}

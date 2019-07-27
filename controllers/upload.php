@@ -102,6 +102,7 @@ class UploadController extends Controller
 			$this->forwardToUrl("/job/create/file:{$file->id}");
 		} //did anything go wrong?
 		catch (Exception $e) {
+			Sentry\captureException($e);
 			$this->setTitle("Upload File - Error");
 			$this->set('megaerror', $e->getMessage());
 		}
