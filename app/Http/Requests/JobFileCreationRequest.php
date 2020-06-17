@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class JobFileCreationRequest extends FormRequest
 {
-    /** @var MatchExists $matchExists */
+    /** @var MatchExists */
     private $matchExists;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->matchExists = new MatchExists([
@@ -33,7 +34,7 @@ class JobFileCreationRequest extends FormRequest
         $original_value = $this->get('bot_cluster');
 
         $this->merge([
-            'bot_cluster' => $this->matchExists->getModel($original_value)
+            'bot_cluster' => $this->matchExists->getModel($original_value),
         ]);
     }
 
@@ -59,7 +60,7 @@ class JobFileCreationRequest extends FormRequest
             'bot_cluster' => [
                 'required',
                 $this->matchExists,
-            ]
+            ],
         ];
     }
 }

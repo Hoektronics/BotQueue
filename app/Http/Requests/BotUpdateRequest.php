@@ -27,14 +27,14 @@ class BotUpdateRequest extends FormRequest
                 'sometimes',
                 'filled',
                 Rule::in('gcode', 'dummy'),
-            ]
+            ],
         ]);
 
-        $validator->sometimes('serial_port', 'required', function($input) {
+        $validator->sometimes('serial_port', 'required', function ($input) {
             return $this->isGcodeDriver($input);
         });
 
-        $validator->sometimes('delay', 'sometimes|numeric', function($input) {
+        $validator->sometimes('delay', 'sometimes|numeric', function ($input) {
             return $this->isDummyDriver($input);
         });
 

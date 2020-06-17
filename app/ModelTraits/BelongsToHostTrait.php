@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\ModelTraits;
-
 
 use App\Bot;
 use App\Events\Host\BotAssignedToHost;

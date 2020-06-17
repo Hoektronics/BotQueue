@@ -2,7 +2,6 @@
 
 namespace App\Errors;
 
-
 use Illuminate\Http\JsonResponse;
 
 class ErrorResponse extends JsonResponse
@@ -55,7 +54,7 @@ class ErrorResponse extends JsonResponse
         return [
             'status' => 'error',
             'code' => $this->code,
-            'message' => $this->message
+            'message' => $this->message,
         ];
     }
 }

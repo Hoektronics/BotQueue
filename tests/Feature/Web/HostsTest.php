@@ -6,14 +6,13 @@ use Tests\TestCase;
 
 class HostsTest extends TestCase
 {
-
     /** @test */
     public function anUnauthenticatedUserCannotViewHostsIndex()
     {
         $this
             ->withExceptionHandling()
-            ->get("/hosts")
-            ->assertRedirect("/login");
+            ->get('/hosts')
+            ->assertRedirect('/login');
     }
 
     /** @test */
@@ -24,7 +23,7 @@ class HostsTest extends TestCase
 
         $this
             ->actingAs($this->mainUser)
-            ->get("/hosts")
+            ->get('/hosts')
             ->assertSee(e($this->mainHost->name));
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers\Models;
 
-
 use App\Enums\FileTypeEnum;
 use App\File;
 use App\User;
@@ -29,7 +28,7 @@ class FileBuilder
 
         $this->attributes = array_merge($this->attributes, [
             'path' => $uploadedFilePath,
-            'filesystem' => 'public'
+            'filesystem' => 'public',
         ]);
 
         return File::unguarded(function () {
@@ -39,7 +38,7 @@ class FileBuilder
 
     private function newWith($newAttributes)
     {
-        return new FileBuilder(
+        return new self(
             array_merge(
                 $this->attributes,
                 $newAttributes
@@ -51,7 +50,7 @@ class FileBuilder
     {
         $intersectingKeys = array_intersect_key($this->attributes, $newAttributes);
 
-        if(count($intersectingKeys) > 0) {
+        if (count($intersectingKeys) > 0) {
             throw new InvalidArgumentException("attribute(s) were set twice: {$intersectingKeys}");
         }
 

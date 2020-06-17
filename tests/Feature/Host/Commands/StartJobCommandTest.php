@@ -6,8 +6,8 @@ use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
-use Tests\TestCase;
 use Tests\Helpers\PassportHelper;
+use Tests\TestCase;
 
 class StartJobCommandTest extends TestCase
 {
@@ -17,8 +17,8 @@ class StartJobCommandTest extends TestCase
     public function unauthenticatedHostCannotPerformThisAction()
     {
         $this
-            ->postJson("/host", [
-                "command" => "StartJob"
+            ->postJson('/host', [
+                'command' => 'StartJob',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
@@ -44,20 +44,20 @@ class StartJobCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "StartJob",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'StartJob',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $job->id,
-                    "name" => $job->name,
-                    "status" => JobStatusEnum::IN_PROGRESS,
-                    "url" => $file->url(),
+                'status' => 'success',
+                'data' => [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'status' => JobStatusEnum::IN_PROGRESS,
+                    'url' => $file->url(),
                 ],
             ]);
 
@@ -73,7 +73,8 @@ class StartJobCommandTest extends TestCase
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::ASSIGNED)
             ->reduce(function ($lookup, $item) {
-                $lookup[$item] = array($item);
+                $lookup[$item] = [$item];
+
                 return $lookup;
             }, []);
     }
@@ -99,10 +100,10 @@ class StartJobCommandTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "StartJob",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'StartJob',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_CONFLICT)
@@ -129,10 +130,10 @@ class StartJobCommandTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "StartJob",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'StartJob',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_FORBIDDEN)

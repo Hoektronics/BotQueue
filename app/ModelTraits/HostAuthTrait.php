@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\ModelTraits;
-
 
 use App\Exceptions\OauthHostClientNotSetup;
 use App\Host;
@@ -29,7 +27,7 @@ trait HostAuthTrait
                 'id' => bin2hex(random_bytes(40)),
                 'user_id' => $host->owner_id,
                 'client_id' => $client->getIdentifier(),
-                'name' => 'Host ' . $host->id . ' Token',
+                'name' => 'Host '.$host->id.' Token',
                 'scopes' => ['host'],
                 'revoked' => false,
                 'created_at' => Carbon::now(),
@@ -90,7 +88,7 @@ trait HostAuthTrait
      */
     public function getJWT()
     {
-        return (string)$this->getAccessToken()->convertToJWT(passport_private_key());
+        return (string) $this->getAccessToken()->convertToJWT(passport_private_key());
     }
 
     /**
@@ -102,8 +100,8 @@ trait HostAuthTrait
         /** @var OauthHostClient $client */
         $oauthHostClient = OauthHostClient::query()->orderBy('id', 'desc')->first();
 
-        if($oauthHostClient == null) {
-            throw new OauthHostClientNotSetup("No Oauth Host Client has been created");
+        if ($oauthHostClient == null) {
+            throw new OauthHostClientNotSetup('No Oauth Host Client has been created');
         }
 
         $clientRepository = app(ClientRepository::class);

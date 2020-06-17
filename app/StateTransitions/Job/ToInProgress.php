@@ -2,7 +2,6 @@
 
 namespace App\StateTransitions\Job;
 
-
 use App\Enums\JobStatusEnum;
 use App\Job;
 

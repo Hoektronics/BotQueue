@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddFileIdToJobsTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddFileIdToJobsTable extends Migration
     public function up()
     {
         Schema::table('jobs', function (Blueprint $table) {
-            $table->integer("file_id")->unsigned()->nullable();
+            $table->integer('file_id')->unsigned()->nullable();
             $table->foreign('file_id')->references('id')->on('files');
         });
     }

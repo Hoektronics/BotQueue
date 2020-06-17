@@ -34,7 +34,7 @@ class BotCreationRequest extends FormRequest
             ],
             'type' => [
                 'required',
-                Rule::in(['3d_printer'])
+                Rule::in(['3d_printer']),
             ],
             'cluster' => [
                 'required',

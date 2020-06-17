@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Channels;
-
 
 use App\Bot;
 use App\Host;

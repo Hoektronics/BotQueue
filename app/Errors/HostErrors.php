@@ -2,7 +2,6 @@
 
 namespace App\Errors;
 
-
 use Illuminate\Http\Response;
 
 class HostErrors
@@ -11,7 +10,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1000,
-            "Invalid host command.",
+            'Invalid host command.',
             Response::HTTP_BAD_REQUEST
         );
     }
@@ -20,7 +19,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1001,
-            "Host request not found.",
+            'Host request not found.',
             Response::HTTP_NOT_FOUND
         );
     }
@@ -29,7 +28,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1002,
-            "Host request is not claimed.",
+            'Host request is not claimed.',
             Response::HTTP_CONFLICT
         );
     }
@@ -38,7 +37,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1003,
-            "Oauth Host client is not set up.",
+            'Oauth Host client is not set up.',
             Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
@@ -47,7 +46,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1004,
-            "Oauth Host keys are missing.",
+            'Oauth Host keys are missing.',
             Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
@@ -56,7 +55,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1005,
-            "Unknown error occurred. Sorry, we tried.",
+            'Unknown error occurred. Sorry, we tried.',
             Response::HTTP_INTERNAL_SERVER_ERROR
         );
     }
@@ -65,7 +64,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1006,
-            "Authorization used was invalid.",
+            'Authorization used was invalid.',
             Response::HTTP_UNAUTHORIZED
         );
     }
@@ -83,7 +82,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1008,
-            "No host was found for that access token",
+            'No host was found for that access token',
             Response::HTTP_UNAUTHORIZED
         );
     }
@@ -92,7 +91,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1101,
-            "Bot is not assigned to a host.",
+            'Bot is not assigned to a host.',
             Response::HTTP_CONFLICT
         );
     }
@@ -101,7 +100,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1102,
-            "Bot is not assigned to the host that made this request.",
+            'Bot is not assigned to the host that made this request.',
             Response::HTTP_FORBIDDEN
         );
     }
@@ -110,7 +109,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1110,
-            "Bot must be in an idle state to perform this action.",
+            'Bot must be in an idle state to perform this action.',
             Response::HTTP_CONFLICT
         );
     }
@@ -119,7 +118,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1201,
-            "Job is not assigned to a bot. Once it is assigned, the host of that bot can see it.",
+            'Job is not assigned to a bot. Once it is assigned, the host of that bot can see it.',
             Response::HTTP_CONFLICT
         );
     }
@@ -128,7 +127,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1202,
-            "Job is not assigned to a bot running on the host that made this request.",
+            'Job is not assigned to a bot running on the host that made this request.',
             Response::HTTP_FORBIDDEN
         );
     }
@@ -137,7 +136,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1203,
-            "Job is assigned to a bot, but that bot has no host.",
+            'Job is assigned to a bot, but that bot has no host.',
             Response::HTTP_CONFLICT
         );
     }
@@ -146,7 +145,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1210,
-            "Job must be in an assigned state to perform this action.",
+            'Job must be in an assigned state to perform this action.',
             Response::HTTP_CONFLICT
         );
     }
@@ -155,7 +154,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1211,
-            "Job must be in an in progress state to perform this action.",
+            'Job must be in an in progress state to perform this action.',
             Response::HTTP_CONFLICT
         );
     }
@@ -164,7 +163,7 @@ class HostErrors
     {
         return new ErrorResponse(
             1220,
-            "Job percentage cannot be set lower than it already is.",
+            'Job percentage cannot be set lower than it already is.',
             Response::HTTP_CONFLICT
         );
     }

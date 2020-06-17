@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\HostManager;
 use App\Http\Resources\HostResource;
 

@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\Resource;
 
 /**
- * Class HostRequestResource
- * @package App\Http\Resources
+ * Class HostRequestResource.
  *
  * @property int id
  * @property string status
@@ -26,14 +25,14 @@ class HostRequestResource extends Resource
     public function toArray($request)
     {
         return [
-            "id" => $this->id,
-            "status" => $this->status,
-            "expires_at" => $this->expires_at,
-            "claimer" => $this->whenLoaded("claimer", function () {
+            'id' => $this->id,
+            'status' => $this->status,
+            'expires_at' => $this->expires_at,
+            'claimer' => $this->whenLoaded('claimer', function () {
                 return [
-                    "id" => $this->claimer->id,
-                    "username" => $this->claimer->username,
-                    "link" => url('/api/users', $this->claimer->id),
+                    'id' => $this->claimer->id,
+                    'username' => $this->claimer->username,
+                    'link' => url('/api/users', $this->claimer->id),
                 ];
             }),
         ];
@@ -42,7 +41,7 @@ class HostRequestResource extends Resource
     public function with($request)
     {
         return [
-            "status" => "success",
+            'status' => 'success',
         ];
     }
 }

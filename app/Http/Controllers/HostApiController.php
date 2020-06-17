@@ -10,18 +10,18 @@ class HostApiController extends Controller
 {
     public function command(Request $request)
     {
-        $commandName = $request->input("command");
+        $commandName = $request->input('command');
 
         $classpath = "App\\Http\\HostCommands\\${commandName}Command";
 
         if (class_exists($classpath)) {
             $command = app()->make($classpath);
-            $data = collect($request->input("data", []));
+            $data = collect($request->input('data', []));
 
-            if (method_exists($command, "verifyAuth")) {
+            if (method_exists($command, 'verifyAuth')) {
                 $response = $command->verifyAuth(app()->make(Auth::class));
 
-                if($response !== null) {
+                if ($response !== null) {
                     return $response;
                 }
             }

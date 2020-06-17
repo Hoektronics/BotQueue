@@ -3,8 +3,8 @@
 namespace Tests\Feature\Web;
 
 use App\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class LoginTest extends TestCase
 {

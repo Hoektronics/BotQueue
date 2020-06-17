@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Events;
-
 
 use App\Bot;
 use App\Cluster;
@@ -22,7 +20,7 @@ class Event
 
     protected function ensureNotEmptyChannels()
     {
-        if($this->channels == null) {
+        if ($this->channels == null) {
             $this->channels = collect();
         }
     }
@@ -41,7 +39,7 @@ class Event
         $this->ensureNotEmptyChannels();
 
         return $this->channels->unique(function ($channel) {
-            /** @var Channel $channel */
+            /* @var Channel $channel */
             return $channel->name;
         })->all();
     }
@@ -57,8 +55,9 @@ class Event
             $user_id = $user->id;
         }
 
-        if($user_id !== null)
+        if ($user_id !== null) {
             return $this->addChannel(new PrivateChannel('user.'.$user_id));
+        }
 
         return $this;
     }
@@ -74,8 +73,9 @@ class Event
             $bot_id = $bot->id;
         }
 
-        if($bot_id !== null)
+        if ($bot_id !== null) {
             return $this->addChannel(new PrivateChannel('bot.'.$bot_id));
+        }
 
         return $this;
     }
@@ -91,8 +91,9 @@ class Event
             $job_id = $job->id;
         }
 
-        if($job_id !== null)
+        if ($job_id !== null) {
             return $this->addChannel(new PrivateChannel('job.'.$job_id));
+        }
 
         return $this;
     }
@@ -108,8 +109,9 @@ class Event
             $host_id = $host->id;
         }
 
-        if($host_id !== null)
+        if ($host_id !== null) {
             return $this->addChannel(new PrivateChannel('host.'.$host_id));
+        }
 
         return $this;
     }
@@ -125,8 +127,9 @@ class Event
             $cluster_id = $cluster->id;
         }
 
-        if($cluster_id !== null)
+        if ($cluster_id !== null) {
             return $this->addChannel(new PrivateChannel('cluster.'.$cluster_id));
+        }
 
         return $this;
     }

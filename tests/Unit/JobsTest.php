@@ -30,11 +30,11 @@ class JobsTest extends TestCase
 
         $this->assertDispatched(JobCreated::class)
             ->inspect(function ($event) use ($job) {
-                /** @var JobCreated $event */
+                /* @var JobCreated $event */
                 $this->assertEquals($job->id, $event->job->id);
             })
             ->channels([
-                'private-user.' . $this->mainUser->id,
+                'private-user.'.$this->mainUser->id,
             ]);
     }
 

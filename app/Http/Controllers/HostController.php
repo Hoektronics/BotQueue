@@ -18,8 +18,9 @@ class HostController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+
         return view('host.index', [
-            'hosts' => $user->hosts
+            'hosts' => $user->hosts,
         ]);
     }
 
@@ -31,8 +32,9 @@ class HostController extends Controller
         /** @var HostRequest $hostRequest */
         $hostRequest = HostRequest::query()->find($hostRequestId);
 
-        if($hostRequest->claimer_id !== null)
+        if ($hostRequest->claimer_id !== null) {
             return response('', 403);
+        }
 
         Auth::user()->claim($hostRequest, $name);
 

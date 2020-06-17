@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\ModelTraits;
-
 
 use App\Bot;
 use App\Enums\BotStatusEnum;
@@ -26,7 +24,7 @@ trait WorksOnJobsTrait
                 ->where('status', JobStatusEnum::ASSIGNED)
                 ->where('bot_id', $this->id)
                 ->update([
-                    'status' => JobStatusEnum::IN_PROGRESS
+                    'status' => JobStatusEnum::IN_PROGRESS,
                 ]);
 
             $job->refresh();

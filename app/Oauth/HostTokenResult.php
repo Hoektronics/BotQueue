@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Oauth;
 
 use Illuminate\Contracts\Support\Arrayable;

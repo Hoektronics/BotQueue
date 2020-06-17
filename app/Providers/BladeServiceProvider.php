@@ -8,7 +8,6 @@ use Illuminate\Support\ServiceProvider;
 
 class BladeServiceProvider extends ServiceProvider
 {
-
     /**
      * Bootstrap the application services.
      *

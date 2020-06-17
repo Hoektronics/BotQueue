@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\Enums\HostRequestStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
@@ -25,13 +24,13 @@ class ConvertRequestToHostCommand
      */
     public function __invoke($data)
     {
-        $host_request = HostRequest::find($data->get("id"));
+        $host_request = HostRequest::find($data->get('id'));
 
-        if($host_request == null) {
+        if ($host_request == null) {
             return HostErrors::hostRequestNotFound();
         }
 
-        if($host_request->status !== HostRequestStatusEnum::CLAIMED) {
+        if ($host_request->status !== HostRequestStatusEnum::CLAIMED) {
             return HostErrors::hostRequestIsNotClaimed();
         }
 

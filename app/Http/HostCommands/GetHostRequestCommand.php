@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\HostRequest;
@@ -21,9 +20,9 @@ class GetHostRequestCommand
      */
     public function __invoke($data)
     {
-        $host_request = HostRequest::with("claimer")->find($data->get("id"));
+        $host_request = HostRequest::with('claimer')->find($data->get('id'));
 
-        if($host_request == null) {
+        if ($host_request == null) {
             return HostErrors::hostRequestNotFound();
         }
 

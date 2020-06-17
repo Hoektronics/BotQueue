@@ -3,11 +3,11 @@
 namespace App\Providers;
 
 use App;
+use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Contracts\Auth\Factory as Auth;
 
 class RouteServiceProvider extends ServiceProvider
 {

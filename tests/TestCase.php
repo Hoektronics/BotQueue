@@ -2,13 +2,12 @@
 
 namespace Tests;
 
+use Illuminate\Contracts\Bus\Dispatcher as BusDispatcherContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Tests\Helpers\UsesBuilders;
 use Tests\Helpers\WithFakesEvents;
-
-use Illuminate\Contracts\Bus\Dispatcher as BusDispatcherContract;
 
 abstract class TestCase extends BaseTestCase
 {

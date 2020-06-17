@@ -2,7 +2,6 @@
 
 namespace App\Action;
 
-
 use App\Bot;
 use App\Cluster;
 use App\Enums\BotStatusEnum;
@@ -41,7 +40,7 @@ class AssignJobToBot
     public function fromJob(Job $job)
     {
         if ($this->bot->status != BotStatusEnum::IDLE) {
-            throw new BotIsNotIdle("Cannot assign the job to a non-idle bot");
+            throw new BotIsNotIdle('Cannot assign the job to a non-idle bot');
         }
 
         if ($job->status != JobStatusEnum::QUEUED) {
@@ -50,11 +49,11 @@ class AssignJobToBot
 
         if ($job->worker instanceof Bot) {
             if ($job->worker_id != $this->bot->id) {
-                throw new BotIsNotValidWorker("Cannot assign the job if the bot is not a valid worker for this job");
+                throw new BotIsNotValidWorker('Cannot assign the job if the bot is not a valid worker for this job');
             }
-        } else if ($job->worker instanceof Cluster) {
+        } elseif ($job->worker instanceof Cluster) {
             if ($job->worker_id != $this->bot->cluster_id) {
-                throw new BotIsNotValidWorker("Cannot assign the job if the bot is not a valid worker for this job");
+                throw new BotIsNotValidWorker('Cannot assign the job if the bot is not a valid worker for this job');
             }
         }
 
@@ -65,17 +64,17 @@ class AssignJobToBot
                 ->whereNull('bot_id')
                 ->update([
                     'bot_id' => $this->bot->id,
-                    'status' => JobStatusEnum::ASSIGNED
+                    'status' => JobStatusEnum::ASSIGNED,
                 ]);
 
             $job->refresh();
 
             if ($job->status != JobStatusEnum::ASSIGNED) {
-                throw new JobAssignmentFailed("The job does not have a status of assigned");
+                throw new JobAssignmentFailed('The job does not have a status of assigned');
             }
 
             if ($job->bot_id != $this->bot->id) {
-                throw new JobAssignmentFailed("This job is assigned to a different bot");
+                throw new JobAssignmentFailed('This job is assigned to a different bot');
             }
 
             Bot::query()
@@ -84,17 +83,17 @@ class AssignJobToBot
                 ->whereNull('current_job_id')
                 ->update([
                     'current_job_id' => $job->id,
-                    'status' => BotStatusEnum::JOB_ASSIGNED
+                    'status' => BotStatusEnum::JOB_ASSIGNED,
                 ]);
 
             $this->bot->refresh();
 
             if ($this->bot->status != BotStatusEnum::JOB_ASSIGNED) {
-                throw new JobAssignmentFailed("This bot does not have a status of assigned");
+                throw new JobAssignmentFailed('This bot does not have a status of assigned');
             }
 
             if ($this->bot->current_job_id != $job->id) {
-                throw new JobAssignmentFailed("This bot is assigned a different job");
+                throw new JobAssignmentFailed('This bot is assigned a different job');
             }
         });
     }

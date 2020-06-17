@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\ErrorResponse;
@@ -32,17 +31,17 @@ class StartJobCommand
      */
     public function __invoke($data)
     {
-        $job = Job::find($data["id"]);
+        $job = Job::find($data['id']);
 
         $currentStatus = $job->status;
 
-        if($currentStatus != JobStatusEnum::ASSIGNED) {
+        if ($currentStatus != JobStatusEnum::ASSIGNED) {
             return HostErrors::jobIsNotAssigned();
         }
 
         $bot = $job->bot;
 
-        if($bot->host_id != $this->hostManager->getHost()->id) {
+        if ($bot->host_id != $this->hostManager->getHost()->id) {
             return HostErrors::jobIsNotAssignedToThisHost();
         }
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Helpers;
-
 
 use PHPUnit\Framework\Constraint\Constraint;
 use Tests\Helpers\EventFake;

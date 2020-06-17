@@ -6,7 +6,7 @@ use App\ModelTraits\HostAuthTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Host
+ * App\Host.
  *
  * @property int $id
  * @property \Carbon\Carbon|null $created_at

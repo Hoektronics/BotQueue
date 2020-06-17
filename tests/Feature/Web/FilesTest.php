@@ -36,7 +36,7 @@ class FilesTest extends TestCase
     {
         Storage::fake('public');
 
-        $fileName = $this->faker->userName . '.stl';
+        $fileName = $this->faker->userName.'.stl';
 
         $response = $this
             ->actingAs($this->mainUser)
@@ -62,7 +62,7 @@ class FilesTest extends TestCase
     {
         Storage::fake('public');
 
-        $fileName = $this->faker->userName . '.gcode';
+        $fileName = $this->faker->userName.'.gcode';
 
         $response = $this
             ->actingAs($this->mainUser)
@@ -88,7 +88,7 @@ class FilesTest extends TestCase
     {
         Storage::fake('public');
 
-        $fileName = $this->faker->userName . '.STL';
+        $fileName = $this->faker->userName.'.STL';
 
         $response = $this
             ->actingAs($this->mainUser)

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Oauth;
 
 use League\OAuth2\Server\Grant\AbstractGrant;
@@ -17,7 +16,7 @@ class HostGrant extends AbstractGrant
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
     ) {
-    
+
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));

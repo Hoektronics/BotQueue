@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers\Models;
 
-
 use App\Bot;
 use App\Cluster;
 use App\File;
@@ -30,7 +29,7 @@ class JobBuilder
 
     private function newWith($newAttributes)
     {
-        return new JobBuilder(
+        return new self(
             array_merge(
                 $this->attributes,
                 $newAttributes
@@ -74,7 +73,7 @@ class JobBuilder
     {
         $builder = $this->newWith(['bot_id' => $bot->id]);
 
-        if(! array_key_exists("worker_id", $this->attributes)) {
+        if (! array_key_exists('worker_id', $this->attributes)) {
             $builder = $builder->worker($bot);
         }
 

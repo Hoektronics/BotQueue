@@ -19,7 +19,7 @@
                                 <span class="input-error">{{ $errors->first('email') }}</span>
                             @endif
 
-                            <input id="email" type="email" name="email" value="{{ $email or old('email') }}"
+                            <input id="email" type="email" name="email" value="{{ $email ?? old('email') }}"
                                    class="input"
                                    required autofocus>
                         </div>

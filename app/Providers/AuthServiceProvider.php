@@ -24,13 +24,13 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->extend(AuthorizationServer::class, function ($server) {
-            /** @var $server AuthorizationServer */
+            /* @var $server AuthorizationServer */
             $server->enableGrantType(new HostGrant, new DateInterval('P1Y'));
 
             return $server;
         });
 
-        $this->app->singleton(App\HostManager::class, function() {
+        $this->app->singleton(App\HostManager::class, function () {
             return new App\HostManager();
         });
     }

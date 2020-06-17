@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Host;
 
-
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
 use Tests\Helpers\PassportHelper;
@@ -16,8 +15,8 @@ class HostApiTest extends TestCase
     public function invalidCommandReturnsCorrectError()
     {
         $this
-            ->postJson("/host", [
-                "command" => "DefinitelyNotAValidCommand",
+            ->postJson('/host', [
+                'command' => 'DefinitelyNotAValidCommand',
             ])
             ->assertStatus(Response::HTTP_BAD_REQUEST)
             ->assertExactJson(HostErrors::invalidCommand()->toArray());
@@ -36,8 +35,8 @@ class HostApiTest extends TestCase
 
         $this
             ->withTokenFromHost($host)
-            ->postJson("/host", [
-                "command" => "GetBots",
+            ->postJson('/host', [
+                'command' => 'GetBots',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(HostErrors::noHostFound()->toArray());

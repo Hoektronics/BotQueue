@@ -193,7 +193,8 @@ class JobsTest extends TestCase
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::QUALITY_CHECK)
             ->reduce(function ($lookup, $item) {
-                $lookup[$item] = array($item);
+                $lookup[$item] = [$item];
+
                 return $lookup;
             }, []);
     }
@@ -244,7 +245,7 @@ class JobsTest extends TestCase
             ->assertStatus(Response::HTTP_CONFLICT);
     }
 
-    /**
+    /*
      * TODO:
      * Test: Not Quality Check status
      * Add buttons for pass/fail in the view for the job index or something.

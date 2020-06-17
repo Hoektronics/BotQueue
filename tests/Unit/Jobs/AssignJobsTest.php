@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 class AssignJobsTest extends TestCase
 {
-    /** @var Collection $assignJobToBots */
+    /** @var Collection */
     private $assignJobToBots;
 
     public function setUp()
@@ -26,9 +26,9 @@ class AssignJobsTest extends TestCase
         parent::setUp();
         $this->assignJobToBots = collect();
 
-        $this->app->bind(AssignJobToBot::class, function($app, $args) {
-            if(array_key_exists("bot", $args)) {
-                $bot = $args["bot"];
+        $this->app->bind(AssignJobToBot::class, function ($app, $args) {
+            if (array_key_exists('bot', $args)) {
+                $bot = $args['bot'];
             } else {
                 $bot = $args[0];
             }
@@ -72,7 +72,7 @@ class AssignJobsTest extends TestCase
         return $this->getAssignJobToBot($bot)
             ->shouldReceive('fromJob')
             ->once()
-            ->withArgs(function($arg) use ($job) {
+            ->withArgs(function ($arg) use ($job) {
                 return $arg->id == $job->id;
             })
             ->andReturnUndefined();
@@ -88,7 +88,7 @@ class AssignJobsTest extends TestCase
         return $this->getAssignJobToBot($bot)
             ->shouldReceive('fromJob')
             ->never()
-            ->withArgs(function($arg) use ($job) {
+            ->withArgs(function ($arg) use ($job) {
                 return $arg->id == $job->id;
             })
             ->andReturnUndefined();
@@ -301,7 +301,8 @@ class AssignJobsTest extends TestCase
         return BotStatusEnum::allStates()
             ->diff(BotStatusEnum::IDLE)
             ->reduce(function ($lookup, $item) {
-                $lookup[$item] = array($item);
+                $lookup[$item] = [$item];
+
                 return $lookup;
             }, []);
     }
@@ -405,7 +406,8 @@ class AssignJobsTest extends TestCase
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::QUEUED)
             ->reduce(function ($lookup, $item) {
-                $lookup[$item] = array($item);
+                $lookup[$item] = [$item];
+
                 return $lookup;
             }, []);
     }

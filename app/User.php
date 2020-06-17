@@ -6,12 +6,12 @@ use App\Enums\HostRequestStatusEnum;
 use App\Events\UserCreated;
 use App\Exceptions\HostAlreadyClaimed;
 use App\ModelTraits\CreatesMyCluster;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
 /**
- * App\User
+ * App\User.
  *
  * @property int $id
  * @property string $username
@@ -103,10 +103,11 @@ class User extends Authenticatable
 
             $request->refresh();
 
-            if($request->claimer_id != $this->id)
-                throw new HostAlreadyClaimed("This host request has already been claimed by someone else");
-        } catch (\Exception|\Throwable $e) {
-            throw new HostAlreadyClaimed("Unexpected exception while trying to grab host request");
+            if ($request->claimer_id != $this->id) {
+                throw new HostAlreadyClaimed('This host request has already been claimed by someone else');
+            }
+        } catch (\Exception | \Throwable $e) {
+            throw new HostAlreadyClaimed('Unexpected exception while trying to grab host request');
         }
     }
 

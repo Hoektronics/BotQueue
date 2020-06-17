@@ -20,7 +20,7 @@ class ResolveHost
      */
     public function handle($request, Closure $next)
     {
-        if (!$request->hasHeader('authorization')) {
+        if (! $request->hasHeader('authorization')) {
             return $next($request);
         }
 

@@ -16,20 +16,20 @@ class CreateHostRequestCommandTest extends TestCase
     public function clientRequestHasStatusOfRequested()
     {
         $response = $this
-            ->postJson("/host", [
-                "command" => "CreateHostRequest",
-                "data" => [
-                    "local_ip" => $this->faker->localIpv4,
-                    "hostname" => $this->faker->domainWord,
+            ->postJson('/host', [
+                'command' => 'CreateHostRequest',
+                'data' => [
+                    'local_ip' => $this->faker->localIpv4,
+                    'hostname' => $this->faker->domainWord,
                 ],
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                "status",
-                "data" => [
-                    "id",
-                    "status",
-                    "expires_at",
+                'status',
+                'data' => [
+                    'id',
+                    'status',
+                    'expires_at',
                 ],
             ]);
 
@@ -43,10 +43,10 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $host_request->id,
-                    "status" => HostRequestStatusEnum::REQUESTED,
+                'status' => 'success',
+                'data' => [
+                    'id' => $host_request->id,
+                    'status' => HostRequestStatusEnum::REQUESTED,
                 ],
             ]);
     }
@@ -55,13 +55,13 @@ class CreateHostRequestCommandTest extends TestCase
     public function noInformationIsNeededForRequest()
     {
         $response = $this
-            ->postJson("/host", [
-                "command" => "CreateHostRequest",
-                "data" => [],
+            ->postJson('/host', [
+                'command' => 'CreateHostRequest',
+                'data' => [],
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                "status",
+                'status',
                 'data' => [
                     'id',
                     'status',
@@ -69,7 +69,7 @@ class CreateHostRequestCommandTest extends TestCase
                 ],
             ]);
 
-        $host_request_id = $response->json("data.id");
+        $host_request_id = $response->json('data.id');
 
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);
@@ -79,10 +79,10 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $host_request->id,
-                    "status" => HostRequestStatusEnum::REQUESTED,
+                'status' => 'success',
+                'data' => [
+                    'id' => $host_request->id,
+                    'status' => HostRequestStatusEnum::REQUESTED,
                 ],
             ]);
     }
@@ -91,20 +91,20 @@ class CreateHostRequestCommandTest extends TestCase
     public function missingDataFieldIsFineForRequest()
     {
         $response = $this
-            ->postJson("/host", [
-                "command" => "CreateHostRequest",
+            ->postJson('/host', [
+                'command' => 'CreateHostRequest',
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                "status",
-                "data" => [
-                    "id",
-                    "status",
-                    "expires_at",
+                'status',
+                'data' => [
+                    'id',
+                    'status',
+                    'expires_at',
                 ],
             ]);
 
-        $host_request_id = $response->json("data.id");
+        $host_request_id = $response->json('data.id');
 
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);
@@ -114,10 +114,10 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $host_request->id,
-                    "status" => HostRequestStatusEnum::REQUESTED,
+                'status' => 'success',
+                'data' => [
+                    'id' => $host_request->id,
+                    'status' => HostRequestStatusEnum::REQUESTED,
                 ],
             ]);
     }
@@ -129,23 +129,23 @@ class CreateHostRequestCommandTest extends TestCase
 
         $response = $this
             ->withRemoteIp($ipv4)
-            ->postJson("/host", [
-                "command" => "CreateHostRequest",
+            ->postJson('/host', [
+                'command' => 'CreateHostRequest',
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                "status",
-                "data" => [
-                    "id"
+                'status',
+                'data' => [
+                    'id',
                 ],
             ]);
 
-        $host_request_id = $response->json("data.id");
+        $host_request_id = $response->json('data.id');
 
         $response->assertJson([
-            "status" => "success",
-            "data" => [
-                "id" => $host_request_id,
+            'status' => 'success',
+            'data' => [
+                'id' => $host_request_id,
             ],
         ]);
 

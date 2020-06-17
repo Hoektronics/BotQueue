@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App;
-
 
 class HostManager
 {

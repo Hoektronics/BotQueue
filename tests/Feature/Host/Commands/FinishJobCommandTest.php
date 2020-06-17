@@ -18,8 +18,8 @@ class FinishJobCommandTest extends TestCase
     public function unauthenticatedHostCannotPerformThisAction()
     {
         $this
-            ->postJson("/host", [
-                "command" => "FinishJob"
+            ->postJson('/host', [
+                'command' => 'FinishJob',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
@@ -47,20 +47,20 @@ class FinishJobCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FinishJob",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'FinishJob',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $job->id,
-                    "name" => $job->name,
-                    "status" => JobStatusEnum::QUALITY_CHECK,
-                    "url" => $file->url(),
+                'status' => 'success',
+                'data' => [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'status' => JobStatusEnum::QUALITY_CHECK,
+                    'url' => $file->url(),
                 ],
             ]);
 
@@ -72,7 +72,7 @@ class FinishJobCommandTest extends TestCase
 
         $this->assertDispatched(JobFinished::class)
             ->inspect(function ($event) use ($job) {
-                /** @var JobFinished $event */
+                /* @var JobFinished $event */
                 $this->assertEquals($job->id, $event->job->id);
             });
     }
@@ -82,7 +82,8 @@ class FinishJobCommandTest extends TestCase
         return JobStatusEnum::allStates()
             ->diff(JobStatusEnum::IN_PROGRESS)
             ->reduce(function ($lookup, $item) {
-                $lookup[$item] = array($item);
+                $lookup[$item] = [$item];
+
                 return $lookup;
             }, []);
     }
@@ -108,10 +109,10 @@ class FinishJobCommandTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FinishJob",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'FinishJob',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_CONFLICT)
@@ -138,10 +139,10 @@ class FinishJobCommandTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FinishJob",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'FinishJob',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_FORBIDDEN)

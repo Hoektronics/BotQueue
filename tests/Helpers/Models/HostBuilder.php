@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers\Models;
 
-
 use App\Host;
 
 class HostBuilder
@@ -26,7 +25,7 @@ class HostBuilder
 
     private function newWith($newAttributes)
     {
-        return new HostBuilder(
+        return new self(
             array_merge(
                 $this->attributes,
                 $newAttributes

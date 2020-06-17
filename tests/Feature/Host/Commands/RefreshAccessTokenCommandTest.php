@@ -6,8 +6,8 @@ use App\Errors\HostErrors;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Parser as JwtParser;
-use Tests\TestCase;
 use Tests\Helpers\PassportHelper;
+use Tests\TestCase;
 
 class RefreshAccessTokenCommandTest extends TestCase
 {
@@ -17,8 +17,8 @@ class RefreshAccessTokenCommandTest extends TestCase
     public function unauthenticatedHostCannotPerformThisAction()
     {
         $this
-            ->postJson("/host", [
-                "command" => "RefreshAccessToken"
+            ->postJson('/host', [
+                'command' => 'RefreshAccessToken',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
@@ -37,33 +37,33 @@ class RefreshAccessTokenCommandTest extends TestCase
 
         $refresh_response = $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "RefreshAccessToken"
+            ->postJson('/host', [
+                'command' => 'RefreshAccessToken',
             ]);
 
         $refresh_response
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "host" => [
-                        "id" => $this->mainHost->id,
-                        "name" => $this->mainHost->name,
-                        "owner" => [
-                            "id" => $this->mainUser->id,
-                            "username" => $this->mainUser->username,
+                'status' => 'success',
+                'data' => [
+                    'host' => [
+                        'id' => $this->mainHost->id,
+                        'name' => $this->mainHost->name,
+                        'owner' => [
+                            'id' => $this->mainUser->id,
+                            'username' => $this->mainUser->username,
                         ],
                     ],
                 ],
             ])
             ->assertJsonStructure([
-                "data" => [
-                    "access_token",
+                'data' => [
+                    'access_token',
                 ],
             ]);
 
-        $new_token = $refresh_response->json("data.access_token");
-        $later_expire_time = $jwt->parse($new_token)->getClaim("exp");
+        $new_token = $refresh_response->json('data.access_token');
+        $later_expire_time = $jwt->parse($new_token)->getClaim('exp');
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
 
         $this->mainHost->token->refresh();
@@ -78,8 +78,8 @@ class RefreshAccessTokenCommandTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "RefreshAccessToken"
+            ->postJson('/host', [
+                'command' => 'RefreshAccessToken',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }

@@ -1,18 +1,16 @@
 <?php
 
-
 namespace App\Oauth;
 
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\TokenRepository;
+use Lcobucci\JWT\Parser as JWTParser;
 use League\OAuth2\Server\AuthorizationServer;
-use \Lcobucci\JWT\Parser as JWTParser;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
 class HostTokenFactory
 {
-
     /**
      * The authorization server instance.
      *
@@ -56,7 +54,6 @@ class HostTokenFactory
         TokenRepository $tokens,
         JwtParser $jwt
     ) {
-    
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;

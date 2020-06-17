@@ -3,8 +3,8 @@
 namespace Tests\Feature\Web;
 
 use App\Enums\HostRequestStatusEnum;
-use App\User;
 use App\HostRequest;
+use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -21,7 +21,7 @@ class HostRequestTest extends TestCase
         $this
             ->withExceptionHandling()
             ->get("/hosts/requests/{$host_request->id}")
-            ->assertRedirect("/login");
+            ->assertRedirect('/login');
     }
 
     /** @test */
@@ -29,7 +29,7 @@ class HostRequestTest extends TestCase
     {
         $host_request = $this->hostRequest()
             ->create();
-        
+
         $this->assertEquals(null, $host_request->local_ip);
         $this->assertEquals(null, $host_request->hostname);
 
@@ -52,7 +52,7 @@ class HostRequestTest extends TestCase
                 'host_request_id' => $host_request->id,
                 'name' => $newHostName,
             ])
-            ->assertRedirect("/login");
+            ->assertRedirect('/login');
     }
 
     /** @test */
@@ -67,7 +67,7 @@ class HostRequestTest extends TestCase
                 'host_request_id' => $host_request->id,
                 'name' => $newHostName,
             ])
-            ->assertRedirect("/dashboard");
+            ->assertRedirect('/dashboard');
 
         $host_request->refresh();
 
