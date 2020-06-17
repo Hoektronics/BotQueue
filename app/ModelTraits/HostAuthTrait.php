@@ -65,7 +65,7 @@ trait HostAuthTrait
 
         $now = new DateTimeImmutable();
         $now = $now->setTimestamp(Carbon::now()->getTimestamp()); // Hack to make Carbon::setTestNow work
-        $expiration = $now->add(new \DateInterval("P1Y"));
+        $expiration = $now->add(new \DateInterval('P1Y'));
 
         $host_scope = new Scope('host');
         $accessToken = new AccessToken($this->owner_id, [$host_scope], $client);
