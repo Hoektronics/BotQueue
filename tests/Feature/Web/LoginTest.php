@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Web;
 
+use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -48,6 +49,6 @@ class LoginTest extends TestCase
                 'username' => $this->user->username,
                 'password' => $this->password,
             ])
-            ->assertRedirect('/');
+            ->assertRedirect(RouteServiceProvider::HOME);
     }
 }

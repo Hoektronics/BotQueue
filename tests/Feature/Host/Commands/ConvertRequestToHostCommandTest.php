@@ -184,7 +184,7 @@ class ConvertRequestToHostCommandTest extends TestCase
         $this->assertEquals($host->token_id, $jwt->getClaim('jti'));
         $this->assertEquals($this->mainUser->id, $jwt->getClaim('sub'));
         $this->assertEquals($host->token->client_id, $jwt->getClaim('aud'));
-        $this->assertArraySubset(['host'], $jwt->getClaim('scopes'));
+        $this->assertTrue(in_array('host', $jwt->getClaim('scopes')));
     }
 
     /** @test

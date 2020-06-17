@@ -13,7 +13,6 @@ class SubsetConstraint extends Constraint
 
     public function __construct($expected)
     {
-        parent::__construct();
         $this->expected = $expected;
     }
 
@@ -31,6 +30,6 @@ class SubsetConstraint extends Constraint
      */
     public function toString(): string
     {
-        return 'has a subset of '.$this->exporter->export($this->expected);
+        return 'has a subset of '.$this->exporter()->export($this->expected);
     }
 }
