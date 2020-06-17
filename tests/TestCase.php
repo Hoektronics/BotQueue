@@ -16,7 +16,7 @@ abstract class TestCase extends BaseTestCase
     use WithFakesEvents;
     use UsesBuilders;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
