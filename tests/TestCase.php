@@ -44,7 +44,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param Model $model
      */
-    public function assertDeleted($model)
+    public function assertModelDeleted($model)
     {
         $this->assertDatabaseMissing($model->getTable(), [
             $model->getKeyName() => $model->getKey(),

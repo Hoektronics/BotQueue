@@ -430,6 +430,6 @@ class BotsTest extends TestCase
             ->delete("/bots/{$bot->id}")
             ->assertRedirect('/bots');
 
-        $this->assertDeleted($bot);
+        $this->assertModelDeleted($bot);
     }
 }

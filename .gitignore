@@ -26,3 +26,4 @@ yarn-error.log
 _ide_helper.php
 *.rdb
 package-lock.json
+.phpunit.result.cache
