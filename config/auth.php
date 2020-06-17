@@ -42,7 +42,7 @@ return [
         ],
 
         'api' => [
-            'driver' => 'passport',
+            'driver' => 'passport', // We use passport as the driver to handle api auth
             'provider' => 'users',
             'hash' => false,
         ],

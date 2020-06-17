@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Class HostResource.
@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\Resource;
  * @property string name
  * @property User owner
  */
-class HostResource extends Resource
+class HostResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

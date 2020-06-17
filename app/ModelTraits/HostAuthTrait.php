@@ -6,6 +6,7 @@ use App\Exceptions\OauthHostClientNotSetup;
 use App\Host;
 use App\Oauth\OauthHostClient;
 use Carbon\Carbon;
+use DateTimeImmutable;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\ClientRepository;
 use Laravel\Passport\Bridge\Scope;
@@ -62,14 +63,17 @@ trait HostAuthTrait
     {
         $client = static::client();
 
-        $expiration = Carbon::now()->addYear();
+        $now = new DateTimeImmutable();
+        $now = $now->setTimestamp(Carbon::now()->getTimestamp()); // Hack to make Carbon::setTestNow work
+        $expiration = $now->add(new \DateInterval("P1Y"));
 
         $host_scope = new Scope('host');
-        $accessToken = new AccessToken($this->owner_id, [$host_scope]);
+        $accessToken = new AccessToken($this->owner_id, [$host_scope], $client);
         $accessToken->setClient($client);
         $accessToken->setIdentifier($this->token_id);
         $accessToken->setUserIdentifier($this->owner_id);
         $accessToken->setExpiryDateTime($expiration);
+        $accessToken->setPrivateKey(passport_private_key());
 
         /** @var Token $token */
         $token = $this->token;
@@ -88,7 +92,7 @@ trait HostAuthTrait
      */
     public function getJWT()
     {
-        return (string) $this->getAccessToken()->convertToJWT(passport_private_key());
+        return (string) $this->getAccessToken();
     }
 
     /**

@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Job;
 use App\User;
-use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Class BotResource.
@@ -17,7 +17,7 @@ use Illuminate\Http\Resources\Json\Resource;
  * @property Job $currentJob
  * @property array $driver
  */
-class BotResource extends Resource
+class BotResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
