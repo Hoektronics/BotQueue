@@ -31,7 +31,7 @@ let purgeAppCss = PurgeCss({
     ...purgeCssConfig,
     content: [
         './resources/views/**/*.blade.php',
-        './resources/assets/js/**/*.vue',
+        './resources/js/**/*.vue',
         './app/Services/**/*.php'
     ],
     css: ['public/css/app.css'],
@@ -46,13 +46,13 @@ let purgeEmailCss = PurgeCss({
 });
 
 mix
-    .js('resources/assets/js/app.js', 'public/js')
-    .postCss('resources/assets/css/app.css', 'public/css/app.css', [
+    .js('resources/js/app.js', 'public/js')
+    .postCss('resources/css/app.css', 'public/css/app.css', [
         tailwindcss,
         ...mix.inProduction() ? [purgeAppCss] : [],
         postcss_import,
     ])
-    .postCss('resources/assets/css/email.css', 'public/css/email.css', [
+    .postCss('resources/css/email.css', 'public/css/email.css', [
         tailwindcss,
         purgeEmailCss,
         postcss_import,
