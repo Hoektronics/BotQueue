@@ -13,7 +13,6 @@ use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use function Sodium\add;
 
 trait HostAuthTrait
 {
