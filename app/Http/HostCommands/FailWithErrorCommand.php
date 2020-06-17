@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Errors\ErrorResponse;
@@ -30,25 +29,25 @@ class FailWithErrorCommand
      */
     public function __invoke($data)
     {
-        if(!$data->has("id")) {
-            return HostErrors::missingParameter("id");
+        if (! $data->has('id')) {
+            return HostErrors::missingParameter('id');
         }
-        if(!$data->has("error")) {
-            return HostErrors::missingParameter("error");
+        if (! $data->has('error')) {
+            return HostErrors::missingParameter('error');
         }
 
         /** @var Bot $bot */
-        $bot = Bot::find($data["id"]);
+        $bot = Bot::find($data['id']);
 
-        if($bot->host === null) {
+        if ($bot->host === null) {
             return HostErrors::botHasNoHost();
         }
 
-        if($bot->host->id != $this->hostManager->getHost()->id) {
+        if ($bot->host->id != $this->hostManager->getHost()->id) {
             return HostErrors::botIsNotAssignedToThisHost();
         }
 
-        $bot->error_text = $data["error"];
+        $bot->error_text = $data['error'];
         $bot->status = BotStatusEnum::ERROR;
 
         $bot->save();

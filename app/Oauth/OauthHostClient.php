@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\Client;
 
 /**
- * App\Oauth\OauthHostClient
+ * App\Oauth\OauthHostClient.
  *
  * @property int $id
  * @property int $client_id

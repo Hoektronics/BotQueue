@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Host;
 
-
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use ReflectionClass;
@@ -12,7 +11,7 @@ use Tests\TestCase;
 class HostErrorDuplicationTest extends TestCase
 {
     protected $testParameters = [
-        "missingParameter" => ["test"],
+        'missingParameter' => ['test'],
     ];
 
     /** @test */
@@ -30,7 +29,7 @@ class HostErrorDuplicationTest extends TestCase
                     return $method->invoke(null);
                 }
 
-                if (!array_key_exists($method->name, $this->testParameters)) {
+                if (! array_key_exists($method->name, $this->testParameters)) {
                     $name = $method->name;
                     self::fail("$name has parameters but test parameters have not been defined for this test.");
                 }
@@ -41,7 +40,7 @@ class HostErrorDuplicationTest extends TestCase
                 return $result instanceof ErrorResponse;
             })
             ->map(function ($result) {
-                /** @var ErrorResponse $result */
+                /* @var ErrorResponse $result */
                 return $result->getCode();
             });
 
@@ -49,7 +48,7 @@ class HostErrorDuplicationTest extends TestCase
         $this->assertEquals(
             $errorResponses->count(),
             $errorResponses->unique()->count(),
-            "There is a duplicate error response code"
+            'There is a duplicate error response code'
         );
     }
 }

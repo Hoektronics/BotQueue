@@ -22,14 +22,14 @@ class BotController extends Controller
     }
 
     /**
-     * Show the list of available bots
+     * Show the list of available bots.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
         return view('bot.index', [
-            'bots' => Auth::user()->bots()->with('cluster', 'currentJob')->get()
+            'bots' => Auth::user()->bots()->with('cluster', 'currentJob')->get(),
         ]);
     }
 
@@ -43,7 +43,7 @@ class BotController extends Controller
         $clusters = Auth::user()->clusters;
 
         return view('bot.create', [
-            'clusters' => $clusters
+            'clusters' => $clusters,
         ]);
     }
 
@@ -85,7 +85,7 @@ class BotController extends Controller
         $bot->load(['cluster', 'creator']);
 
         return view('bot.show', [
-            'bot' => $bot
+            'bot' => $bot,
         ]);
     }
 
@@ -101,7 +101,7 @@ class BotController extends Controller
         $this->authorize('update', $bot);
 
         return view('bot.edit', [
-            'bot' => $bot
+            'bot' => $bot,
         ]);
     }
 
@@ -123,7 +123,7 @@ class BotController extends Controller
             $driverName = $request->get('driver');
             $driverObject = [
                 'type' => $driverName,
-                'config' => []
+                'config' => [],
             ];
 
             switch ($driverName) {

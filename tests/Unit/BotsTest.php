@@ -21,8 +21,8 @@ class BotsTest extends TestCase
         $bot = $this->bot()->create();
 
         $this->assertDispatched(BotCreated::class)
-            ->inspect(function($event) use ($bot) {
-                /** @var BotCreated $event */
+            ->inspect(function ($event) use ($bot) {
+                /* @var BotCreated $event */
                 $this->assertEquals($bot->id, $event->bot->id);
             })
             ->channels([
@@ -49,14 +49,14 @@ class BotsTest extends TestCase
 
         $this->assertDispatched(BotAssignedToHost::class)
             ->inspect(function ($event) use ($bot) {
-                /** @var $event BotAssignedToHost */
+                /* @var $event BotAssignedToHost */
                 $this->assertEquals($bot->id, $event->bot->id);
                 $this->assertEquals($this->mainHost->id, $event->host->id);
             })
             ->channels([
-                'private-user.' . $this->mainUser->id,
-                'private-bot.' . $bot->id,
-                'private-host.' . $this->mainHost->id,
+                'private-user.'.$this->mainUser->id,
+                'private-bot.'.$bot->id,
+                'private-host.'.$this->mainHost->id,
             ]);
     }
 
@@ -78,19 +78,19 @@ class BotsTest extends TestCase
 
         $this->assertDispatched(BotAssignedToHost::class)
             ->inspect(function ($event) use ($bot) {
-                /** @var $event BotAssignedToHost */
+                /* @var $event BotAssignedToHost */
                 $this->assertEquals($bot->id, $event->bot->id);
                 $this->assertEquals($this->mainHost->id, $event->host->id);
             })
             ->channels([
-                'private-user.' . $this->mainUser->id,
-                'private-bot.' . $bot->id,
-                'private-host.' . $this->mainHost->id,
+                'private-user.'.$this->mainUser->id,
+                'private-bot.'.$bot->id,
+                'private-host.'.$this->mainHost->id,
             ]);
 
         $this->assertDispatched(BotRemovedFromHost::class)
             ->inspect(function ($event) use ($bot, $otherHost) {
-                /** @var $event BotRemovedFromHost */
+                /* @var $event BotRemovedFromHost */
                 $this->assertEquals($bot->id, $event->bot->id);
                 $this->assertEquals($otherHost->id, $event->host->id);
             })

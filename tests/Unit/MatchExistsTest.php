@@ -19,17 +19,17 @@ class MatchExistsTest extends TestCase
             ->state(BotStatusEnum::IDLE)
             ->create();
 
-        $fieldValue = 'foo_' . $bot->id;
+        $fieldValue = 'foo_'.$bot->id;
         $fields = [
-            'field' => $fieldValue
+            'field' => $fieldValue,
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::class
+            'foo_{id}' => App\Bot::class,
         ]);
 
         $validator = Validator::make($fields, [
-            'field' => $matchExists
+            'field' => $matchExists,
         ]);
 
         $this->assertTrue($validator->passes());
@@ -46,17 +46,17 @@ class MatchExistsTest extends TestCase
             ->state(BotStatusEnum::IDLE)
             ->create();
 
-        $fieldValue = 'foo_' . ($bot->id + 1);
+        $fieldValue = 'foo_'.($bot->id + 1);
         $fields = [
-            'field' => $fieldValue
+            'field' => $fieldValue,
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::class
+            'foo_{id}' => App\Bot::class,
         ]);
 
         $validator = Validator::make($fields, [
-            'field' => $matchExists
+            'field' => $matchExists,
         ]);
 
         $this->assertFalse($validator->passes());
@@ -70,9 +70,9 @@ class MatchExistsTest extends TestCase
             ->state(BotStatusEnum::IDLE)
             ->create();
 
-        $fieldValue = 'bar_' . $bot->id;
+        $fieldValue = 'bar_'.$bot->id;
         $fields = [
-            'field' => $fieldValue
+            'field' => $fieldValue,
         ];
 
         $matchExists = new MatchExists([
@@ -81,7 +81,7 @@ class MatchExistsTest extends TestCase
         ]);
 
         $validator = Validator::make($fields, [
-            'field' => $matchExists
+            'field' => $matchExists,
         ]);
 
         $this->assertTrue($validator->passes());
@@ -96,9 +96,9 @@ class MatchExistsTest extends TestCase
     {
         $cluster = $this->cluster()->create();
 
-        $fieldValue = 'bar_' . $cluster->id;
+        $fieldValue = 'bar_'.$cluster->id;
         $fields = [
-            'field' => $fieldValue
+            'field' => $fieldValue,
         ];
 
         $matchExists = new MatchExists([
@@ -107,7 +107,7 @@ class MatchExistsTest extends TestCase
         ]);
 
         $validator = Validator::make($fields, [
-            'field' => $matchExists
+            'field' => $matchExists,
         ]);
 
         $this->assertTrue($validator->passes());
@@ -126,10 +126,10 @@ class MatchExistsTest extends TestCase
 
         $this->actingAs($this->mainUser);
 
-        $fieldValue = 'foo_' . $bot->id;
+        $fieldValue = 'foo_'.$bot->id;
 
         $fields = [
-            'field' => $fieldValue
+            'field' => $fieldValue,
         ];
 
         $matchExists = new MatchExists([
@@ -137,7 +137,7 @@ class MatchExistsTest extends TestCase
         ]);
 
         $validator = Validator::make($fields, [
-            'field' => $matchExists
+            'field' => $matchExists,
         ]);
 
         $this->assertTrue($validator->passes());

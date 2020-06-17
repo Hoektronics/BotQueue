@@ -15,7 +15,7 @@ class BotsTest extends TestCase
     public function botsIndex()
     {
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $bot = $this->bot()
@@ -38,9 +38,9 @@ class BotsTest extends TestCase
                             'id' => $this->mainUser->id,
                             'username' => $this->mainUser->username,
                             'link' => url('/api/users', $this->mainUser->id),
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ]);
     }
 
@@ -48,7 +48,7 @@ class BotsTest extends TestCase
     public function botsThatAreNotMineAreNotVisibleInIndex()
     {
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $bot = $this->bot()
@@ -76,9 +76,9 @@ class BotsTest extends TestCase
                             'id' => $this->mainUser->id,
                             'username' => $this->mainUser->username,
                             'link' => url('/api/users', $this->mainUser->id),
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ])
             ->assertDontSee($other_bot->name);
     }
@@ -87,7 +87,7 @@ class BotsTest extends TestCase
     public function canSeeMyOwnBot()
     {
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $bot = $this->bot()
@@ -109,8 +109,8 @@ class BotsTest extends TestCase
                         'id' => $this->mainUser->id,
                         'username' => $this->mainUser->username,
                         'link' => url('/api/users', $this->mainUser->id),
-                    ]
-                ]
+                    ],
+                ],
             ]);
     }
 
@@ -118,7 +118,7 @@ class BotsTest extends TestCase
     public function canSeeMyOwnBotGivenExplicitScope()
     {
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $bot = $this->bot()
@@ -140,8 +140,8 @@ class BotsTest extends TestCase
                         'id' => $this->mainUser->id,
                         'username' => $this->mainUser->username,
                         'link' => url('/api/users', $this->mainUser->id),
-                    ]
-                ]
+                    ],
+                ],
             ]);
     }
 

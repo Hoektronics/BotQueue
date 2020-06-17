@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\HostManager;
@@ -30,20 +29,20 @@ class UpdateJobProgressCommand
      */
     public function __invoke($data)
     {
-        if(!$data->has("id")) {
-            return HostErrors::missingParameter("id");
+        if (! $data->has('id')) {
+            return HostErrors::missingParameter('id');
         }
-        if(!$data->has("progress")) {
-            return HostErrors::missingParameter("progress");
+        if (! $data->has('progress')) {
+            return HostErrors::missingParameter('progress');
         }
 
-        $job = Job::find($data["id"]);
+        $job = Job::find($data['id']);
 
-        if ($data["progress"] < $job->progress) {
+        if ($data['progress'] < $job->progress) {
             return HostErrors::jobPercentageCanOnlyIncrease();
         }
 
-        $job->progress = $data["progress"];
+        $job->progress = $data['progress'];
         $job->save();
 
         return new JobResource($job);

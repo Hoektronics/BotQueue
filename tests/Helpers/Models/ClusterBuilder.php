@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers\Models;
 
-
 use App\Cluster;
 
 class ClusterBuilder
@@ -26,7 +25,7 @@ class ClusterBuilder
 
     private function newWith($newAttributes)
     {
-        return new ClusterBuilder(
+        return new self(
             array_merge(
                 $this->attributes,
                 $newAttributes

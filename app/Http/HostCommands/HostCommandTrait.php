@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\Host;
@@ -19,13 +18,13 @@ trait HostCommandTrait
      */
     public function verifyAuth(Auth $auth)
     {
-        if(isset($this->ignoreHostAuth) && $this->ignoreHostAuth) {
+        if (isset($this->ignoreHostAuth) && $this->ignoreHostAuth) {
             return;
         }
 
-        $guard = "api";
+        $guard = 'api';
 
-        if($auth->guard($guard)->check()) {
+        if ($auth->guard($guard)->check()) {
             $auth->shouldUse($guard);
 
             return $this->setUpHost();
@@ -34,15 +33,16 @@ trait HostCommandTrait
         }
     }
 
-    private function setUpHost() {
+    private function setUpHost()
+    {
         $jsonWebToken = request()->bearerToken();
 
         $parsedToken = (new Parser())->parse($jsonWebToken);
-        $jsonWebTokenId = $parsedToken->getClaim("jti");
+        $jsonWebTokenId = $parsedToken->getClaim('jti');
 
         $host = Host::whereTokenId($jsonWebTokenId)->first();
 
-        if($host === null) {
+        if ($host === null) {
             return HostErrors::noHostFound();
         }
 

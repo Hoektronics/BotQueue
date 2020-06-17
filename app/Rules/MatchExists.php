@@ -34,12 +34,13 @@ class MatchExists implements Rule
     {
         /** @var MatchFieldSet $field */
         $field = $this->fields->first(function ($field) use ($value) {
-            /** @var MatchFieldSet $field */
+            /* @var MatchFieldSet $field */
             return $field->matches($value);
         });
 
-        if($field !== null)
+        if ($field !== null) {
             return $field->exists($value);
+        }
 
         return false;
     }
@@ -51,7 +52,7 @@ class MatchExists implements Rule
      */
     public function message()
     {
-        return "The selected :attribute is invalid.";
+        return 'The selected :attribute is invalid.';
     }
 
     public function getModel($value)
@@ -80,7 +81,7 @@ class MatchFieldSet
 
         $variables = isset($matches[1]) ? collect($matches[1]) : collect();
 
-        $this->regex_pattern = '/' . preg_replace('/\{(\w+)\}/', '(.*)', $key) . '/';
+        $this->regex_pattern = '/'.preg_replace('/\{(\w+)\}/', '(.*)', $key).'/';
 
         $this->attributes = $variables;
 
@@ -91,14 +92,14 @@ class MatchFieldSet
     {
         $matches = $this->getMatches($value);
 
-        return !is_null($matches);
+        return ! is_null($matches);
     }
 
     public function exists($value)
     {
         $model = $this->getModel($value);
 
-        return !is_null($model);
+        return ! is_null($model);
     }
 
     public function getModel($value)
@@ -125,6 +126,7 @@ class MatchFieldSet
         if (is_subclass_of($this->type, Model::class)) {
             /** @var Model $object */
             $object = app($this->type);
+
             return $object->newQuery();
         }
         if (is_a($this->type, \Illuminate\Database\Eloquent\Builder::class)) {
@@ -147,7 +149,7 @@ class MatchFieldSet
             return null;
         }
 
-        if (!isset($matches[1])) {
+        if (! isset($matches[1])) {
             return null;
         }
 

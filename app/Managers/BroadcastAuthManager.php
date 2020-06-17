@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Managers;
-
 
 use App\Host;
 use App\HostManager;
@@ -41,9 +39,9 @@ class BroadcastAuthManager
     {
         $channel = $request->json('channel_name');
 
-        if ($channel === null)
-            throw new BadRequestHttpException("channel_name must be specified");
-
+        if ($channel === null) {
+            throw new BadRequestHttpException('channel_name must be specified');
+        }
         $authModel = $this->hostManager->getHost();
         if ($authModel === null) {
             $authModel = $request->user();
@@ -52,7 +50,7 @@ class BroadcastAuthManager
         foreach ($this->channels as $pattern => $channelClass) {
             $simplifiedPattern = preg_replace('/\{(.*?)\}/', '*', $pattern);
 
-            if (!Str::is($simplifiedPattern, $channel)) {
+            if (! Str::is($simplifiedPattern, $channel)) {
                 continue;
             }
 
@@ -100,7 +98,7 @@ class BroadcastAuthManager
      */
     protected function extractChannelKeys($pattern, $channel)
     {
-        preg_match('/^' . preg_replace('/\{(.*?)\}/', '(?<$1>[^\.]+)', $pattern) . '/', $channel, $keys);
+        preg_match('/^'.preg_replace('/\{(.*?)\}/', '(?<$1>[^\.]+)', $pattern).'/', $channel, $keys);
 
         return $keys;
     }
@@ -132,7 +130,7 @@ class BroadcastAuthManager
     protected function formatChannels(array $channels)
     {
         return array_map(function ($channel) {
-            return (string)$channel;
+            return (string) $channel;
         }, $channels);
     }
 
@@ -143,7 +141,7 @@ class BroadcastAuthManager
      */
     protected function binder()
     {
-        if (!$this->bindingRegistrar) {
+        if (! $this->bindingRegistrar) {
             $this->bindingRegistrar = Container::getInstance()->bound(BindingRegistrar::class)
                 ? Container::getInstance()->make(BindingRegistrar::class) : null;
         }
@@ -175,7 +173,7 @@ class BroadcastAuthManager
     private function getParametersFromMethod($channelClass, $method)
     {
         $reflection = new ReflectionClass($channelClass);
-        if (!$reflection->hasMethod($method)) {
+        if (! $reflection->hasMethod($method)) {
             throw new AccessDeniedHttpException;
         }
 
@@ -199,7 +197,7 @@ class BroadcastAuthManager
             return $this->getCallbackFromMethod($channelClass, $authModel, $parameters, 'host');
         }
 
-        throw new AccessDeniedHttpException("Unknown authentication model");
+        throw new AccessDeniedHttpException('Unknown authentication model');
     }
 
     /**
@@ -232,7 +230,7 @@ class BroadcastAuthManager
     private function matchParameters($requiredParameters, $parameters)
     {
         return $requiredParameters->map(function ($reflectionParameter) use ($parameters) {
-            /** @var \ReflectionParameter $reflectionParameter */
+            /* @var \ReflectionParameter $reflectionParameter */
             return $parameters->first(function ($filledParameter) use ($reflectionParameter) {
                 return $reflectionParameter->getClass()->isInstance($filledParameter);
             });

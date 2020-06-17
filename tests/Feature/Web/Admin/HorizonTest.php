@@ -7,7 +7,6 @@ use Tests\TestCase;
 
 class HorizonTest extends TestCase
 {
-
     /** @test */
     public function anUnauthenticatedUserCanNotSeeHorizon()
     {

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Host\Commands;
 
-
 use App\Enums\BotStatusEnum;
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
@@ -17,8 +16,8 @@ class FailWithErrorCommandTest extends TestCase
     public function unauthenticatedHostCannotPerformThisAction()
     {
         $this
-            ->postJson("/host", [
-                "command" => "FailWithError"
+            ->postJson('/host', [
+                'command' => 'FailWithError',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
@@ -32,16 +31,16 @@ class FailWithErrorCommandTest extends TestCase
             ->host($this->mainHost)
             ->create();
 
-        $error = "ERROR TEXT";
+        $error = 'ERROR TEXT';
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FailWithError",
-                "data" => [
-                    "id" => $bot->id,
-                    "error" => $error,
-                ]
+            ->postJson('/host', [
+                'command' => 'FailWithError',
+                'data' => [
+                    'id' => $bot->id,
+                    'error' => $error,
+                ],
             ])
             ->assertStatus(Response::HTTP_OK);
 
@@ -60,12 +59,12 @@ class FailWithErrorCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FailWithError",
-                "data" => [
-                    "id" => $bot->id,
-                    "error" => "ERROR TEXT",
-                ]
+            ->postJson('/host', [
+                'command' => 'FailWithError',
+                'data' => [
+                    'id' => $bot->id,
+                    'error' => 'ERROR TEXT',
+                ],
             ])
             ->assertStatus(Response::HTTP_CONFLICT)
             ->assertExactJson(HostErrors::botHasNoHost()->toArray());
@@ -79,16 +78,16 @@ class FailWithErrorCommandTest extends TestCase
             ->host($this->host()->create())
             ->create();
 
-        $error = "ERROR TEXT";
+        $error = 'ERROR TEXT';
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FailWithError",
-                "data" => [
-                    "id" => $bot->id,
-                    "error" => $error,
-                ]
+            ->postJson('/host', [
+                'command' => 'FailWithError',
+                'data' => [
+                    'id' => $bot->id,
+                    'error' => $error,
+                ],
             ])
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertExactJson(HostErrors::botIsNotAssignedToThisHost()->toArray());
@@ -102,18 +101,18 @@ class FailWithErrorCommandTest extends TestCase
     /** @test */
     public function missingIdFieldThrowsException()
     {
-        $error = "ERROR TEXT";
+        $error = 'ERROR TEXT';
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FailWithError",
-                "data" => [
-                    "error" => $error,
+            ->postJson('/host', [
+                'command' => 'FailWithError',
+                'data' => [
+                    'error' => $error,
                 ],
             ])
             ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson(HostErrors::missingParameter("id")->toArray());
+            ->assertExactJson(HostErrors::missingParameter('id')->toArray());
     }
 
     /** @test */
@@ -125,13 +124,13 @@ class FailWithErrorCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "FailWithError",
-                "data" => [
-                    "id" => $bot->id,
+            ->postJson('/host', [
+                'command' => 'FailWithError',
+                'data' => [
+                    'id' => $bot->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson(HostErrors::missingParameter("error")->toArray());
+            ->assertExactJson(HostErrors::missingParameter('error')->toArray());
     }
 }

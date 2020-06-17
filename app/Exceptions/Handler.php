@@ -59,11 +59,13 @@ class Handler extends ExceptionHandler
      */
     protected function handleSentryReporting(Exception $exception)
     {
-        if (!$this->shouldReport($exception))
+        if (! $this->shouldReport($exception)) {
             return;
+        }
 
-        if (!app()->bound('sentry'))
+        if (! app()->bound('sentry')) {
             return;
+        }
 
         /** @var \Raven_Client $sentry */
         $sentry = app('sentry');

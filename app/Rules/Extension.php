@@ -30,6 +30,7 @@ class Extension implements Rule
     public function passes($attribute, $value)
     {
         $originalName = $value->getClientOriginalName();
+
         return in_array(strtolower(File::extension($originalName)), $this->extensions);
     }
 
@@ -41,6 +42,7 @@ class Extension implements Rule
     public function message()
     {
         $values = implode(', ', $this->extensions);
+
         return "The :attribute must be a file with extension: ${values}.";
     }
 }

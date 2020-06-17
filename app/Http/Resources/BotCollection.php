@@ -16,8 +16,8 @@ class BotCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            "status" => "success",
-            "data" => BotResource::collection($this->collection),
+            'status' => 'success',
+            'data' => BotResource::collection($this->collection),
         ];
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Helpers;
 
 use App;
@@ -14,8 +13,9 @@ trait PassportHelper
 
     private function setUpPersonalClient()
     {
-        if($this->userClientSetUp)
+        if ($this->userClientSetUp) {
             return;
+        }
 
         $clients = app(ClientRepository::class);
 
@@ -65,7 +65,7 @@ trait PassportHelper
      */
     public function withAccessToken($accessToken)
     {
-        $this->withHeader('Authorization', 'Bearer ' . $accessToken);
+        $this->withHeader('Authorization', 'Bearer '.$accessToken);
 
         return $this;
     }

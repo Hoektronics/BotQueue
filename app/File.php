@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * App\File
+ * App\File.
  *
  * @property int $id
  * @property string $path
@@ -49,7 +49,7 @@ class File extends Model
         'filesystem',
         'type',
         'size',
-        'uploader_id'
+        'uploader_id',
     ];
 
     /**
@@ -66,7 +66,7 @@ class File extends Model
         $hash = Str::random(40);
         $uploadedFilePath = $uploadedFile->storePubliclyAs("uploads/{$hash}", $clientOriginalName);
 
-        $file = new File([
+        $file = new self([
             'path' => $uploadedFilePath,
             'name' => $clientOriginalName,
             'filesystem' => 'public',

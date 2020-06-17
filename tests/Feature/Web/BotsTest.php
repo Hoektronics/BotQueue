@@ -109,7 +109,7 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee(e($bot->name))
-            ->assertSee("Offline")
+            ->assertSee('Offline')
             ->assertSee("Creator: $username");
     }
 
@@ -128,7 +128,7 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee(e($bot->name))
-            ->assertSee("Offline")
+            ->assertSee('Offline')
             ->assertSee("Creator: $username")
             ->assertSee(e($cluster->name));
     }
@@ -322,8 +322,8 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->patch("/bots/{$bot->id}", [
                 'driver' => 'gcode',
-                "serial_port" => "/dev/ttyACM0",
-                "baud_rate" => 115200,
+                'serial_port' => '/dev/ttyACM0',
+                'baud_rate' => 115200,
             ])
             ->assertRedirect("/bots/{$bot->id}");
 
@@ -335,7 +335,7 @@ class BotsTest extends TestCase
                 'connection' => [
                     'port' => '/dev/ttyACM0',
                     'baud' => 115200,
-                ]
+                ],
             ],
         ]);
 
@@ -414,7 +414,7 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->patch("/bots/{$bot->id}", [
                 'driver' => 'dummy',
-                'delay' => 'foo'
+                'delay' => 'foo',
             ])
             ->assertSessionHasErrors('delay');
     }
@@ -428,7 +428,7 @@ class BotsTest extends TestCase
             ->withExceptionHandling()
             ->actingAs($this->mainUser)
             ->delete("/bots/{$bot->id}")
-            ->assertRedirect("/bots");
+            ->assertRedirect('/bots');
 
         $this->assertDeleted($bot);
     }

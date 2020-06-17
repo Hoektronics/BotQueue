@@ -50,6 +50,6 @@ class UsersTest extends TestCase
         /** @var Cluster $cluster */
         $cluster = $user->clusters()->first();
 
-        $this->assertEquals("My Cluster", $cluster->name);
+        $this->assertEquals('My Cluster', $cluster->name);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * App\Job
+ * App\Job.
  *
  * @property int $id
  * @property string $name
@@ -87,7 +87,7 @@ class Job extends Model
     }
 
     /**
-     * Scope to only include jobs belonging to the currently authenticated user
+     * Scope to only include jobs belonging to the currently authenticated user.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Helpers;
-
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -53,12 +51,12 @@ class EventAssertion
 
         $channels = Arr::wrap($channels);
 
-        if(! $event instanceof ShouldBroadcast) {
+        if (! $event instanceof ShouldBroadcast) {
             Assert::fail("Event [$eventClass] does not implement ShouldBroadcast interface");
         }
 
         $broadcastNames = collect($event->broadcastOn())->map(function ($channel) {
-            /** @var $channel Channel */
+            /* @var $channel Channel */
             return $channel->name;
         })->values()->all();
 
@@ -77,17 +75,17 @@ class EventAssertion
 
         $result = $callback(...$arguments);
 
-        if($result === null) {
+        if ($result === null) {
             $finalAssertionCount = Assert::getCount();
 
-            if($initialAssertionCount === $finalAssertionCount) {
+            if ($initialAssertionCount === $finalAssertionCount) {
                 Assert::fail("No assertions were made on inspection of [$eventClass]");
             }
 
             return $this;
         }
 
-        if(is_bool($result)) {
+        if (is_bool($result)) {
             Assert::assertTrue($result, "Inspection of event [$eventClass] returned false");
         }
 
@@ -100,7 +98,7 @@ class EventAssertion
     protected function guardEmptyArguments($arguments)
     {
         if (count($arguments) === 0) {
-            Assert::fail("Arguments to event callback must have at least the event itself");
+            Assert::fail('Arguments to event callback must have at least the event itself');
         }
     }
 

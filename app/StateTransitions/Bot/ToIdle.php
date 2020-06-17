@@ -2,7 +2,6 @@
 
 namespace App\StateTransitions\Bot;
 
-
 use App\Bot;
 use App\Enums\BotStatusEnum;
 use App\Jobs\AssignJobs;

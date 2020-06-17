@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddDriverToBots extends Migration
 {
@@ -14,7 +14,7 @@ class AddDriverToBots extends Migration
     public function up()
     {
         Schema::table('bots', function (Blueprint $table) {
-            $table->string("driver")->nullable();
+            $table->string('driver')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddDriverToBots extends Migration
     public function down()
     {
         Schema::table('bots', function (Blueprint $table) {
-            $table->dropColumn("driver");
+            $table->dropColumn('driver');
         });
     }
 }

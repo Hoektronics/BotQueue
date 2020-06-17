@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers\Models;
 
-
 use App\Bot;
 
 class BotBuilder
@@ -26,7 +25,7 @@ class BotBuilder
 
     private function newWith($newAttributes)
     {
-        return new BotBuilder(
+        return new self(
             array_merge(
                 $this->attributes,
                 $newAttributes

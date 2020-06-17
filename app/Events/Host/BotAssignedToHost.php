@@ -5,10 +5,10 @@ namespace App\Events\Host;
 use App\Bot;
 use App\Events\Event;
 use App\Host;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class BotAssignedToHost extends Event implements ShouldBroadcast
 {

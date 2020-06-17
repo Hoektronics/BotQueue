@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers\Models;
 
-
 use App\HostRequest;
 use App\User;
 use Carbon\Carbon;
@@ -28,7 +27,7 @@ class HostRequestBuilder
 
     private function newWith($newAttributes)
     {
-        return new HostRequestBuilder(
+        return new self(
             array_merge(
                 $this->attributes,
                 $newAttributes

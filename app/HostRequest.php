@@ -12,7 +12,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\HostRequest
+ * App\HostRequest.
  *
  * @property string $id
  * @property \Carbon\Carbon|null $created_at
@@ -60,8 +60,9 @@ class HostRequest extends Model
 
     public function getStatusAttribute($value)
     {
-        if (Carbon::now() > $this->expires_at)
+        if (Carbon::now() > $this->expires_at) {
             return HostRequestStatusEnum::EXPIRED;
+        }
 
         return $value;
     }
@@ -87,11 +88,11 @@ class HostRequest extends Model
             'owner_id' => $this->claimer_id,
         ]);
 
-        if (!file_exists(passport_private_key_path())) {
-            throw new OauthHostKeysMissing("Private key for oauth is missing");
+        if (! file_exists(passport_private_key_path())) {
+            throw new OauthHostKeysMissing('Private key for oauth is missing');
         }
 
-        $rowsAffected = HostRequest::whereId($this->id)
+        $rowsAffected = self::whereId($this->id)
             ->delete();
 
         if ($rowsAffected == 0) {

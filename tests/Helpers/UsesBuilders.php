@@ -3,7 +3,9 @@
 namespace Tests\Helpers;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Oauth\OauthHostClient;
 use Faker\Generator as Faker;
+use Laravel\Passport\ClientRepository;
 use Tests\Helpers\Models\BotBuilder;
 use Tests\Helpers\Models\ClusterBuilder;
 use Tests\Helpers\Models\FileBuilder;
@@ -12,12 +14,8 @@ use Tests\Helpers\Models\HostRequestBuilder;
 use Tests\Helpers\Models\JobBuilder;
 use Tests\Helpers\Models\UserBuilder;
 
-use App\Oauth\OauthHostClient;
-use Laravel\Passport\ClientRepository;
-
 /**
- * Trait UsesBuilders
- * @package Tests
+ * Trait UsesBuilders.
  * @property \App\User mainUser
  * @property \App\Host mainHost
  */
@@ -31,14 +29,16 @@ trait UsesBuilders
     {
         switch ($name) {
             case 'mainUser':
-                if(! isset($this->lazyMainUser)) {
+                if (! isset($this->lazyMainUser)) {
                     $this->lazyMainUser = $this->user()->create();
                 }
+
                 return $this->lazyMainUser;
             case 'mainHost':
-                if(! isset($this->lazyMainHost)) {
+                if (! isset($this->lazyMainHost)) {
                     $this->lazyMainHost = $this->host()->create();
                 }
+
                 return $this->lazyMainHost;
         }
         throw new \Exception("Missing attribute $name");
@@ -46,7 +46,7 @@ trait UsesBuilders
 
     private function setUpHostClient()
     {
-        if($this->hostClientSetUp) {
+        if ($this->hostClientSetUp) {
             return;
         }
 
@@ -145,6 +145,6 @@ trait UsesBuilders
     {
         $this->setUpHostClient();
 
-        return (new HostRequestBuilder());
+        return new HostRequestBuilder();
     }
 }

@@ -12,11 +12,11 @@ use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobIsNotQueued;
 use App\Job;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
 class AssignJobs implements ShouldQueue
@@ -52,14 +52,14 @@ class AssignJobs implements ShouldQueue
      */
     public function handle()
     {
-        if($this->model instanceof Bot) {
+        if ($this->model instanceof Bot) {
             $this->forBot($this->model);
-        } else if($this->model instanceof Cluster) {
+        } elseif ($this->model instanceof Cluster) {
             /** @var Cluster $cluster */
             $cluster = $this->model;
 
-            $cluster->bots()->each(function($bot) {
-                /** @var Bot $bot */
+            $cluster->bots()->each(function ($bot) {
+                /* @var Bot $bot */
                 $this->forBot($bot);
             });
         }
@@ -67,8 +67,9 @@ class AssignJobs implements ShouldQueue
 
     private function forBot(Bot $bot)
     {
-        if ($bot->status != BotStatusEnum::IDLE)
+        if ($bot->status != BotStatusEnum::IDLE) {
             return;
+        }
 
         Job::query()
             ->where('worker_id', $bot->id)
@@ -107,9 +108,11 @@ class AssignJobs implements ShouldQueue
         try {
             $assignJobToBot->fromJob($job);
             $this->botsThatShouldNotKeepSearching->push($bot->id);
+
             return false;
         } catch (BotIsNotIdle $e) {
             $this->botsThatShouldNotKeepSearching->push($bot->id);
+
             return false;
         } catch (BotIsNotValidWorker $e) {
             return true;

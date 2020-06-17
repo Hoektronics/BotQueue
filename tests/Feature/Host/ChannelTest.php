@@ -33,7 +33,7 @@ class ChannelTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->authChannel('private-host.' . $this->mainHost->id)
+            ->authChannel('private-host.'.$this->mainHost->id)
             ->assertStatus(Response::HTTP_OK);
     }
 
@@ -43,7 +43,7 @@ class ChannelTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->authChannel('private-user.' . $this->mainUser->id)
+            ->authChannel('private-user.'.$this->mainUser->id)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -55,7 +55,7 @@ class ChannelTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->authChannel('private-bot.' . $bot->id)
+            ->authChannel('private-bot.'.$bot->id)
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -69,7 +69,7 @@ class ChannelTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->authChannel('private-bot.' . $bot->id)
+            ->authChannel('private-bot.'.$bot->id)
             ->assertStatus(Response::HTTP_OK);
     }
 }

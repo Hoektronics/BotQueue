@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Response;
-
 
 use App\Job;
 use Illuminate\Contracts\Support\Responsable;
@@ -40,8 +38,8 @@ class JobStartedResponse implements Responsable
         return response()->json([
             'data' => [
                 'id' => $this->job->id,
-                'status' => $this->job->status
-            ]
+                'status' => $this->job->status,
+            ],
         ]);
     }
 }

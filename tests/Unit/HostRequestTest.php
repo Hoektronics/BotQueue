@@ -19,12 +19,12 @@ class HostRequestTest extends TestCase
     {
         $host_request = $this->hostRequest()->create();
 
-        $this->mainUser->claim($host_request, "Test Host");
+        $this->mainUser->claim($host_request, 'Test Host');
 
         $host_request->refresh();
 
         $this->assertEquals($this->mainUser->id, $host_request->claimer_id);
-        $this->assertEquals("Test Host", $host_request->hostname);
+        $this->assertEquals('Test Host', $host_request->hostname);
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
 
@@ -37,14 +37,14 @@ class HostRequestTest extends TestCase
 
         $otherUser = $this->user()->create();
 
-        $otherUser->claim($host_request, "Test Host");
+        $otherUser->claim($host_request, 'Test Host');
 
         $this->expectException(HostAlreadyClaimed::class);
 
-        $this->mainUser->claim($host_request, "No I want this host!");
+        $this->mainUser->claim($host_request, 'No I want this host!');
 
         $this->assertEquals($otherUser->id, $host_request->claimer_id);
-        $this->assertEquals("Test Host", $host_request->hostname);
+        $this->assertEquals('Test Host', $host_request->hostname);
         $this->assertEquals(HostRequestStatusEnum::CLAIMED, $host_request->status);
     }
 
@@ -78,7 +78,7 @@ class HostRequestTest extends TestCase
     {
         $host_request = $this->hostRequest()
             ->state(HostRequestStatusEnum::CLAIMED)
-            ->hostname("My Test Host")
+            ->hostname('My Test Host')
             ->claimer($this->mainUser)
             ->create();
 

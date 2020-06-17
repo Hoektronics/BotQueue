@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Helpers;
-
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
@@ -10,7 +8,6 @@ use PHPUnit\Framework\Assert;
 
 class EventFake implements Dispatcher
 {
-
     /**
      * The original event dispatcher.
      *
@@ -48,7 +45,7 @@ class EventFake implements Dispatcher
 
     public function hasDispatched($eventClass)
     {
-        return isset($this->events[$eventClass]) && !empty($this->events[$eventClass]);
+        return isset($this->events[$eventClass]) && ! empty($this->events[$eventClass]);
     }
 
     public function assertDispatched($eventClass)
@@ -115,7 +112,7 @@ class EventFake implements Dispatcher
      */
     public function dispatch($event, $payload = [], $halt = false)
     {
-        $name = is_object($event) ? get_class($event) : (string)$event;
+        $name = is_object($event) ? get_class($event) : (string) $event;
 
         if ($this->shouldFakeEvent($name)) {
             $this->events[$name][] = func_get_args();
@@ -155,7 +152,6 @@ class EventFake implements Dispatcher
      */
     public function subscribe($subscriber)
     {
-
     }
 
     /**
@@ -167,7 +163,6 @@ class EventFake implements Dispatcher
      */
     public function push($event, $payload = [])
     {
-
     }
 
     /**
@@ -178,7 +173,6 @@ class EventFake implements Dispatcher
      */
     public function flush($event)
     {
-
     }
 
     /**
@@ -189,7 +183,6 @@ class EventFake implements Dispatcher
      */
     public function forget($event)
     {
-
     }
 
     /**
@@ -199,6 +192,5 @@ class EventFake implements Dispatcher
      */
     public function forgetPushed()
     {
-
     }
 }

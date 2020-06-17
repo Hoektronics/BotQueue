@@ -7,8 +7,7 @@ use App\User;
 use Illuminate\Http\Resources\Json\Resource;
 
 /**
- * Class BotResource
- * @package App\Http\Resources
+ * Class BotResource.
  *
  * @property int $id
  * @property string $name
@@ -55,7 +54,7 @@ class BotResource extends Resource
     public function with($request)
     {
         return [
-            "status" => "success",
+            'status' => 'success',
         ];
     }
 }

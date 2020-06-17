@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\ModelTraits;
-
 
 use App\Enums\HostRequestStatusEnum;
 use App\HostRequest;

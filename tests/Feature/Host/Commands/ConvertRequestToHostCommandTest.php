@@ -22,10 +22,10 @@ class ConvertRequestToHostCommandTest extends TestCase
 
         $this
             ->withExceptionHandling()
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_CONFLICT)
@@ -39,27 +39,27 @@ class ConvertRequestToHostCommandTest extends TestCase
     {
         $host_request = $this->hostRequest()->create();
 
-        $host_name = "My super unique test name";
+        $host_name = 'My super unique test name';
         $this->mainUser->claim($host_request, $host_name);
 
         $convert_to_host_response = $this
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                "data" => [
-                    "access_token",
-                    "host" => [
-                        "id"
+                'data' => [
+                    'access_token',
+                    'host' => [
+                        'id',
                     ],
                 ],
             ]);
 
-        $host_id = $convert_to_host_response->json("data.host.id");
+        $host_id = $convert_to_host_response->json('data.host.id');
 
         /** @var Host $host */
         $host = Host::query()->find($host_id);
@@ -69,14 +69,14 @@ class ConvertRequestToHostCommandTest extends TestCase
 
         $convert_to_host_response
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "host" => [
-                        "id" => $host->id,
-                        "name" => $host->name,
-                        "owner" => [
-                            "id" => $this->mainUser->id,
-                            "username" => $this->mainUser->username,
+                'status' => 'success',
+                'data' => [
+                    'host' => [
+                        'id' => $host->id,
+                        'name' => $host->name,
+                        'owner' => [
+                            'id' => $this->mainUser->id,
+                            'username' => $this->mainUser->username,
                         ],
                     ],
                 ],
@@ -94,31 +94,31 @@ class ConvertRequestToHostCommandTest extends TestCase
         $this->mainUser->claim($host_request, $host_name);
 
         $this
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson([
-                "status" => "success",
+                'status' => 'success',
             ])
             ->assertJsonStructure([
-                "data" => [
-                    "access_token",
-                    "host" => [
-                        "id"
+                'data' => [
+                    'access_token',
+                    'host' => [
+                        'id',
                     ],
                 ],
             ]);
 
         $this
             ->withExceptionHandling()
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_NOT_FOUND)
@@ -129,10 +129,10 @@ class ConvertRequestToHostCommandTest extends TestCase
     public function conversionToHostOnRequestThatDoesNotExistThrowsAnError()
     {
         $this
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => "000000",
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => '000000',
                 ],
             ])
             ->assertStatus(Response::HTTP_NOT_FOUND)
@@ -147,44 +147,44 @@ class ConvertRequestToHostCommandTest extends TestCase
         $jwt_parser = app(JwtParser::class);
 
         $host_request = $this->hostRequest()->create();
-        $this->mainUser->claim($host_request, "My Test Host");
+        $this->mainUser->claim($host_request, 'My Test Host');
 
         $convert_to_host_response = $this
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
-                "status",
-                "data" => [
-                    "access_token",
+                'status',
+                'data' => [
+                    'access_token',
                 ],
             ]);
 
-        $access_token = $convert_to_host_response->json("data.access_token");
+        $access_token = $convert_to_host_response->json('data.access_token');
 
         $convert_to_host_response
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "access_token" => $access_token,
+                'status' => 'success',
+                'data' => [
+                    'access_token' => $access_token,
                 ],
             ]);
 
         /** @var Host $host */
-        $host = Host::query()->where("name", "My Test Host")->first();
+        $host = Host::query()->where('name', 'My Test Host')->first();
         $this->assertNotNull($host);
 
         /** @var Token $jwt */
         $jwt = $jwt_parser->parse($access_token);
 
-        $this->assertEquals($host->token_id, $jwt->getClaim("jti"));
-        $this->assertEquals($this->mainUser->id, $jwt->getClaim("sub"));
-        $this->assertEquals($host->token->client_id, $jwt->getClaim("aud"));
-        $this->assertArraySubset(["host"], $jwt->getClaim("scopes"));
+        $this->assertEquals($host->token_id, $jwt->getClaim('jti'));
+        $this->assertEquals($this->mainUser->id, $jwt->getClaim('sub'));
+        $this->assertEquals($host->token->client_id, $jwt->getClaim('aud'));
+        $this->assertArraySubset(['host'], $jwt->getClaim('scopes'));
     }
 
     /** @test
@@ -194,7 +194,7 @@ class ConvertRequestToHostCommandTest extends TestCase
     {
         $hostRequest = $this->hostRequest()
             ->state(HostRequestStatusEnum::CLAIMED)
-            ->hostname("My Test Host")
+            ->hostname('My Test Host')
             ->claimer($this->mainUser)
             ->create();
 
@@ -202,10 +202,10 @@ class ConvertRequestToHostCommandTest extends TestCase
         OauthHostClient::first()->delete();
 
         $this
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $hostRequest->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $hostRequest->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
@@ -220,15 +220,15 @@ class ConvertRequestToHostCommandTest extends TestCase
 
         $hostRequest = $this->hostRequest()
             ->state(HostRequestStatusEnum::CLAIMED)
-            ->hostname("My Test Host")
+            ->hostname('My Test Host')
             ->claimer($this->mainUser)
             ->create();
 
         $this
-            ->postJson("/host", [
-                "command" => "ConvertRequestToHost",
-                "data" => [
-                    "id" => $hostRequest->id,
+            ->postJson('/host', [
+                'command' => 'ConvertRequestToHost',
+                'data' => [
+                    'id' => $hostRequest->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)

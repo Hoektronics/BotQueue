@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\ModelTraits;
-
 
 use App\Cluster;
 use App\User;

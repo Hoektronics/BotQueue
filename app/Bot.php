@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * App\Bot
+ * App\Bot.
  *
  * @property int $id
  * @property int $creator_id
@@ -74,7 +74,7 @@ class Bot extends Model
     ];
 
     protected $casts = [
-        'driver' => 'array'
+        'driver' => 'array',
     ];
 
     public function creator()
@@ -93,7 +93,7 @@ class Bot extends Model
     }
 
     /**
-     * Scope to only include bots belonging to the currently authenticated user
+     * Scope to only include bots belonging to the currently authenticated user.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder

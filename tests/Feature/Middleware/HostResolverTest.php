@@ -20,7 +20,7 @@ class HostResolverTest extends TestCase
         $middleware = new ResolveHost();
 
         /** @var Response $response */
-        $response = $middleware->handle($request, function() {
+        $response = $middleware->handle($request, function () {
             return Response::create('', Response::HTTP_OK);
         });
 
@@ -35,13 +35,13 @@ class HostResolverTest extends TestCase
     {
         $request = Request::create('http://example.com/host/foo', 'GET');
         $request->headers->add([
-            'Authorization' => 'Bearer '. $this->mainHost->getJWT(),
+            'Authorization' => 'Bearer '.$this->mainHost->getJWT(),
         ]);
 
         $middleware = new ResolveHost();
 
         /** @var Response $response */
-        $response = $middleware->handle($request, function() {
+        $response = $middleware->handle($request, function () {
             return Response::create('', Response::HTTP_OK);
         });
 
@@ -64,12 +64,13 @@ class HostResolverTest extends TestCase
 
         $request = Request::create('http://example.com/host/foo', 'GET');
         $request->headers->add([
-            'Authorization' => 'Bearer '. $this->mainHost->getJWT(),
+            'Authorization' => 'Bearer '.$this->mainHost->getJWT(),
         ]);
 
         $middleware = new ResolveHost();
 
-        $middleware->handle($request, function() {});
+        $middleware->handle($request, function () {
+        });
 
         /** @var Host $testHost */
         $testHost = Host::query()->find($this->mainHost->id);

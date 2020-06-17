@@ -15,12 +15,12 @@ class UpdateAvailableConnectionsCommandTest extends TestCase
     public function hostMustBeAuthenticated()
     {
         $this
-            ->postJson("/host", [
-                "command" => "UpdateAvailableConnections",
-                "data" => [
+            ->postJson('/host', [
+                'command' => 'UpdateAvailableConnections',
+                'data' => [
                     [
-                        "type" => "serial",
-                        "port" => "/dev/cu.usbmodem1401",
+                        'type' => 'serial',
+                        'port' => '/dev/cu.usbmodem1401',
                     ],
                 ],
             ])
@@ -33,19 +33,19 @@ class UpdateAvailableConnectionsCommandTest extends TestCase
     {
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "UpdateAvailableConnections",
-                "data" => [
+            ->postJson('/host', [
+                'command' => 'UpdateAvailableConnections',
+                'data' => [
                     [
-                        "type" => "serial",
-                        "port" => "/dev/cu.usbmodem1401",
+                        'type' => 'serial',
+                        'port' => '/dev/cu.usbmodem1401',
                     ],
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [],
+                'status' => 'success',
+                'data' => [],
             ]);
 
         $this->mainHost->refresh();
@@ -53,8 +53,8 @@ class UpdateAvailableConnectionsCommandTest extends TestCase
         $this->assertEquals(
             collect([
                 [
-                    "type" => "serial",
-                    "port" => "/dev/cu.usbmodem1401",
+                    'type' => 'serial',
+                    'port' => '/dev/cu.usbmodem1401',
                 ],
             ])->toJson(),
             $this->mainHost->available_connections

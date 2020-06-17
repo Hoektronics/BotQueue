@@ -38,23 +38,23 @@ class UpdateJobProgressCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "UpdateJobProgress",
-                "data" => [
-                    "id" => $job->id,
-                    "progress" => 50.0,
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'id' => $job->id,
+                    'progress' => 50.0,
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $job->id,
-                    "name" => $job->name,
-                    "status" => JobStatusEnum::IN_PROGRESS,
-                    "progress" => 50.0,
-                    "url" => $file->url(),
-                ]
+                'status' => 'success',
+                'data' => [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'status' => JobStatusEnum::IN_PROGRESS,
+                    'progress' => 50.0,
+                    'url' => $file->url(),
+                ],
             ]);
 
         $job->refresh();
@@ -76,23 +76,23 @@ class UpdateJobProgressCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "UpdateJobProgress",
-                "data" => [
-                    "id" => $job->id,
-                    "progress" => 50.0,
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'id' => $job->id,
+                    'progress' => 50.0,
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $job->id,
-                    "name" => $job->name,
-                    "status" => JobStatusEnum::IN_PROGRESS,
-                    "progress" => 50.0,
-                    "url" => $file->url(),
-                ]
+                'status' => 'success',
+                'data' => [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'status' => JobStatusEnum::IN_PROGRESS,
+                    'progress' => 50.0,
+                    'url' => $file->url(),
+                ],
             ]);
 
         $job->refresh();
@@ -101,11 +101,11 @@ class UpdateJobProgressCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "UpdateJobProgress",
-                "data" => [
-                    "id" => $job->id,
-                    "progress" => 25.0,
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'id' => $job->id,
+                    'progress' => 25.0,
                 ],
             ])
             ->assertStatus(Response::HTTP_CONFLICT)
@@ -121,14 +121,14 @@ class UpdateJobProgressCommandTest extends TestCase
     {
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "UpdateJobProgress",
-                "data" => [
-                    "progress" => 50.0,
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'progress' => 50.0,
                 ],
             ])
             ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson(HostErrors::missingParameter("id")->toArray());
+            ->assertExactJson(HostErrors::missingParameter('id')->toArray());
     }
 
     /** @test */
@@ -142,13 +142,13 @@ class UpdateJobProgressCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "UpdateJobProgress",
-                "data" => [
-                    "id" => $job->id,
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'id' => $job->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertExactJson(HostErrors::missingParameter("progress")->toArray());
+            ->assertExactJson(HostErrors::missingParameter('progress')->toArray());
     }
 }

@@ -30,7 +30,7 @@ class FileUploadRequest extends FormRequest
                 'required',
                 'file',
                 new Extension(['gcode', 'stl']),
-            ]
+            ],
         ];
     }
 }

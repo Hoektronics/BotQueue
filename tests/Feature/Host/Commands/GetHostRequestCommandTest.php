@@ -16,17 +16,17 @@ class GetHostRequestCommandTest extends TestCase
         $host_request = $this->hostRequest()->create();
 
         $this
-            ->postJson("/host", [
-                "command" => "GetHostRequest",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'GetHostRequest',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $host_request->id,
+                'status' => 'success',
+                'data' => [
+                    'id' => $host_request->id,
                     'status' => HostRequestStatusEnum::REQUESTED,
                 ],
             ]);
@@ -39,24 +39,24 @@ class GetHostRequestCommandTest extends TestCase
     {
         $host_request = $this->hostRequest()->create();
 
-        $this->mainUser->claim($host_request, "My host");
+        $this->mainUser->claim($host_request, 'My host');
 
         $this
-            ->postJson("/host", [
-                "command" => "GetHostRequest",
-                "data" => [
-                    "id" => $host_request->id,
+            ->postJson('/host', [
+                'command' => 'GetHostRequest',
+                'data' => [
+                    'id' => $host_request->id,
                 ],
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
-                    "id" => $host_request->id,
-                    "status" => HostRequestStatusEnum::CLAIMED,
-                    "claimer" => [
-                        "id" => $this->mainUser->id,
-                        "username" => $this->mainUser->username,
+                'status' => 'success',
+                'data' => [
+                    'id' => $host_request->id,
+                    'status' => HostRequestStatusEnum::CLAIMED,
+                    'claimer' => [
+                        'id' => $this->mainUser->id,
+                        'username' => $this->mainUser->username,
                     ],
                 ],
             ]);
@@ -66,10 +66,10 @@ class GetHostRequestCommandTest extends TestCase
     public function viewingHostRequestThatDoesNotExistThrowsAnError()
     {
         $this
-            ->postJson("/host", [
-                "command" => "GetHostRequest",
-                "data" => [
-                    "id" => "000000"
+            ->postJson('/host', [
+                'command' => 'GetHostRequest',
+                'data' => [
+                    'id' => '000000',
                 ],
             ])
             ->assertStatus(Response::HTTP_NOT_FOUND)

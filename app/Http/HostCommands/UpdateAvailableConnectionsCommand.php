@@ -2,7 +2,6 @@
 
 namespace App\Http\HostCommands;
 
-
 use App\HostManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -33,8 +32,8 @@ class UpdateAvailableConnectionsCommand
         $host->save();
 
         return response()->json([
-            "status" => "success",
-            "data" => [],
+            'status' => 'success',
+            'data' => [],
         ]);
     }
 }

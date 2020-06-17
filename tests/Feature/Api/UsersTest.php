@@ -20,8 +20,8 @@ class UsersTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $this->mainUser->id,
-                    'username' => $this->mainUser->username
-                ]
+                    'username' => $this->mainUser->username,
+                ],
             ]);
     }
 
@@ -35,8 +35,8 @@ class UsersTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $this->mainUser->id,
-                    'username' => $this->mainUser->username
-                ]
+                    'username' => $this->mainUser->username,
+                ],
             ]);
     }
 

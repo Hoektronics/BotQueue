@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddAvailableConnectionsToHosts extends Migration
 {
@@ -14,7 +14,7 @@ class AddAvailableConnectionsToHosts extends Migration
     public function up()
     {
         Schema::table('hosts', function (Blueprint $table) {
-            $table->string("available_connections")->nullable();
+            $table->string('available_connections')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddAvailableConnectionsToHosts extends Migration
     public function down()
     {
         Schema::table('hosts', function (Blueprint $table) {
-            $table->dropColumn("available_connections");
+            $table->dropColumn('available_connections');
         });
     }
 }

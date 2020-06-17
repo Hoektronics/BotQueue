@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\JobAttempt
+ * App\JobAttempt.
  *
  * @property int $id
  * @property int $job_id

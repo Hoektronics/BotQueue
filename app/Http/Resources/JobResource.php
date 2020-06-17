@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class JobResource
- * @package App\Http\Resources
+ * Class JobResource.
  *
  * @property int id
  * @property string $name
@@ -27,18 +26,18 @@ class JobResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "id" => $this->id,
-            "name" => $this->name,
-            "status" => $this->status,
-            "progress" => $this->progress,
-            "url" => $this->file->url(),
+            'id' => $this->id,
+            'name' => $this->name,
+            'status' => $this->status,
+            'progress' => $this->progress,
+            'url' => $this->file->url(),
         ];
     }
 
     public function with($request)
     {
         return [
-            "status" => "success",
+            'status' => 'success',
         ];
     }
 }

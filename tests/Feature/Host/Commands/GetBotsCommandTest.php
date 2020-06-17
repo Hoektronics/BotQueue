@@ -18,8 +18,8 @@ class GetBotsCommandTest extends TestCase
     public function unauthenticatedHostCannotPerformThisAction()
     {
         $this
-            ->postJson("/host", [
-                "command" => "GetBots"
+            ->postJson('/host', [
+                'command' => 'GetBots',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
@@ -29,7 +29,7 @@ class GetBotsCommandTest extends TestCase
     public function hostCanAccessBotsAssignedToIt()
     {
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $bot = $this->bot()
@@ -39,30 +39,30 @@ class GetBotsCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "GetBots",
+            ->postJson('/host', [
+                'command' => 'GetBots',
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
+                'status' => 'success',
+                'data' => [
                     [
-                        "id" => $bot->id,
-                        "name" => $bot->name,
-                        "type" => "3d_printer",
-                        "status" => BotStatusEnum::OFFLINE,
-                        "driver" => $driverConfig,
+                        'id' => $bot->id,
+                        'name' => $bot->name,
+                        'type' => '3d_printer',
+                        'status' => BotStatusEnum::OFFLINE,
+                        'driver' => $driverConfig,
                     ],
                 ],
             ])
-            ->assertDontSee("creator");
+            ->assertDontSee('creator');
     }
 
     /** @test */
     public function hostCanSeeJobAssignedToBot()
     {
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $bot = $this->bot()
@@ -84,28 +84,28 @@ class GetBotsCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "GetBots",
+            ->postJson('/host', [
+                'command' => 'GetBots',
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJson([
-                "status" => "success",
-                "data" => [
+                'status' => 'success',
+                'data' => [
                     [
-                        "id" => $bot->id,
-                        "name" => $bot->name,
-                        "status" => BotStatusEnum::JOB_ASSIGNED,
-                        "type" => '3d_printer',
-                        "driver" => $driverConfig,
-                        "job" => [
-                            "id" => $job->id,
-                            "status" => JobStatusEnum::ASSIGNED,
-                            "url" => Storage::url($job->file->path),
+                        'id' => $bot->id,
+                        'name' => $bot->name,
+                        'status' => BotStatusEnum::JOB_ASSIGNED,
+                        'type' => '3d_printer',
+                        'driver' => $driverConfig,
+                        'job' => [
+                            'id' => $job->id,
+                            'status' => JobStatusEnum::ASSIGNED,
+                            'url' => Storage::url($job->file->path),
                         ],
                     ],
                 ],
             ])
-            ->assertDontSee("creator");
+            ->assertDontSee('creator');
     }
 
     /** @test */
@@ -114,7 +114,7 @@ class GetBotsCommandTest extends TestCase
         $otherHost = $this->host()->create();
 
         $driverConfig = [
-            "type" => "dummy"
+            'type' => 'dummy',
         ];
 
         $this->bot()
@@ -125,13 +125,13 @@ class GetBotsCommandTest extends TestCase
 
         $this
             ->withTokenFromHost($this->mainHost)
-            ->postJson("/host", [
-                "command" => "GetBots",
+            ->postJson('/host', [
+                'command' => 'GetBots',
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
-                "status" => "success",
-                "data" => [
+                'status' => 'success',
+                'data' => [
                 ],
             ]);
     }
