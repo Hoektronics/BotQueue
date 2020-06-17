@@ -21,7 +21,7 @@ class AssignJobsTest extends TestCase
     /** @var Collection */
     private $assignJobToBots;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->assignJobToBots = collect();
