@@ -26,7 +26,7 @@ class BotsTest extends TestCase
         $this
             ->actingAs($this->mainUser)
             ->get('/bots')
-            ->assertSee('Click the "Create a Bot" button', $escaped=false);
+            ->assertSee('Click the "Create a Bot" button', $escaped = false);
     }
 
     /** @test */
@@ -56,10 +56,10 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->get('/bots/create')
             ->assertViewIs('bot.create')
-            ->assertSee('<input name="name"', $escaped=false)
-            ->assertSee('<select name="type"', $escaped=false)
-            ->assertSee('<option value="3d_printer">3D Printer</option>', $escaped=false)
-            ->assertSee('<select name="cluster"', $escaped=false);
+            ->assertSee('<input name="name"', $escaped = false)
+            ->assertSee('<select name="type"', $escaped = false)
+            ->assertSee('<option value="3d_printer">3D Printer</option>', $escaped = false)
+            ->assertSee('<select name="cluster"', $escaped = false);
     }
 
     /** @test */
