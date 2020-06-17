@@ -50,7 +50,7 @@ class ClustersTest extends TestCase
             ->actingAs($this->mainUser)
             ->get('/clusters/create')
             ->assertViewIs('cluster.create')
-            ->assertSee('<input name="name"');
+            ->assertSee('<input name="name"', $escaped=false);
     }
 
     /** @test */
