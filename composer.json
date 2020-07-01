@@ -9,19 +9,19 @@
     "type": "project",
     "require": {
         "php": "^7.2.5",
+        "ext-json": "*",
         "barryvdh/laravel-ide-helper": "^2.3",
         "doctrine/dbal": "~2.3",
         "fideloper/proxy": "^4.2",
+        "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.18",
         "laravel/horizon": "^4.0",
-        "laravel/passport": "^8.4",
+        "laravel/passport": "^9.3",
         "laravel/tinker": "^2.0",
-        "predis/predis": "^1.1",
-        "sentry/sentry-laravel": "^1.7",
-        "ext-json": "*",
         "laravel/ui": "^2.0",
-        "fruitcake/laravel-cors": "^2.0"
+        "predis/predis": "^1.1",
+        "sentry/sentry-laravel": "^1.7"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.1",
