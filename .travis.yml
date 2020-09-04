@@ -17,7 +17,10 @@ branches:
 
 before_install:
   - mysql -e 'CREATE DATABASE botqueue;'
-  - npm install -g npm@2
+  - npm install -g npm@latest
+  - npm cache clean -f
+  - npm install -g n
+  - n stable
   - node -v
   - npm -v
 
