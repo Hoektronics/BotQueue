@@ -43,8 +43,5 @@ before_script:
   - npm run prod
 
 script:
-  - php vendor/bin/phpunit --coverage-clover=coverage.xml
+  - php vendor/bin/phpunit
 
-after_success:
-  - php vendor/bin/codacycoverage clover coverage.xml
-  - bash <(curl -s https://codecov.io/bash)
