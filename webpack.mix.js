@@ -1,7 +1,7 @@
 const mix = require('laravel-mix');
-const PurgeCss = require('@fullhuman/postcss-purgecss');
-const tailwindcss = require('tailwindcss');
-const postcss_import = require('postcss-import');
+const tailwindcss = require('tailwindcss')
+
+require('laravel-mix-purgecss');
 
 /*
  |--------------------------------------------------------------------------
@@ -14,46 +14,63 @@ const postcss_import = require('postcss-import');
  |
  */
 
-let purgeCssConfig = {
-    extractors: [
-        {
-            extractor: class {
-                static extract(content) {
-                    return content.match(/[A-Za-z0-9-_:/]+/g)
-                }
-            },
-            extensions: ['html', 'js', 'php', 'vue'],
-        }
-    ],
-};
+// let purgeCssConfig = {
+//     extractors: [
+//         {
+//             extractor: class {
+//                 static extract(content) {
+//                     return content.match(/[A-Za-z0-9-_:/]+/g)
+//                 }
+//             },
+//             extensions: ['html', 'js', 'php', 'vue'],
+//         }
+//     ],
+// };
+//
+// let purgeAppCss = new PurgeCss({
+//     ...purgeCssConfig,
+//     content: [
+//         './resources/views/**/*.blade.php',
+//         './resources/js/**/*.vue',
+//         './app/Services/**/*.php'
+//     ],
+//     css: ['public/css/app.css'],
+// });
+//
+// let purgeEmailCss = PurgeCss({
+//     ...purgeCssConfig,
+//     content: [
+//         './resources/views/emails/**/*.blade.php',
+//     ],
+//     css: ['public/css/email.css'],
+// });
 
-let purgeAppCss = PurgeCss({
-    ...purgeCssConfig,
-    content: [
-        './resources/views/**/*.blade.php',
-        './resources/js/**/*.vue',
-        './app/Services/**/*.php'
-    ],
-    css: ['public/css/app.css'],
-});
+mix.js('resources/js/app.js', 'public/js');
 
-let purgeEmailCss = PurgeCss({
-    ...purgeCssConfig,
-    content: [
-        './resources/views/emails/**/*.blade.php',
-    ],
-    css: ['public/css/email.css'],
-});
+mix.sass('resources/sass/app.scss', 'public/css')
+    .options({
+        processCssUrls: false,
+        postCss: [ tailwindcss('tailwind.config.js') ],
+    })
+    .purgeCss({
+        enabled: true,
+        css: ['public/css/app.css'],
+        content: [
+            'resources/views/**/*.blade.php',
+            'resources/js/**/*.vue',
+            'app/Services/**/*.php'
+        ],
+    })
 
-mix
-    .js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css/app.css', [
-        tailwindcss,
-        ...mix.inProduction() ? [purgeAppCss] : [],
-        postcss_import,
-    ])
-    .postCss('resources/css/email.css', 'public/css/email.css', [
-        tailwindcss,
-        purgeEmailCss,
-        postcss_import,
-    ]);
+mix.sass('resources/sass/email.scss', 'public/css')
+    .options({
+        processCssUrls: false,
+        postCss: [ tailwindcss('tailwind.config.js') ],
+    })
+    .purgeCss({
+        enabled: true,
+        css: ['public/css/email.css'],
+        content: [
+            'resources/views/emails/**/*.blade.php',
+        ],
+    });
