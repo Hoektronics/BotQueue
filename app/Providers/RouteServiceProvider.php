@@ -53,6 +53,10 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
+
+        $this->mapHostRoutes();
+
+        $this->mapChannelRoutes();
     }
 
     /**
@@ -82,5 +86,26 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace('App\Http\Controllers\Api')
             ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the "host" routes for the application.
+     *
+     * @return void
+     */
+    protected function mapHostRoutes()
+    {
+        Route::post('host', 'App\Http\Controllers\HostApiController@command');
+    }
+
+    /**
+     * Define the broadcast channel route for the application.
+     *
+     * @return void
+     */
+    protected function mapChannelRoutes()
+    {
+        Route::post('/broadcasting/auth', 'App\Http\Controllers\BroadcastController@auth')
+            ->middleware('resolve_host');
     }
 }
