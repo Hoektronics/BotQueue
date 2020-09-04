@@ -1,5 +1,4 @@
 module.exports = {
-  purge: false,
   theme: {
     extend: {
       margin: {
