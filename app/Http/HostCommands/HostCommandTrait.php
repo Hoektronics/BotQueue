@@ -24,7 +24,9 @@ trait HostCommandTrait
 
         $guard = 'api';
 
-        if ($auth->guard($guard)->check()) {
+        $guard = $auth->guard($guard);
+
+        if ($guard->check()) {
             $auth->shouldUse($guard);
 
             return $this->setUpHost();

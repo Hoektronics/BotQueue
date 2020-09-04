@@ -58,7 +58,7 @@ class Handler extends ExceptionHandler
     /**
      * @param  \Throwable  $exception
      */
-    protected function handleSentryReporting(Exception $exception)
+    protected function handleSentryReporting(Throwable $exception)
     {
         if (! $this->shouldReport($exception)) {
             return;

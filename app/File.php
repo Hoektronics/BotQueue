@@ -92,6 +92,6 @@ class File extends Model
 
     public function url()
     {
-        return Storage::url($this->path);
+        return Storage::disk('public')->url($this->path);
     }
 }
