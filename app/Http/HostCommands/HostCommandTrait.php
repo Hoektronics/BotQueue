@@ -22,12 +22,12 @@ trait HostCommandTrait
             return;
         }
 
-        $guard = 'api';
+        $guard_name = 'api';
 
-        $guard = $auth->guard($guard);
+        $guard = $auth->guard($guard_name);
 
         if ($guard->check()) {
-            $auth->shouldUse($guard);
+            $auth->shouldUse($guard_name);
 
             return $this->setUpHost();
         } else {

@@ -111,12 +111,7 @@ trait HostAuthTrait
         $clientRepository = app(ClientRepository::class);
 
         /** @var ClientEntityInterface $client */
-        $client = $clientRepository->getClientEntity(
-            $oauthHostClient->client_id,
-            'host',
-            null,
-            false
-        );
+        $client = $clientRepository->getClientEntity($oauthHostClient->client_id);
 
         return $client;
     }

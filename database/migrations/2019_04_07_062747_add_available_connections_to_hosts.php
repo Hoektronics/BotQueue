@@ -14,7 +14,7 @@ class AddAvailableConnectionsToHosts extends Migration
     public function up()
     {
         Schema::table('hosts', function (Blueprint $table) {
-            $table->string('available_connections')->nullable();
+            $table->longText('available_connections')->nullable();
         });
     }
 
