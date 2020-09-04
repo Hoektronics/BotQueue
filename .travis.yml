@@ -17,17 +17,14 @@ branches:
 
 before_install:
   - mysql -e 'CREATE DATABASE botqueue;'
+  - nvm install --lts
   - npm install -g npm@latest
   - npm cache clean -f
-  - npm install -g n
-  - n stable
   - node -v
   - npm -v
 
 install:
   # Install the packages we need
-
-  # Install composer
   - composer self-update
   - composer install --no-interaction
 
