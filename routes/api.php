@@ -29,3 +29,9 @@ Route::middleware('auth:api')
                     ->middleware('can:view,bot');
             });
     });
+
+Route::post('host', 'App\Http\Controllers\HostApiController@command')
+    ->middleware('host');
+
+Route::post('/broadcasting/auth', 'App\Http\Controllers\BroadcastController@auth')
+    ->middleware('resolve_host');
