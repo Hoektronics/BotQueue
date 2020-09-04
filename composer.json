@@ -15,7 +15,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.17",
         "laravel/horizon": "^4.0",
-        "laravel/passport": "^8.4",
+        "laravel/passport": "^v9.2.1",
         "laravel/tinker": "^2.0",
         "predis/predis": "^1.1",
         "sentry/sentry-laravel": "^1.7",
@@ -41,11 +41,19 @@
             "app/helpers.php"
         ],
         "psr-4": {
-            "App\\": "app/",
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Tests\\": "tests/"
         }
     },
     "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
@@ -53,7 +61,6 @@
             "@php artisan key:generate --ansi"
         ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "php artisan ide-helper:generate",
             "php artisan ide-helper:meta",
             "@php artisan package:discover --ansi"
