@@ -37,7 +37,7 @@ class BotsTest extends TestCase
         $this
             ->actingAs($this->mainUser)
             ->get('/bots')
-            ->assertSee(e($bot->name));
+            ->assertSee($bot->name);
     }
 
     /** @test */
@@ -106,7 +106,7 @@ class BotsTest extends TestCase
         $this
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
-            ->assertSee(e($bot->name))
+            ->assertSee($bot->name)
             ->assertSee('Offline');
     }
 
@@ -119,12 +119,12 @@ class BotsTest extends TestCase
             ->cluster($cluster)
             ->create();
 
-        $username = e($this->mainUser->username);
+        $username = $this->mainUser->username;
 
         $this
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
-            ->assertSee(e($bot->name))
+            ->assertSee($bot->name)
             ->assertSee('Offline')
             ->assertSee("Creator: $username")
             ->assertSee(e($cluster->name));
