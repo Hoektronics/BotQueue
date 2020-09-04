@@ -103,14 +103,11 @@ class BotsTest extends TestCase
     {
         $bot = $this->bot()->create();
 
-        $username = e($this->mainUser->username);
-
         $this
             ->actingAs($this->mainUser)
             ->get("/bots/{$bot->id}")
             ->assertSee(e($bot->name))
-            ->assertSee('Offline')
-            ->assertSee("Creator: $username");
+            ->assertSee('Offline');
     }
 
     /** @test */

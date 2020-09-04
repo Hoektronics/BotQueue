@@ -100,7 +100,7 @@ class GetBotsCommandTest extends TestCase
                         'job' => [
                             'id' => $job->id,
                             'status' => JobStatusEnum::ASSIGNED,
-                            'url' => Storage::url($job->file->path),
+                            'url' => $job->file->url(),
                         ],
                     ],
                 ],
