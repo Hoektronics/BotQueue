@@ -36,7 +36,7 @@ return [
 
         'database' => [
             'driver' => 'database',
-            'table' => 'internal_queue_jobs', // This cannot be jobs as that conflicts with BotQueue's jobs table
+            'table' => 'jobs',
             'queue' => 'default',
             'retry_after' => 90,
         ],

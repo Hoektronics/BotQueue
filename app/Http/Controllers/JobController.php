@@ -118,7 +118,7 @@ class JobController extends Controller
         $job->status = JobStatusEnum::COMPLETED;
         $job->push();
 
-        $findJobsForBot = app()->make(AssignJobs::class, ['model' => $bot]);
+        $findJobsForBot = app()->makeWith(AssignJobs::class, ['model' => $bot]);
         dispatch($findJobsForBot);
 
         return redirect("/jobs/{$job->id}");
@@ -136,7 +136,7 @@ class JobController extends Controller
         $job->status = JobStatusEnum::FAILED;
         $job->push();
 
-        $findJobsForBot = app()->make(AssignJobs::class, ['model' => $bot]);
+        $findJobsForBot = app()->makeWith(AssignJobs::class, ['model' => $bot]);
         dispatch($findJobsForBot);
 
         return redirect("/jobs/{$job->id}");
