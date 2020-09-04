@@ -24,7 +24,7 @@
     "scc-broker-client": "^3.0.0",
     "serve-static": "^1.14.1",
     "socket.io": "^2.3.0",
-    "socketcluster": "^11.1.0",
+    "socketcluster": "^16.0.1",
     "socketcluster-client": "^11.0.0"
   },
   "devDependencies": {
@@ -34,11 +34,11 @@
     "cross-env": "^5.2.1",
     "glob-all": "^3.2.1",
     "jquery": "^3.5.1",
-    "laravel-mix": "^4.1.4",
-    "lodash": "^4.17.15",
+    "laravel-mix": "^5.0.5",
+    "lodash": "^4.17.20",
     "postcss-import": "^12.0.1",
-    "tailwindcss": "^1.4.6",
-    "vue": "^2.6.11",
-    "vue-template-compiler": "^2.6.11"
+    "tailwindcss": "^1.7.6",
+    "vue": "^2.6.12",
+    "vue-template-compiler": "^2.6.12"
   }
 }
