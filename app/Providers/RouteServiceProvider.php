@@ -3,10 +3,9 @@
 namespace App\Providers;
 
 use App;
-use Illuminate\Contracts\Auth\Factory as Auth;
+use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\HostApiController;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
@@ -95,7 +94,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapHostRoutes()
     {
-        Route::post('host', 'App\Http\Controllers\HostApiController@command');
+        Route::post('host', [HostApiController::class, 'command']);
     }
 
     /**
@@ -105,7 +104,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapChannelRoutes()
     {
-        Route::post('/broadcasting/auth', 'App\Http\Controllers\BroadcastController@auth')
+        Route::post('/broadcasting/auth', [BroadcastController::class, 'auth'])
             ->middleware('resolve_host');
     }
 }
