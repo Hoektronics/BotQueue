@@ -32,7 +32,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        parent::boot();
 
         Event::listen(Events\JobCreated::class, function ($event) {
             /** @var $event Events\JobCreated */
