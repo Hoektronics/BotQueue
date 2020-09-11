@@ -75,7 +75,8 @@ class HostRequest extends Model
 
     public function scopeCouldBeMine(Builder $query)
     {
-        $remote_ip = $_SERVER["REMOTE_ADDR"];
+        $remote_ip = $_SERVER['REMOTE_ADDR'];
+
         return $query->where('remote_ip', $remote_ip);
     }
 
