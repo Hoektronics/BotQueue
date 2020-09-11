@@ -28,15 +28,31 @@
             <div class="border rounded">
                 <div class="text-center bg-gray-200">Info</div>
                 <div class="p-4">
-                    Creator: {{ $bot->creator->username }}<br>
-                    Status: {!! $bot_status->label($bot->status) !!}<br>
-                    @if($bot->cluster !== null)
-                        Cluster:
-                        <a class="hover:text-gray-700"
-                           href="{{ route('clusters.show', [$bot->cluster]) }}">
-                            {{ $bot->cluster->name }}
-                        </a>
-                    @endif
+                    <ul>
+                        <li>
+                            Creator: {{ $bot->creator->username }}
+                        </li>
+                        <li>
+                            Status: {!! $bot_status->label($bot->status) !!}<br>
+                        </li>
+                        @if($bot->cluster !== null)
+                            <li>
+                                Cluster:
+                                <a class="hover:text-gray-700"
+                                   href="{{ route('clusters.show', [$bot->cluster]) }}">
+                                    {{ $bot->cluster->name }}
+                                </a>
+                            </li>
+                        @endif
+                        @if($bot->host !== null)
+                            <li>
+                                Host:
+                                <a class="hover:text-gray-700">
+                                {{ $bot->host->name }}
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
                 </div>
             </div>
 

@@ -87,6 +87,11 @@ class Bot extends Model
         return $this->belongsTo(Cluster::class);
     }
 
+    public function host()
+    {
+        return $this->belongsTo(Host::class);
+    }
+
     public function currentJob()
     {
         return $this->belongsTo(Job::class);
