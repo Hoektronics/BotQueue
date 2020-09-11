@@ -10,7 +10,7 @@
                 </span>
 
                 <select id="driver" name="driver"
-                        class="flex-grow select-all"
+                        class="input appearance-none"
                         v-model="driver">
                     <option value="gcode">Gcode Driver</option>
                     <option value="dummy">Dummy Driver</option>

@@ -24,6 +24,23 @@
                         </div>
                     </div>
 
+                    <div class="flex mb-3">
+                        <label for="host" class="w-1/3 my-auto">Host</label>
+
+                        <div class="input-with-error flex-grow">
+                            @if ($errors->has('host'))
+                                <span class="input-error">{{ $errors->first('host') }}</span>
+                            @endif
+
+                            <select name="host" id="host"
+                                    class="input appearance-none">
+                                @foreach($hosts as $host)
+                                    <option value="{{ $host->id }}">{{ $host->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <driver-selection
                             :errors="{{ $errors->toJson() }}"
                             driver="{{ old('driver', 'gcode') }}"

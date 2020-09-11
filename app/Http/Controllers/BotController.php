@@ -102,6 +102,7 @@ class BotController extends Controller
 
         return view('bot.edit', [
             'bot' => $bot,
+            'hosts' => Auth::user()->hosts,
         ]);
     }
 
@@ -117,6 +118,7 @@ class BotController extends Controller
     {
         $this->authorize('update', $bot);
 
+        $bot->host_id = $request->get('host', $bot->host_id);
         $bot->name = $request->get('name', $bot->name);
 
         if ($request->has('driver')) {
