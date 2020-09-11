@@ -14,10 +14,10 @@ class RootTest extends TestCase
     }
 
     /** @test */
-    public function authenticatedUsersVisitingTheSiteAreRedirectedToTheDashboard()
+    public function authenticatedUsersVisitingTheSiteAreRedirectedToHome()
     {
         $this->actingAs($this->mainUser)
             ->get('/')
-            ->assertRedirect('/dashboard');
+            ->assertRedirect('/home');
     }
 }

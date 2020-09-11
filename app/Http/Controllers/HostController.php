@@ -38,6 +38,6 @@ class HostController extends Controller
 
         Auth::user()->claim($hostRequest, $name);
 
-        return redirect('/dashboard');
+        return redirect('/home');
     }
 }

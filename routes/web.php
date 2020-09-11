@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect('dashboard');
+        return redirect('home');
     }
 
     return view('welcome');
@@ -24,8 +24,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('dashboard', 'HomeController@index')
-    ->name('dashboard');
+Route::get('home', 'HomeController@index')
+    ->name('home');
 
 Route::get('bots/{bot}/delete', 'BotController@delete')->name('bots.delete');
 Route::resource('bots', 'BotController');

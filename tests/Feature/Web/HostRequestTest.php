@@ -67,7 +67,7 @@ class HostRequestTest extends TestCase
                 'host_request_id' => $host_request->id,
                 'name' => $newHostName,
             ])
-            ->assertRedirect('/dashboard');
+            ->assertRedirect('/home');
 
         $host_request->refresh();
 
