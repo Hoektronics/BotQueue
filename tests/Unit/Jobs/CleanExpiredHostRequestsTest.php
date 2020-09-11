@@ -4,7 +4,7 @@ namespace Tests\Unit\Jobs;
 
 use App\Enums\HostRequestStatusEnum;
 use App\Models\HostRequest;
-use App\Models\Jobs\CleanExpiredHostRequests;
+use App\Jobs\CleanExpiredHostRequests;
 use Carbon\Carbon;
 use Tests\TestCase;
 

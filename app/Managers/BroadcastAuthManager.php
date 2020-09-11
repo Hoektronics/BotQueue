@@ -3,7 +3,7 @@
 namespace App\Managers;
 
 use App\Models\Host;
-use App\Models\HostManager;
+use App\HostManager;
 use App\Models\User;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Routing\BindingRegistrar;

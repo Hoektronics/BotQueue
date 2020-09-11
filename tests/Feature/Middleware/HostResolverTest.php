@@ -3,7 +3,7 @@
 namespace Tests\Feature\Middleware;
 
 use App\Models\Host;
-use App\Models\HostManager;
+use App\HostManager;
 use App\Http\Middleware\ResolveHost;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

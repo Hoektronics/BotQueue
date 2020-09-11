@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Jobs;
+namespace App\Jobs;
 
 use App\Action\AssignJobToBot;
 use App\Models\Bot;

@@ -7,7 +7,7 @@ use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
-use App\Models\Jobs\AssignJobs;
+use App\Jobs\AssignJobs;
 use Tests\TestCase;
 
 class JobsTest extends TestCase

@@ -6,7 +6,7 @@ use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\Models\HostManager;
+use App\HostManager;
 use Illuminate\Support\Collection;
 
 class FailWithErrorCommand

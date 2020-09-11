@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Host;
-use App\Models\HostManager;
+use App\HostManager;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Response;

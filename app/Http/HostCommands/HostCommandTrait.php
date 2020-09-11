@@ -5,7 +5,7 @@ namespace App\Http\HostCommands;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\Models\Host;
-use App\Models\HostManager;
+use App\HostManager;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Lcobucci\JWT\Parser;

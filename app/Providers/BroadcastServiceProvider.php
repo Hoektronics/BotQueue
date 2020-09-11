@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Channels\BotChannel;
 use App\Channels\HostChannel;
 use App\Channels\UserChannel;
-use App\Models\HostManager;
+use App\HostManager;
 use App\Managers\BroadcastAuthManager;
 use Illuminate\Support\ServiceProvider;
 

@@ -10,7 +10,7 @@ use App\Exceptions\BotIsNotIdle;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobIsNotQueued;
 use App\Models\Job;
-use App\Models\Jobs\AssignJobs;
+use App\Jobs\AssignJobs;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Mockery\MockInterface;

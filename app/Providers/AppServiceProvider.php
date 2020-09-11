@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Paginator::defaultView('vendor.pagination.paginator');
+
+        Relation::morphMap([
+            'bots' => App\Models\Bot::class,
+            'clusters' => App\Models\Cluster::class,
+        ]);
     }
 
     /**

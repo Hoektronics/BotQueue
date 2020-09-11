@@ -3,7 +3,7 @@
 namespace Tests\Unit\StateTransitions\Bot;
 
 use App\Enums\BotStatusEnum;
-use App\Models\Jobs\AssignJobs;
+use App\Jobs\AssignJobs;
 use App\StateTransitions\Bot\ToIdle;
 use Tests\TestCase;
 

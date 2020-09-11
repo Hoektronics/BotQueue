@@ -4,7 +4,7 @@ namespace App\StateTransitions\Bot;
 
 use App\Models\Bot;
 use App\Enums\BotStatusEnum;
-use App\Models\Jobs\AssignJobs;
+use App\Jobs\AssignJobs;
 
 class ToIdle
 {

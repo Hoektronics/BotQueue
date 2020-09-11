@@ -2,7 +2,7 @@
 
 namespace App\Http\HostCommands;
 
-use App\Models\HostManager;
+use App\HostManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 

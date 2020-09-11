@@ -8,7 +8,7 @@ use App\Enums\JobStatusEnum;
 use App\Models\File;
 use App\Http\Requests\JobFileCreationRequest;
 use App\Models\Job;
-use App\Models\Jobs\AssignJobs;
+use App\Jobs\AssignJobs;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
