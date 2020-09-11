@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use App\User;
-use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -38,7 +37,9 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
-        $this->handleSentryReporting($exception);
+        if (app()->bound('sentry') && $this->shouldReport($exception)) {
+            app('sentry')->captureException($exception);
+        }
 
         parent::report($exception);
     }
@@ -53,36 +54,5 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         return parent::render($request, $exception);
-    }
-
-    /**
-     * @param  \Throwable  $exception
-     */
-    protected function handleSentryReporting(Throwable $exception)
-    {
-        if (! $this->shouldReport($exception)) {
-            return;
-        }
-
-        if (! app()->bound('sentry')) {
-            return;
-        }
-
-        /** @var \Raven_Client $sentry */
-        $sentry = app('sentry');
-
-        if (auth()->check()) {
-            /** @var User $user */
-            $user = auth()->user();
-
-            $sentry->user_context([
-                'id' => $user->id,
-                'username' => $user->username,
-                'email' => $user->email,
-                'ip_address' => request()->getClientIp(),
-            ]);
-        }
-
-        $sentry->captureException($exception);
     }
 }
