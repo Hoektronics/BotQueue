@@ -76,7 +76,7 @@ return [
         'development' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['queue'],
+                'queue' => ['default'],
                 'balance' => 'simple',
                 'processes' => 5,
                 'tries' => 3,
@@ -86,7 +86,7 @@ return [
         'production' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['queue'],
+                'queue' => ['default'],
                 'balance' => 'simple',
                 'processes' => 10,
                 'tries' => 3,
@@ -96,7 +96,7 @@ return [
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['queue'],
+                'queue' => ['default'],
                 'balance' => 'simple',
                 'processes' => 3,
                 'tries' => 3,
