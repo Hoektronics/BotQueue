@@ -3,6 +3,8 @@
 namespace Tests\Helpers;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Models\Host;
+use App\Models\User;
 use App\Oauth\OauthHostClient;
 use Faker\Generator as Faker;
 use Laravel\Passport\ClientRepository;
@@ -16,12 +18,14 @@ use Tests\Helpers\Models\UserBuilder;
 
 /**
  * Trait UsesBuilders.
- * @property \App\User mainUser
- * @property \App\Host mainHost
+ * @property User mainUser
+ * @property Host mainHost
  */
 trait UsesBuilders
 {
+    /** @var User $lazyMainUser */
     private $lazyMainUser;
+    /** @var Host $lazyMainHost */
     private $lazyMainHost;
     private $hostClientSetUp = false;
 
@@ -31,6 +35,12 @@ trait UsesBuilders
             case 'mainUser':
                 if (! isset($this->lazyMainUser)) {
                     $this->lazyMainUser = $this->user()->create();
+
+                    // By default, the first user on the site is admin
+                    // For testing purposes, our main user shouldn't be
+                    // an admin unless the test makes them an admin.
+                    $this->lazyMainUser->is_admin = false;
+                    $this->lazyMainUser->save();
                 }
 
                 return $this->lazyMainUser;

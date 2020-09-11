@@ -19,13 +19,21 @@ class UsersTest extends TestCase
     }
 
     /** @test */
-    public function userIsNotAnAdminByDefault()
+    public function firstUserIsAdminByDefault()
     {
         $user = $this->user()->create();
 
-        $user->refresh();
+        $this->assertTrue($user->is_admin);
+    }
 
-        $this->assertFalse($user->is_admin);
+    /** @test */
+    public function secondUserIsNotAdminByDefault()
+    {
+        $firstUser = $this->user()->create();
+        $secondUser = $this->user()->create();
+
+        $this->assertTrue($firstUser->is_admin);
+        $this->assertFalse($secondUser->is_admin);
     }
 
     /** @test */

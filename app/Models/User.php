@@ -6,6 +6,7 @@ use App\Enums\HostRequestStatusEnum;
 use App\Events\UserCreated;
 use App\Exceptions\HostAlreadyClaimed;
 use App\ModelTraits\CreatesMyCluster;
+use App\ModelTraits\FirstUserIsPromotedToAdmin;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -46,6 +47,7 @@ class User extends Authenticatable
     use Notifiable;
     use HasApiTokens;
     use CreatesMyCluster;
+    use FirstUserIsPromotedToAdmin;
 
     /**
      * The attributes that are mass assignable.
