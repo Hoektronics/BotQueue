@@ -2,7 +2,7 @@
 
 namespace Tests\Helpers\Models;
 
-use App\Cluster;
+use App\Models\Cluster;
 
 class ClusterBuilder
 {
@@ -33,7 +33,7 @@ class ClusterBuilder
         );
     }
 
-    public function creator(\App\User $user)
+    public function creator(\App\Models\User $user)
     {
         return $this->newWith(['creator_id' => $user->id]);
     }

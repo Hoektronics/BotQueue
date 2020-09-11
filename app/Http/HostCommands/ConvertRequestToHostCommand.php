@@ -8,7 +8,7 @@ use App\Errors\HostErrors;
 use App\Exceptions\HostRequestAlreadyDeleted;
 use App\Exceptions\OauthHostClientNotSetup;
 use App\Exceptions\OauthHostKeysMissing;
-use App\HostRequest;
+use App\Models\HostRequest;
 use App\Http\Resources\HostResource;
 use Illuminate\Support\Collection;
 

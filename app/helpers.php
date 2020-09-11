@@ -1,7 +1,7 @@
 <?php
 
 use App\Exceptions\Handler;
-use App\User;
+use App\Models\User;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\CryptKey;
 

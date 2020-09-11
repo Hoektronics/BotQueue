@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Web;
 
-use App\Cluster;
+use App\Models\Cluster;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 

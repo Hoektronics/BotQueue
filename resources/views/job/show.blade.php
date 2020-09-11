@@ -29,7 +29,7 @@
                     Creator: {{ $job->creator->username }}<br>
                     Status: {!! $job_status->label($job->status) !!}<br>
                     Worker:
-                    @if(is_a($job->worker, App\Bot::class))
+                    @if(is_a($job->worker, App\Models\Bot::class))
                         <a
                                 href="{{ route('bots.show', [$job->worker]) }}">
                             {{ $job->worker->name }}

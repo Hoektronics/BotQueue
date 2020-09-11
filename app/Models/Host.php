@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\ModelTraits\HostAuthTrait;
 use Illuminate\Database\Eloquent\Model;

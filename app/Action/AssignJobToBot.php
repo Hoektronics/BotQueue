@@ -2,15 +2,15 @@
 
 namespace App\Action;
 
-use App\Bot;
-use App\Cluster;
+use App\Models\Bot;
+use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotIsNotIdle;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobAssignmentFailed;
 use App\Exceptions\JobIsNotQueued;
-use App\Job;
+use App\Models\Job;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

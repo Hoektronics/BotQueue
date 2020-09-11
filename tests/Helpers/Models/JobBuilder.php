@@ -2,10 +2,10 @@
 
 namespace Tests\Helpers\Models;
 
-use App\Bot;
-use App\Cluster;
-use App\File;
-use App\Job;
+use App\Models\Bot;
+use App\Models\Cluster;
+use App\Models\File;
+use App\Models\Job;
 use Carbon\Carbon;
 
 class JobBuilder
@@ -37,7 +37,7 @@ class JobBuilder
         );
     }
 
-    public function creator(\App\User $user)
+    public function creator(\App\Models\User $user)
     {
         return $this->newWith(['creator_id' => $user->id]);
     }

@@ -3,7 +3,7 @@
 namespace App\ModelTraits;
 
 use App\Enums\HostRequestStatusEnum;
-use App\HostRequest;
+use App\Models\HostRequest;
 use Carbon\Carbon;
 
 trait HostRequestDynamicAttributes

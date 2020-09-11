@@ -16,19 +16,19 @@ class JobFileController extends Controller
         $this->middleware('auth');
     }
 
-    public function create(App\File $file)
+    public function create(App\Models\File $file)
     {
         return view('job.create.file', [
             'file' => $file,
-            'bots' => App\Bot::mine()->get(),
-            'clusters' => App\Cluster::mine()->get(),
+            'bots' => App\Models\Bot::mine()->get(),
+            'clusters' => App\Models\Cluster::mine()->get(),
         ]);
     }
 
-    public function store(App\File $file, JobFileCreationRequest $request)
+    public function store(App\Models\File $file, JobFileCreationRequest $request)
     {
-        /** @var App\Job $job */
-        $job = new App\Job([
+        /** @var App\Models\Job $job */
+        $job = new App\Models\Job([
             'name' => $request->get('job_name'),
             'status' => App\Enums\JobStatusEnum::QUEUED,
             'creator_id' => Auth::id(),

@@ -2,8 +2,8 @@
 
 namespace Tests\Helpers\Models;
 
-use App\HostRequest;
-use App\User;
+use App\Models\HostRequest;
+use App\Models\User;
 use Carbon\Carbon;
 
 class HostRequestBuilder

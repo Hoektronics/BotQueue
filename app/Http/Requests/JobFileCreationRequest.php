@@ -17,8 +17,8 @@ class JobFileCreationRequest extends FormRequest
         parent::__construct();
 
         $this->matchExists = new MatchExists([
-            'bots_{id}' => App\Bot::mine(),
-            'clusters_{id}' => App\Cluster::mine(),
+            'bots_{id}' => App\Models\Bot::mine(),
+            'clusters_{id}' => App\Models\Cluster::mine(),
         ]);
     }
 

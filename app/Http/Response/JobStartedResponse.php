@@ -2,7 +2,7 @@
 
 namespace App\Http\Response;
 
-use App\Job;
+use App\Models\Job;
 use Illuminate\Contracts\Support\Responsable;
 
 class JobStartedResponse implements Responsable
@@ -13,7 +13,7 @@ class JobStartedResponse implements Responsable
     private $job;
 
     /**
-     * @var \App\JobAttempt|null
+     * @var \App\Models\JobAttempt|null
      */
     private $currentAttempt;
 

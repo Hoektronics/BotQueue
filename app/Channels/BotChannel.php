@@ -2,8 +2,8 @@
 
 namespace App\Channels;
 
-use App\Bot;
-use App\Host;
+use App\Models\Bot;
+use App\Models\Host;
 
 class BotChannel
 {

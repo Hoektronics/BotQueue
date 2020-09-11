@@ -4,7 +4,7 @@ namespace App\Http\HostCommands;
 
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\Host;
+use App\Models\Host;
 use App\HostManager;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Factory as Auth;

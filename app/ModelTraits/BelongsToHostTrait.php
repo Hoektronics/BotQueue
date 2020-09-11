@@ -2,10 +2,10 @@
 
 namespace App\ModelTraits;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Events\Host\BotAssignedToHost;
 use App\Events\Host\BotRemovedFromHost;
-use App\Host;
+use App\Models\Host;
 
 trait BelongsToHostTrait
 {

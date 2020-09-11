@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Job;
+use App\Models\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;

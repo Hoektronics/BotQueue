@@ -3,14 +3,14 @@
 namespace App\Jobs;
 
 use App\Action\AssignJobToBot;
-use App\Bot;
-use App\Cluster;
+use App\Models\Bot;
+use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotIsNotIdle;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobIsNotQueued;
-use App\Job;
+use App\Models\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;

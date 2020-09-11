@@ -2,8 +2,8 @@
 
 namespace App\ModelTraits;
 
-use App\Cluster;
-use App\User;
+use App\Models\Cluster;
+use App\Models\User;
 
 trait CreatesMyCluster
 {

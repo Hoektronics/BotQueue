@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\FileTypeEnum;
-use App\File;
+use App\Models\File;
 use App\Http\Requests\FileUploadRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -67,7 +67,7 @@ class FileController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\File  $file
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Http\Response
      */
     public function show(File $file)
@@ -78,7 +78,7 @@ class FileController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\File  $file
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Http\Response
      */
     public function edit(File $file)
@@ -90,7 +90,7 @@ class FileController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\File  $file
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, File $file)
@@ -101,7 +101,7 @@ class FileController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\File  $file
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Http\Response
      */
     public function destroy(File $file)

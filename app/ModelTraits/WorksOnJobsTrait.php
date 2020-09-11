@@ -2,10 +2,10 @@
 
 namespace App\ModelTraits;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Job;
+use App\Models\Job;
 use Illuminate\Support\Facades\DB;
 
 trait WorksOnJobsTrait

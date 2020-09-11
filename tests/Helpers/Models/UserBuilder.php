@@ -2,7 +2,7 @@
 
 namespace Tests\Helpers\Models;
 
-use App\User;
+use App\Models\User;
 
 class UserBuilder
 {

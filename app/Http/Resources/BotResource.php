@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Job;
-use App\User;
+use App\Models\Job;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

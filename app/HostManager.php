@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Models\Host;
+
 class HostManager
 {
     protected $host;

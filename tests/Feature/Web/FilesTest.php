@@ -3,7 +3,7 @@
 namespace Tests\Feature\Web;
 
 use App\Enums\FileTypeEnum;
-use App\File;
+use App\Models\File;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
