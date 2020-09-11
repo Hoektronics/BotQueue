@@ -17,8 +17,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        App\Bot::class => App\Policies\BotPolicy::class,
-        App\User::class => App\Policies\UserPolicy::class,
+        App\Models\Bot::class => App\Policies\BotPolicy::class,
+        App\Models\User::class => App\Policies\UserPolicy::class,
     ];
 
     public function register()
@@ -30,8 +30,8 @@ class AuthServiceProvider extends ServiceProvider
             return $server;
         });
 
-        $this->app->singleton(App\HostManager::class, function () {
-            return new App\HostManager();
+        $this->app->singleton(App\Models\HostManager::class, function () {
+            return new App\Models\HostManager();
         });
     }
 

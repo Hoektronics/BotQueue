@@ -2,12 +2,12 @@
 
 namespace Tests\Unit;
 
-use App\Bot;
-use App\Cluster;
+use App\Models\Bot;
+use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Events\JobCreated;
-use App\Jobs\AssignJobs;
+use App\Models\Jobs\AssignJobs;
 use Tests\TestCase;
 
 class JobsTest extends TestCase

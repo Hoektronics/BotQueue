@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use App;
-use App\Bot;
-use App\Cluster;
+use App\Models\Bot;
+use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Rules\MatchExists;
 use Illuminate\Support\Facades\Validator;
@@ -25,7 +25,7 @@ class MatchExistsTest extends TestCase
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::class,
+            'foo_{id}' => App\Models\Bot::class,
         ]);
 
         $validator = Validator::make($fields, [
@@ -52,7 +52,7 @@ class MatchExistsTest extends TestCase
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::class,
+            'foo_{id}' => App\Models\Bot::class,
         ]);
 
         $validator = Validator::make($fields, [
@@ -76,8 +76,8 @@ class MatchExistsTest extends TestCase
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::class,
-            'bar_{id}' => App\Bot::class,
+            'foo_{id}' => App\Models\Bot::class,
+            'bar_{id}' => App\Models\Bot::class,
         ]);
 
         $validator = Validator::make($fields, [
@@ -102,8 +102,8 @@ class MatchExistsTest extends TestCase
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::class,
-            'bar_{id}' => App\Cluster::class,
+            'foo_{id}' => App\Models\Bot::class,
+            'bar_{id}' => App\Models\Cluster::class,
         ]);
 
         $validator = Validator::make($fields, [
@@ -133,7 +133,7 @@ class MatchExistsTest extends TestCase
         ];
 
         $matchExists = new MatchExists([
-            'foo_{id}' => App\Bot::mine(),
+            'foo_{id}' => App\Models\Bot::mine(),
         ]);
 
         $validator = Validator::make($fields, [

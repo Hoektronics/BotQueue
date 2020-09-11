@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Models\Jobs;
 
-use App\HostRequest;
+use App\Models\HostRequest;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

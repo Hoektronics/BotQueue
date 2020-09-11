@@ -12,7 +12,7 @@ class FileTypeEnum
 
     public static function fromFile($file)
     {
-        if (is_a($file, App\File::class)) {
+        if (is_a($file, App\Models\File::class)) {
             $file = $file->name;
         }
         $extension = File::extension($file);

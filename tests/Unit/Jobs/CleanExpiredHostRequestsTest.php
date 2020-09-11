@@ -3,8 +3,8 @@
 namespace Tests\Unit\Jobs;
 
 use App\Enums\HostRequestStatusEnum;
-use App\HostRequest;
-use App\Jobs\CleanExpiredHostRequests;
+use App\Models\HostRequest;
+use App\Models\Jobs\CleanExpiredHostRequests;
 use Carbon\Carbon;
 use Tests\TestCase;
 

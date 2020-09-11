@@ -2,11 +2,11 @@
 
 namespace App\Http\HostCommands;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\HostManager;
+use App\Models\HostManager;
 use Illuminate\Support\Collection;
 
 class FailWithErrorCommand

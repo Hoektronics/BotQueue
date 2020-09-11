@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BotResource;
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class BotController extends Controller

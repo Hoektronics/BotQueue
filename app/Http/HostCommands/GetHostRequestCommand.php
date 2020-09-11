@@ -4,7 +4,7 @@ namespace App\Http\HostCommands;
 
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\HostRequest;
+use App\Models\HostRequest;
 use App\Http\Resources\HostRequestResource;
 use Illuminate\Support\Collection;
 

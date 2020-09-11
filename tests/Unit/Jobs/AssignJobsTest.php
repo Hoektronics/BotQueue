@@ -3,14 +3,14 @@
 namespace Tests\Unit\Jobs;
 
 use App\Action\AssignJobToBot;
-use App\Bot;
+use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotIsNotIdle;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobIsNotQueued;
-use App\Job;
-use App\Jobs\AssignJobs;
+use App\Models\Job;
+use App\Models\Jobs\AssignJobs;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Mockery\MockInterface;

@@ -7,9 +7,9 @@ use App\Enums\JobStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\Events\JobFinished;
-use App\HostManager;
+use App\Models\HostManager;
 use App\Http\Resources\JobResource;
-use App\Job;
+use App\Models\Job;
 use Illuminate\Support\Collection;
 
 class FinishJobCommand

@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
-use App\Bot;
-use App\Job;
+use App\Models\Bot;
+use App\Models\Job;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;

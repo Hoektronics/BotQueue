@@ -2,7 +2,7 @@
 
 namespace Tests\Helpers\Models;
 
-use App\Bot;
+use App\Models\Bot;
 
 class BotBuilder
 {
@@ -33,7 +33,7 @@ class BotBuilder
         );
     }
 
-    public function creator(\App\User $user)
+    public function creator(\App\Models\User $user)
     {
         return $this->newWith(['creator_id' => $user->id]);
     }
@@ -48,12 +48,12 @@ class BotBuilder
         return $this->newWith(['status' => $state]);
     }
 
-    public function host(\App\Host $host)
+    public function host(\App\Models\Host $host)
     {
         return $this->newWith(['host_id' => $host->id]);
     }
 
-    public function cluster(\App\Cluster $cluster)
+    public function cluster(\App\Models\Cluster $cluster)
     {
         return $this->newWith(['cluster_id' => $cluster->id]);
     }

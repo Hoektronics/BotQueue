@@ -4,9 +4,9 @@ namespace App\Http\HostCommands;
 
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\HostManager;
+use App\Models\HostManager;
 use App\Http\Resources\JobResource;
-use App\Job;
+use App\Models\Job;
 use Illuminate\Support\Collection;
 
 class UpdateJobProgressCommand

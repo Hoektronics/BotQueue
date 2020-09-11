@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Middleware;
 
-use App\Host;
-use App\HostManager;
+use App\Models\Host;
+use App\Models\HostManager;
 use App\Http\Middleware\ResolveHost;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -3,7 +3,7 @@
 namespace Tests\Feature\Web;
 
 use App\Providers\RouteServiceProvider;
-use App\User;
+use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 

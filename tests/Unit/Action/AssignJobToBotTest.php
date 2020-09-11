@@ -3,14 +3,14 @@
 namespace Tests\Unit\Action;
 
 use App\Action\AssignJobToBot;
-use App\Bot;
+use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotIsNotIdle;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobAssignmentFailed;
 use App\Exceptions\JobIsNotQueued;
-use App\Job;
+use App\Models\Job;
 use Tests\TestCase;
 
 class AssignJobToBotTest extends TestCase

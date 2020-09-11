@@ -2,7 +2,7 @@
 
 namespace Tests\Helpers\Models;
 
-use App\Host;
+use App\Models\Host;
 
 class HostBuilder
 {
@@ -33,7 +33,7 @@ class HostBuilder
         );
     }
 
-    public function creator(\App\User $user)
+    public function creator(\App\Models\User $user)
     {
         return $this->newWith(['owner_id' => $user->id]);
     }

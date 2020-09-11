@@ -2,7 +2,7 @@
 
 namespace App\Http\HostCommands;
 
-use App\HostRequest;
+use App\Models\HostRequest;
 use App\Http\Resources\HostRequestResource;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

@@ -2,9 +2,9 @@
 
 namespace App\Events\Host;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Events\Event;
-use App\Host;
+use App\Models\Host;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;

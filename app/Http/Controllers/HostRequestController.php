@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\HostRequest;
+use App\Models\HostRequest;
 
 class HostRequestController extends Controller
 {

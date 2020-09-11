@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Events;
-use App\Jobs\AssignJobs;
+use App\Models\Jobs\AssignJobs;
 use App\Listeners;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;

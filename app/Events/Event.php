@@ -2,11 +2,11 @@
 
 namespace App\Events;
 
-use App\Bot;
-use App\Cluster;
-use App\Host;
-use App\Job;
-use App\User;
+use App\Models\Bot;
+use App\Models\Cluster;
+use App\Models\Host;
+use App\Models\Job;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Support\Collection;

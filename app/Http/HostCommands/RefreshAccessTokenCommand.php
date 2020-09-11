@@ -2,7 +2,7 @@
 
 namespace App\Http\HostCommands;
 
-use App\HostManager;
+use App\Models\HostManager;
 use App\Http\Resources\HostResource;
 
 class RefreshAccessTokenCommand

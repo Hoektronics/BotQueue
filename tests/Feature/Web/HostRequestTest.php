@@ -3,8 +3,8 @@
 namespace Tests\Feature\Web;
 
 use App\Enums\HostRequestStatusEnum;
-use App\HostRequest;
-use App\User;
+use App\Models\HostRequest;
+use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;

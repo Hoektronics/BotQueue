@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Bot;
-use App\Cluster;
+use App\Models\Bot;
+use App\Models\Cluster;
 use App\Http\Requests\BotCreationRequest;
 use App\Http\Requests\BotUpdateRequest;
 use Illuminate\Http\Request;
@@ -74,7 +74,7 @@ class BotController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Bot $bot
+     * @param \App\Models\Bot $bot
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -92,7 +92,7 @@ class BotController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Bot $bot
+     * @param \App\Models\Bot $bot
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -110,7 +110,7 @@ class BotController extends Controller
      * Update the specified resource in storage.
      *
      * @param BotUpdateRequest $request
-     * @param \App\Bot $bot
+     * @param \App\Models\Bot $bot
      * @return void
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -160,7 +160,7 @@ class BotController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Bot $bot
+     * @param \App\Models\Bot $bot
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */

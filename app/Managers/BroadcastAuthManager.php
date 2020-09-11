@@ -2,9 +2,9 @@
 
 namespace App\Managers;
 
-use App\Host;
-use App\HostManager;
-use App\User;
+use App\Models\Host;
+use App\Models\HostManager;
+use App\Models\User;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Routing\BindingRegistrar;
 use Illuminate\Database\Eloquent\Model;

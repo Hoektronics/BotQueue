@@ -4,8 +4,8 @@ namespace Tests\Feature\Web;
 
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Job;
-use App\Jobs\AssignJobs;
+use App\Models\Job;
+use App\Models\Jobs\AssignJobs;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
