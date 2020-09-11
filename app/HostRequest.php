@@ -9,6 +9,7 @@ use App\Exceptions\OauthHostKeysMissing;
 use App\ModelTraits\HostRequestDynamicAttributes;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -70,6 +71,12 @@ class HostRequest extends Model
     public function claimer()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeCouldBeMine(Builder $query)
+    {
+        $remote_ip = $_SERVER["REMOTE_ADDR"];
+        return $query->where('remote_ip', $remote_ip);
     }
 
     /**
