@@ -64,6 +64,10 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        if(! setting('registration.enabled')) {
+            abort(403, 'Registration is disabled for this site.');
+        }
+
         $user = User::create([
             'username' => $data['username'],
             'email' => $data['email'],

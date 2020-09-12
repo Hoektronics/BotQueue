@@ -7,5 +7,9 @@ module.exports = {
     }
   },
   variants: {},
-  plugins: []
+  plugins: [],
+  purge: [
+      './resources/views/**/*.php',
+      './resources/js/**/*.vue'
+  ],
 };

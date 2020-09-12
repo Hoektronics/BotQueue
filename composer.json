@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.3",
         "ext-json": "*",
+        "akaunting/setting": "^1.2",
         "barryvdh/laravel-ide-helper": "^2.3",
         "doctrine/dbal": "^2.10",
         "fideloper/proxy": "^4.2",
