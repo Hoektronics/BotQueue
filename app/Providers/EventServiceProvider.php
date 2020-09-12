@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Events;
 use App\Jobs\AssignJobs;
 use App\Listeners;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Response;
 
-use App\Job;
+use App\Models\Job;
 use Illuminate\Contracts\Support\Responsable;
 
 class JobStartedResponse implements Responsable

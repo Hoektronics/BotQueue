@@ -3,8 +3,8 @@
 namespace Tests\Helpers\Models;
 
 use App\Enums\FileTypeEnum;
-use App\File;
-use App\User;
+use App\Models\File;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use InvalidArgumentException;

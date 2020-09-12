@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
-use App\Bot;
-use App\Cluster;
-use App\Job;
+use App\Models\Bot;
+use App\Models\Cluster;
+use App\Models\Job;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;

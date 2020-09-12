@@ -7,7 +7,7 @@ use App\Exceptions\HostAlreadyClaimed;
 use App\Exceptions\HostRequestAlreadyDeleted;
 use App\Exceptions\OauthHostClientNotSetup;
 use App\Exceptions\OauthHostKeysMissing;
-use App\HostRequest;
+use App\Models\HostRequest;
 use Tests\TestCase;
 
 class HostRequestTest extends TestCase

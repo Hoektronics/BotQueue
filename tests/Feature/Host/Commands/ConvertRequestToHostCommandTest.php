@@ -5,7 +5,7 @@ namespace Tests\Feature\Host\Commands;
 use App\Enums\HostRequestStatusEnum;
 use App\Errors\HostErrors;
 use App\Exceptions\HostAlreadyClaimed;
-use App\Host;
+use App\Models\Host;
 use App\Oauth\OauthHostClient;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;

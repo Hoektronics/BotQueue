@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Cluster;
+use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Http\Requests\ClusterCreationRequest;
 use Illuminate\Http\Request;
@@ -63,7 +63,7 @@ class ClusterController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Cluster $cluster
+     * @param  \App\Models\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function show(Cluster $cluster)
@@ -78,7 +78,7 @@ class ClusterController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Cluster $cluster
+     * @param  \App\Models\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function edit(Cluster $cluster)
@@ -90,7 +90,7 @@ class ClusterController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \App\Cluster $cluster
+     * @param  \App\Models\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Cluster $cluster)
@@ -101,7 +101,7 @@ class ClusterController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Cluster $cluster
+     * @param  \App\Models\Cluster $cluster
      * @return \Illuminate\Http\Response
      */
     public function destroy(Cluster $cluster)

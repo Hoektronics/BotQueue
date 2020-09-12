@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Host;
+use App\Models\Host;
 use App\HostManager;
 use Carbon\Carbon;
 use Closure;

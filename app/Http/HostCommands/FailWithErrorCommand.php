@@ -2,7 +2,7 @@
 
 namespace App\Http\HostCommands;
 
-use App\Bot;
+use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;

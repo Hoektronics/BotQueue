@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Web;
 
-use App\Bot;
+use App\Models\Bot;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;

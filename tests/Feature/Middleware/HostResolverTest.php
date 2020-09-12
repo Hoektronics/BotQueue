@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Middleware;
 
-use App\Host;
+use App\Models\Host;
 use App\HostManager;
 use App\Http\Middleware\ResolveHost;
 use Carbon\Carbon;

@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Bot;
-use App\User;
+use App\Models\Bot;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BotPolicy
@@ -13,8 +13,8 @@ class BotPolicy
     /**
      * Determine whether the user can view the bot.
      *
-     * @param  \App\User  $user
-     * @param  \App\Bot  $bot
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bot  $bot
      * @return mixed
      */
     public function view(User $user, Bot $bot)
@@ -25,7 +25,7 @@ class BotPolicy
     /**
      * Determine whether the user can create bots.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function create(User $user)
@@ -36,8 +36,8 @@ class BotPolicy
     /**
      * Determine whether the user can update the bot.
      *
-     * @param  \App\User  $user
-     * @param  \App\Bot  $bot
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bot  $bot
      * @return mixed
      */
     public function update(User $user, Bot $bot)
@@ -48,8 +48,8 @@ class BotPolicy
     /**
      * Determine whether the user can delete the bot.
      *
-     * @param  \App\User  $user
-     * @param  \App\Bot  $bot
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bot  $bot
      * @return mixed
      */
     public function delete(User $user, Bot $bot)

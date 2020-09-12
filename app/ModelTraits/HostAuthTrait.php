@@ -3,7 +3,7 @@
 namespace App\ModelTraits;
 
 use App\Exceptions\OauthHostClientNotSetup;
-use App\Host;
+use App\Models\Host;
 use App\Oauth\OauthHostClient;
 use Carbon\Carbon;
 use DateTimeImmutable;
