@@ -64,7 +64,13 @@ class File extends Model
 
         $extension = FileFacade::extension($clientOriginalName);
         $hash = Str::random(40);
-        $uploadedFilePath = $uploadedFile->storePubliclyAs("uploads/{$hash}", $clientOriginalName);
+        $uploadedFilePath = $uploadedFile->storePubliclyAs(
+            "uploads/{$hash}",
+            $clientOriginalName,
+            [
+                "disk" => "public",
+            ]
+        );
 
         $file = new self([
             'path' => $uploadedFilePath,
@@ -87,7 +93,7 @@ class File extends Model
     public function setPathAttribute($path)
     {
         $this->attributes['path'] = $path;
-        $this->attributes['size'] = Storage::size($path);
+        $this->attributes['size'] = Storage::disk('public')->size($path);
     }
 
     public function url()

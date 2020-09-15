@@ -10,6 +10,7 @@ module.exports = {
   plugins: [],
   purge: [
       './resources/views/**/*.php',
-      './resources/js/**/*.vue'
+      './resources/js/**/*.vue',
+      './app/Services/*.php'
   ],
 };

@@ -24,7 +24,10 @@ class FileBuilder
     public function create()
     {
         $uploadedFile = UploadedFile::fake()->create($this->attributes['name']);
-        $uploadedFilePath = $uploadedFile->storePublicly('uploads');
+        $uploadedFilePath = $uploadedFile->storePublicly(
+            'uploads',
+            'public'
+        );
 
         $this->attributes = array_merge($this->attributes, [
             'path' => $uploadedFilePath,
