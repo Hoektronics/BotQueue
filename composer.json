@@ -7,6 +7,12 @@
     ],
     "license": "MIT",
     "type": "project",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/Jnesselr/laravel-chunk-upload"
+        }
+    ],
     "require": {
         "php": "^7.3",
         "ext-json": "*",
@@ -16,6 +22,7 @@
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "jnesselr/laravel-chunk-upload": "dev-master",
         "laravel/framework": "^8.5",
         "laravel/horizon": "^5.0",
         "laravel/passport": "^10.0",
