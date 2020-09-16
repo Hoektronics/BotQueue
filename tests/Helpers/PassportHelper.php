@@ -33,7 +33,7 @@ trait PassportHelper
     }
 
     /**
-     * @param $user App\User
+     * @param $user App\Models\User
      * @param array $scopes
      * @return $this
      */
@@ -49,7 +49,7 @@ trait PassportHelper
     }
 
     /**
-     * @param $host App\Host
+     * @param $host App\Models\Host
      * @return $this
      */
     public function withTokenFromHost($host)

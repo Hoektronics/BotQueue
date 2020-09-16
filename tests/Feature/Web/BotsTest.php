@@ -127,7 +127,7 @@ class BotsTest extends TestCase
             ->assertSee($bot->name)
             ->assertSee('Offline')
             ->assertSee("Creator: $username")
-            ->assertSee(e($cluster->name));
+            ->assertSee($cluster->name);
     }
 
     /** @test */

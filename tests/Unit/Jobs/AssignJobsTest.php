@@ -14,6 +14,7 @@ use App\Jobs\AssignJobs;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Mockery\MockInterface;
+use Tests\Helpers\TestStatus;
 use Tests\TestCase;
 
 class AssignJobsTest extends TestCase
@@ -296,23 +297,14 @@ class AssignJobsTest extends TestCase
         $assignJobs->handle();
     }
 
-    public static function nonIdleBotStates()
-    {
-        return BotStatusEnum::allStates()
-            ->diff(BotStatusEnum::IDLE)
-            ->reduce(function ($lookup, $item) {
-                $lookup[$item] = [$item];
-
-                return $lookup;
-            }, []);
-    }
-
     /** @test
-     * @dataProvider nonIdleBotStates
+     * @dataProvider botStates
      * @param $botState
      */
-    public function aNonIdleBotCannotGrabABotWorkerJob($botState)
+    public function aNonIdleBotCannotGrabABotWorkerJob(TestStatus $botState)
     {
+        $this->exceptStatus(BotStatusEnum::IDLE);
+
         $this->withoutJobs();
 
         $bot = $this->bot()
@@ -352,11 +344,13 @@ class AssignJobsTest extends TestCase
     }
 
     /** @test
-     * @dataProvider nonIdleBotStates
+     * @dataProvider botStates
      * @param $botState
      */
     public function aNonIdleBotCannotGrabAClusterWorkerJob($botState)
     {
+        $this->exceptStatus(BotStatusEnum::IDLE);
+
         $this->withoutJobs();
 
         $cluster = $this->cluster()->create();
@@ -401,23 +395,14 @@ class AssignJobsTest extends TestCase
         $assignJobs->handle();
     }
 
-    public static function nonQueuedJobStates()
-    {
-        return JobStatusEnum::allStates()
-            ->diff(JobStatusEnum::QUEUED)
-            ->reduce(function ($lookup, $item) {
-                $lookup[$item] = [$item];
-
-                return $lookup;
-            }, []);
-    }
-
     /** @test
-     * @dataProvider nonQueuedJobStates
+     * @dataProvider jobStates
      * @param $jobState
      */
     public function aNonQueuedBotWorkerJobCannotBeAssignedToABot($jobState)
     {
+        $this->exceptStatus(JobStatusEnum::QUEUED);
+
         $this->withoutJobs();
 
         $bot = $this->bot()
@@ -457,11 +442,13 @@ class AssignJobsTest extends TestCase
     }
 
     /** @test
-     * @dataProvider nonQueuedJobStates
+     * @dataProvider jobStates
      * @param $jobState
      */
     public function aNonQueuedClusterWorkerJobCannotBeAssignedToABot($jobState)
     {
+        $this->exceptStatus(JobStatusEnum::QUEUED);
+
         $this->withoutJobs();
 
         $cluster = $this->cluster()->create();
@@ -978,11 +965,13 @@ class AssignJobsTest extends TestCase
     }
 
     /** @test
-     * @dataProvider nonIdleBotStates
+     * @dataProvider botStates
      * @param $botState
      */
     public function aNonIdleBotInAClusterWillNotAttemptJobAssignment($botState)
     {
+        $this->exceptStatus(BotStatusEnum::IDLE);
+
         $this->withoutJobs();
 
         $cluster = $this->cluster()->create();

@@ -2,10 +2,14 @@
 
 namespace Tests;
 
+use App\Enums\BotStatusEnum;
+use App\Enums\JobStatusEnum;
 use Illuminate\Contracts\Bus\Dispatcher as BusDispatcherContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Tests\Helpers\TestStatus;
+use Tests\Helpers\TestStatusException;
 use Tests\Helpers\UsesBuilders;
 use Tests\Helpers\WithFakesEvents;
 
@@ -49,5 +53,49 @@ abstract class TestCase extends BaseTestCase
         $this->assertDatabaseMissing($model->getTable(), [
             $model->getKeyName() => $model->getKey(),
         ]);
+    }
+
+    public function exceptStatus(string ...$status)
+    {
+        $data = array_filter(array_values($this->getProvidedData()),
+            function ($parameter) {
+                return is_a($parameter, TestStatus::class);
+            });
+
+        if(count($data) == 0) {
+            return;
+        }
+
+        /** @var TestStatus $testStatus */
+        $testStatus = reset($data);
+
+        if(in_array((string) $testStatus, $status)) {
+            /**
+             * We're going to skip this status, so we throw an exception to get out of the test early.
+             * We also want to not fail (or skip) the test, so we expect the exception.
+             */
+            $this->expectException(TestStatusException::class);
+            throw new TestStatusException($testStatus);
+        }
+    }
+
+    public static function botStates()
+    {
+        return BotStatusEnum::allStates()
+            ->reduce(function ($lookup, $item) {
+                $lookup[$item] = [new TestStatus($item)];
+
+                return $lookup;
+            }, []);
+    }
+
+    public static function jobStates()
+    {
+        return JobStatusEnum::allStates()
+            ->reduce(function ($lookup, $item) {
+                $lookup[$item] = [new TestStatus($item)];
+
+                return $lookup;
+            }, []);
     }
 }

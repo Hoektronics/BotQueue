@@ -77,23 +77,14 @@ class FinishJobCommandTest extends TestCase
             });
     }
 
-    public static function nonInProgressState()
-    {
-        return JobStatusEnum::allStates()
-            ->diff(JobStatusEnum::IN_PROGRESS)
-            ->reduce(function ($lookup, $item) {
-                $lookup[$item] = [$item];
-
-                return $lookup;
-            }, []);
-    }
-
     /** @test
-     * @dataProvider nonInProgressState
+     * @dataProvider jobStates
      * @param $jobState
      */
     public function aHostCanNotGoFromANonInProgressStateToQualityCheck($jobState)
     {
+        $this->exceptStatus(JobStatusEnum::IN_PROGRESS);
+
         $this->withoutJobs();
 
         $bot = $this->bot()

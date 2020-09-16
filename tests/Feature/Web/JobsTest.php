@@ -188,24 +188,15 @@ class JobsTest extends TestCase
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public static function nonQualityCheckJobStates()
-    {
-        return JobStatusEnum::allStates()
-            ->diff(JobStatusEnum::QUALITY_CHECK)
-            ->reduce(function ($lookup, $item) {
-                $lookup[$item] = [$item];
-
-                return $lookup;
-            }, []);
-    }
-
     /**
      * @test
-     * @dataProvider nonQualityCheckJobStates
+     * @dataProvider jobStates
      * @param $jobState
      */
     public function aNonQualityCheckJobStateThrowsAConflictForPass($jobState)
     {
+        $this->exceptStatus(JobStatusEnum::QUALITY_CHECK);
+
         $bot = $this->bot()
             ->state(BotStatusEnum::WAITING)
             ->create();
@@ -224,11 +215,13 @@ class JobsTest extends TestCase
 
     /**
      * @test
-     * @dataProvider nonQualityCheckJobStates
+     * @dataProvider jobStates
      * @param $jobState
      */
     public function aNonQualityCheckJobStateThrowsAConflictForFail($jobState)
     {
+        $this->exceptStatus(JobStatusEnum::QUALITY_CHECK);
+
         $bot = $this->bot()
             ->state(BotStatusEnum::WAITING)
             ->create();

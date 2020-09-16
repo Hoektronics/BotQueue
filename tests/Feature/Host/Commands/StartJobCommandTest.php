@@ -68,23 +68,14 @@ class StartJobCommandTest extends TestCase
         $this->assertEquals(BotStatusEnum::WORKING, $bot->status);
     }
 
-    public static function nonAssignedJobStates()
-    {
-        return JobStatusEnum::allStates()
-            ->diff(JobStatusEnum::ASSIGNED)
-            ->reduce(function ($lookup, $item) {
-                $lookup[$item] = [$item];
-
-                return $lookup;
-            }, []);
-    }
-
     /** @test
-     * @dataProvider nonAssignedJobStates
+     * @dataProvider jobStates
      * @param $jobState
      */
     public function aHostCanNotGoFromANonAssignedStateToInProgress($jobState)
     {
+        $this->exceptStatus(JobStatusEnum::ASSIGNED);
+
         $this->withoutJobs();
 
         $bot = $this->bot()
