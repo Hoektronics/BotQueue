@@ -58,8 +58,8 @@ class HostResolverTest extends TestCase
     /** @test */
     public function updatesSeenAt()
     {
-        $fakeTimeStamp = Carbon::now()->subMinute();
-        $this->mainHost->seen_at = $fakeTimeStamp;
+        $oneMinuteAgo = Carbon::now()->subMinute();
+        $this->mainHost->seen_at = $oneMinuteAgo;
         $this->mainHost->save();
 
         $request = Request::create('http://example.com/host/foo', 'GET');
@@ -74,6 +74,7 @@ class HostResolverTest extends TestCase
 
         /** @var Host $testHost */
         $testHost = Host::query()->find($this->mainHost->id);
-        $this->assertEquals(Carbon::now(), $testHost->seen_at);
+        $this->assertGreaterThan($oneMinuteAgo, $testHost->seen_at);
+        $this->assertLessThanOrEqual(Carbon::now(), $testHost->seen_at);
     }
 }

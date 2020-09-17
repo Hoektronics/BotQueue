@@ -53,6 +53,10 @@ class Host extends Model
         'name',
     ];
 
+    protected $dates = [
+        'seen_at',
+    ];
+
     public function owner()
     {
         return $this->belongsTo(User::class);
