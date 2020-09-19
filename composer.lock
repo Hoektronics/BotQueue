@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "582162cd5b62ef96520b8544708705cc",
+    "content-hash": "c4fd8d73e68d338653da188440ba7adb",
     "packages": [
         {
             "name": "akaunting/setting",
@@ -2204,16 +2204,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.4.0",
+            "version": "v8.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "1c57ab5e375d0a897c22b29e8352453be514131e"
+                "reference": "5a748eecae35fd453e0b1e4d4b6f4fadf0d3e7ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/1c57ab5e375d0a897c22b29e8352453be514131e",
-                "reference": "1c57ab5e375d0a897c22b29e8352453be514131e",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/5a748eecae35fd453e0b1e4d4b6f4fadf0d3e7ac",
+                "reference": "5a748eecae35fd453e0b1e4d4b6f4fadf0d3e7ac",
                 "shasum": ""
             },
             "require": {
@@ -2367,7 +2367,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-09-16T16:13:13+00:00"
+            "time": "2020-09-18T21:27:11+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -3355,20 +3355,20 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "c17f4f73985f62054a331cbc4ffdf9868c4ef256"
+                "reference": "21b71a31eab5c0c2caf967b9c0fd97020254ed75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/c17f4f73985f62054a331cbc4ffdf9868c4ef256",
-                "reference": "c17f4f73985f62054a331cbc4ffdf9868c4ef256",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/21b71a31eab5c0c2caf967b9c0fd97020254ed75",
+                "reference": "21b71a31eab5c0c2caf967b9c0fd97020254ed75",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
+                "php": ">=7.1",
                 "php-http/message-factory": "^1.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0"
@@ -3416,7 +3416,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Nyholm/psr7/issues",
-                "source": "https://github.com/Nyholm/psr7/tree/master"
+                "source": "https://github.com/Nyholm/psr7/tree/1.3.1"
             },
             "funding": [
                 {
@@ -3428,7 +3428,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-05-23T11:29:07+00:00"
+            "time": "2020-06-13T15:59:10+00:00"
         },
         {
             "name": "opis/closure",
@@ -3994,16 +3994,16 @@
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "e878a14a65245fbe78f8080eba03b47c3b705651"
+                "reference": "6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/e878a14a65245fbe78f8080eba03b47c3b705651",
-                "reference": "e878a14a65245fbe78f8080eba03b47c3b705651",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0",
+                "reference": "6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0",
                 "shasum": ""
             },
             "require": {
@@ -4037,9 +4037,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.x"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.4.0"
             },
-            "time": "2020-06-27T10:12:23+00:00"
+            "time": "2020-09-17T18:55:26+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -8418,16 +8418,16 @@
         },
         {
             "name": "facade/flare-client-php",
-            "version": "1.3.5",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/flare-client-php.git",
-                "reference": "25907a113bfc212a38d458ae365bfb902b4e7fb8"
+                "reference": "451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/25907a113bfc212a38d458ae365bfb902b4e7fb8",
-                "reference": "25907a113bfc212a38d458ae365bfb902b4e7fb8",
+                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799",
+                "reference": "451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799",
                 "shasum": ""
             },
             "require": {
@@ -8440,7 +8440,6 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.14",
-                "larapack/dd": "^1.1",
                 "phpunit/phpunit": "^7.5.16",
                 "spatie/phpunit-snapshot-assertions": "^2.0"
             },
@@ -8472,7 +8471,7 @@
             ],
             "support": {
                 "issues": "https://github.com/facade/flare-client-php/issues",
-                "source": "https://github.com/facade/flare-client-php/tree/master"
+                "source": "https://github.com/facade/flare-client-php/tree/1.3.6"
             },
             "funding": [
                 {
@@ -8480,7 +8479,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-26T18:06:23+00:00"
+            "time": "2020-09-18T06:35:11+00:00"
         },
         {
             "name": "facade/ignition",
@@ -9179,16 +9178,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.2.1",
+            "version": "5.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44"
+                "reference": "069a785b2141f5bcf49f3e353548dc1cce6df556"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/d870572532cd70bc3fab58f2e23ad423c8404c44",
-                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/069a785b2141f5bcf49f3e353548dc1cce6df556",
+                "reference": "069a785b2141f5bcf49f3e353548dc1cce6df556",
                 "shasum": ""
             },
             "require": {
@@ -9231,7 +9230,7 @@
                 "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
                 "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/master"
             },
-            "time": "2020-08-15T11:14:08+00:00"
+            "time": "2020-09-03T19:13:55+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -9302,16 +9301,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.1.9",
+            "version": "9.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "cf6582906d4b2502c5f4c6be6a3d0b4cd5b3ef7f"
+                "reference": "5134e2a65ec48e2f7126d12f1503a9889c660bdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/cf6582906d4b2502c5f4c6be6a3d0b4cd5b3ef7f",
-                "reference": "cf6582906d4b2502c5f4c6be6a3d0b4cd5b3ef7f",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/5134e2a65ec48e2f7126d12f1503a9889c660bdf",
+                "reference": "5134e2a65ec48e2f7126d12f1503a9889c660bdf",
                 "shasum": ""
             },
             "require": {
@@ -9367,7 +9366,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.1.9"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.1.10"
             },
             "funding": [
                 {
@@ -9375,7 +9374,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-15T06:14:11+00:00"
+            "time": "2020-09-18T05:25:29+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
