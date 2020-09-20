@@ -69,7 +69,7 @@ export default {
       simultaneousUploads: 3,
       testChunks: false,
       // Get the url from data-url tag
-      target: "/upload-advanced",
+      target: "/files",
       // Append token to the request - required for web routes
       query: {_token: this.token}
     });

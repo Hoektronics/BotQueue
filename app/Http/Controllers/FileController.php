@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\FileTypeEnum;
 use App\Models\File;
-use App\Http\Requests\FileUploadRequest;
+use App\Rules\Extension;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File as FileFacade;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
 class FileController extends Controller
 {
@@ -50,16 +52,46 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  FileUploadRequest $request
-     * @return \Illuminate\Http\Response
-     * @throws \Exception
+     * @param FileReceiver $receiver
+     * @return JsonResponse|RedirectResponse
      */
-    public function store(FileUploadRequest $request)
+    public function store(FileReceiver $receiver)
     {
-        /** @var UploadedFile $originalFile */
-        $originalFile = $request->file('file');
+        // check if the upload is success, throw exception or return response you need
+        if ($receiver->isUploaded() === false) {
+            throw new UploadMissingFileException();
+        }
+        // receive the file
+        $save = $receiver->receive();
 
-        $file = File::fromUploadedFile($originalFile, Auth::getUser());
+        // check if the upload has finished (in chunk mode it will send smaller files)
+        if ($save->isFinished()) {
+            // save the file and return any response you need
+            return $this->saveFile($save->getFile());
+        }
+
+        // we are in chunk mode, lets send the current progress
+        $handler = $save->handler();
+        return response()->json([
+            "done" => $handler->getPercentageDone()
+        ]);
+    }
+
+    protected function saveFile(UploadedFile $originalFile)
+    {
+        $validator = Validator::make([
+            'file' => $originalFile
+        ], [
+            'file' => [new Extension(['gcode', 'stl'])]
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                "error" => "Unsupported file type: {$originalFile->getClientOriginalExtension()}"
+            ], 422);
+        }
+
+        $file = File::fromUploadedFile($originalFile, Auth::user());
 
         return redirect()->route('jobs.create.file', [$file]);
     }
