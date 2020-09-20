@@ -29,8 +29,9 @@
       </div>
     </div>
 
-    <div class="text-center border-red-600 border rounded p-1 text-red-600 text-xl" :class="{ visible: error, hidden: !error }">
-      Oh no, something went wrong!
+    <div class="text-center border-red-600 border rounded p-1 text-red-600 text-xl"
+         :class="{ visible: error, hidden: !error, 'mt-4' : show_upload }">
+      {{ error }}
     </div>
   </div>
 </template>
@@ -45,17 +46,20 @@ export default {
     return {
       flow_supported: true,
       uploading: false,
-      error: false,
+      error: null,
       progress: 0,
       file_name: "",
     }
   },
   computed: {
     show_upload: function() {
-      return this.flow_supported && !this.uploading && !this.error;
+      return this.flow_supported && !this.uploading;
     },
     show_progress: function() {
-      return this.flow_supported && this.uploading && !this.error;
+      return this.flow_supported && this.uploading && !this.has_error;
+    },
+    has_error: function() {
+      return this.error != null;
     }
   },
   mounted() {
@@ -80,6 +84,10 @@ export default {
     flow.assignBrowse(this.$refs.flow_browse, false, true, {});
 
     let self = this;
+    flow.on('fileAdded', function (file, event) {
+      self.error = null;
+      self.uploading = false;
+    });
     flow.on('filesSubmitted', function (files, event) {
       self.file_name = files[0].name;
       self.uploading = true;
@@ -89,7 +97,19 @@ export default {
       location.href = chunk.xhr.responseURL;
     });
     flow.on('fileError', function (file, message) {
-      self.error = true;
+      self.uploading = false
+      try {
+        message = JSON.parse(message);
+
+        if(message.hasOwnProperty('error')) {
+          self.error = message.error;
+        }
+      } catch (e) {}
+
+      if(self.error === null) {
+        self.error = "Oh no, something went wrong!"
+      }
+
       console.log("File upload error!");
       console.log(message);
     });
