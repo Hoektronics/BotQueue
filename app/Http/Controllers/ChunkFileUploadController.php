@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
@@ -30,26 +33,11 @@ class ChunkFileUploadController extends Controller
         ]);
     }
 
-    protected function saveFile(UploadedFile $file)
+    protected function saveFile(UploadedFile $originalFile)
     {
-        $fileName = $this->createFilename($file);
-        // Group files by mime type
-        $mime = str_replace('/', '-', $file->getMimeType());
-        // Group files by the date (week
-        $dateFolder = date("Y-m-W");
+        $file = File::fromUploadedFile($originalFile, User::first());
 
-        // Build the file path
-        $filePath = "upload/{$mime}/{$dateFolder}/";
-        $finalPath = storage_path("app/".$filePath);
-
-        // move the file name
-        $file->move($finalPath, $fileName);
-
-        return response()->json([
-            'path' => $filePath,
-            'name' => $fileName,
-            'mime_type' => $mime
-        ]);
+        return redirect()->route('jobs.create.file', [$file]);
     }
 
     /**

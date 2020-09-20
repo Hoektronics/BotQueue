@@ -1,67 +1,74 @@
 <template>
   <div>
-    <div :class="{ visible : !resumable_supported, hidden : resumable_supported}">
-      Resumable not supported. We should probably handle this somehow later.
+    <div :class="{ visible: !flow_supported, hidden: flow_supported}">
+      Flow upload library not supported. We should probably handle this somehow later.
     </div>
-    <div ref="resumable_drop" :class="{ visible : resumable_supported, hidden : !resumable_supported}">
+    <div ref="flow_drop" class="visible"  :class="{ hidden: !flow_supported}">
       <p>
-        <button ref="resumable_browse" data-url="/foo">Upload</button>
+        <button ref="flow_browse" data-url="/foo">Upload</button>
         or drop here
       </p>
-      <p>Uses `api/upload` endpoint which uses `browser` data instead of session (session is not inited in api routes).
-        This is automatically detected.</p>
     </div>
-    <ul id="file-upload-list" class="list-unstyled hidden">
 
-    </ul>
+    <div ref="progress_bar" class="relative pt-4" :class="{ visible: uploading, hidden: !uploading}">
+      <div class="overflow-hidden h-2 text-xs flex rounded bg-green-200">
+        <div :style="{ width: progress + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-const Resumable = require('resumablejs');
+const Flow = require('@flowjs/flow.js');
 
 export default {
   name: "FileUpload",
   props: ['token'],
   data: function () {
     return {
-      resumable_supported: true
+      flow_supported: true,
+      uploading: false,
+      progress: 0,
     }
   },
   mounted() {
-    const resumable = new Resumable({
+    const flow = new Flow({
       chunkSize: 1000 * 1000, // 1MB ish
       forceChunkSize: true,
       simultaneousUploads: 3,
       testChunks: false,
-      throttleProgressCallbacks: 1,
       // Get the url from data-url tag
       target: "/upload-advanced",
       // Append token to the request - required for web routes
       query: {_token: this.token}
     });
+    window.flow = flow;
 
-    if(!resumable.support) {
-      this.resumable_supported = false;
+    if(!flow.support) {
+      this.flow_supported = false;
       return;
     }
 
-    resumable.assignDrop(this.$refs.resumable_drop);
-    resumable.assignBrowse(this.$refs.resumable_drop, false);
+    flow.assignDrop(this.$refs.flow_drop);
+    flow.assignBrowse(this.$refs.flow_browse, false, true, {});
 
-    resumable.on('fileAdded', function (file) {
+    let self = this;
+    flow.on('filesSubmitted', function () {
       console.log("Uploading!");
-      resumable.upload();
+      self.uploading = true;
+      flow.upload();
     });
-    resumable.on('fileSuccess', function (file, message) {
+    flow.on('fileSuccess', function (file, message, chunk) {
       console.log("Success");
+      location.href = chunk.xhr.responseURL;
     });
-    resumable.on('fileError', function (file, message) {
+    flow.on('fileError', function (file, message) {
       console.log("Error!");
       console.log(message);
     });
-    resumable.on('fileProgress', function (file) {
-      console.log(`Progress! ${(resumable.progress() * 100).toFixed(2)}`);
+    flow.on('fileProgress', function (file) {
+      self.progress = (flow.progress() * 100).toFixed(0);
+      console.log(`Progress! ${self.progress}`);
     });
   }
 }

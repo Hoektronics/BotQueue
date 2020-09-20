@@ -14,12 +14,12 @@
     "esversion": 6
   },
   "dependencies": {
+    "@flowjs/flow.js": "^2.14.1",
     "connect": "^3.7.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ioredis": "^4.17.3",
     "jsonwebtoken": "^8.2.1",
-    "resumablejs": "^1.1.0",
     "sc-errors": "^2.0.1",
     "sc-framework-health-check": "^2.0.0",
     "scc-broker-client": "^8.0.0",
