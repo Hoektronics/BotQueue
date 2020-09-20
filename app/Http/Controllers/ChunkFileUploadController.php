@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
-use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
@@ -11,6 +10,15 @@ use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
 class ChunkFileUploadController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function uploadFile(FileReceiver $receiver)
     {
         // check if the upload is success, throw exception or return response you need
@@ -35,7 +43,7 @@ class ChunkFileUploadController extends Controller
 
     protected function saveFile(UploadedFile $originalFile)
     {
-        $file = File::fromUploadedFile($originalFile, User::first());
+        $file = File::fromUploadedFile($originalFile, Auth::user());
 
         return redirect()->route('jobs.create.file', [$file]);
     }
