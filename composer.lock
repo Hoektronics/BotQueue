@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7ad8091bc39cb45c38720a9d9bb5e9b",
+    "content-hash": "8be4a7aba890a3bcfc32f17fabde44f6",
     "packages": [
         {
             "name": "akaunting/setting",
@@ -1953,16 +1953,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.3.0",
+            "version": "v8.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7f8ac4f4abee41215b7f421f0dc491c844aea7b9"
+                "reference": "5a748eecae35fd453e0b1e4d4b6f4fadf0d3e7ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7f8ac4f4abee41215b7f421f0dc491c844aea7b9",
-                "reference": "7f8ac4f4abee41215b7f421f0dc491c844aea7b9",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/5a748eecae35fd453e0b1e4d4b6f4fadf0d3e7ac",
+                "reference": "5a748eecae35fd453e0b1e4d4b6f4fadf0d3e7ac",
                 "shasum": ""
             },
             "require": {
@@ -2112,11 +2112,7 @@
                 "framework",
                 "laravel"
             ],
-            "support": {
-                "issues": "https://github.com/laravel/framework/issues",
-                "source": "https://github.com/laravel/framework"
-            },
-            "time": "2020-09-15T14:50:30+00:00"
+            "time": "2020-09-18T21:27:11+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -2845,16 +2841,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.39.2",
+            "version": "2.40.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2"
+                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/326efde1bc09077a26cb77f6e2e32e13f06c27f2",
-                "reference": "326efde1bc09077a26cb77f6e2e32e13f06c27f2",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/6c7646154181013ecd55e80c201b9fd873c6ee5d",
+                "reference": "6c7646154181013ecd55e80c201b9fd873c6ee5d",
                 "shasum": ""
             },
             "require": {
@@ -2920,20 +2916,20 @@
                 "datetime",
                 "time"
             ],
-            "time": "2020-09-10T12:16:42+00:00"
+            "time": "2020-09-11T19:00:58+00:00"
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.9.1",
+            "version": "v4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "88e519766fc58bd46b8265561fb79b54e2e00b28"
+                "reference": "1c13d05035deff45f1230ca68bd7d74d621762d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/88e519766fc58bd46b8265561fb79b54e2e00b28",
-                "reference": "88e519766fc58bd46b8265561fb79b54e2e00b28",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1c13d05035deff45f1230ca68bd7d74d621762d9",
+                "reference": "1c13d05035deff45f1230ca68bd7d74d621762d9",
                 "shasum": ""
             },
             "require": {
@@ -2972,24 +2968,24 @@
                 "parser",
                 "php"
             ],
-            "time": "2020-08-30T16:15:20+00:00"
+            "time": "2020-09-19T14:52:48+00:00"
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "c17f4f73985f62054a331cbc4ffdf9868c4ef256"
+                "reference": "21b71a31eab5c0c2caf967b9c0fd97020254ed75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/c17f4f73985f62054a331cbc4ffdf9868c4ef256",
-                "reference": "c17f4f73985f62054a331cbc4ffdf9868c4ef256",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/21b71a31eab5c0c2caf967b9c0fd97020254ed75",
+                "reference": "21b71a31eab5c0c2caf967b9c0fd97020254ed75",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
+                "php": ">=7.1",
                 "php-http/message-factory": "^1.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0"
@@ -3035,7 +3031,7 @@
                 "psr-17",
                 "psr-7"
             ],
-            "time": "2020-05-23T11:29:07+00:00"
+            "time": "2020-06-13T15:59:10+00:00"
         },
         {
             "name": "opis/closure",
@@ -3564,16 +3560,16 @@
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "e878a14a65245fbe78f8080eba03b47c3b705651"
+                "reference": "6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/e878a14a65245fbe78f8080eba03b47c3b705651",
-                "reference": "e878a14a65245fbe78f8080eba03b47c3b705651",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0",
+                "reference": "6a467b8989322d92aa1c8bf2bebcc6e5c2ba55c0",
                 "shasum": ""
             },
             "require": {
@@ -3605,7 +3601,7 @@
                 }
             ],
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "time": "2020-06-27T10:12:23+00:00"
+            "time": "2020-09-17T18:55:26+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -7193,16 +7189,16 @@
         },
         {
             "name": "facade/flare-client-php",
-            "version": "1.3.5",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/flare-client-php.git",
-                "reference": "25907a113bfc212a38d458ae365bfb902b4e7fb8"
+                "reference": "451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/25907a113bfc212a38d458ae365bfb902b4e7fb8",
-                "reference": "25907a113bfc212a38d458ae365bfb902b4e7fb8",
+                "url": "https://api.github.com/repos/facade/flare-client-php/zipball/451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799",
+                "reference": "451fadf38e9f635e7f8e1f5b3cf5c9eb82f11799",
                 "shasum": ""
             },
             "require": {
@@ -7215,7 +7211,6 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.14",
-                "larapack/dd": "^1.1",
                 "phpunit/phpunit": "^7.5.16",
                 "spatie/phpunit-snapshot-assertions": "^2.0"
             },
@@ -7245,7 +7240,7 @@
                 "flare",
                 "reporting"
             ],
-            "time": "2020-08-26T18:06:23+00:00"
+            "time": "2020-09-18T06:35:11+00:00"
         },
         {
             "name": "facade/ignition",
@@ -7878,16 +7873,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.2.1",
+            "version": "5.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44"
+                "reference": "069a785b2141f5bcf49f3e353548dc1cce6df556"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/d870572532cd70bc3fab58f2e23ad423c8404c44",
-                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/069a785b2141f5bcf49f3e353548dc1cce6df556",
+                "reference": "069a785b2141f5bcf49f3e353548dc1cce6df556",
                 "shasum": ""
             },
             "require": {
@@ -7926,7 +7921,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-08-15T11:14:08+00:00"
+            "time": "2020-09-03T19:13:55+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -7993,16 +7988,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.1.9",
+            "version": "9.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "cf6582906d4b2502c5f4c6be6a3d0b4cd5b3ef7f"
+                "reference": "c9394cb9d07ecfa9351b96f2e296bad473195f4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/cf6582906d4b2502c5f4c6be6a3d0b4cd5b3ef7f",
-                "reference": "cf6582906d4b2502c5f4c6be6a3d0b4cd5b3ef7f",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/c9394cb9d07ecfa9351b96f2e296bad473195f4d",
+                "reference": "c9394cb9d07ecfa9351b96f2e296bad473195f4d",
                 "shasum": ""
             },
             "require": {
@@ -8056,11 +8051,7 @@
                 "testing",
                 "xunit"
             ],
-            "support": {
-                "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.1.9"
-            },
-            "time": "2020-09-15T06:14:11+00:00"
+            "time": "2020-09-19T05:29:17+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
