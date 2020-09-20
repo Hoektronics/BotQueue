@@ -31,6 +31,7 @@ Route::get('bots/{bot}/delete', 'BotController@delete')->name('bots.delete');
 Route::resource('bots', 'BotController');
 Route::resource('clusters', 'ClusterController');
 Route::resource('files', 'FileController');
+Route::post('upload-advanced', 'ChunkFileUploadController@uploadFile');
 
 Route::post('jobs/{job}/pass', 'JobController@pass')->name('jobs.pass');
 Route::post('jobs/{job}/fail', 'JobController@fail')->name('jobs.fail');
