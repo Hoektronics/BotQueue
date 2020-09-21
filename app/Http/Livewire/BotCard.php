@@ -66,10 +66,12 @@ class BotCard extends Component
             case BotStatusEnum::OFFLINE:
                 return [
                     "Bring Online" => "bringBotOnline",
+                    "Edit Bot" => "editBot",
                 ];
             case BotStatusEnum::IDLE:
                 return [
                     "Take Offline" => "takeBotOffline",
+                    "Edit Bot" => "editBot",
                 ];
             default:
                 return [];
@@ -92,6 +94,11 @@ class BotCard extends Component
     {
         app(TakeBotOffline::class)->execute($this->bot);
         $this->closeMenu();
+    }
+
+    public function editBot()
+    {
+        return redirect()->route('bots.edit', [$this->bot]);
     }
 
     private function closeMenu()
