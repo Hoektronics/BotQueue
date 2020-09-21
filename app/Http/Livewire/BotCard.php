@@ -2,9 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Actions\BringBotOnline;
 use App\Enums\BotStatusEnum;
+use App\Exceptions\BotStatusConflict;
 use App\Models\Bot;
-use App\StateTransitions\Bot\ToIdle;
 use Illuminate\Support\Arr;
 use Livewire\Component;
 
@@ -54,9 +55,11 @@ class BotCard extends Component
         }
     }
 
+    /**
+     * @throws BotStatusConflict
+     */
     public function bringBotOnline()
     {
-        $toIdle = new ToIdle();
-        $toIdle($this->bot);
+        app(BringBotOnline::class)->execute($this->bot);
     }
 }

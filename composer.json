@@ -30,7 +30,8 @@
         "laravel/ui": "^3.0",
         "livewire/livewire": "^2.2",
         "predis/predis": "^1.1.6",
-        "sentry/sentry-laravel": "^1.9.0"
+        "sentry/sentry-laravel": "^1.9.0",
+        "spatie/laravel-queueable-action": "^2.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
