@@ -28,6 +28,7 @@
         "laravel/passport": "^10.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
+        "livewire/livewire": "^2.2",
         "predis/predis": "^1.1.6",
         "sentry/sentry-laravel": "^1.9.0"
     },

@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="/css/app.css">
+    <livewire:styles />
 
     @yield('css')
 
@@ -65,5 +66,6 @@
 <script src="{{ mix('js/app.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
 @yield('script')
+<livewire:scripts />
 </body>
 </html>
