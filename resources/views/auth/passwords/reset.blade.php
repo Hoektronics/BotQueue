@@ -11,7 +11,7 @@
 
                     <input type="hidden" name="token" value="{{ $token }}">
 
-                    <div class="flex mb-3">
+                    <div class="flex mb-3 items-center">
                         <label for="email" class="w-1/3 my-auto">E-Mail Address</label>
 
                         <div class="input-with-error flex-grow">
@@ -25,7 +25,7 @@
                         </div>
                     </div>
 
-                    <div class="flex mb-3">
+                    <div class="flex mb-3 items-center">
                         <label for="password" class="w-1/3 my-auto">Password</label>
 
                         <div class="input-with-error flex-grow">
@@ -39,7 +39,7 @@
                         </div>
                     </div>
 
-                    <div class="flex mb-3">
+                    <div class="flex mb-3 items-center">
                         <label for="password-confirm" class="w-1/3 my-auto">Confirm Password</label>
 
                         <input id="password-confirm" type="password" name="password_confirmation"

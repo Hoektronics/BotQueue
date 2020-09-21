@@ -14,7 +14,6 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('driver-selection', require('./components/DriverSelection.vue').default);
 Vue.component('file-upload', require('./components/FileUpload.vue').default);
 
 const app = new Vue({

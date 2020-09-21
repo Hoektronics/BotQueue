@@ -8,7 +8,7 @@
                 <form role="form" method="POST" action="{{ route('login') }}">
                     {{ csrf_field() }}
 
-                    <div class="flex mb-3">
+                    <div class="flex mb-3 items-center">
                         <label for="username" class="w-1/3 my-auto">Username</label>
 
                         <div class="input-with-error flex-grow">
