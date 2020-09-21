@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Actions;
+namespace Tests\Unit\Actions;
 
 use App\Actions\BringBotOnline;
 use App\Enums\BotStatusEnum;
@@ -37,16 +37,6 @@ class BringBotOnlineTest extends TestCase
         app(BringBotOnline::class)->execute($bot);
 
         $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
-    }
-
-    /** @test */
-    public function bringingBotOnlineEmitsBotUpdatedEvent()
-    {
-        $this->fakesEvents(BotUpdated::class);
-
-        $bot = $this->bot()->state(BotStatusEnum::OFFLINE)->create();
-
-        app(BringBotOnline::class)->execute($bot);
 
         $this->assertDispatched(BotUpdated::class)
             ->inspect(function ($event) use ($bot) {

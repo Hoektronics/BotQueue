@@ -12,7 +12,7 @@
 
     <div class="flex flex-wrap -mx-2">
         @forelse($bots as $bot)
-            @livewire('bot-card', ['bot' => $bot], key($bot->id))
+            @livewire('bot-card', ['botId' => $bot->id], key($bot->id))
         @empty
             <h4>
                 Hello! This is the page where you can see all of your bots, but it looks like you don't have any

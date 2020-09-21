@@ -1,12 +1,12 @@
 <div class="w-full pt-4 px-2 md:w-1/3">
     <div class="border rounded-t shadow-md">
         <div class="p-2 flex text-lg bg-gray-300 items-center">
-            <a href="{{ route('bots.show', [$bot]) }}"
+            <a href="{{ route('bots.show', [$this->bot]) }}"
                class="text-lg flex-grow mr-2">
-                {{ $bot->name }}
+                {{ $this->bot->name }}
             </a>
 
-            <div class="relative" x-data="{ open: false }">
+            <div class="relative" x-data="{ open: false }" @menu-item-clicked.window="open = false">
                 <button
                         @click="open = true"
                         class="relative rounded-full shadow whitespace-no-wrap flex fill-current items-center p-1 pl-4 pr-2 cursor-pointer z-10 {{ $this->status_color }}">
@@ -18,7 +18,7 @@
                 @if(count($this->menu_items) > 0)
                     <div x-show="open"
                          @click.away="open = false"
-                         class="mt-2 py-2 w-48 absolute bg-white border shadow-xl rounded-lg">
+                         class="mt-2 py-2 w-48 absolute bg-white border border-gray-500 shadow-xl rounded-lg right-0">
                         @foreach($this->menu_items as $menu_title => $action)
                             <a href="#"
                                wire:click="{{ $action }}"
@@ -32,9 +32,9 @@
         </div>
 
         <div class="p-2">
-            @if($bot->currentJob)
-                Job: <a href="{{ route('jobs.show', [$bot->currentJob]) }}">
-                    {{ $bot->currentJob->name }}
+            @if($this->bot->currentJob)
+                Job: <a href="{{ route('jobs.show', [$this->bot->currentJob]) }}">
+                    {{ $this->bot->currentJob->name }}
                 </a>
             @else
                 Job: None

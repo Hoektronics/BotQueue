@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Actions\BringBotOnline;
+use App\Actions\TakeBotOffline;
 use App\Enums\BotStatusEnum;
 use App\Exceptions\BotStatusConflict;
 use App\Models\Bot;
@@ -22,11 +23,27 @@ class BotCard extends Component
     /**
      * @var Bot
      */
-    public $bot;
+    protected $bot;
+    public $botId;
+
+    public function mount()
+    {
+        $this->bot = Bot::find($this->botId);
+    }
+
+    public function hydrate()
+    {
+        $this->bot = Bot::find($this->botId);
+    }
 
     public function render()
     {
         return view('livewire.bot-card');
+    }
+
+    public function getBotProperty()
+    {
+        return $this->bot;
     }
 
     public function getStatusProperty()
@@ -50,6 +67,10 @@ class BotCard extends Component
                 return [
                     "Bring Online" => "bringBotOnline",
                 ];
+            case BotStatusEnum::IDLE:
+                return [
+                    "Take Offline" => "takeBotOffline",
+                ];
             default:
                 return [];
         }
@@ -61,5 +82,20 @@ class BotCard extends Component
     public function bringBotOnline()
     {
         app(BringBotOnline::class)->execute($this->bot);
+        $this->closeMenu();
+    }
+
+    /**
+     * @throws BotStatusConflict
+     */
+    public function takeBotOffline()
+    {
+        app(TakeBotOffline::class)->execute($this->bot);
+        $this->closeMenu();
+    }
+
+    private function closeMenu()
+    {
+        $this->dispatchBrowserEvent('menu-item-clicked');
     }
 }
