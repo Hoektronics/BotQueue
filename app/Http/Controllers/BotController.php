@@ -6,6 +6,8 @@ use App\Models\Bot;
 use App\Models\Cluster;
 use App\Http\Requests\BotCreationRequest;
 use App\Http\Requests\BotUpdateRequest;
+use App\Services\BotDriverService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,9 +76,9 @@ class BotController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Bot $bot
+     * @param Bot $bot
      * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function show(Bot $bot)
     {
@@ -92,9 +94,9 @@ class BotController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Bot $bot
+     * @param Bot $bot
      * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function edit(Bot $bot)
     {
@@ -110,11 +112,12 @@ class BotController extends Controller
      * Update the specified resource in storage.
      *
      * @param BotUpdateRequest $request
-     * @param \App\Models\Bot $bot
+     * @param BotDriverService $driverService
+     * @param Bot $bot
      * @return void
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
-    public function update(BotUpdateRequest $request, Bot $bot)
+    public function update(BotUpdateRequest $request, BotDriverService $driverService, Bot $bot)
     {
         $this->authorize('update', $bot);
 
@@ -122,27 +125,12 @@ class BotController extends Controller
         $bot->name = $request->get('name', $bot->name);
 
         if ($request->has('driver')) {
-            $driverName = $request->get('driver');
-            $driverObject = [
-                'type' => $driverName,
-                'config' => [],
-            ];
+            $driverService->driver_type = $request->get('driver');
+            $driverService->serial_port = $request->get('serial_port');
+            $driverService->baud_rate = $request->get('baud_rate');
+            $driverService->command_delay = $request->get('command_delay');
 
-            switch ($driverName) {
-                case 'gcode':
-                    $connection = [];
-                    $connection['port'] = $request->get('serial_port');
-                    $connection['baud'] = $request->get('baud_rate');
-                    $driverObject['config']['connection'] = $connection;
-                    break;
-                case 'dummy':
-                    if ($request->has('delay')) {
-                        $driverObject['config']['command_delay'] = $request->get('delay');
-                    }
-                    break;
-            }
-
-            $bot->driver = json_encode($driverObject);
+            $bot->driver = $driverService->encode();
         }
 
         $bot->save();
@@ -160,7 +148,7 @@ class BotController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Bot $bot
+     * @param Bot $bot
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */

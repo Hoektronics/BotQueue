@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            @if($this->driverType == $this::GCODE_DRIVER)
+            @if($this->driverType == \App\Enums\DriverType::GCODE)
                 <div class="flex mb-3 items-center">
                     <label for="serial_port" class="w-1/3 my-auto">Serial Port</label>
 
@@ -86,7 +86,7 @@
                 </div>
             @endif
 
-            @if($this->driverType == $this::DUMMY_DRIVER)
+            @if($this->driverType == \App\Enums\DriverType::DUMMY)
                 <div class="flex mb-3 items-center">
                     <label for="command_delay" class="w-1/3 my-auto">Command Delay (sec)</label>
 

@@ -2,15 +2,14 @@
 
 namespace App\Http\Livewire;
 
+use App\Enums\DriverType;
 use App\Models\Bot;
+use App\Services\BotDriverService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class BotEditForm extends Component
 {
-    const GCODE_DRIVER = 'gcode';
-    const DUMMY_DRIVER = 'dummy';
-
     /**
      * @var Bot
      */
@@ -30,8 +29,13 @@ class BotEditForm extends Component
         $this->botName = $this->bot->name;
         $this->hostId = $this->bot->host_id;
 
-        // TODO Get and decode JSON object to find correct driver
-        $this->driverType = self::GCODE_DRIVER;
+        $driverService = app(BotDriverService::class);
+        $driverService->decode($this->bot->driver);
+
+        $this->driverType = $driverService->driver_type;
+        $this->serialPort = $driverService->serial_port;
+        $this->baudRate = $driverService->baud_rate;
+        $this->commandDelay = $driverService->command_delay;
     }
 
     public function hydrate()
@@ -58,8 +62,8 @@ class BotEditForm extends Component
     public function getDriversProperty()
     {
         return [
-            self::GCODE_DRIVER => "Gcode Driver",
-            self::DUMMY_DRIVER => "Dummy/Test Driver",
+            DriverType::GCODE => "Gcode Driver",
+            DriverType::DUMMY => "Dummy/Test Driver",
         ];
     }
 }

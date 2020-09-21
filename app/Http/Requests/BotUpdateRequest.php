@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\DriverType;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
@@ -26,11 +27,15 @@ class BotUpdateRequest extends FormRequest
             'driver' => [
                 'sometimes',
                 'filled',
-                Rule::in('gcode', 'dummy'),
+                Rule::in(DriverType::allDrivers()),
             ],
         ]);
 
         $validator->sometimes('serial_port', 'required', function ($input) {
+            return $this->isGcodeDriver($input);
+        });
+
+        $validator->sometimes('baud_rate', 'required', function ($input) {
             return $this->isGcodeDriver($input);
         });
 
@@ -43,11 +48,11 @@ class BotUpdateRequest extends FormRequest
 
     protected function isGcodeDriver($input)
     {
-        return $input->driver === 'gcode';
+        return $input->driver === DriverType::GCODE;
     }
 
     protected function isDummyDriver($input)
     {
-        return $input->driver === 'dummy';
+        return $input->driver === DriverType::DUMMY;
     }
 }
