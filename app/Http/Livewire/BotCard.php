@@ -39,8 +39,10 @@ class BotCard extends Component
 
     public function getListeners()
     {
+        $id = Auth::user()->id;
+
         return [
-            "echo-private:bots.{$this->bot->id},BotUpdated" => "updateBot",
+            "echo-private:users.{$id},BotUpdated" => "updateBot",
         ];
     }
 

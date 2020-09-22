@@ -8,22 +8,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class BotCreated extends Event implements ShouldBroadcast
+class BotDeleted extends Event implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels;
 
-    /**
-     * @var Bot
-     */
     public $bot;
+    public $user;
 
     /**
      * BotCreated constructor.
-     * @param Bot $bot
+     * @param Bot|mixed $bot
      */
     public function __construct(Bot $bot)
     {
-        $this->bot = $bot;
+        if(is_a($bot, Bot::class)) {
+            $this->bot = ["id" => $bot->id];
+            $this->user = ["id" => $bot->creator_id];
+        }
     }
 
     /**
@@ -34,7 +35,8 @@ class BotCreated extends Event implements ShouldBroadcast
     public function broadcastOn()
     {
         return $this
-            ->userChannel($this->bot->creator_id)
+            ->userChannel($this->user["id"])
+            ->botChannel($this->bot["id"])
             ->channels();
     }
 }

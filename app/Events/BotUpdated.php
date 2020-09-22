@@ -4,15 +4,13 @@ namespace App\Events;
 
 use App\Models\Bot;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class BotUpdated extends Event implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, Queueable, SerializesModels;
+    use Dispatchable, SerializesModels;
 
     /**
      * @var Bot
