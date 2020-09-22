@@ -26,7 +26,7 @@ class BotsTest extends TestCase
                 $this->assertEquals($bot->id, $event->bot->id);
             })
             ->channels([
-                'private-user.'.$this->mainUser->id,
+                'private-users.'.$this->mainUser->id,
             ]);
     }
 
@@ -54,9 +54,9 @@ class BotsTest extends TestCase
                 $this->assertEquals($this->mainHost->id, $event->host->id);
             })
             ->channels([
-                'private-user.'.$this->mainUser->id,
-                'private-bot.'.$bot->id,
-                'private-host.'.$this->mainHost->id,
+                'private-users.'.$this->mainUser->id,
+                'private-bots.'.$bot->id,
+                'private-hosts.'.$this->mainHost->id,
             ]);
     }
 
@@ -83,9 +83,9 @@ class BotsTest extends TestCase
                 $this->assertEquals($this->mainHost->id, $event->host->id);
             })
             ->channels([
-                'private-user.'.$this->mainUser->id,
-                'private-bot.'.$bot->id,
-                'private-host.'.$this->mainHost->id,
+                'private-users.'.$this->mainUser->id,
+                'private-bots.'.$bot->id,
+                'private-hosts.'.$this->mainHost->id,
             ]);
 
         $this->assertDispatched(BotRemovedFromHost::class)
@@ -95,9 +95,9 @@ class BotsTest extends TestCase
                 $this->assertEquals($otherHost->id, $event->host->id);
             })
             ->channels([
-                'private-user.'.$this->mainUser->id,
-                'private-bot.'.$bot->id,
-                'private-host.'.$otherHost->id,
+                'private-users.'.$this->mainUser->id,
+                'private-bots.'.$bot->id,
+                'private-hosts.'.$otherHost->id,
             ]);
     }
 }

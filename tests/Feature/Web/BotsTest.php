@@ -370,7 +370,9 @@ class BotsTest extends TestCase
 
         $jsonString = json_encode([
             'type' => 'dummy',
-            'config' => [],
+            'config' => [
+                "command_delay" => 0,
+            ],
         ]);
 
         $this->assertEquals($jsonString, $bot->driver);
@@ -385,7 +387,7 @@ class BotsTest extends TestCase
             ->actingAs($this->mainUser)
             ->patch("/bots/{$bot->id}", [
                 'driver' => 'dummy',
-                'delay' => 0.01,
+                'command_delay' => 0.01,
             ])
             ->assertRedirect("/bots/{$bot->id}");
 

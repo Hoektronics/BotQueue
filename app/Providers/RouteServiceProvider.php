@@ -54,8 +54,6 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapWebRoutes();
 
         $this->mapHostRoutes();
-
-        $this->mapChannelRoutes();
     }
 
     /**
@@ -95,16 +93,5 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapHostRoutes()
     {
         Route::post('host', [HostApiController::class, 'command']);
-    }
-
-    /**
-     * Define the broadcast channel route for the application.
-     *
-     * @return void
-     */
-    protected function mapChannelRoutes()
-    {
-        Route::post('/broadcasting/auth', [BroadcastController::class, 'auth'])
-            ->middleware('resolve_host');
     }
 }
