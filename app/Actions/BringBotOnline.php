@@ -3,7 +3,6 @@
 namespace App\Actions;
 
 use App\Enums\BotStatusEnum;
-use App\Events\BotUpdated;
 use App\Exceptions\BotStatusConflict;
 use App\Models\Bot;
 use Spatie\QueueableAction\QueueableAction;
@@ -26,7 +25,5 @@ class BringBotOnline
 
         $bot->status = BotStatusEnum::IDLE;
         $bot->save();
-
-        event(new BotUpdated($bot));
     }
 }

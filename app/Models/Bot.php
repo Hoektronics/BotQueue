@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
+use App\Events\BotUpdated;
 use App\ModelTraits\BelongsToHostTrait;
 use App\ModelTraits\WorksOnJobsTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -67,6 +68,7 @@ class Bot extends Model
 
     protected $dispatchesEvents = [
         'created' => BotCreated::class,
+        'updated' => BotUpdated::class,
     ];
 
     protected $attributes = [
