@@ -6,7 +6,7 @@
             <div class="text-center text-xl bg-gray-200">Delete Bot</div>
             <div class="p-4">
                 <form role="form" method="POST" action="{{ route('bots.destroy', [$bot]) }}">
-                    {{ csrf_field() }}
+                    @csrf
                     {{ method_field('DELETE') }}
 
                     <span>

@@ -9,7 +9,7 @@
 @section('content')
     <div class="mx-4">
         <form id="job-create-form" role="form" method="POST" action="{{ route('jobs.file.store', $file) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="flex w-2/3 mx-auto items-start">
                 <div class="w-1/3 m-2 rounded-lg border">

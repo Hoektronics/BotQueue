@@ -11,7 +11,7 @@
                     </div>
                 @else
                     <form role="form" method="POST" action="{{ route('password.email') }}">
-                        {{ csrf_field() }}
+                        @csrf
 
                         <div class="flex mb-3 items-center">
                             <label for="email" class="w-1/3 my-auto">E-Mail Address</label>

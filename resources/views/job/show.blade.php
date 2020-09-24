@@ -10,12 +10,12 @@
             <div class="flex">
                 @if($job->status == \App\Enums\JobStatusEnum::QUALITY_CHECK)
                     <form method="post" action="/jobs/{{$job->id}}/pass">
-                        {{ csrf_field() }}
+                        @csrf
                         <input type="submit" class="btn-green btn-lg btn-interactive m-2" value="Pass">
                     </form>
 
                     <form method="post" action="/jobs/{{$job->id}}/fail">
-                        {{ csrf_field() }}
+                        @csrf
                         <input type="submit" class="btn-red btn-lg btn-interactive m-2" value="Fail">
                     </form>
                 @endif
@@ -83,7 +83,7 @@
 
                         <form id="delete-job-form" action="{{ route('jobs.destroy', [$job]) }}" method="POST"
                               style="display: none;">
-                            {{ csrf_field() }}
+                            @csrf
                             {{ method_field('DELETE') }}
                         </form>
                     @endif

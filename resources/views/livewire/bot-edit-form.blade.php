@@ -2,7 +2,7 @@
     <div class="text-center text-xl bg-gray-200">Edit Bot</div>
     <div class="p-4">
         <form role="form" method="POST" action="{{ route('bots.update', [$this->bot]) }}">
-            {{ csrf_field() }}
+            @csrf
             {{ method_field('PATCH') }}
 
             <div class="flex mb-3 items-center">

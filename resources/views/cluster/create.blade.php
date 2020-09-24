@@ -6,7 +6,7 @@
             <div class="text-center text-xl bg-gray-200">Create Cluster</div>
             <div class="p-4">
                 <form role="form" method="POST" action="{{ route('clusters.store') }}">
-                    {{ csrf_field() }}
+                    @csrf
 
                     <div class="flex mb-3 items-center">
                         <label for="name" class="w-1/3 my-auto">Name</label>

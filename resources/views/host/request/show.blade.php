@@ -6,7 +6,7 @@
             <div class="text-center text-xl bg-gray-200">Claim Host</div>
             <div class="p-4">
                 <form role="form" method="POST" action="{{ route('hosts.store') }}">
-                    {{ csrf_field() }}
+                    @csrf
                     <input type="hidden" name="host_request_id" value="{{ $host_request->id }}">
 
                     <div class="flex mb-3 items-center">
