@@ -38,11 +38,13 @@ class UpdateJobProgressCommand
 
         $job = Job::find($data['id']);
 
-        if ($data['progress'] < $job->progress) {
+        $progress = round($data['progress'], 2);
+
+        if ($progress < $job->progress) {
             return HostErrors::jobPercentageCanOnlyIncrease();
         }
 
-        $job->progress = $data['progress'];
+        $job->progress = $progress;
         $job->save();
 
         return new JobResource($job);

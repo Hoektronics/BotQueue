@@ -117,6 +117,69 @@ class UpdateJobProgressCommandTest extends TestCase
     }
 
     /** @test */
+    public function precisionIsOnlyTwoDecimalPlaces()
+    {
+        $file = $this->file()->gcode()->create();
+
+        $job = $this
+            ->job()
+            ->state(JobStatusEnum::IN_PROGRESS)
+            ->bot($this->bot()->host($this->mainHost)->create())
+            ->file($file)
+            ->create();
+
+        $this
+            ->withTokenFromHost($this->mainHost)
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'id' => $job->id,
+                    'progress' => 42.4242,
+                ],
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson([
+                'status' => 'success',
+                'data' => [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'status' => JobStatusEnum::IN_PROGRESS,
+                    'progress' => 42.42,
+                    'url' => $file->url(),
+                ],
+            ]);
+
+        $job->refresh();
+
+        $this->assertEquals(42.42, $job->progress);
+
+        $this
+            ->withTokenFromHost($this->mainHost)
+            ->postJson('/host', [
+                'command' => 'UpdateJobProgress',
+                'data' => [
+                    'id' => $job->id,
+                    'progress' => 42.4245,
+                ],
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson([
+                'status' => 'success',
+                'data' => [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'status' => JobStatusEnum::IN_PROGRESS,
+                    'progress' => 42.42,
+                    'url' => $file->url(),
+                ],
+            ]);
+
+        $job->refresh();
+
+        $this->assertEquals(42.42, $job->progress);
+    }
+
+    /** @test */
     public function jobIdMustBeSpecified()
     {
         $this
