@@ -19,6 +19,7 @@ class BotCard extends Component
         BotStatusEnum::IDLE => 'bg-green-500 text-white',
         BotStatusEnum::WORKING => 'bg-blue-400 text-white',
         BotStatusEnum::WAITING => 'bg-gray-600 text-white',
+        BotStatusEnum::ERROR => 'bg-red-600 text-white',
     ];
     
     /**
@@ -73,14 +74,19 @@ class BotCard extends Component
     public function getMenuItemsProperty()
     {
         switch ($this->bot->status) {
-            case BotStatusEnum::OFFLINE:
+            case BotStatusEnum::ERROR:
                 return [
                     "Bring Online" => "bringBotOnline",
-                    "Edit Bot" => "editBot",
+                    "Take Offline" => "takeBotOffline",
                 ];
             case BotStatusEnum::IDLE:
                 return [
                     "Take Offline" => "takeBotOffline",
+                    "Edit Bot" => "editBot",
+                ];
+            case BotStatusEnum::OFFLINE:
+                return [
+                    "Bring Online" => "bringBotOnline",
                     "Edit Bot" => "editBot",
                 ];
             default:

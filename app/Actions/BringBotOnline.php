@@ -19,11 +19,12 @@ class BringBotOnline
      */
     public function execute(Bot $bot)
     {
-        if($bot->status != BotStatusEnum::OFFLINE) {
-            throw new BotStatusConflict("Bot status was {$bot->status} but needed to be offline");
+        if(! in_array($bot->status, [BotStatusEnum::OFFLINE, BotStatusEnum::ERROR])) {
+            throw new BotStatusConflict("Bot status cannot be brought online from {$bot->status}");
         }
 
         $bot->status = BotStatusEnum::IDLE;
+        $bot->error_text = null;
         $bot->save();
     }
 }

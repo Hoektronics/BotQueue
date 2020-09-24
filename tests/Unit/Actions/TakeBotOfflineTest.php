@@ -17,18 +17,18 @@ class TakeBotOfflineTest extends TestCase
      */
     public function nonIdleStatesCannotBeTakenOffline(TestStatus $botState)
     {
-        $this->exceptStatus(BotStatusEnum::IDLE);
+        $this->exceptStatus(BotStatusEnum::IDLE, BotStatusEnum::ERROR);
 
         $bot = $this->bot()->state($botState)->create();
 
         $this->expectException(BotStatusConflict::class);
-        $this->expectExceptionMessage("Bot status was {$botState} but needed to be idle");
+        $this->expectExceptionMessage("Bot status cannot be taken offline from {$botState}");
 
         app(TakeBotOffline::class)->execute($bot);
     }
 
     /** @test */
-    public function offlineBotCanBeBroughtOnline()
+    public function idleBotCanBeTakenOffline()
     {
         $this->fakesEvents(BotUpdated::class);
 
@@ -43,5 +43,39 @@ class TakeBotOfflineTest extends TestCase
                 /** @var BotUpdated $event */
                 return $bot->id == $event->bot->id;
             });
+    }
+
+    /** @test */
+    public function errorBotCanBeBroughtOnline()
+    {
+        $this->fakesEvents(BotUpdated::class);
+
+        $bot = $this->bot()->state(BotStatusEnum::ERROR)->create();
+
+        app(TakeBotOffline::class)->execute($bot);
+
+        $this->assertEquals(BotStatusEnum::OFFLINE, $bot->status);
+
+        $this->assertDispatched(BotUpdated::class)
+            ->inspect(function ($event) use ($bot) {
+                /** @var BotUpdated $event */
+                return $bot->id == $event->bot->id;
+            });
+    }
+
+    /** @test */
+    public function takingBotOfflineClearsError()
+    {
+        $this->fakesEvents(BotUpdated::class);
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::ERROR)
+            ->error_text("This is a test")
+            ->create();
+
+        app(TakeBotOffline::class)->execute($bot);
+
+        $this->assertEquals(BotStatusEnum::OFFLINE, $bot->status);
+        $this->assertNull($bot->error_text);
     }
 }

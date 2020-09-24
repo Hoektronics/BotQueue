@@ -39,6 +39,11 @@
             @else
                 Job: None
             @endif
+            @if($this->bot->error_text)
+                <div class="mt-2 border-red-600 border rounded p-1 text-red-600">
+                    Error: {{ $this->bot->error_text }}
+                </div>
+            @endif
         </div>
     </div>
 </div>

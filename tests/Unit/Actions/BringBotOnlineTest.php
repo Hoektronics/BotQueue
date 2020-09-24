@@ -17,12 +17,12 @@ class BringBotOnlineTest extends TestCase
      */
     public function nonOfflineStatesCannotBeBroughtOnline(TestStatus $botState)
     {
-        $this->exceptStatus($botState);
+        $this->exceptStatus(BotStatusEnum::OFFLINE, BotStatusEnum::ERROR);
 
         $bot = $this->bot()->state($botState)->create();
 
         $this->expectException(BotStatusConflict::class);
-        $this->expectExceptionMessage("Bot status was {$botState} but needed to be offline");
+        $this->expectExceptionMessage("Bot status cannot be brought online from {$botState}");
 
         app(BringBotOnline::class)->execute($bot);
     }
@@ -43,5 +43,39 @@ class BringBotOnlineTest extends TestCase
                 /** @var BotUpdated $event */
                 return $bot->id == $event->bot->id;
             });
+    }
+
+    /** @test */
+    public function errorBotCanBeBroughtOnline()
+    {
+        $this->fakesEvents(BotUpdated::class);
+
+        $bot = $this->bot()->state(BotStatusEnum::ERROR)->create();
+
+        app(BringBotOnline::class)->execute($bot);
+
+        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
+
+        $this->assertDispatched(BotUpdated::class)
+            ->inspect(function ($event) use ($bot) {
+                /** @var BotUpdated $event */
+                return $bot->id == $event->bot->id;
+            });
+    }
+
+    /** @test */
+    public function bringingBotOnlineClearsError()
+    {
+        $this->fakesEvents(BotUpdated::class);
+
+        $bot = $this->bot()
+            ->state(BotStatusEnum::ERROR)
+            ->error_text("This is a test")
+            ->create();
+
+        app(BringBotOnline::class)->execute($bot);
+
+        $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
+        $this->assertNull($bot->error_text);
     }
 }

@@ -19,11 +19,12 @@ class TakeBotOffline
      */
     public function execute(Bot $bot)
     {
-        if($bot->status != BotStatusEnum::IDLE) {
-            throw new BotStatusConflict("Bot status was {$bot->status} but needed to be idle");
+        if(! in_array($bot->status, [BotStatusEnum::IDLE, BotStatusEnum::ERROR])) {
+            throw new BotStatusConflict("Bot status cannot be taken offline from {$bot->status}");
         }
 
         $bot->status = BotStatusEnum::OFFLINE;
+        $bot->error_text = null;
         $bot->save();
     }
 }

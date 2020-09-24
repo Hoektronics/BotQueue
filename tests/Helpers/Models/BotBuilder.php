@@ -67,4 +67,9 @@ class BotBuilder
     {
         return $this->newWith(['driver' => $array]);
     }
+
+    public function error_text(string $text)
+    {
+        return $this->newWith(['error_text' => $text]);
+    }
 }
