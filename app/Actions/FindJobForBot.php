@@ -4,11 +4,9 @@ namespace App\Actions;
 
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Exceptions\BotIsNotIdle;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\BotStatusConflict;
 use App\Exceptions\JobAssignmentFailed;
-use App\Exceptions\JobIsNotQueued;
 use App\Exceptions\JobStatusConflict;
 use App\Models\Bot;
 use App\Models\Cluster;

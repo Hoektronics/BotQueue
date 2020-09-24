@@ -6,8 +6,6 @@ use App\Actions\FindJobForBot;
 use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Exceptions\BotIsNotIdle;
-use App\Exceptions\JobIsNotQueued;
 use App\Models\Job;
 use Carbon\Carbon;
 use Tests\Helpers\TestStatus;
