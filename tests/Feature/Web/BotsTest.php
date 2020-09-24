@@ -50,19 +50,6 @@ class BotsTest extends TestCase
     }
 
     /** @test */
-    public function userCanSeeBotCreationPage()
-    {
-        $this
-            ->actingAs($this->mainUser)
-            ->get('/bots/create')
-            ->assertViewIs('bot.create')
-            ->assertSee('<input name="name"', $escaped = false)
-            ->assertSee('<select name="type"', $escaped = false)
-            ->assertSee('<option value="3d_printer">3D Printer</option>', $escaped = false)
-            ->assertSee('<select name="cluster"', $escaped = false);
-    }
-
-    /** @test */
     public function unauthenticatedUserCannotCreateBot()
     {
         $this

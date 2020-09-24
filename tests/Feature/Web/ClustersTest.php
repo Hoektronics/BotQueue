@@ -44,16 +44,6 @@ class ClustersTest extends TestCase
     }
 
     /** @test */
-    public function authenticatedUserSeesCreateClusterPage()
-    {
-        $this
-            ->actingAs($this->mainUser)
-            ->get('/clusters/create')
-            ->assertViewIs('cluster.create')
-            ->assertSee('<input name="name"', $escaped = false);
-    }
-
-    /** @test */
     public function unauthenticatedUserCannotCreateCluster()
     {
         $this
