@@ -19,6 +19,7 @@ class FindJobForBotTest extends TestCase
         $this->assertEquals(BotStatusEnum::JOB_ASSIGNED, $bot->status);
         $this->assertEquals($job->id, $bot->current_job_id);
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
+        $this->assertEquals($bot->id, $job->bot_id);
     }
 
     public function assertBotIsNotAssignedAnyJob(Bot $bot)
@@ -30,6 +31,7 @@ class FindJobForBotTest extends TestCase
     public function assertBotIsNotAssignedToJob(Bot $bot, Job $job)
     {
         $this->assertNotEquals($job->id, $bot->current_job_id);
+        $this->assertNotEquals($bot->id, $job->bot_id);
     }
 
     /** @test */
