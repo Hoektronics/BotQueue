@@ -8,20 +8,12 @@
                 <form role="form" method="POST" action="{{ route('bots.store') }}">
                     @csrf
 
-                    <div class="flex mb-3 items-center">
-                        <label for="name" class="w-1/3 my-auto">Name</label>
-
-                        <div class="input-with-error flex-grow">
-                            @error('name')
-                                <span class="input-error">{{ $message }}</span>
-                            @enderror
-
-                            <input name="name" id="name" type="text"
-                                   value="{{ old('name') }}"
-                                   class="input"
-                                   required autofocus>
-                        </div>
-                    </div>
+                    <x-input.text
+                            name="name"
+                            label="Name"
+                            class="mb-3"
+                            required autofocus
+                    ></x-input.text>
 
                     <div class="flex mb-3 items-center">
                         <label for="type" class="w-1/3 my-auto">Bot Type</label>

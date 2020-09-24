@@ -9,20 +9,12 @@
                     @csrf
                     <input type="hidden" name="host_request_id" value="{{ $host_request->id }}">
 
-                    <div class="flex mb-3 items-center">
-                        <label for="name" class="w-1/3 my-auto">Host Name</label>
-
-                        <div class="input-with-error flex-grow">
-                            @error('name')
-                                <span class="input-error">{{ $message }}</span>
-                            @enderror
-
-                            <input name="name" id="name" type="text"
-                                   value="{{ old('name', $host_request->hostname) }}"
-                                   class="input"
-                                   required autofocus>
-                        </div>
-                    </div>
+                    <x-input.text
+                            name="name"
+                            label="Host Name"
+                            class="mb-3"
+                            required autofocus
+                    ></x-input.text>
 
                     @if($host_request->hostname !== null)
                         <div class="flex mb-3 items-center">

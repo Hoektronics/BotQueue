@@ -9,52 +9,36 @@
                     <form role="form" method="POST" action="{{ route('register') }}">
                         @csrf
 
-                        <div class="flex mb-3 items-center">
-                            <label for="username" class="w-1/3 my-auto">Username</label>
+                        <x-input.text
+                                name="username"
+                                label="Username"
+                                class="mb-3"
+                                required autofocus
+                        ></x-input.text>
 
-                            <div class="input-with-error flex-grow">
-                                @error('username')
-                                <span class="input-error">{{ $message }}</span>
-                                @enderror
+                        <x-input.text
+                                name="email"
+                                label="E-mail Address"
+                                type="email"
+                                class="mb-3"
+                                required
+                        ></x-input.text>
 
-                                <input id="username" type="text" name="username" value="{{ old('username') }}" required
-                                       class="input"
-                                       autofocus>
-                            </div>
-                        </div>
+                        <x-input.text
+                                name="password"
+                                label="Password"
+                                type="password"
+                                class="mb-3"
+                                required
+                        ></x-input.text>
 
-                        <div class="flex my-3">
-                            <label for="email" class="w-1/3 my-auto">E-Mail Address</label>
-
-                            <div class="input-with-error flex-grow">
-                                @error('email')
-                                    <span class="input-error">{{ $message }}</span>
-                                @enderror
-
-                                <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                                       class="input">
-                            </div>
-                        </div>
-
-                        <div class="flex my-3">
-                            <label for="password" class="w-1/3 my-auto">Password</label>
-
-                            <div class="input-with-error flex-grow">
-                                @error('password')
-                                    <span class="input-error">{{ $message }}</span>
-                                @enderror
-
-                                <input id="password" type="password" name="password" required
-                                       class="input">
-                            </div>
-                        </div>
-
-                        <div class="flex my-3">
-                            <label for="password-confirm" class="w-1/3 my-auto">Confirm Password</label>
-
-                            <input id="password-confirm" type="password" name="password_confirmation" required
-                                   class="flex-grow input">
-                        </div>
+                        <x-input.text
+                                name="password_confirmation"
+                                label="Confirm Password"
+                                type="password"
+                                class="mb-3"
+                                required
+                        ></x-input.text>
 
                         <div class="flex justify-end mt-4">
                             <button type="submit" class="btn-blue btn-lg btn-interactive">
