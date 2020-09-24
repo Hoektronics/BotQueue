@@ -56,7 +56,7 @@ class Event
         }
 
         if ($user_id !== null) {
-            return $this->addChannel(new PrivateChannel('user.'.$user_id));
+            return $this->addChannel(new PrivateChannel('users.'.$user_id));
         }
 
         return $this;
@@ -74,7 +74,7 @@ class Event
         }
 
         if ($bot_id !== null) {
-            return $this->addChannel(new PrivateChannel('bot.'.$bot_id));
+            return $this->addChannel(new PrivateChannel('bots.'.$bot_id));
         }
 
         return $this;
@@ -92,7 +92,7 @@ class Event
         }
 
         if ($job_id !== null) {
-            return $this->addChannel(new PrivateChannel('job.'.$job_id));
+            return $this->addChannel(new PrivateChannel('jobs.'.$job_id));
         }
 
         return $this;
@@ -110,7 +110,7 @@ class Event
         }
 
         if ($host_id !== null) {
-            return $this->addChannel(new PrivateChannel('host.'.$host_id));
+            return $this->addChannel(new PrivateChannel('hosts.'.$host_id));
         }
 
         return $this;
@@ -128,7 +128,7 @@ class Event
         }
 
         if ($cluster_id !== null) {
-            return $this->addChannel(new PrivateChannel('cluster.'.$cluster_id));
+            return $this->addChannel(new PrivateChannel('clusters.'.$cluster_id));
         }
 
         return $this;

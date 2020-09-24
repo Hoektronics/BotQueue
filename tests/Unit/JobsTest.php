@@ -34,7 +34,7 @@ class JobsTest extends TestCase
                 $this->assertEquals($job->id, $event->job->id);
             })
             ->channels([
-                'private-user.'.$this->mainUser->id,
+                'private-users.'.$this->mainUser->id,
             ]);
     }
 

@@ -5,7 +5,7 @@
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch-poll": "npm run watch -- --watch-poll",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production",
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "socket": "node js/socket/server.js"
@@ -20,6 +20,8 @@
     "express": "^4.17.1",
     "ioredis": "^4.17.3",
     "jsonwebtoken": "^8.2.1",
+    "laravel-echo": "^1.8.1",
+    "pusher-js": "^7.0.0",
     "sc-errors": "^2.0.1",
     "sc-framework-health-check": "^2.0.0",
     "scc-broker-client": "^8.0.0",

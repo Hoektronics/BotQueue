@@ -8,7 +8,7 @@
                 <form role="form" method="POST" action="{{ route('clusters.store') }}">
                     {{ csrf_field() }}
 
-                    <div class="flex mb-3">
+                    <div class="flex mb-3 items-center">
                         <label for="name" class="w-1/3 my-auto">Name</label>
 
                         <div class="input-with-error flex-grow">

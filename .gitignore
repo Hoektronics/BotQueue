@@ -11,6 +11,7 @@ node_modules
 /public/fonts
 /public/css
 /public/js
+/public/mix-manifest.json
 /public/hot
 /public/storage
 /storage/*.key

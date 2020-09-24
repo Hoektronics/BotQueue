@@ -1,17 +1,15 @@
-@extends('layouts.app')
-
-@section('content')
+<div>
     <div class="flex justify-between">
-        <span class="text-3xl">Bots</span>
+        <span class="text-3xl">Dashboard</span>
         <a role="button"
-           href="{{ route('bots.create') }}"
+           href="{{ route('jobs.create') }}"
            class="btn-lg btn-blue btn-interactive">
-            Create a Bot
+            Start a job
         </a>
     </div>
 
     <div class="flex flex-wrap -mx-2">
-        @forelse($bots as $bot)
+        @forelse($this->bots as $bot)
             @livewire('bot-card', ['botId' => $bot->id], key($bot->id))
         @empty
             <h4>
@@ -23,4 +21,4 @@
             </h4>
         @endforelse
     </div>
-@endsection
+</div>

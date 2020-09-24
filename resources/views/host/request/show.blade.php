@@ -9,7 +9,7 @@
                     {{ csrf_field() }}
                     <input type="hidden" name="host_request_id" value="{{ $host_request->id }}">
 
-                    <div class="flex mb-3">
+                    <div class="flex mb-3 items-center">
                         <label for="name" class="w-1/3 my-auto">Host Name</label>
 
                         <div class="input-with-error flex-grow">
@@ -25,14 +25,14 @@
                     </div>
 
                     @if($host_request->hostname !== null)
-                        <div class="flex mb-3">
+                        <div class="flex mb-3 items-center">
                             <label for="hostname" class="w-1/3 my-auto">Device hostname</label>
                             <input type="text" class="flex-grow" id="hostname" value="{{ $host_request->hostname }}" disabled>
                         </div>
                     @endif
 
                     @if($host_request->local_ip !== null)
-                        <div class="flex mb-3">
+                        <div class="flex mb-3 items-center">
                             <label for="local_ip" class="w-1/3 my-auto">Local IP</label>
                             <input type="text" class="flex-grow" id="local_ip" value="{{ $host_request->local_ip }}" disabled>
                         </div>

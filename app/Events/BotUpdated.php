@@ -8,7 +8,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class BotCreated extends Event implements ShouldBroadcast
+class BotUpdated extends Event implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels;
 
@@ -35,6 +35,7 @@ class BotCreated extends Event implements ShouldBroadcast
     {
         return $this
             ->userChannel($this->bot->creator_id)
+            ->botChannel($this->bot)
             ->channels();
     }
 }
