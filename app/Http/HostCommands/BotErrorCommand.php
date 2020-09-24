@@ -9,7 +9,7 @@ use App\Errors\HostErrors;
 use App\HostManager;
 use Illuminate\Support\Collection;
 
-class FailWithErrorCommand
+class BotErrorCommand
 {
     use HostCommandTrait;
 
