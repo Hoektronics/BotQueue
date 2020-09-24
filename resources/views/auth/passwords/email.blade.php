@@ -17,9 +17,9 @@
                             <label for="email" class="w-1/3 my-auto">E-Mail Address</label>
 
                             <div class="input-with-error flex-grow">
-                                @if ($errors->has('email'))
-                                    <span class="input-error">{{ $errors->first('email') }}</span>
-                                @endif
+                                @error('email')
+                                    <span class="input-error">{{ $message }}</span>
+                                @enderror
 
                                 <input id="email" type="email" name="email" value="{{ old('email') }}"
                                        class="input"

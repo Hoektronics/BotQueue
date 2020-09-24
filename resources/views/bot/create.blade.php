@@ -12,9 +12,9 @@
                         <label for="name" class="w-1/3 my-auto">Name</label>
 
                         <div class="input-with-error flex-grow">
-                            @if ($errors->has('name'))
-                                <span class="input-error">{{ $errors->first('name') }}</span>
-                            @endif
+                            @error('name')
+                                <span class="input-error">{{ $message }}</span>
+                            @enderror
 
                             <input name="name" id="name" type="text"
                                    value="{{ old('name') }}"
@@ -27,9 +27,9 @@
                         <label for="type" class="w-1/3 my-auto">Bot Type</label>
 
                         <div class="input-with-error flex-grow">
-                            @if ($errors->has('type'))
-                                <span class="input-error">{{ $errors->first('type') }}</span>
-                            @endif
+                            @error('type')
+                                <span class="input-error">{{ $message }}</span>
+                            @enderror
 
                             <select name="type" id="type"
                                     class="input">
@@ -42,9 +42,9 @@
                         <label for="cluster" class="w-1/3 my-auto">Cluster</label>
 
                         <div class="input-with-error flex-grow">
-                            @if ($errors->has('cluster'))
-                                <span class="input-error">{{ $errors->first('cluster') }}</span>
-                            @endif
+                            @error('cluster')
+                                <span class="input-error">{{ $message }}</span>
+                            @enderror
 
                             <select name="cluster" id="cluster"
                                     class="input appearance-none">

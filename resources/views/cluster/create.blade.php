@@ -12,9 +12,9 @@
                         <label for="name" class="w-1/3 my-auto">Name</label>
 
                         <div class="input-with-error flex-grow">
-                            @if ($errors->has('name'))
-                                <span class="input-error">{{ $errors->first('name') }}</span>
-                            @endif
+                            @error('name')
+                                <span class="input-error">{{ $message }}</span>
+                            @enderror
 
                             <input name="name" id="name" type="text"
                                    value="{{ old('name') }}"

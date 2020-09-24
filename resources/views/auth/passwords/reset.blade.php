@@ -15,9 +15,9 @@
                         <label for="email" class="w-1/3 my-auto">E-Mail Address</label>
 
                         <div class="input-with-error flex-grow">
-                            @if ($errors->has('email'))
-                                <span class="input-error">{{ $errors->first('email') }}</span>
-                            @endif
+                            @error('email')
+                                <span class="input-error">{{ $message }}</span>
+                            @enderror
 
                             <input id="email" type="email" name="email" value="{{ $email ?? old('email') }}"
                                    class="input"
@@ -29,9 +29,9 @@
                         <label for="password" class="w-1/3 my-auto">Password</label>
 
                         <div class="input-with-error flex-grow">
-                            @if ($errors->has('password'))
-                                <span class="input-error">{{ $errors->first('password') }}</span>
-                            @endif
+                            @error('password')
+                                <span class="input-error">{{ $message }}</span>
+                            @enderror
 
                             <input id="password" type="password" name="password"
                                    class="input"

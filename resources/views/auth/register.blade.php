@@ -13,9 +13,9 @@
                             <label for="username" class="w-1/3 my-auto">Username</label>
 
                             <div class="input-with-error flex-grow">
-                                @if ($errors->has('username'))
-                                    <span class="input-error">{{ $errors->first('username') }}</span>
-                                @endif
+                                @error('username')
+                                <span class="input-error">{{ $message }}</span>
+                                @enderror
 
                                 <input id="username" type="text" name="username" value="{{ old('username') }}" required
                                        class="input"
@@ -27,9 +27,9 @@
                             <label for="email" class="w-1/3 my-auto">E-Mail Address</label>
 
                             <div class="input-with-error flex-grow">
-                                @if ($errors->has('email'))
-                                    <span class="input-error">{{ $errors->first('email') }}</span>
-                                @endif
+                                @error('email')
+                                    <span class="input-error">{{ $message }}</span>
+                                @enderror
 
                                 <input id="email" type="email" name="email" value="{{ old('email') }}" required
                                        class="input">
@@ -40,9 +40,9 @@
                             <label for="password" class="w-1/3 my-auto">Password</label>
 
                             <div class="input-with-error flex-grow">
-                                @if ($errors->has('password'))
-                                    <span class="input-error">{{ $errors->first('password') }}</span>
-                                @endif
+                                @error('password')
+                                    <span class="input-error">{{ $message }}</span>
+                                @enderror
 
                                 <input id="password" type="password" name="password" required
                                        class="input">

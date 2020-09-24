@@ -9,9 +9,9 @@
                 <label for="name" class="w-1/3 my-auto">Name</label>
 
                 <div class="input-with-error flex-grow">
-                    @if ($errors->has('name'))
-                        <span class="input-error">{{ $errors->first('name') }}</span>
-                    @endif
+                    @error('name')
+                        <span class="input-error">{{ $message }}</span>
+                    @enderror
 
                     <input id="name" type="text" name="name"
                            wire:model="botName"
@@ -24,9 +24,9 @@
                 <label for="host" class="w-1/3 my-auto">Host</label>
 
                 <div class="input-with-error flex-grow">
-                    @if ($errors->has('host'))
-                        <span class="input-error">{{ $errors->first('host') }}</span>
-                    @endif
+                    @error('host')
+                        <span class="input-error">{{ $message }}</span>
+                    @enderror
 
                     <select name="host" id="host"
                             class="input" wire:model="hostId">
@@ -41,9 +41,9 @@
                 <label for="driver" class="w-1/3 my-auto">Driver</label>
 
                 <div class="input-with-error flex-grow">
-                    @if ($errors->has('driver'))
-                        <span class="input-error">{{ $errors->first('driver') }}</span>
-                    @endif
+                    @error('driver')
+                        <span class="input-error">{{ $message }}</span>
+                    @enderror
 
                     <select name="driver" id="driver"
                             class="input" wire:model="driverType">
@@ -59,9 +59,9 @@
                     <label for="serial_port" class="w-1/3 my-auto">Serial Port</label>
 
                     <div class="input-with-error flex-grow">
-                        @if ($errors->has('serial_port'))
-                            <span class="input-error">{{ $errors->first('serial_port') }}</span>
-                        @endif
+                        @error('serial_port')
+                            <span class="input-error">{{ $message }}</span>
+                        @enderror
 
                         <input id="serial_port" type="text" name="serial_port"
                                wire:model="serialPort"
@@ -74,9 +74,9 @@
                     <label for="baud_rate" class="w-1/3 my-auto">Baud Rate</label>
 
                     <div class="input-with-error flex-grow">
-                        @if ($errors->has('baud_rate'))
-                            <span class="input-error">{{ $errors->first('baud_rate') }}</span>
-                        @endif
+                        @error('baud_rate')
+                            <span class="input-error">{{ $message }}</span>
+                        @enderror
 
                         <input id="baud_rate" type="text" name="baud_rate"
                                wire:model="baudRate"
@@ -91,9 +91,9 @@
                     <label for="command_delay" class="w-1/3 my-auto">Command Delay (sec)</label>
 
                     <div class="input-with-error flex-grow">
-                        @if ($errors->has('command_delay'))
-                            <span class="input-error">{{ $errors->first('command_delay') }}</span>
-                        @endif
+                        @error('command_delay')
+                            <span class="input-error">{{ $message }}</span>
+                        @enderror
 
                         <input id="command_delay" type="text" name="command_delay"
                                wire:model="commandDelay"

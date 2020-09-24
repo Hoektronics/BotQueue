@@ -28,9 +28,9 @@
                             </div>
 
                             <div class="input-with-error flex-grow m-2">
-                                @if ($errors->has('job_name'))
-                                    <span class="input-error">{{ $errors->first('job_name') }}</span>
-                                @endif
+                                @error('job_name')
+                                    <span class="input-error">{{ $message }}</span>
+                                @enderror
 
                                 <input type="text"
                                        value="{{ old('job_name', pathinfo($file->name, PATHINFO_FILENAME)) }}"
@@ -75,9 +75,9 @@
                                     @endif
                                 </select>
 
-                                @if ($errors->has('bot_cluster'))
-                                    <span class="w-1/3">{{ $errors->first('bot_cluster') }}</span>
-                                @endif
+                                @error('bot_cluster')
+                                    <span class="w-1/3">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </div>
