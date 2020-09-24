@@ -4,6 +4,8 @@ namespace Tests;
 
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Models\Bot;
+use App\Models\Job;
 use Illuminate\Contracts\Bus\Dispatcher as BusDispatcherContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -97,5 +99,19 @@ abstract class TestCase extends BaseTestCase
 
                 return $lookup;
             }, []);
+    }
+
+    /**
+     * Using an update this way means hydrated models still have the old data, but the DB is different.
+     * This is useful for testing race conditions when another process changes the data from under you.
+     *
+     * @param Model $model
+     * @param $fields
+     */
+    public function updateModelDb(Model $model, $fields)
+    {
+        $model->newQuery()
+            ->whereKey($model->getKey())
+            ->update($fields);
     }
 }

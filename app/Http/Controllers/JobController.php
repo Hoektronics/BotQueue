@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
-use App\Models\File;
-use App\Http\Requests\JobFileCreationRequest;
 use App\Models\Job;
-use App\Jobs\AssignJobs;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -118,9 +115,6 @@ class JobController extends Controller
         $job->status = JobStatusEnum::COMPLETED;
         $job->push();
 
-        $findJobsForBot = app()->makeWith(AssignJobs::class, ['model' => $bot]);
-        dispatch($findJobsForBot);
-
         return redirect("/jobs/{$job->id}");
     }
 
@@ -135,9 +129,6 @@ class JobController extends Controller
         $bot->current_job_id = null;
         $job->status = JobStatusEnum::FAILED;
         $job->push();
-
-        $findJobsForBot = app()->makeWith(AssignJobs::class, ['model' => $bot]);
-        dispatch($findJobsForBot);
 
         return redirect("/jobs/{$job->id}");
     }

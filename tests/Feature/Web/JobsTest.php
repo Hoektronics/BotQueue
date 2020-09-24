@@ -5,7 +5,6 @@ namespace Tests\Feature\Web;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Models\Job;
-use App\Jobs\AssignJobs;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -87,8 +86,6 @@ class JobsTest extends TestCase
     /** @test */
     public function aUserCanPassTheirJob()
     {
-        $this->expectsJobs(AssignJobs::class);
-
         $bot = $this->bot()
             ->state(BotStatusEnum::WAITING)
             ->create();
@@ -116,8 +113,6 @@ class JobsTest extends TestCase
     /** @test */
     public function aUserCanFailTheirJob()
     {
-        $this->expectsJobs(AssignJobs::class);
-
         $bot = $this->bot()
             ->state(BotStatusEnum::WAITING)
             ->create();
@@ -145,8 +140,6 @@ class JobsTest extends TestCase
     /** @test */
     public function aUserCannotPassAnotherUsersJob()
     {
-        $this->expectsJobs(AssignJobs::class);
-
         $bot = $this->bot()
             ->state(BotStatusEnum::WAITING)
             ->create();
@@ -168,8 +161,6 @@ class JobsTest extends TestCase
     /** @test */
     public function aUserCannotFailAnotherUsersJob()
     {
-        $this->expectsJobs(AssignJobs::class);
-
         $bot = $this->bot()
             ->state(BotStatusEnum::WAITING)
             ->create();

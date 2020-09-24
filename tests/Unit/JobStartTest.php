@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Action\AssignJobToBot;
+use App\Actions\AssignJobToBot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use Tests\TestCase;
@@ -23,8 +23,7 @@ class JobStartTest extends TestCase
             ->worker($bot)
             ->create();
 
-        $assign = new AssignJobToBot($bot);
-        $assign->fromJob($job);
+        app(AssignJobToBot::class)->execute($bot, $job);
 
         $bot->start();
 

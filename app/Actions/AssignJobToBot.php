@@ -81,7 +81,7 @@ class AssignJobToBot
             $bot->refresh();
 
             if ($bot->status != BotStatusEnum::JOB_ASSIGNED) {
-                throw new JobAssignmentFailed('This bot does not have a status of assigned');
+                throw new JobAssignmentFailed('This bot does not have a status of job_assigned');
             }
 
             if ($bot->current_job_id != $job->id) {

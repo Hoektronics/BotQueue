@@ -325,12 +325,9 @@ class AssignJobToBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        // Using an update this way means the model still has the old status
-        Bot::query()
-            ->whereKey($bot->id)
-            ->update([
-                'status' => BotStatusEnum::OFFLINE,
-            ]);
+        $this->updateModelDb($bot, [
+            'status' => BotStatusEnum::OFFLINE,
+        ]);
 
         $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
 
@@ -353,12 +350,9 @@ class AssignJobToBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        // Using an update this way means the model still has the old status
-        Job::query()
-            ->whereKey($job->id)
-            ->update([
-                'status' => JobStatusEnum::CANCELLED,
-            ]);
+        $this->updateModelDb($job, [
+            'status' => JobStatusEnum::CANCELLED,
+        ]);
 
         $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
 
@@ -385,13 +379,10 @@ class AssignJobToBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        // Using an update this way means the model still has the old status
-        Job::query()
-            ->whereKey($job->id)
-            ->update([
-                'status' => JobStatusEnum::ASSIGNED,
-                'bot_id' => $otherBot->id,
-            ]);
+        $this->updateModelDb($job, [
+            'status' => JobStatusEnum::ASSIGNED,
+            'bot_id' => $otherBot->id,
+        ]);
 
         $this->assertEquals(JobStatusEnum::QUEUED, $job->status);
         $this->assertNull($job->bot_id);
@@ -420,13 +411,10 @@ class AssignJobToBotTest extends TestCase
             ->worker($bot)
             ->create();
 
-        // Using an update this way means the model still has the old status
-        Bot::query()
-            ->whereKey($bot->id)
-            ->update([
-                'status' => BotStatusEnum::JOB_ASSIGNED,
-                'current_job_id' => $otherJob->id,
-            ]);
+        $this->updateModelDb($bot, [
+            'status' => BotStatusEnum::JOB_ASSIGNED,
+            'current_job_id' => $otherJob->id,
+        ]);
 
         $this->assertEquals(BotStatusEnum::IDLE, $bot->status);
         $this->assertNull($bot->current_job_id);
