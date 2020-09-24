@@ -8,6 +8,9 @@ require('./bootstrap');
 
 import Echo from "laravel-echo"
 
+import Flow from '@flowjs/flow.js'
+window.Flow = Flow;
+
 window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
