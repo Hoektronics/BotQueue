@@ -76,7 +76,7 @@ class RefreshAccessTokenCommandTest extends TestCase
         $this->mainHost->revoke();
 
         $this
-            ->withExceptionHandling()
+            ->withoutExceptionHandling()
             ->withTokenFromHost($this->mainHost)
             ->postJson('/host', [
                 'command' => 'RefreshAccessToken',
