@@ -21,14 +21,13 @@ trait HostAuthTrait
         static::creating(function (Host $host) {
             $tokenRepository = app(TokenRepository::class);
 
-            /** @var ClientEntityInterface $client */
             $client = static::client();
 
             $token = $tokenRepository->create([
                 'id' => bin2hex(random_bytes(40)),
-                'user_id' => $host->owner_id,
+                'user_id' => null,
                 'client_id' => $client->getIdentifier(),
-                'name' => 'Host '.$host->id.' Token',
+                'name' => 'Host Token',
                 'scopes' => ['host'],
                 'revoked' => false,
                 'created_at' => Carbon::now(),
