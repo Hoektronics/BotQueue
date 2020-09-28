@@ -2,7 +2,7 @@
     <div class="flex justify-between">
         <span class="text-3xl">Dashboard</span>
         <a role="button"
-           href="{{ route('jobs.create') }}"
+           href="{{ route('files.create') }}"
            class="btn-lg btn-blue btn-interactive">
             Start a job
         </a>
