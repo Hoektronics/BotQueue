@@ -21,8 +21,8 @@
                 <div class="relative" x-show="show_progress()">
                     <div class="flex mb-2 items-center justify-between">
                         <span x-text="file_name" class="overflow-hidden whitespace-no-wrap mr-4 truncate"></span>
-                                        <div class="text-right">
-                          <span x-text="progress + '%'" class="text-green-500"></span>
+                        <div class="text-right">
+                            <span x-text="progress + '%'" class="text-green-500"></span>
                         </div>
                     </div>
                     <div class="overflow-hidden h-2 text-xs flex rounded bg-green-200">
@@ -51,19 +51,19 @@
                 progress: 0,
                 error: null,
                 flow: null,
-                show_upload: function() {
+                show_upload: function () {
                     return this.flow_supported && !this.uploading;
                 },
-                show_progress: function() {
+                show_progress: function () {
                     return this.flow_supported && this.uploading && !this.has_error();
                 },
-                has_error: function() {
+                has_error: function () {
                     return this.error != null;
                 },
-                progress_style: function() {
+                progress_style: function () {
                     return "width: " + this.progress + "%";
                 },
-                init: function() {
+                init: function () {
                     let token = document.querySelector('meta[name="csrf-token"]').content;
                     this.flow = new Flow({
                         chunkSize: 1000 * 1000, // 1MB ish
@@ -76,7 +76,7 @@
                         query: {_token: token}
                     });
 
-                    if(!this.flow.support) {
+                    if (!this.flow.support) {
                         this.flow_supported = false;
                         return;
                     }
@@ -102,12 +102,13 @@
                         try {
                             message = JSON.parse(message);
 
-                            if(message.hasOwnProperty('error')) {
+                            if (message.hasOwnProperty('error')) {
                                 self.error = message.error;
                             }
-                        } catch (e) {}
+                        } catch (e) {
+                        }
 
-                        if(self.error === null) {
+                        if (self.error === null) {
                             self.error = "Oh no, something went wrong!"
                         }
 
