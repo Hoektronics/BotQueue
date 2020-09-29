@@ -70,7 +70,11 @@ class GetAJobCommandTest extends TestCase
             ->getAJob([
                 'bot' => $bot->id,
             ])
-            ->assertStatus(Response::HTTP_ACCEPTED);
+            ->assertStatus(Response::HTTP_ACCEPTED)
+            ->assertJson([
+                'status' => 'success',
+                'data' => [],
+            ]);
 
         $this->assertAction(FindJobForBot::class);
     }

@@ -11,6 +11,7 @@ use App\HostManager;
 use App\Http\Resources\JobResource;
 use App\Models\Bot;
 use App\Models\Job;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 
@@ -30,7 +31,7 @@ class GetAJobCommand
 
     /**
      * @param $data Collection
-     * @return ErrorResponse|Response
+     * @return ErrorResponse|JsonResponse
      */
     public function __invoke($data)
     {
@@ -48,6 +49,9 @@ class GetAJobCommand
             ->onQueue()
             ->execute($bot);
 
-        return response('', Response::HTTP_ACCEPTED);
+        return response()->json([
+            'status' => 'success',
+            'data' => [],
+        ], Response::HTTP_ACCEPTED);
     }
 }
