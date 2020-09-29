@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
+use App\Events\BotHasAvailableJob;
 use App\Events\Host\BotAssignedToHost;
 use App\Events\Host\BotRemovedFromHost;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -99,5 +100,17 @@ class BotsTest extends TestCase
                 'private-bots.'.$bot->id,
                 'private-hosts.'.$otherHost->id,
             ]);
+    }
+
+    /** @test */
+    public function jobAvailableFlagIsSetFromBotHasAvailableJob()
+    {
+        $bot = $this->bot()->create();
+
+        $this->assertFalse($bot->job_available);
+
+        event(new BotHasAvailableJob($bot));
+
+        $this->assertTrue($bot->job_available);
     }
 }

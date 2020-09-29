@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
  * @property string $status
  * @property int|null $host_id
  * @property int|null $current_job_id
+ * @property boolean $job_available
  * @property-read \App\Cluster $cluster
  * @property-read \App\User $creator
  * @property-read \App\Job|null $currentJob
@@ -79,6 +80,7 @@ class Bot extends Model
 
     protected $casts = [
         'driver' => 'array',
+        'job_available' => 'boolean',
     ];
 
     public function creator()

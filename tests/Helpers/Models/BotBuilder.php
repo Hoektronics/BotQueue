@@ -10,7 +10,11 @@ class BotBuilder
 
     public function __construct($attributes = [])
     {
-        $this->attributes = $attributes;
+        $this->attributes = array_merge(
+            [
+                'job_available' => false,
+            ],
+            $attributes);
     }
 
     /**

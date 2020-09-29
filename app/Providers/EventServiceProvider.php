@@ -14,8 +14,14 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+        Events\BotHasAvailableJob::class => [
+            Listeners\SetJobAvailableFlag::class,
+        ],
         Events\UserCreated::class => [
             Listeners\EmailNewUser::class,
+        ],
+        Events\JobCreated::class => [
+            Listeners\AlertWorkersThatJobIsAvailable::class,
         ],
         Events\JobFinished::class => [
             Listeners\EmailJobFinished::class,
