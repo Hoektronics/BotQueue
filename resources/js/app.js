@@ -17,7 +17,8 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: 'pusher-botqueue-key',
     wsHost: window.location.hostname,
-    wsPort: 6001,
+    wsPath: '/ws',
     forceTLS: false,
     disableStats: true,
+    enabledTransports: ['ws', 'wss'],
 });
