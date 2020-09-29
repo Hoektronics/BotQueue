@@ -10,6 +10,8 @@ use Illuminate\Contracts\Bus\Dispatcher as BusDispatcherContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Bus;
+use Spatie\QueueableAction\ActionJob;
 use Tests\Helpers\TestStatus;
 use Tests\Helpers\TestStatusException;
 use Tests\Helpers\UsesBuilders;
@@ -34,17 +36,12 @@ abstract class TestCase extends BaseTestCase
         return $this->withHeader('X-FORWARDED-FOR', $ip);
     }
 
-    /*
-     * We need this function until https://github.com/laravel/framework/pull/26437
-     * is in our dependencies.
-     */
-    public function withoutJobs()
+    public function assertAction($action)
     {
-        parent::withoutJobs();
-
-        $this->app
-            ->make(BusDispatcherContract::class)
-            ->shouldIgnoreMissing();
+        Bus::assertDispatched(ActionJob::class, function ($job) use ($action) {
+            /** @var $job ActionJob */
+            return $job->displayName() == $action;
+        });
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App;
-use App\Http\Controllers\BroadcastController;
 use App\Http\Controllers\HostApiController;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
