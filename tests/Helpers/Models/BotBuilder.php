@@ -37,6 +37,11 @@ class BotBuilder
         );
     }
 
+    public function job_available($available = true)
+    {
+        return $this->newWith(['job_available' => $available]);
+    }
+
     public function creator(\App\Models\User $user)
     {
         return $this->newWith(['creator_id' => $user->id]);

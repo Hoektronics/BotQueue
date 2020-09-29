@@ -5,12 +5,10 @@ namespace Tests\Unit\Actions;
 use App\Actions\AssignJobToBot;
 use App\Exceptions\BotStatusConflict;
 use App\Exceptions\JobStatusConflict;
-use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\JobAssignmentFailed;
-use App\Models\Job;
 use Tests\TestCase;
 
 class AssignJobToBotTest extends TestCase
@@ -18,10 +16,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function botGetsAssignedWhenItIsTheWorker()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -39,17 +36,17 @@ class AssignJobToBotTest extends TestCase
 
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertEquals($bot->id, $job->bot_id);
+        $this->assertFalse($bot->job_available);
     }
 
     /** @test */
     public function botGetsAssignedWhenItIsInTheClusterThatIsTheWorker()
     {
-        $this->withoutJobs();
-
         $cluster = $this->cluster()->create();
 
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->cluster($cluster)
             ->create();
 
@@ -68,15 +65,15 @@ class AssignJobToBotTest extends TestCase
 
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertEquals($bot->id, $job->bot_id);
+        $this->assertFalse($bot->job_available);
     }
 
     /** @test */
     public function botCannotGrabJobIfItIsNotTheWorker()
     {
-        $this->withoutJobs();
-
         $otherBot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $bot = $this->bot()
@@ -96,10 +93,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function botCannotGrabJobIfItIsNotInTheClusterThatIsTheWorker()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $cluster = $this->cluster()->create();
@@ -117,10 +113,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function botThatAlreadyHasAJobCannotGrabAnother()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $jobA = $this->job()
@@ -143,10 +138,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function anOfflineBotCannotGrabAJob()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::OFFLINE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -162,10 +156,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aWorkingBotCannotGrabAJob()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::WORKING)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -181,10 +174,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function anAlreadyAssignedBotCannotGrabAJob()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::JOB_ASSIGNED)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -200,10 +192,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function anAlreadyAssignedJobCannotBeAssignedAgain()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -219,8 +210,6 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function anInProgressJobCannotBeAssigned()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
             ->create();
@@ -238,10 +227,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aQualityCheckJobCannotBeAssigned()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -257,10 +245,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aCompletedJobCannotBeAssigned()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -276,10 +263,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aFailedJobCannotBeAssigned()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -295,10 +281,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aCancelledJobCannotBeAssigned()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -314,10 +299,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aBotThatWasIdleStillThrowsBotStatusConflict()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -339,10 +323,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aJobThatWasQueuedStillThrowsJobStatusConflict()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()
@@ -364,10 +347,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aJobThatWasQueuedButGetsPickedUpByADifferentJobFails()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $otherBot = $this->bot()
@@ -395,10 +377,9 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function aBotThatAttemptsToUpAJobWhileAnotherProcessIsRunningFails()
     {
-        $this->withoutJobs();
-
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
+            ->job_available()
             ->create();
 
         $job = $this->job()

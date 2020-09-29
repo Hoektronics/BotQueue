@@ -74,6 +74,7 @@ class AssignJobToBot
                 ->where('status', BotStatusEnum::IDLE)
                 ->whereNull('current_job_id')
                 ->update([
+                    'job_available' => false,
                     'current_job_id' => $job->id,
                     'status' => BotStatusEnum::JOB_ASSIGNED,
                 ]);
