@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Host\Commands;
 
+use App\Actions\AssignJobToBot;
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
@@ -51,6 +52,42 @@ class GetBotsCommandTest extends TestCase
                         'name' => $bot->name,
                         'type' => '3d_printer',
                         'status' => BotStatusEnum::OFFLINE,
+                        'job_available' => false,
+                        'driver' => $driverConfig,
+                    ],
+                ],
+            ])
+            ->assertDontSee('creator');
+    }
+
+    /** @test */
+    public function hostCanSeeWhenJobIsAvailable()
+    {
+        $driverConfig = [
+            'type' => 'dummy',
+        ];
+
+        $bot = $this->bot()
+            ->driver($driverConfig)
+            ->job_available()
+            ->host($this->mainHost)
+            ->create();
+
+        $this
+            ->withTokenFromHost($this->mainHost)
+            ->postJson('/host', [
+                'command' => 'GetBots',
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'status' => 'success',
+                'data' => [
+                    [
+                        'id' => $bot->id,
+                        'name' => $bot->name,
+                        'type' => '3d_printer',
+                        'status' => BotStatusEnum::OFFLINE,
+                        'job_available' => true,
                         'driver' => $driverConfig,
                     ],
                 ],
@@ -66,7 +103,7 @@ class GetBotsCommandTest extends TestCase
         ];
 
         $bot = $this->bot()
-            ->state(BotStatusEnum::JOB_ASSIGNED)
+            ->state(BotStatusEnum::IDLE)
             ->host($this->mainHost)
             ->driver($driverConfig)
             ->create();
@@ -74,13 +111,12 @@ class GetBotsCommandTest extends TestCase
         $file = $this->file()->stl()->create();
 
         $job = $this->job()
-            ->state(JobStatusEnum::ASSIGNED)
+            ->state(JobStatusEnum::QUEUED)
             ->file($file)
-            ->bot($bot)
+            ->worker($bot)
             ->create();
 
-        $bot->current_job_id = $job->id;
-        $bot->save();
+        app(AssignJobToBot::class)->execute($bot, $job);
 
         $this
             ->withTokenFromHost($this->mainHost)
@@ -96,6 +132,7 @@ class GetBotsCommandTest extends TestCase
                         'name' => $bot->name,
                         'status' => BotStatusEnum::JOB_ASSIGNED,
                         'type' => '3d_printer',
+                        'job_available' => false,
                         'driver' => $driverConfig,
                         'job' => [
                             'id' => $job->id,
