@@ -4,7 +4,9 @@ namespace App\Actions;
 
 use App\Enums\BotStatusEnum;
 use App\Enums\JobStatusEnum;
+use App\Events\BotUpdated;
 use App\Events\JobAssignedToBot;
+use App\Events\JobUpdated;
 use App\Exceptions\BotIsNotValidWorker;
 use App\Exceptions\BotStatusConflict;
 use App\Exceptions\JobAssignmentFailed;
@@ -90,6 +92,8 @@ class AssignJobToBot
                 throw new JobAssignmentFailed('This bot is assigned a different job');
             }
 
+            event(new JobUpdated($job));
+            event(new BotUpdated($bot));
             event(new JobAssignedToBot($job, $bot));
         });
     }

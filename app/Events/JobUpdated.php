@@ -8,7 +8,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class JobFinished extends Event implements ShouldBroadcast
+class JobUpdated extends Event implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels;
 

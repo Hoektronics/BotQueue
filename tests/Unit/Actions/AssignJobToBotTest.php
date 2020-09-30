@@ -3,7 +3,9 @@
 namespace Tests\Unit\Actions;
 
 use App\Actions\AssignJobToBot;
+use App\Events\BotUpdated;
 use App\Events\JobAssignedToBot;
+use App\Events\JobUpdated;
 use App\Exceptions\BotStatusConflict;
 use App\Exceptions\JobStatusConflict;
 use App\Enums\BotStatusEnum;
@@ -17,7 +19,11 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function botGetsAssignedWhenItIsTheWorker()
     {
-        $this->fakesEvents(JobAssignedToBot::class);
+        $this->fakesEvents([
+            JobUpdated::class,
+            BotUpdated::class,
+            JobAssignedToBot::class
+        ]);
 
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
@@ -41,6 +47,18 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals($bot->id, $job->bot_id);
         $this->assertFalse($bot->job_available);
 
+        $this->assertDispatched(JobUpdated::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var $event JobUpdated */
+                return $event->job->id == $job->id;
+            });
+
+        $this->assertDispatched(BotUpdated::class)
+            ->inspect(function ($event) use ($bot) {
+                /** @var $event BotUpdated */
+                return $event->bot->id == $bot->id;
+            });
+
         $this->assertDispatched(JobAssignedToBot::class)
             ->inspect(function ($event) use ($job, $bot) {
                 /** @var $event JobAssignedToBot */
@@ -52,7 +70,11 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function botGetsAssignedWhenItIsInTheClusterThatIsTheWorker()
     {
-        $this->fakesEvents(JobAssignedToBot::class);
+        $this->fakesEvents([
+            JobUpdated::class,
+            BotUpdated::class,
+            JobAssignedToBot::class
+        ]);
 
         $cluster = $this->cluster()->create();
 
@@ -78,6 +100,18 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertEquals($bot->id, $job->bot_id);
         $this->assertFalse($bot->job_available);
+
+        $this->assertDispatched(JobUpdated::class)
+            ->inspect(function ($event) use ($job) {
+                /** @var $event JobUpdated */
+                return $event->job->id == $job->id;
+            });
+
+        $this->assertDispatched(BotUpdated::class)
+            ->inspect(function ($event) use ($bot) {
+                /** @var $event BotUpdated */
+                return $event->bot->id == $bot->id;
+            });
 
         $this->assertDispatched(JobAssignedToBot::class)
             ->inspect(function ($event) use ($job, $bot) {
