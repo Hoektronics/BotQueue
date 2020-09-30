@@ -118,6 +118,13 @@ class JobController extends Controller
         return redirect("/jobs/{$job->id}");
     }
 
+    public function pass_signed(Job $job, Request $request)
+    {
+        abort_unless($request->hasValidSignature(), Response::HTTP_UNAUTHORIZED);
+
+        return $this->pass($job);
+    }
+
     public function fail(Job $job)
     {
         abort_unless($job->creator_id == Auth::user()->id, Response::HTTP_FORBIDDEN);
@@ -131,5 +138,12 @@ class JobController extends Controller
         $job->push();
 
         return redirect("/jobs/{$job->id}");
+    }
+
+    public function pass_failed(Job $job, Request $request)
+    {
+        abort_unless($request->hasValidSignature(), Response::HTTP_UNAUTHORIZED);
+
+        return $this->fail($job);
     }
 }

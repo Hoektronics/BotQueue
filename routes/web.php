@@ -32,6 +32,8 @@ Route::resource('bots', 'BotController');
 Route::resource('clusters', 'ClusterController');
 Route::resource('files', 'FileController');
 
+Route::get('jobs/{job}/pass', 'JobController@pass_signed')->name('jobs.pass.signed');
+Route::get('jobs/{job}/fail', 'JobController@fail_signed')->name('jobs.fail.signed');
 Route::post('jobs/{job}/pass', 'JobController@pass')->name('jobs.pass');
 Route::post('jobs/{job}/fail', 'JobController@fail')->name('jobs.fail');
 
