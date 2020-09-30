@@ -148,7 +148,6 @@ class FindJobForBotTest extends TestCase
 
         // The first job by time should be the second job by id
         // This is to verify that assumption
-        $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
         $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
 
         app(FindJobForBot::class)->execute($bot);
@@ -220,7 +219,6 @@ class FindJobForBotTest extends TestCase
 
         // The first job by time should be the second job by id
         // This is to verify that assumption
-        $this->assertGreaterThan($secondJobByTime->id, $firstJobByTime->id);
         $this->assertGreaterThan($firstJobByTime->created_at, $secondJobByTime->created_at);
 
         app(FindJobForBot::class)->execute($bot);

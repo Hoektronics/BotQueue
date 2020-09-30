@@ -6,12 +6,15 @@ use App\Models\Bot;
 
 class BotBuilder
 {
+    use Builder;
+
     private $attributes;
 
     public function __construct($attributes = [])
     {
         $this->attributes = array_merge(
             [
+                'id' => $this->get_id(),
                 'job_available' => false,
             ],
             $attributes);

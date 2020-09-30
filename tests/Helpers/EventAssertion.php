@@ -57,7 +57,10 @@ class EventAssertion
 
         $broadcastNames = collect($event->broadcastOn())->map(function ($channel) {
             /* @var $channel Channel */
-            return $channel->name;
+            if(is_a($channel, Channel::class)) {
+                return $channel->name;
+            }
+            return $channel;
         })->values()->all();
 
         $constraint = new SubsetConstraint($channels);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Host;
+namespace App\Events;
 
 use App\Models\Bot;
 use App\Events\Event;

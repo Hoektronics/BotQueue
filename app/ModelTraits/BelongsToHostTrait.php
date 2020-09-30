@@ -3,8 +3,8 @@
 namespace App\ModelTraits;
 
 use App\Models\Bot;
-use App\Events\Host\BotAssignedToHost;
-use App\Events\Host\BotRemovedFromHost;
+use App\Events\BotAssignedToHost;
+use App\Events\BotRemovedFromHost;
 use App\Models\Host;
 
 trait BelongsToHostTrait

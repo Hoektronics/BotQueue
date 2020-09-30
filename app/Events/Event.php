@@ -38,10 +38,10 @@ class Event
     {
         $this->ensureNotEmptyChannels();
 
-        return $this->channels->unique(function ($channel) {
+        return $this->channels->map(function ($channel) {
             /* @var Channel $channel */
             return $channel->name;
-        })->all();
+        })->unique()->values()->sort()->all();
     }
 
     /**

@@ -5,8 +5,8 @@ namespace Tests\Unit;
 use App\Enums\BotStatusEnum;
 use App\Events\BotCreated;
 use App\Events\BotHasAvailableJob;
-use App\Events\Host\BotAssignedToHost;
-use App\Events\Host\BotRemovedFromHost;
+use App\Events\BotAssignedToHost;
+use App\Events\BotRemovedFromHost;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
