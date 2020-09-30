@@ -54,6 +54,29 @@ class BotErrorCommandTest extends TestCase
     }
 
     /** @test */
+    public function hostCannotSubmitErrorOnOfflineBot()
+    {
+        $bot = $this->bot()
+            ->state(BotStatusEnum::OFFLINE)
+            ->host($this->mainHost)
+            ->create();
+
+        $this
+            ->withTokenFromHost($this->mainHost)
+            ->botErrorCommand([
+                'id' => $bot->id,
+                'error' => 'ERROR TEXT',
+            ])
+            ->assertStatus(Response::HTTP_CONFLICT)
+            ->assertExactJson(HostErrors::botStatusConflict()->toArray());
+
+        $bot->refresh();
+
+        $this->assertEquals(BotStatusEnum::OFFLINE, $bot->status);
+        $this->assertNull($bot->error_text);
+    }
+
+    /** @test */
     public function botMustBelongToAHost()
     {
         $bot = $this->bot()

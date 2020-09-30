@@ -47,6 +47,10 @@ class BotErrorCommand
             return HostErrors::botIsNotAssignedToThisHost();
         }
 
+        if ($bot->status == BotStatusEnum::OFFLINE) {
+            return HostErrors::botStatusConflict();
+        }
+
         $bot->error_text = $data['error'];
         $bot->status = BotStatusEnum::ERROR;
 

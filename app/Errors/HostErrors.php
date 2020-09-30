@@ -105,11 +105,11 @@ class HostErrors
         );
     }
 
-    public static function botMustBeIdle()
+    public static function botStatusConflict()
     {
         return new ErrorResponse(
             1110,
-            'Bot must be in an idle state to perform this action.',
+            'Bot is not in a valid state to perform this action.',
             Response::HTTP_CONFLICT
         );
     }
