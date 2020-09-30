@@ -3,6 +3,7 @@
 namespace Tests\Unit\Actions;
 
 use App\Actions\AssignJobToBot;
+use App\Events\JobAssignedToBot;
 use App\Exceptions\BotStatusConflict;
 use App\Exceptions\JobStatusConflict;
 use App\Enums\BotStatusEnum;
@@ -16,6 +17,8 @@ class AssignJobToBotTest extends TestCase
     /** @test */
     public function botGetsAssignedWhenItIsTheWorker()
     {
+        $this->fakesEvents(JobAssignedToBot::class);
+
         $bot = $this->bot()
             ->state(BotStatusEnum::IDLE)
             ->job_available()
@@ -37,11 +40,20 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertEquals($bot->id, $job->bot_id);
         $this->assertFalse($bot->job_available);
+
+        $this->assertDispatched(JobAssignedToBot::class)
+            ->inspect(function ($event) use ($job, $bot) {
+                /** @var $event JobAssignedToBot */
+                return $event->job->id == $job->id &&
+                    $event->bot->id == $bot->id;
+            });
     }
 
     /** @test */
     public function botGetsAssignedWhenItIsInTheClusterThatIsTheWorker()
     {
+        $this->fakesEvents(JobAssignedToBot::class);
+
         $cluster = $this->cluster()->create();
 
         $bot = $this->bot()
@@ -66,6 +78,13 @@ class AssignJobToBotTest extends TestCase
         $this->assertEquals(JobStatusEnum::ASSIGNED, $job->status);
         $this->assertEquals($bot->id, $job->bot_id);
         $this->assertFalse($bot->job_available);
+
+        $this->assertDispatched(JobAssignedToBot::class)
+            ->inspect(function ($event) use ($job, $bot) {
+                /** @var $event JobAssignedToBot */
+                return $event->job->id == $job->id &&
+                    $event->bot->id == $bot->id;
+            });
     }
 
     /** @test */
