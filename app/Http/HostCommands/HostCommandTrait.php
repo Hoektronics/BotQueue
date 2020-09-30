@@ -55,4 +55,12 @@ trait HostCommandTrait
 
         return null;
     }
+
+    protected function emptySuccess()
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => [],
+        ]);
+    }
 }

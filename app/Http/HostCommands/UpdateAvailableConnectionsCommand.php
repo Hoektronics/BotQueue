@@ -31,9 +31,6 @@ class UpdateAvailableConnectionsCommand
         $host->available_connections = $data->toJson();
         $host->save();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => [],
-        ]);
+        return $this->emptySuccess();
     }
 }

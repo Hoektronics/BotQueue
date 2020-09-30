@@ -2,11 +2,14 @@
 
 namespace App\Http\HostCommands;
 
+use App\Enums\JobStatusEnum;
 use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\HostManager;
+use App\Models\Job;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
 class BotErrorCommand
@@ -25,7 +28,7 @@ class BotErrorCommand
 
     /**
      * @param $data Collection
-     * @return ErrorResponse
+     * @return ErrorResponse|JsonResponse
      */
     public function __invoke($data)
     {
@@ -54,6 +57,15 @@ class BotErrorCommand
         $bot->error_text = $data['error'];
         $bot->status = BotStatusEnum::ERROR;
 
-        $bot->save();
+        if(! is_null($bot->current_job_id)) {
+            /** @var Job $job */
+            $job = $bot->currentJob;
+
+            $job->status = JobStatusEnum::FAILED;
+        }
+
+        $bot->push();
+
+        return $this->emptySuccess();
     }
 }

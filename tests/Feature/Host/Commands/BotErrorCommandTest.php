@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Host\Commands;
 
+use App\Actions\AssignJobToBot;
 use App\Enums\BotStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Errors\HostErrors;
 use Illuminate\Http\Response;
 use Tests\Helpers\PassportHelper;
@@ -45,12 +47,52 @@ class BotErrorCommandTest extends TestCase
                 'id' => $bot->id,
                 'error' => $error,
             ])
-            ->assertStatus(Response::HTTP_OK);
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'status' => 'success',
+                'data' => [],
+            ]);
 
         $bot->refresh();
 
         $this->assertEquals(BotStatusEnum::ERROR, $bot->status);
         $this->assertEquals($error, $bot->error_text);
+    }
+
+    /** @test */
+    public function botErrorWithJobFailsJob()
+    {
+        $bot = $this->bot()
+            ->state(BotStatusEnum::IDLE)
+            ->host($this->mainHost)
+            ->create();
+
+        $job = $this->job()->worker($bot)->create();
+
+        app(AssignJobToBot::class)->execute($bot, $job);
+        $bot->refresh();
+        $job->refresh();
+
+        $error = 'ERROR TEXT';
+
+        $this
+            ->withTokenFromHost($this->mainHost)
+            ->botErrorCommand([
+                'id' => $bot->id,
+                'error' => $error,
+            ])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'status' => 'success',
+                'data' => [],
+            ]);
+
+        $bot->refresh();
+        $job->refresh();
+
+        $this->assertEquals(BotStatusEnum::ERROR, $bot->status);
+        $this->assertEquals($error, $bot->error_text);
+        $this->assertEquals(JobStatusEnum::FAILED, $job->status);
     }
 
     /** @test */

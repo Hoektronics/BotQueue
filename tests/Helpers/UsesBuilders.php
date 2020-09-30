@@ -3,6 +3,7 @@
 namespace Tests\Helpers;
 
 use App\Enums\HostRequestStatusEnum;
+use App\Enums\JobStatusEnum;
 use App\Models\Host;
 use App\Models\User;
 use App\Oauth\OauthHostClient;
@@ -131,6 +132,7 @@ trait UsesBuilders
 
         return (new JobBuilder())
             ->creator($this->mainUser)
+            ->state(JobStatusEnum::QUEUED)
             ->name($faker->name);
     }
 
