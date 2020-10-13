@@ -24,7 +24,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "jnesselr/laravel-chunk-upload": "dev-master",
-        "laravel/framework": "^8.5",
+        "laravel/framework": "^8.10",
         "laravel/horizon": "^5.0",
         "laravel/passport": "^10.0",
         "laravel/tinker": "^2.0",
