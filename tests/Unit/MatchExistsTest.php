@@ -8,6 +8,7 @@ use App\Models\Cluster;
 use App\Enums\BotStatusEnum;
 use App\Rules\MatchExists;
 use Illuminate\Support\Facades\Validator;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class MatchExistsTest extends TestCase
@@ -42,11 +43,7 @@ class MatchExistsTest extends TestCase
     /** @test */
     public function whenNothingMatches()
     {
-        $bot = $this->bot()
-            ->state(BotStatusEnum::IDLE)
-            ->create();
-
-        $fieldValue = 'foo_'.($bot->id + 1);
+        $fieldValue = 'foo_'.(Uuid::uuid4());
         $fields = [
             'field' => $fieldValue,
         ];

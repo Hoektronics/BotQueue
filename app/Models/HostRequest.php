@@ -7,6 +7,7 @@ use App\Exceptions\HostRequestAlreadyDeleted;
 use App\Exceptions\OauthHostClientNotSetup;
 use App\Exceptions\OauthHostKeysMissing;
 use App\ModelTraits\HostRequestDynamicAttributes;
+use App\ModelTraits\UuidKey;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,29 +24,26 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $remote_ip
  * @property string|null $hostname
  * @property string $status
- * @property int|null $claimer_id
- * @property-read \App\User|null $claimer
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereClaimerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereExpiresAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereHostname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereLocalIp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereRemoteIp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest whereUpdatedAt($value)
+ * @property string|null $claimer_id
+ * @property-read User|null $claimer
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereClaimerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereHostname($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereLocalIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereRemoteIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\HostRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HostRequest query()
  */
 class HostRequest extends Model
 {
+    use UuidKey;
     use HostRequestDynamicAttributes;
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
 
     protected $fillable = [
         'local_ip',

@@ -5,18 +5,11 @@ namespace Tests\Helpers\Models;
 use App\Models\Host;
 
 class HostBuilder
-{
-    use Builder;
-
-    private $attributes;
+{private $attributes;
 
     public function __construct($attributes = [])
     {
-        $this->attributes = array_merge(
-            [
-                'id' => $this->get_id(),
-            ],
-            $attributes);
+        $this->attributes = $attributes;
     }
 
     /**

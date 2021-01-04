@@ -10,17 +10,11 @@ use Carbon\Carbon;
 
 class JobBuilder
 {
-    use Builder;
-
     private $attributes;
 
     public function __construct($attributes = [])
     {
-        $this->attributes = array_merge(
-            [
-                'id' => $this->get_id(),
-            ],
-            $attributes);
+        $this->attributes = $attributes;
     }
 
     /**

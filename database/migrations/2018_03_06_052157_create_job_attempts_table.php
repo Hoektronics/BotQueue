@@ -14,12 +14,12 @@ class CreateJobAttemptsTable extends Migration
     public function up()
     {
         Schema::create('job_attempts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->uuid('id')->primary();
 
-            $table->integer('job_id')->unsigned();
+            $table->uuid('job_id');
             $table->foreign('job_id')->references('id')->on('jobs');
 
-            $table->integer('bot_id')->unsigned();
+            $table->uuid('bot_id');
             $table->foreign('bot_id')->references('id')->on('bots');
 
             $table->timestamps();

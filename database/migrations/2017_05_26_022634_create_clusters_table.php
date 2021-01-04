@@ -14,10 +14,12 @@ class CreateClustersTable extends Migration
     public function up()
     {
         Schema::create('clusters', function (Blueprint $table) {
-            $table->increments('id');
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->integer('creator_id')->unsigned();
+
+            $table->uuid('creator_id');
             $table->foreign('creator_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

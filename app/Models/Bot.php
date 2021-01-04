@@ -7,6 +7,7 @@ use App\Events\BotCreated;
 use App\Events\BotDeleted;
 use App\Events\BotUpdated;
 use App\ModelTraits\BelongsToHostTrait;
+use App\ModelTraits\UuidKey;
 use App\ModelTraits\WorksOnJobsTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,8 @@ use Illuminate\Support\Facades\Auth;
 /**
  * App\Bot.
  *
- * @property int $id
- * @property int $creator_id
+ * @property string $id
+ * @property string $creator_id
  * @property string $name
  * @property string $type
  * @property string|null $seen_at
@@ -23,36 +24,37 @@ use Illuminate\Support\Facades\Auth;
  * @property \Carbon\Carbon|null $updated_at
  * @property string $status
  * @property int|null $host_id
- * @property int|null $current_job_id
+ * @property string|null $current_job_id
  * @property boolean $job_available
- * @property-read \App\Cluster $cluster
- * @property-read \App\User $creator
- * @property-read \App\Job|null $currentJob
- * @property-read \App\Host|null $host
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot mine()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereCreatorId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereCurrentJobId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereHostId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereSeenAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereUpdatedAt($value)
+ * @property-read Cluster $cluster
+ * @property-read User $creator
+ * @property-read Job|null $currentJob
+ * @property-read Host|null $host
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot mine()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereCreatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereCurrentJobId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereHostId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereSeenAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property int|null $cluster_id
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereClusterId($value)
+ * @property string|null $cluster_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereClusterId($value)
  * @property string|null $driver
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereDriver($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereDriver($value)
  * @property string|null $error_text
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Bot whereErrorText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereErrorText($value)
  */
 class Bot extends Model
 {
+    use UuidKey;
     use WorksOnJobsTrait;
     use BelongsToHostTrait;
 
@@ -112,5 +114,10 @@ class Bot extends Model
     public function scopeMine($query)
     {
         return $query->where('creator_id', Auth::user()->id);
+    }
+
+    public function getJobAvailableAttribute($value): bool
+    {
+        return $value ?? false;
     }
 }
