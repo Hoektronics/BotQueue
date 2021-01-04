@@ -27,8 +27,8 @@ class ResolveHost
         $header = $request->header('authorization');
         $jwt = trim(preg_replace('/^(?:\s+)?Bearer\s/', '', $header));
 
-        $token = (new Parser())->parse($jwt);
-        $jti = $token->getClaim('jti');
+        $token = app(Parser::class)->parse($jwt);
+        $jti = $token->claims()->get('jti');
 
         $host = Host::where('token_id', $jti)->first();
 

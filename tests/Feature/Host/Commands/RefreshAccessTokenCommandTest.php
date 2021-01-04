@@ -31,9 +31,9 @@ class RefreshAccessTokenCommandTest extends TestCase
 
         $original_token = $this->mainHost->getAccessToken();
 
-        $first_expire_time = $original_token->getExpiryDateTime()->getTimestamp();
+        $first_expire_time = $original_token->getExpiryDateTime();
 
-        Carbon::setTestNow(Carbon::createFromTimestamp($first_expire_time)->addMinute());
+        Carbon::setTestNow(Carbon::createFromImmutable($first_expire_time)->addMinute());
 
         $refresh_response = $this
             ->withTokenFromHost($this->mainHost)
@@ -63,11 +63,11 @@ class RefreshAccessTokenCommandTest extends TestCase
             ]);
 
         $new_token = $refresh_response->json('data.access_token');
-        $later_expire_time = $jwt->parse($new_token)->getClaim('exp');
+        $later_expire_time = $jwt->parse($new_token)->claims()->get('exp');
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
 
         $this->mainHost->token->refresh();
-        $this->assertEquals($later_expire_time, $this->mainHost->token->expires_at->getTimestamp());
+        $this->assertEquals($later_expire_time, $this->mainHost->token->expires_at);
     }
 
     /** @test */

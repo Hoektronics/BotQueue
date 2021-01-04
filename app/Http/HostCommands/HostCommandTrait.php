@@ -9,6 +9,7 @@ use App\HostManager;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Token;
 
 trait HostCommandTrait
 {
@@ -39,9 +40,11 @@ trait HostCommandTrait
     {
         $jsonWebToken = request()->bearerToken();
 
-        $parsedToken = (new Parser())->parse($jsonWebToken);
-        $jsonWebTokenId = $parsedToken->getClaim('jti');
+        /** @var Token $parsedToken */
+        $parsedToken = app(Parser::class)->parse($jsonWebToken);
+        $jsonWebTokenId = $parsedToken->claims()->get('jti');
 
+        /** @var Host $host */
         $host = Host::whereTokenId($jsonWebTokenId)->first();
 
         if ($host === null) {
