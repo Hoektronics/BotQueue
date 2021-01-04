@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\ModelTraits\HostAuthTrait;
 use App\ModelTraits\UuidKey;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\HasApiTokens;
 
 /**
  * App\Host.
@@ -17,10 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $remote_ip
  * @property string $name
  * @property string $owner_id
- * @property string $token_id
  * @property-read \Illuminate\Database\Eloquent\Collection|Bot[] $bots
  * @property-read User $owner
- * @property-read \Laravel\Passport\Token $token
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereLocalIp($value)
@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereRemoteIp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereSeenAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Host whereTokenId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereUpdatedAt($value)
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|Host newModelQuery()
@@ -37,10 +36,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $available_connections
  * @method static \Illuminate\Database\Eloquent\Builder|Host whereAvailableConnections($value)
  */
-class Host extends Model
+class Host extends Model implements Authenticatable
 {
     use UuidKey;
-    use HostAuthTrait;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -69,8 +68,45 @@ class Host extends Model
         return $this->hasMany(Bot::class);
     }
 
-    public function revoke()
+    public function createHostToken()
     {
-        $this->token->revoke();
+        $currentToken = $this->token();
+        if (! is_null($currentToken)) {
+            $currentToken->revoke();
+        }
+
+        $accessTokenResult = $this->createToken("Host Token", ["host"]);
+
+        $this->withAccessToken($accessTokenResult->token);
+
+        return $accessTokenResult->accessToken;
+    }
+
+    public function getAuthIdentifierName()
+    {
+        return $this->getKeyName();
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->{$this->getAuthIdentifierName()};
+    }
+
+    public function getAuthPassword()
+    {
+        return null;
+    }
+
+    public function getRememberToken()
+    {
+        return null;
+    }
+
+    public function setRememberToken($value)
+    {}
+
+    public function getRememberTokenName()
+    {
+        return null;
     }
 }

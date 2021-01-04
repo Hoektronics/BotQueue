@@ -82,21 +82,20 @@ class HostRequest extends Model
      * @return Host
      * @throws OauthHostKeysMissing
      * @throws HostRequestAlreadyDeleted
-     * @throws OauthHostClientNotSetup See HostAuthTrait::client
      * @throws Exception
      */
     public function toHost()
     {
+        if (! file_exists(passport_private_key_path())) {
+            throw new OauthHostKeysMissing('Private key for oauth is missing');
+        }
+
         $host = Host::make([
             'local_ip' => $this->local_ip,
             'remote_ip' => $this->remote_ip,
             'name' => $this->hostname,
             'owner_id' => $this->claimer_id,
         ]);
-
-        if (! file_exists(passport_private_key_path())) {
-            throw new OauthHostKeysMissing('Private key for oauth is missing');
-        }
 
         $rowsAffected = self::whereId($this->id)
             ->delete();

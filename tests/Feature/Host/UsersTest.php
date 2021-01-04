@@ -16,6 +16,7 @@ class UsersTest extends TestCase
         $this
             ->withExceptionHandling()
             ->withTokenFromHost($this->mainHost)
-            ->getJson("/api/users/{$this->mainUser->id}")->assertStatus(Response::HTTP_FORBIDDEN);
+            ->getJson("/api/users/{$this->mainUser->id}")
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }

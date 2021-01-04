@@ -5,17 +5,30 @@ namespace App\Http\Resources;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Laravel\Passport\Token;
 
 /**
  * Class HostResource.
  *
- * @method string getJWT
+ * @method Token token
  * @property int id
  * @property string name
  * @property User owner
  */
 class HostResource extends JsonResource
 {
+    /**
+     * @var string|null
+     */
+    private $accessToken;
+
+    public function __construct($resource, $accessToken = null)
+    {
+        parent::__construct($resource);
+
+        $this->accessToken = $accessToken;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -25,7 +38,7 @@ class HostResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'access_token' => $this->getJWT(),
+            'access_token' => $this->when($this->accessToken !== null, $this->accessToken),
             'host' => [
                 'id' => $this->id,
                 'name' => $this->name,

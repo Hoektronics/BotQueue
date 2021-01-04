@@ -36,10 +36,10 @@ class ConvertRequestToHostCommand
 
         try {
             $host = $host_request->toHost();
-        } catch (OauthHostClientNotSetup $e) {
-            report($e);
 
-            return HostErrors::oauthHostClientIsNotSetup();
+            $accessToken = $host->createHostToken();
+
+            return new HostResource($host, $accessToken);
         } catch (OauthHostKeysMissing $e) {
             report($e);
 
@@ -51,7 +51,5 @@ class ConvertRequestToHostCommand
 
             return HostErrors::unknownError();
         }
-
-        return new HostResource($host);
     }
 }

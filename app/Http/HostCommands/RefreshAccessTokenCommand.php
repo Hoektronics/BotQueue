@@ -2,29 +2,21 @@
 
 namespace App\Http\HostCommands;
 
-use App\HostManager;
 use App\Http\Resources\HostResource;
+use App\Models\Host;
+use Illuminate\Support\Facades\Auth;
 
 class RefreshAccessTokenCommand
 {
     use HostCommandTrait;
 
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    public function __construct(HostManager $hostManager)
-    {
-        $this->hostManager = $hostManager;
-    }
-
     public function __invoke()
     {
-        $host = $this->hostManager->getHost();
+        /** @var Host $host */
+        $host = Auth::user();
 
-        $host->refreshAccessToken();
+        $accessToken = $host->createHostToken();
 
-        return new HostResource($host);
+        return new HostResource($host, $accessToken);
     }
 }

@@ -78,15 +78,6 @@ class HostErrors
         );
     }
 
-    public static function noHostFound()
-    {
-        return new ErrorResponse(
-            1008,
-            'No host was found for that access token',
-            Response::HTTP_UNAUTHORIZED
-        );
-    }
-
     public static function botHasNoHost()
     {
         return new ErrorResponse(

@@ -7,24 +7,14 @@ use App\Enums\JobStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
 use App\Events\JobFinished;
-use App\HostManager;
 use App\Http\Resources\JobResource;
 use App\Models\Job;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class FinishJobCommand
 {
     use HostCommandTrait;
-
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    public function __construct(HostManager $hostManager)
-    {
-        $this->hostManager = $hostManager;
-    }
 
     /**
      * @param $data Collection
@@ -42,7 +32,7 @@ class FinishJobCommand
 
         $bot = $job->bot;
 
-        if ($bot->host_id != $this->hostManager->getHost()->id) {
+        if ($bot->host_id != Auth::user()->id) {
             return HostErrors::jobIsNotAssignedToThisHost();
         }
 

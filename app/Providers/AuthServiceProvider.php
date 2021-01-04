@@ -3,11 +3,8 @@
 namespace App\Providers;
 
 use App;
-use App\Oauth\HostGrant;
-use DateInterval;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use League\OAuth2\Server\AuthorizationServer;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -23,16 +20,6 @@ class AuthServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->extend(AuthorizationServer::class, function ($server) {
-            /* @var $server AuthorizationServer */
-            $server->enableGrantType(new HostGrant, new DateInterval('P1Y'));
-
-            return $server;
-        });
-
-        $this->app->singleton(App\HostManager::class, function () {
-            return new App\HostManager();
-        });
     }
 
     /**

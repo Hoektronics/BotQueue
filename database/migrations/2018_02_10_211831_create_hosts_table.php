@@ -24,9 +24,6 @@ class CreateHostsTable extends Migration
 
             $table->uuid('owner_id');
             $table->foreign('owner_id')->references('id')->on('users');
-
-            $table->string('token_id', 100);
-            $table->foreign('token_id')->references('id')->on('oauth_access_tokens');
         });
     }
 

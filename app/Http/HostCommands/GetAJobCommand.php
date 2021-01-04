@@ -3,31 +3,17 @@
 namespace App\Http\HostCommands;
 
 use App\Actions\FindJobForBot;
-use App\Enums\BotStatusEnum;
-use App\Enums\JobStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\HostManager;
-use App\Http\Resources\JobResource;
 use App\Models\Bot;
-use App\Models\Job;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class GetAJobCommand
 {
     use HostCommandTrait;
-
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    public function __construct(HostManager $hostManager)
-    {
-        $this->hostManager = $hostManager;
-    }
 
     /**
      * @param $data Collection
@@ -41,7 +27,7 @@ class GetAJobCommand
 
         $bot = Bot::find($data['bot']);
 
-        if ($bot->host_id != $this->hostManager->getHost()->id) {
+        if ($bot->host_id != Auth::user()->id) {
             return HostErrors::jobIsNotAssignedToThisHost();
         }
 

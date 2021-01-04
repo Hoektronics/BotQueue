@@ -46,6 +46,12 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'host' => [
+            'driver' => 'passport', // We use passport as the driver to handle api auth
+            'provider' => 'hosts',
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -60,7 +66,7 @@ return [
     | If you have multiple user tables or models you may configure multiple
     | sources which represent each model / table. These sources may then
     | be assigned to any extra authentication guards you have defined.
-    |
+    |w
     | Supported: "database", "eloquent"
     |
     */
@@ -71,10 +77,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'hosts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Host::class,
+        ],
     ],
 
     /*
