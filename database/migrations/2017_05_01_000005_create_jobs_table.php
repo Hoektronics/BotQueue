@@ -31,6 +31,11 @@ class CreateJobsTable extends Migration
             $table->foreign('bot_id')->references('id')->on('bots');
 
             $table->timestamps();
+
+            $table->uuid('file_id');
+            $table->foreign('file_id')->references('id')->on('files');
+
+            $table->float('progress')->default(0);
         });
     }
 
