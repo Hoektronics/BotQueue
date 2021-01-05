@@ -49,17 +49,6 @@ class FileBuilder
         );
     }
 
-    private function newWithNoOverride($newAttributes)
-    {
-        $intersectingKeys = array_intersect_key($this->attributes, $newAttributes);
-
-        if (count($intersectingKeys) > 0) {
-            throw new InvalidArgumentException("attribute(s) were set twice: {$intersectingKeys}");
-        }
-
-        return $this->newWith($newAttributes);
-    }
-
     public function uploader(User $user)
     {
         return $this->newWith(['uploader_id' => $user->id]);
@@ -77,11 +66,11 @@ class FileBuilder
 
     public function stl()
     {
-        return $this->newWithNoOverride(['type' => FileTypeEnum::STL]);
+        return $this->newWith(['type' => FileTypeEnum::STL]);
     }
 
     public function gcode()
     {
-        return $this->newWithNoOverride(['type' => FileTypeEnum::GCODE]);
+        return $this->newWith(['type' => FileTypeEnum::GCODE]);
     }
 }

@@ -82,6 +82,7 @@ trait UsesBuilders
 
         return (new BotBuilder())
             ->creator($this->mainUser)
+            ->cluster($this->cluster()->create())
             ->name($faker->name)
             ->type('3d_printer');
     }

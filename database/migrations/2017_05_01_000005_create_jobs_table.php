@@ -32,7 +32,7 @@ class CreateJobsTable extends Migration
 
             $table->timestamps();
 
-            $table->uuid('file_id');
+            $table->uuid('file_id')->nullable();
             $table->foreign('file_id')->references('id')->on('files');
 
             $table->float('progress')->default(0);
