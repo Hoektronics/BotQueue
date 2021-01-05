@@ -1,0 +1,13 @@
+name: Automated Testing
+
+on: [ pull_request ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Composer Install
+        run: composer install --ignore-platform-reqs
+      - name: Run Tests
+        run: vendor/bin/phpunit
