@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIsAdminToUsers extends Migration
+class AddCurrentJobIdToBots extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class AddIsAdminToUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_admin')->default(false);
+        Schema::table('bots', function (Blueprint $table) {
+            $table->uuid('current_job_id')->nullable();
+            $table->foreign('current_job_id')->references('id')->on('jobs');
         });
     }
 
@@ -25,8 +26,8 @@ class AddIsAdminToUsers extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_admin');
+        Schema::table('bots', function (Blueprint $table) {
+            //
         });
     }
 }

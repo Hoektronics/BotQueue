@@ -2,23 +2,14 @@
 
 namespace App\Http\HostCommands;
 
-use App\HostManager;
+use App\Models\Host;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateAvailableConnectionsCommand
 {
     use HostCommandTrait;
-
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    public function __construct(HostManager $hostManager)
-    {
-        $this->hostManager = $hostManager;
-    }
 
     /**
      * @param $data Collection
@@ -26,7 +17,8 @@ class UpdateAvailableConnectionsCommand
      */
     public function __invoke($data)
     {
-        $host = $this->hostManager->getHost();
+        /** @var Host $host */
+        $host = Auth::user();
 
         $host->available_connections = $data->toJson();
         $host->save();

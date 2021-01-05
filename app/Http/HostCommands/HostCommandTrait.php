@@ -4,12 +4,7 @@ namespace App\Http\HostCommands;
 
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\Models\Host;
-use App\HostManager;
-use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Factory as Auth;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Token;
 
 trait HostCommandTrait
 {
@@ -23,40 +18,17 @@ trait HostCommandTrait
             return;
         }
 
-        $guard_name = 'api';
+        $guard_name = 'host';
 
         $guard = $auth->guard($guard_name);
 
         if ($guard->check()) {
             $auth->shouldUse($guard_name);
 
-            return $this->setUpHost();
+            return null;
         } else {
             return HostErrors::oauthAuthorizationInvalid();
         }
-    }
-
-    private function setUpHost()
-    {
-        $jsonWebToken = request()->bearerToken();
-
-        /** @var Token $parsedToken */
-        $parsedToken = app(Parser::class)->parse($jsonWebToken);
-        $jsonWebTokenId = $parsedToken->claims()->get('jti');
-
-        /** @var Host $host */
-        $host = Host::whereTokenId($jsonWebTokenId)->first();
-
-        if ($host === null) {
-            return HostErrors::noHostFound();
-        }
-
-        $host->seen_at = Carbon::now();
-        $host->save();
-
-        app(HostManager::class)->setHost($host);
-
-        return null;
     }
 
     protected function emptySuccess()

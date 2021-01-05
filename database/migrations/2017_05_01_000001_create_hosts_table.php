@@ -14,7 +14,7 @@ class CreateHostsTable extends Migration
     public function up()
     {
         Schema::create('hosts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->uuid('id')->primary();
             $table->timestamps();
             $table->timestamp('seen_at')->nullable();
 
@@ -22,11 +22,10 @@ class CreateHostsTable extends Migration
             $table->string('remote_ip')->nullable();
             $table->string('name');
 
-            $table->integer('owner_id')->unsigned();
+            $table->uuid('owner_id');
             $table->foreign('owner_id')->references('id')->on('users');
 
-            $table->string('token_id', 100);
-            $table->foreign('token_id')->references('id')->on('oauth_access_tokens');
+            $table->longText('available_connections')->nullable();
         });
     }
 

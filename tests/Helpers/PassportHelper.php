@@ -11,7 +11,7 @@ trait PassportHelper
 {
     private $userClientSetUp = false;
 
-    private function setUpPersonalClient()
+    protected function setUpPersonalClient()
     {
         if ($this->userClientSetUp) {
             return;
@@ -54,7 +54,12 @@ trait PassportHelper
      */
     public function withTokenFromHost($host)
     {
-        $this->withAccessToken($host->getJWT());
+        $this->setUpPersonalClient();
+
+        $tokenResult = $host->createToken("Test Token", ['host']);
+
+        $host->withAccessToken($tokenResult->token);
+        $this->withAccessToken($tokenResult->accessToken);
 
         return $this;
     }

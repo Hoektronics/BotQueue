@@ -2,23 +2,14 @@
 
 namespace App\Http\HostCommands;
 
-use App\HostManager;
 use App\Http\Resources\BotCollection;
+use App\Models\Host;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class GetBotsCommand
 {
     use HostCommandTrait;
-
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    public function __construct(HostManager $hostManager)
-    {
-        $this->hostManager = $hostManager;
-    }
 
     /**
      * @param $data Collection
@@ -26,7 +17,8 @@ class GetBotsCommand
      */
     public function __invoke($data)
     {
-        $host = $this->hostManager->getHost();
+        /** @var Host $host */
+        $host = Auth::user();
 
         $bots = $host->bots()->with('currentJob')->get();
 

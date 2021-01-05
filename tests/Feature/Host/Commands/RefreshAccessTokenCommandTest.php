@@ -29,14 +29,15 @@ class RefreshAccessTokenCommandTest extends TestCase
     {
         $jwt = app(JwtParser::class);
 
-        $original_token = $this->mainHost->getAccessToken();
+        $this->withTokenFromHost($this->mainHost);
 
-        $first_expire_time = $original_token->getExpiryDateTime();
+        $original_token = $this->mainHost->token();
 
-        Carbon::setTestNow(Carbon::createFromImmutable($first_expire_time)->addMinute());
+        $first_expire_time = $original_token->expires_at;
+
+        Carbon::setTestNow(Carbon::createFromInterface($first_expire_time)->addMinute());
 
         $refresh_response = $this
-            ->withTokenFromHost($this->mainHost)
             ->postJson('/host', [
                 'command' => 'RefreshAccessToken',
             ]);
@@ -66,21 +67,23 @@ class RefreshAccessTokenCommandTest extends TestCase
         $later_expire_time = $jwt->parse($new_token)->claims()->get('exp');
         $this->assertGreaterThan($first_expire_time, $later_expire_time);
 
-        $this->mainHost->token->refresh();
-        $this->assertEquals($later_expire_time, $this->mainHost->token->expires_at);
+        /** @var Carbon $token_expires_at */
+        $token_expires_at = $this->mainHost->token()->expires_at;
+        $this->assertEquals($later_expire_time->getTimestamp(), $token_expires_at->getTimestamp());
     }
 
     /** @test */
     public function refreshingExpiredHostFails()
     {
-        $this->mainHost->revoke();
+        $this->withTokenFromHost($this->mainHost);
+
+        $this->mainHost->token()->revoke();
 
         $this
             ->withoutExceptionHandling()
-            ->withTokenFromHost($this->mainHost)
             ->postJson('/host', [
                 'command' => 'RefreshAccessToken',
             ])
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertJson(HostErrors::oauthAuthorizationInvalid()->toArray());
     }
 }

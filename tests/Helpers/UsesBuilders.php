@@ -2,13 +2,10 @@
 
 namespace Tests\Helpers;
 
-use App\Enums\HostRequestStatusEnum;
 use App\Enums\JobStatusEnum;
 use App\Models\Host;
 use App\Models\User;
-use App\Oauth\OauthHostClient;
 use Faker\Generator as Faker;
-use Laravel\Passport\ClientRepository;
 use Tests\Helpers\Models\BotBuilder;
 use Tests\Helpers\Models\ClusterBuilder;
 use Tests\Helpers\Models\FileBuilder;
@@ -28,7 +25,6 @@ trait UsesBuilders
     private $lazyMainUser;
     /** @var Host $lazyMainHost */
     private $lazyMainHost;
-    private $hostClientSetUp = false;
 
     public function __get($name)
     {
@@ -53,27 +49,6 @@ trait UsesBuilders
                 return $this->lazyMainHost;
         }
         throw new \Exception("Missing attribute $name");
-    }
-
-    private function setUpHostClient()
-    {
-        if ($this->hostClientSetUp) {
-            return;
-        }
-
-        $clients = app(ClientRepository::class);
-
-        $client = $clients->create(
-            null,
-            'TestHostClient',
-            'http://localhost'
-        );
-
-        $accessClient = new OauthHostClient();
-        $accessClient->client_id = $client->id;
-        $accessClient->save();
-
-        $this->hostClientSetUp = true;
     }
 
     public function user()
@@ -107,6 +82,7 @@ trait UsesBuilders
 
         return (new BotBuilder())
             ->creator($this->mainUser)
+            ->cluster($this->cluster()->create())
             ->name($faker->name)
             ->type('3d_printer');
     }
@@ -141,8 +117,6 @@ trait UsesBuilders
      */
     public function host()
     {
-        $this->setUpHostClient();
-
         $faker = app(Faker::class);
 
         return (new HostBuilder())
@@ -155,8 +129,6 @@ trait UsesBuilders
      */
     public function hostRequest()
     {
-        $this->setUpHostClient();
-
         return new HostRequestBuilder();
     }
 }

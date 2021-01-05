@@ -38,7 +38,7 @@ class CreateHostRequestCommandTest extends TestCase
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);
 
-        $this->assertEquals(8, strlen($host_request->id));
+        $this->assertUuid($host_request->id);
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
 
         $response
@@ -74,7 +74,7 @@ class CreateHostRequestCommandTest extends TestCase
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);
 
-        $this->assertEquals(8, strlen($host_request_id));
+        $this->assertUuid($host_request->id);
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
 
         $response
@@ -109,7 +109,7 @@ class CreateHostRequestCommandTest extends TestCase
         /** @var HostRequest $host_request */
         $host_request = HostRequest::query()->find($host_request_id);
 
-        $this->assertEquals(8, strlen($host_request_id));
+        $this->assertUuid($host_request->id);
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
 
         $response
@@ -153,7 +153,7 @@ class CreateHostRequestCommandTest extends TestCase
         $host_request = HostRequest::query()->find($host_request_id);
 
         $this->assertNotNull($host_request);
-        $this->assertEquals(8, strlen($host_request_id));
+        $this->assertUuid($host_request->id);
         $this->assertEquals(HostRequestStatusEnum::REQUESTED, $host_request->status);
         $this->assertEquals($ipv4, $host_request->remote_ip);
     }

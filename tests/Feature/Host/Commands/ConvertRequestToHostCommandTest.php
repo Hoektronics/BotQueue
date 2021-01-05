@@ -6,15 +6,24 @@ use App\Enums\HostRequestStatusEnum;
 use App\Errors\HostErrors;
 use App\Exceptions\HostAlreadyClaimed;
 use App\Models\Host;
-use App\Oauth\OauthHostClient;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
 use Lcobucci\JWT\Parser as JwtParser;
 use Lcobucci\JWT\Token;
+use Tests\Helpers\PassportHelper;
 use Tests\TestCase;
 
 class ConvertRequestToHostCommandTest extends TestCase
 {
+    use PassportHelper;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setUpPersonalClient();
+    }
+
     /** @test */
     public function tryingToAccessHostWithoutItBeingClaimedIsNotAllowed()
     {
@@ -182,35 +191,8 @@ class ConvertRequestToHostCommandTest extends TestCase
         $jwt = $jwt_parser->parse($access_token);
         $claims = $jwt->claims();
 
-        $this->assertEquals($host->token_id, $claims->get('jti'));
-        $this->assertEquals($this->mainUser->id, $claims->get('sub'));
-        $this->assertEquals([$host->token->client_id], $claims->get('aud'));
+        $this->assertEquals($host->id, $claims->get('sub'));
         $this->assertTrue(in_array('host', $claims->get('scopes')));
-    }
-
-    /** @test
-     * @throws \Exception
-     */
-    public function missingOauthHostClientReturnsAnErrorResponse()
-    {
-        $hostRequest = $this->hostRequest()
-            ->state(HostRequestStatusEnum::CLAIMED)
-            ->hostname('My Test Host')
-            ->claimer($this->mainUser)
-            ->create();
-
-        // Delete the host client created with the above host request
-        OauthHostClient::first()->delete();
-
-        $this
-            ->postJson('/host', [
-                'command' => 'ConvertRequestToHost',
-                'data' => [
-                    'id' => $hostRequest->id,
-                ],
-            ])
-            ->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
-            ->assertExactJson(HostErrors::oauthHostClientIsNotSetup()->toArray());
     }
 
     /** @test */

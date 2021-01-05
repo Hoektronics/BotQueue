@@ -7,24 +7,14 @@ use App\Models\Bot;
 use App\Enums\BotStatusEnum;
 use App\Errors\ErrorResponse;
 use App\Errors\HostErrors;
-use App\HostManager;
 use App\Models\Job;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class BotErrorCommand
 {
     use HostCommandTrait;
-
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    public function __construct(HostManager $hostManager)
-    {
-        $this->hostManager = $hostManager;
-    }
 
     /**
      * @param $data Collection
@@ -46,7 +36,7 @@ class BotErrorCommand
             return HostErrors::botHasNoHost();
         }
 
-        if ($bot->host->id != $this->hostManager->getHost()->id) {
+        if ($bot->host->id != Auth::user()->id) {
             return HostErrors::botIsNotAssignedToThisHost();
         }
 

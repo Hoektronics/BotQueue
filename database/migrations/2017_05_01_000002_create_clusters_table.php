@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBotsTable extends Migration
+class CreateClustersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateBotsTable extends Migration
      */
     public function up()
     {
-        Schema::create('bots', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('creator_id')->unsigned();
-            $table->foreign('creator_id')->references('id')->on('users');
+        Schema::create('clusters', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('type');
-            $table->timestamp('seen_at')->nullable();
+
+            $table->uuid('creator_id');
+            $table->foreign('creator_id')->references('id')->on('users');
+
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateBotsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bots');
+        Schema::dropIfExists('clusters');
     }
 }

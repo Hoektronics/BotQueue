@@ -7,6 +7,7 @@ use App\Events\UserCreated;
 use App\Exceptions\HostAlreadyClaimed;
 use App\ModelTraits\CreatesMyCluster;
 use App\ModelTraits\FirstUserIsPromotedToAdmin;
+use App\ModelTraits\UuidKey;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -14,7 +15,7 @@ use Laravel\Passport\HasApiTokens;
 /**
  * App\User.
  *
- * @property int $id
+ * @property string $id
  * @property string $username
  * @property string $email
  * @property string $password
@@ -44,6 +45,7 @@ use Laravel\Passport\HasApiTokens;
  */
 class User extends Authenticatable
 {
+    use UuidKey;
     use Notifiable;
     use HasApiTokens;
     use CreatesMyCluster;

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Bus;
+use Ramsey\Uuid\Exception\InvalidUuidStringException;
+use Ramsey\Uuid\Uuid;
 use Spatie\QueueableAction\ActionJob;
 use Tests\Helpers\TestStatus;
 use Tests\Helpers\TestStatusException;
@@ -52,6 +54,16 @@ abstract class TestCase extends BaseTestCase
         $this->assertDatabaseMissing($model->getTable(), [
             $model->getKeyName() => $model->getKey(),
         ]);
+    }
+
+    public function assertUuid($value)
+    {
+        try {
+            Uuid::fromString($value);
+            $this->assertTrue(true, "$value was a valid uuid");
+        } catch (InvalidUuidStringException) {
+            $this->assertFalse(false, "$value was not a valid uuid");
+        }
     }
 
     public function exceptStatus(string ...$status)

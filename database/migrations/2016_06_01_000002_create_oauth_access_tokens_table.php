@@ -32,8 +32,8 @@ class CreateOauthAccessTokensTable extends Migration
     {
         $this->schema->create('oauth_access_tokens', function (Blueprint $table) {
             $table->string('id', 100)->primary();
-            $table->unsignedBigInteger('user_id')->nullable()->index();
-            $table->unsignedBigInteger('client_id');
+            $table->uuid('user_id')->nullable()->index();
+            $table->uuid('client_id');
             $table->string('name')->nullable();
             $table->text('scopes')->nullable();
             $table->boolean('revoked');

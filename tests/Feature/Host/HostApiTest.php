@@ -39,6 +39,6 @@ class HostApiTest extends TestCase
                 'command' => 'GetBots',
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(HostErrors::noHostFound()->toArray());
+            ->assertExactJson(HostErrors::oauthAuthorizationInvalid()->toArray());
     }
 }
