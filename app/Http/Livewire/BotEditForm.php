@@ -32,7 +32,7 @@ class BotEditForm extends Component
         $driverService = app(BotDriverService::class);
         $driverService->decode($this->bot->driver);
 
-        $this->driverType = $driverService->driver_type;
+        $this->driverType = $driverService->driver_type ?? DriverType::GCODE;
         $this->serialPort = $driverService->serial_port;
         $this->baudRate = $driverService->baud_rate;
         $this->commandDelay = $driverService->command_delay;
