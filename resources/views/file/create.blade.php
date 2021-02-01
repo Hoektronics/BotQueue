@@ -68,7 +68,7 @@
                     this.flow = new Flow({
                         chunkSize: 1000 * 1000, // 1MB ish
                         forceChunkSize: true,
-                        simultaneousUploads: 3,
+                        simultaneousUploads: 1,
                         testChunks: false,
                         // Get the url from data-url tag
                         target: "/files",
