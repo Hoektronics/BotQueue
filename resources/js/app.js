@@ -13,6 +13,12 @@ window.Flow = Flow;
 
 window.Pusher = require('pusher-js');
 
+window.Pusher.log = function(message) {
+    if (window.console && window.console.log) {
+        window.console.log(message);
+    }
+};
+
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: 'pusher-botqueue-key',

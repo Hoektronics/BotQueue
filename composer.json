@@ -36,7 +36,6 @@
         "spatie/laravel-queueable-action": "^2.7"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.5",
         "fakerphp/faker": "^1.13.0",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",

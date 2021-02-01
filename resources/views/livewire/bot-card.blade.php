@@ -44,6 +44,12 @@
                     Error: {{ $this->bot->error_text }}
                 </div>
             @endif
+            @if(!is_null($this->bot->currentjob) && $this->bot->status == \App\Enums\BotStatusEnum::WORKING)
+                <div class="h-4 flex border rounded border-blue-400">
+                    <div style="width: {{ $this->bot->currentJob->progress }}%"
+                         class="shadow-none flex flex-col bg-blue-400"></div>
+                </div>
+            @endif
         </div>
     </div>
 </div>

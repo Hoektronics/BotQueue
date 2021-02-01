@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\JobCreated;
+use App\Events\JobUpdated;
 use App\ModelTraits\UuidKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,7 @@ class Job extends Model
 
     protected $dispatchesEvents = [
         'created' => JobCreated::class,
+        'updated' => JobUpdated::class,
     ];
 
     public function creator()

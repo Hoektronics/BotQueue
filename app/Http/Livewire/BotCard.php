@@ -8,7 +8,6 @@ use App\Enums\BotStatusEnum;
 use App\Exceptions\BotStatusConflict;
 use App\Models\Bot;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class BotCard extends Component
@@ -40,10 +39,9 @@ class BotCard extends Component
 
     public function getListeners()
     {
-        $id = Auth::user()->id;
-
         return [
-            "echo-private:users.{$id},BotUpdated" => "updateBot",
+            "echo-private:bots.{$this->botId},BotUpdated" => "updateBot",
+            "echo-private:bots.{$this->botId},JobUpdated" => "updateCurrentJob",
         ];
     }
 
@@ -97,6 +95,11 @@ class BotCard extends Component
     public function updateBot()
     {
         $this->bot->refresh();
+    }
+
+    public function updateCurrentJob()
+    {
+        $this->bot->currentJob->refresh();
     }
 
     /**

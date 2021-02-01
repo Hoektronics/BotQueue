@@ -32,9 +32,16 @@ class JobUpdated extends Event implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return $this
+        $this
             ->userChannel($this->job->creator_id)
-            ->jobChannel($this->job)
-            ->channels();
+            ->jobChannel($this->job);
+
+        $bot = $this->job->bot;
+
+        if(!is_null($bot) && $bot->current_job_id == $this->job->id) {
+            $this->botChannel($bot);
+        }
+
+        return $this->channels();
     }
 }

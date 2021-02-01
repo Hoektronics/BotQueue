@@ -21,5 +21,10 @@ Broadcast::channel('users.{id}', function (User $user, $id) {
 
 Broadcast::channel('bots.{id}', function (User $user, $id) {
     $bot = \App\Models\Bot::find($id);
-    return (int) $user->id === (int) $bot->id;
+    return (int) $user->id === (int) $bot->creator_id;
+});
+
+Broadcast::channel('jobs.{id}', function (User $user, $id) {
+    $job = \App\Models\Job::find($id);
+    return (int) $user->id === (int) $job->creator_id;
 });
