@@ -3,6 +3,8 @@
 namespace App\Http\Livewire;
 
 use App\Actions\BringBotOnline;
+use App\Actions\FailJob;
+use App\Actions\PassJob;
 use App\Actions\TakeBotOffline;
 use App\Enums\BotStatusEnum;
 use App\Exceptions\BotStatusConflict;
@@ -87,6 +89,11 @@ class BotCard extends Component
                     "Bring Online" => "bringBotOnline",
                     "Edit Bot" => "editBot",
                 ];
+            case BotStatusEnum::WAITING:
+                return [
+                    "Pass Job" => "passJob",
+                    "Fail Job" => "failJob",
+                ];
             default:
                 return [];
         }
@@ -102,12 +109,27 @@ class BotCard extends Component
         $this->bot->currentJob->refresh();
     }
 
+    public function passJob()
+    {
+        app(PassJob::class)->execute($this->bot->currentJob);
+        $this->bot->refresh();
+        $this->closeMenu();
+    }
+
+    public function failJob()
+    {
+        app(FailJob::class)->execute($this->bot->currentJob);
+        $this->bot->refresh();
+        $this->closeMenu();
+    }
+
     /**
      * @throws BotStatusConflict
      */
     public function bringBotOnline()
     {
         app(BringBotOnline::class)->execute($this->bot);
+        $this->bot->refresh();
         $this->closeMenu();
     }
 
@@ -117,6 +139,7 @@ class BotCard extends Component
     public function takeBotOffline()
     {
         app(TakeBotOffline::class)->execute($this->bot);
+        $this->bot->refresh();
         $this->closeMenu();
     }
 

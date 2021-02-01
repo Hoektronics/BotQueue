@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bot;
-use App\Enums\BotStatusEnum;
+use App\Actions\FailJob;
+use App\Actions\PassJob;
 use App\Enums\JobStatusEnum;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class JobController extends Controller
 {
@@ -23,12 +24,12 @@ class JobController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|View
      */
     public function index()
     {
         return view('job.index', [
-            'jobs' => Job::mine()->paginate(15),
+            'jobs' => Job::mine()->orderBy('created_at')->paginate(15),
         ]);
     }
 
@@ -108,12 +109,7 @@ class JobController extends Controller
         abort_unless($job->creator_id == Auth::user()->id, Response::HTTP_FORBIDDEN);
         abort_unless($job->status == JobStatusEnum::QUALITY_CHECK, Response::HTTP_CONFLICT);
 
-        /** @var Bot $bot */
-        $bot = $job->bot;
-        $bot->status = BotStatusEnum::IDLE;
-        $bot->current_job_id = null;
-        $job->status = JobStatusEnum::COMPLETED;
-        $job->push();
+        app(PassJob::class)->execute($job);
 
         return redirect("/jobs/{$job->id}");
     }
@@ -130,12 +126,7 @@ class JobController extends Controller
         abort_unless($job->creator_id == Auth::user()->id, Response::HTTP_FORBIDDEN);
         abort_unless($job->status == JobStatusEnum::QUALITY_CHECK, Response::HTTP_CONFLICT);
 
-        /** @var Bot $bot */
-        $bot = $job->bot;
-        $bot->status = BotStatusEnum::IDLE;
-        $bot->current_job_id = null;
-        $job->status = JobStatusEnum::FAILED;
-        $job->push();
+        app(FailJob::class)->execute($job);
 
         return redirect("/jobs/{$job->id}");
     }
