@@ -20,7 +20,7 @@ class GetBotsCommand
         /** @var Host $host */
         $host = Auth::user();
 
-        $bots = $host->bots()->with('creator')->with('currentJob')->get();
+        $bots = $host->bots()->with('currentJob')->get();
 
         return new BotCollection($bots);
     }
