@@ -36,19 +36,10 @@ class BotResource extends JsonResource
             'type' => $this->type,
             'driver' => $this->driver,
             'creator' => $this->whenLoaded('creator', function () {
-                return [
-                    'id' => $this->creator->id,
-                    'username' => $this->creator->username,
-                    'link' => url('/api/users', $this->creator->id),
-                ];
+                return new UserResource($this->creator);
             }),
             'job' => $this->whenLoaded('currentJob', function () {
-                return [
-                    'id' => $this->currentJob->id,
-                    'name' => $this->currentJob->name,
-                    'status' => $this->currentJob->status,
-                    'url' => $this->currentJob->file->url(),
-                ];
+                return new JobResource($this->currentJob);
             }),
         ];
     }
