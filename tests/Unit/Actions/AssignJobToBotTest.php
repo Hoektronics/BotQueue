@@ -3,6 +3,7 @@
 namespace Tests\Unit\Actions;
 
 use App\Actions\AssignJobToBot;
+use App\Actions\AssignTasksToJob;
 use App\Events\BotUpdated;
 use App\Events\JobAssignedToBot;
 use App\Events\JobUpdated;
@@ -34,6 +35,10 @@ class AssignJobToBotTest extends TestCase
             ->state(JobStatusEnum::QUEUED)
             ->worker($bot)
             ->create();
+
+        $this->mock(AssignTasksToJob::class)
+            ->expects('execute')
+            ->with($job);
 
 		app(AssignJobToBot::class)->execute($bot, $job);
 
@@ -88,6 +93,10 @@ class AssignJobToBotTest extends TestCase
             ->state(JobStatusEnum::QUEUED)
             ->worker($cluster)
             ->create();
+
+        $this->mock(AssignTasksToJob::class)
+            ->expects('execute')
+            ->with($job);
 
         app(AssignJobToBot::class)->execute($bot, $job);
 

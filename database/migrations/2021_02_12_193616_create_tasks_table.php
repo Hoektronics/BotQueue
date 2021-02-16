@@ -28,7 +28,6 @@ class CreateTasksTable extends Migration
             $table->foreign('job_id')->references('id')->on('jobs');
 
             $table->uuid('depends_on')->nullable();
-            $table->foreign('depends_on')->references('id')->on('tasks');
 
             $table->uuid('input_file_id')->nullable();
             $table->foreign('input_file_id')->references('id')->on('files');

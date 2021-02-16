@@ -93,6 +93,11 @@ class Job extends Model
         return $this->belongsTo(File::class);
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
     /**
      * Scope to only include jobs belonging to the currently authenticated user.
      *

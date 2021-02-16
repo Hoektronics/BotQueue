@@ -3,6 +3,7 @@
 namespace Tests\Helpers\Models;
 
 use App\Models\Bot;
+use App\Models\Job;
 
 class BotBuilder
 {
@@ -76,5 +77,10 @@ class BotBuilder
     public function error_text(string $text)
     {
         return $this->newWith(['error_text' => $text]);
+    }
+
+    public function currentJob(Job $job)
+    {
+        return $this->newWith(['current_job_id' => $job->id]);
     }
 }

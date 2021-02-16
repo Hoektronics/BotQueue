@@ -40,4 +40,11 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     use UuidKey;
+
+    protected $fillable = [
+        'type',
+        'status',
+        'input_file_id',
+        'data'
+    ];
 }

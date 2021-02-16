@@ -22,6 +22,13 @@ class AssignJobToBot
 {
     use QueueableAction;
 
+    private AssignTasksToJob $assignTasksToJob;
+
+    public function __construct(AssignTasksToJob $assignTasksToJob)
+    {
+        $this->assignTasksToJob = $assignTasksToJob;
+    }
+
     /**
      * Execute the action.
      *
@@ -33,6 +40,26 @@ class AssignJobToBot
      * @throws Throwable
      */
     public function execute(Bot $bot, Job $job)
+    {
+        $this->guardAgainstInvalidStartingStates($bot, $job);
+
+        $this->attemptDatabaseTransactionAssignment($bot, $job);
+
+        $this->assignTasksToJob->execute($job);
+
+        event(new JobUpdated($job));
+        event(new BotUpdated($bot));
+        event(new JobAssignedToBot($job, $bot));
+    }
+
+    /**
+     * @param Bot $bot
+     * @param Job $job
+     * @throws BotIsNotValidWorker
+     * @throws BotStatusConflict
+     * @throws JobStatusConflict
+     */
+    protected function guardAgainstInvalidStartingStates(Bot $bot, Job $job): void
     {
         if ($bot->status != BotStatusEnum::IDLE) {
             throw new BotStatusConflict('Cannot assign the job to a non-idle bot');
@@ -51,7 +78,21 @@ class AssignJobToBot
                 throw new BotIsNotValidWorker('Cannot assign the job if the bot is not a valid worker for this job');
             }
         }
+    }
 
+    /**
+     * This function does quite a bit of the heavy lifting. It tries to update the bot and job inside a transaction. If
+     * it fails, everything is rolled back. This prevents a race condition where two threads might both try to get the
+     * same job. Without the transaction, the first thread would assume it got the job and then the second would
+     * overwrite the job with that bot id. This function either throws an exception or successfully assigns a job to a
+     * bot.
+     *
+     * @param Bot $bot
+     * @param Job $job
+     * @throws Throwable
+     */
+    protected function attemptDatabaseTransactionAssignment(Bot $bot, Job $job): void
+    {
         DB::transaction(function () use ($bot, $job) {
             Job::query()
                 ->whereKey($job->getKey())
@@ -91,10 +132,6 @@ class AssignJobToBot
             if ($bot->current_job_id != $job->id) {
                 throw new JobAssignmentFailed('This bot is assigned a different job');
             }
-
-            event(new JobUpdated($job));
-            event(new BotUpdated($bot));
-            event(new JobAssignedToBot($job, $bot));
         });
     }
 }

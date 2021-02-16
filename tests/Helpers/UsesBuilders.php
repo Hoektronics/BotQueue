@@ -3,6 +3,8 @@
 namespace Tests\Helpers;
 
 use App\Enums\JobStatusEnum;
+use App\Enums\TaskStatusEnum;
+use App\Enums\TaskType;
 use App\Models\Host;
 use App\Models\User;
 use Faker\Generator as Faker;
@@ -12,6 +14,7 @@ use Tests\Helpers\Models\FileBuilder;
 use Tests\Helpers\Models\HostBuilder;
 use Tests\Helpers\Models\HostRequestBuilder;
 use Tests\Helpers\Models\JobBuilder;
+use Tests\Helpers\Models\TaskBuilder;
 use Tests\Helpers\Models\UserBuilder;
 
 /**
@@ -122,6 +125,18 @@ trait UsesBuilders
         return (new HostBuilder())
             ->creator($this->mainUser)
             ->name($faker->name);
+    }
+
+    /**
+     * @param $taskType
+     * @return TaskBuilder
+     */
+    public function task()
+    {
+        return (new TaskBuilder())
+            ->type(TaskType::MAKE)
+            ->status(TaskStatusEnum::READY)
+            ->data('{}');
     }
 
     /**
