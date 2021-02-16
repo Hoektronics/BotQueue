@@ -12,20 +12,21 @@ use Illuminate\Support\Facades\Auth;
  * @property string $id
  * @property string $name
  * @property string $creator_id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|Bot[] $bots
- * @property-read User $creator
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Bot[] $bots
+ * @property-read int|null $bots_count
+ * @property-read \App\Models\User $creator
  * @method static \Illuminate\Database\Eloquent\Builder|Cluster mine()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cluster newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cluster newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Cluster query()
  * @method static \Illuminate\Database\Eloquent\Builder|Cluster whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cluster whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cluster whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cluster whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Cluster whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|Cluster newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Cluster newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Cluster query()
  */
 class Cluster extends Model
 {

@@ -18,30 +18,32 @@ use Illuminate\Support\Facades\Auth;
  * @property string $worker_id
  * @property string $worker_type
  * @property string|null $bot_id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read Bot|null $bot
- * @property-read User $creator
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $worker
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $file_id
+ * @property float $progress
+ * @property-read \App\Models\Bot|null $bot
+ * @property-read \App\Models\User $creator
+ * @property-read \App\Models\File|null $file
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Task[] $tasks
+ * @property-read int|null $tasks_count
+ * @property-read Model|\Eloquent $worker
  * @method static \Illuminate\Database\Eloquent\Builder|Job mine()
+ * @method static \Illuminate\Database\Eloquent\Builder|Job newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Job newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Job query()
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereBotId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereCreatorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Job whereFileId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Job whereProgress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereWorkerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Job whereWorkerType($value)
  * @mixin \Eloquent
- * @property string|null $file_id
- * @method static \Illuminate\Database\Eloquent\Builder|Job newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Job newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Job query()
- * @method static \Illuminate\Database\Eloquent\Builder|Job whereFileId($value)
- * @property-read File|null $file
- * @property float|null $progress
- * @method static \Illuminate\Database\Eloquent\Builder|Job whereProgress($value)
  */
 class Job extends Model
 {

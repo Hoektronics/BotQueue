@@ -20,9 +20,12 @@ use Illuminate\Support\Str;
  * @property int $size
  * @property string $type
  * @property string $uploader_id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read User $uploader
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $uploader
+ * @method static \Illuminate\Database\Eloquent\Builder|File newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|File newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|File query()
  * @method static \Illuminate\Database\Eloquent\Builder|File whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|File whereFilesystem($value)
  * @method static \Illuminate\Database\Eloquent\Builder|File whereId($value)
@@ -33,9 +36,6 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder|File whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|File whereUploaderId($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|File newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|File newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|File query()
  */
 class File extends Model
 {

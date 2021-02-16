@@ -19,38 +19,39 @@ use Illuminate\Support\Facades\Auth;
  * @property string $creator_id
  * @property string $name
  * @property string $type
- * @property string|null $seen_at
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
  * @property string $status
- * @property int|null $host_id
+ * @property string|null $error_text
+ * @property string|null $seen_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $host_id
+ * @property string $cluster_id
+ * @property array|null $driver
+ * @property bool $job_available
  * @property string|null $current_job_id
- * @property boolean $job_available
- * @property-read Cluster $cluster
- * @property-read User $creator
- * @property-read Job|null $currentJob
- * @property-read Host|null $host
+ * @property-read \App\Models\Cluster $cluster
+ * @property-read \App\Models\User $creator
+ * @property-read \App\Models\Job|null $currentJob
+ * @property-read \App\Models\Host|null $host
  * @method static \Illuminate\Database\Eloquent\Builder|Bot mine()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereClusterId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereCreatorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereCurrentJobId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereDriver($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereErrorText($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereHostId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bot whereJobAvailable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereSeenAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Bot whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $cluster_id
- * @method static \Illuminate\Database\Eloquent\Builder|Bot newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Bot newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Bot query()
- * @method static \Illuminate\Database\Eloquent\Builder|Bot whereClusterId($value)
- * @property string|null $driver
- * @method static \Illuminate\Database\Eloquent\Builder|Bot whereDriver($value)
- * @property string|null $error_text
- * @method static \Illuminate\Database\Eloquent\Builder|Bot whereErrorText($value)
  */
 class Bot extends Model
 {
