@@ -20,7 +20,7 @@ class FindJobForBot
     /**
      * @var AssignJobToBot
      */
-    private $assignJobToBot;
+    private AssignJobToBot $assignJobToBot;
 
     /**
      * @param AssignJobToBot $assignJobToBot

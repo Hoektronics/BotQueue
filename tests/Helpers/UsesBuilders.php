@@ -112,6 +112,7 @@ trait UsesBuilders
         return (new JobBuilder())
             ->creator($this->mainUser)
             ->state(JobStatusEnum::QUEUED)
+            ->file($this->file()->gcode()->create())
             ->name($faker->name);
     }
 
